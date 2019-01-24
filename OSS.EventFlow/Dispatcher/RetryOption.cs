@@ -5,5 +5,9 @@
     /// </summary>
     public class RetryOption
     {
+        /// <summary>
+        ///  重试次数
+        /// </summary>
+        public int RetryTimes { get; set; }
     }
 }

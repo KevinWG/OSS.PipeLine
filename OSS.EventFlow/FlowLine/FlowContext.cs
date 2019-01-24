@@ -1,4 +1,6 @@
-﻿namespace OSS.EventFlow.NodeWorker.Mos
+﻿using OSS.EventFlow.NodeWorker.Mos;
+
+namespace OSS.EventFlow.FlowLine
 {
     public class FlowContext
     {
