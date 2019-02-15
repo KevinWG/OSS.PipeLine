@@ -20,10 +20,10 @@ namespace OSS.EventFlow.Tasks
         }
 
         /// <summary>
-        ///  执行失败
+        ///  执行失败回退
         ///   如果设置了重试配置，会在重试失败后调用
         /// </summary>
-        public void Failed(int doTimes = 0)
+        public void Revert(int doTimes = 0)
         {
         }
 
