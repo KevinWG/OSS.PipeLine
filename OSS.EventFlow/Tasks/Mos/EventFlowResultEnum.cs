@@ -4,7 +4,15 @@ namespace OSS.EventFlow.Tasks
 {
     public enum EventFlowResult
     {
-        Failed=-100
+        /// <summary>
+        ///  执行失败
+        /// </summary>
+        Failed = -9999,
+
+        /// <summary>
+        /// 等待重试
+        /// </summary>
+        WatingRetry = 1
     }
 
     public static class EventFlowResultExtention
@@ -18,5 +26,17 @@ namespace OSS.EventFlow.Tasks
         {
             return res.ret == (int) EventFlowResult.Failed;
         }
+
+        /// <summary>
+        /// 是否等待任务重试
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        public static bool IsTaskWaiting(this ResultMo res)
+        {
+            return res.ret == (int)EventFlowResult.WatingRetry;
+        }
+
+
     }
 }

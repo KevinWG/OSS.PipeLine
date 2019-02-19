@@ -2,13 +2,18 @@
 
 namespace OSS.EventFlow.Tasks.Mos
 {
-    public class TaskConfig
+    public class TaskOption
     {
-        public TaskRetryOption RetryConfig { get; set; }
-
         /// <summary>
-        ///  是否能够复用，如果为True 则底层使用单例模式
+        ///  任务名称
         /// </summary>
-        public bool IsReusable { get; set; }
+        public string TaskName { get; set; }
+
+
+
+        ///// <summary>
+        /////  是否能够复用，如果为True 则底层使用单例模式
+        ///// </summary>
+        //public bool IsReusable { get; set; }
     }
 }
