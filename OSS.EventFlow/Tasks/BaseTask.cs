@@ -5,125 +5,6 @@ using OSS.EventFlow.Tasks.Mos;
 
 namespace OSS.EventFlow.Tasks
 {
-
-    //public abstract class BaseTask //where TPara : class
-    //{
-    //    private TaskOption _config;
-
-    //    /// <summary>
-    //    ///   任务重试配置
-    //    /// </summary>
-    //    public TaskRetryConfig RetryConfig { get; set; }
-
-    //    private ITaskRetryProducer<TPara> _producer;
-
-    //    public BaseTask(TaskOption config)
-    //    {
-    //        _config = config;
-    //    }
-
-    //    public BaseTask(TaskOption config, ITaskRetryProducer<TPara> producer)
-    //    {
-    //        _config = config;
-    //        _producer = producer;
-    //    }
-
-    //    /// <summary>
-    //    ///     任务的具体执行
-    //    /// </summary>
-    //    /// <param name="req"></param>
-    //    /// <returns>  特殊：ret=-100（EventFlowResult.Failed）  任务处理失败，执行回退，并根据重试设置发起重试</returns>
-    //    public abstract TResult Excute(TaskReq<TPara> req);
-
-    //    /// <summary>
-    //    ///     任务的具体执行
-    //    /// </summary>
-    //    /// <param name="req"></param>
-    //    /// <returns>  </returns>
-    //    internal TResult Do(TaskReq<TPara> req)
-    //    {
-    //        TResult res;
-    //        var directExcuteTimes = 0;
-    //        do
-    //        {
-    //            //  直接执行
-    //            res = Excute(req);
-    //            // 判断是否失败回退
-    //            if (res.IsTaskFailed())
-    //                Revert(req);
-
-    //            directExcuteTimes++;
-    //            req.ExcutedTimes++;
-
-    //        } // 判断是否执行直接重试 
-    //        while (res.IsTaskFailed() && CheckDirectTryConfig(directExcuteTimes));
-
-    //        // 判断是否间隔执行,生成重试信息
-    //        if (CheckIntervalTryConfig(req))
-    //        {
-    //            req.IntervalTimes++;
-    //            _producer?.Save(_config, req);
-
-    //            res.ret = (int) EventFlowResult.WatingRetry;
-    //        }
-
-    //        return res;
-    //    }
-
-    //    /// <summary>
-    //    ///  检查是否符合直接重试
-    //    /// </summary>
-    //    /// <param name="directExcuteTimes"></param>
-    //    /// <returns></returns>
-    //    private bool CheckDirectTryConfig(int directExcuteTimes)
-    //    {
-    //        if (directExcuteTimes > RetryConfig?.MaxDirectTimes)
-    //        {
-    //            return false;
-    //        }
-
-    //        if (RetryConfig?.RetryType == TaskRetryType.Direct
-    //            || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
-    //        {
-    //            return true;
-    //        }
-
-    //        return false;
-    //    }
-
-    //    /// <summary>
-    //    ///   判断是否符合间隔重试
-    //    /// </summary>
-    //    /// <param name="req"></param>
-    //    /// <returns></returns>
-    //    private bool CheckIntervalTryConfig(TaskReq<TPara> req)
-    //    {
-    //        if (req.IntervalTimes > RetryConfig?.MaxIntervalTimes)
-    //        {
-    //            return false;
-    //        }
-
-    //        if (RetryConfig?.RetryType == TaskRetryType.Interval
-    //            || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
-    //        {
-    //            return true;
-    //        }
-
-    //        return false;
-    //    }
-
-
-    //    /// <summary>
-    //    ///  执行失败回退操作
-    //    ///   如果设置了重试配置，会在重试失败后调用
-    //    /// </summary>
-    //    /// <param name="req">请求参数</param>
-    //    protected virtual void Revert(TaskReq<TPara> req)
-    //    {
-    //    }
-    //}
-
-
     public abstract class BaseTask<TPara, TResult> //where TPara : class
         where TResult : ResultMo
     {
@@ -152,7 +33,7 @@ namespace OSS.EventFlow.Tasks
         /// </summary>
         /// <param name="req"></param>
         /// <returns>  特殊：ret=-100（EventFlowResult.Failed）  任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        public abstract TResult Excute(TaskReq<TPara> req);
+        public abstract TResult Excute(TPara req);
 
         /// <summary>
         ///     任务的具体执行
@@ -166,10 +47,11 @@ namespace OSS.EventFlow.Tasks
             do
             {
                 //  直接执行
-                res = Excute(req);
+                res = Excute(req.Body);
+
                 // 判断是否失败回退
                 if (res.IsTaskFailed())
-                    Revert(req);
+                    Revert(req.Body);
 
                 directExcuteTimes++;
                 req.ExcutedTimes++;
@@ -177,15 +59,22 @@ namespace OSS.EventFlow.Tasks
             } // 判断是否执行直接重试 
             while (res.IsTaskFailed() && CheckDirectTryConfig(directExcuteTimes));
 
-            // 判断是否间隔执行,生成重试信息
-            if (CheckIntervalTryConfig(req))
+            if (res.IsTaskFailed())
             {
-                req.IntervalTimes++;
-                _producer?.Save(_config, req);
+                // 判断是否间隔执行,生成重试信息
+                if (CheckIntervalTryConfig(req.IntervalTimes))
+                {
+                    req.IntervalTimes++;
+                    _producer?.Save(_config, req);
 
-                res.ret = (int) EventFlowResult.WatingRetry;
+                    res.ret = (int) EventFlowResult.WatingRetry;
+                }
+                else
+                {
+                    Failed(req.Body);
+                }
+
             }
-
             return res;
         }
 
@@ -213,11 +102,11 @@ namespace OSS.EventFlow.Tasks
         /// <summary>
         ///   判断是否符合间隔重试
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="intTimes"></param>
         /// <returns></returns>
-        private bool CheckIntervalTryConfig(TaskReq<TPara> req)
+        private bool CheckIntervalTryConfig(int intTimes)
         {
-            if (req.IntervalTimes > RetryConfig?.MaxIntervalTimes)
+            if (intTimes > RetryConfig?.MaxIntervalTimes)
             {
                 return false;
             }
@@ -234,12 +123,22 @@ namespace OSS.EventFlow.Tasks
 
         /// <summary>
         ///  执行失败回退操作
-        ///   如果设置了重试配置，会在重试失败后调用
+        ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="req">请求参数</param>
-        protected virtual void Revert(TaskReq<TPara> req)
+        protected virtual void Revert(TPara req)
         {
         }
+
+        /// <summary>
+        ///  最终执行失败会执行
+        /// </summary>
+        /// <param name="req"></param>
+        protected virtual void Failed(TPara req)
+        {
+        }
+
+
     }
 
     //public abstract class BaseTask
