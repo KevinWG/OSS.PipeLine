@@ -1,11 +1,11 @@
 ﻿namespace OSS.EventFlow.Tasks.Mos
 {
-    public class TaskContext<TReq> : BaseTaskContext
-    {
-        public TReq Body { get; set; }
-    }
+    //public class TaskContext<TReq> : BaseTaskContext
+    //{
+    //    public TReq Body { get; set; }
+    //}
 
-    public class BaseTaskContext
+    public class TaskContext
     {
         /// <summary>
         ///  上下文Id
