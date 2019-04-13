@@ -1,24 +1,24 @@
 ﻿namespace OSS.EventFlow.Tasks.Mos
 {
-    //public class TaskContext<TReq> : BaseTaskContext
-    //{
-    //    public TReq Body { get; set; }
-    //}
+    public class TaskContext<TReq> : TaskContext
+    {
+        public TReq Body { get; set; }
+    }
 
     public class TaskContext
     {
         /// <summary>
         ///  上下文Id
         /// </summary>
-        public string ContextId { get; set; }
+        public string WorkId { get; set; }
 
         /// <summary>
-        ///  任务编号
+        ///  当前执行任务编号
         /// </summary>
         public string TaskCode { get; set; }
 
         /// <summary>
-        ///  任务名称
+        ///  当前执行任务名称
         /// </summary>
         public string TaskName { get; set; }
 

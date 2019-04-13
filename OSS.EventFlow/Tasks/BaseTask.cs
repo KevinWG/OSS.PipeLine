@@ -3,12 +3,18 @@ using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventFlow.Dispatcher;
 using OSS.EventFlow.Tasks.Mos;
+using OSS.EventFlow.Tasks.Storage;
 
 namespace OSS.EventFlow.Tasks
 {
-    public abstract class BaseTask<TPara, TResult> 
-        where TResult : ResultMo
+    public abstract class BaseTask<TPara, TRes> 
+        where TRes : ResultMo
     {
+        private readonly ITaskContextSaver<TPara> _taskSaver;
+        public BaseTask(ITaskContextSaver<TPara> taskSaver)
+        {
+            _taskSaver = taskSaver;
+        }
         /// <summary>
         ///   任务重试配置
         /// </summary>
@@ -19,6 +25,8 @@ namespace OSS.EventFlow.Tasks
         /// </summary>
         public string TaskCode { get; set; }
 
+        #region 具体任务执行入口
+
         /// <summary>
         ///     任务的具体执行
         /// </summary>
@@ -27,7 +35,7 @@ namespace OSS.EventFlow.Tasks
         /// <returns>  </returns>
         public async Task<ResultMo> Process(TaskContext context, TPara reqPara)
         {
-            TResult res;
+            TRes res;
             var directExcuteTimes = 0;
             do
             {
@@ -63,12 +71,28 @@ namespace OSS.EventFlow.Tasks
             return res;
         }
 
+        #endregion
+
+        /// <summary>
+        ///  如果需要间隔重试，需要保存当前请求上下文信息
+        /// </summary>
+        /// <typeparam name="TPara"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="reqPara"></param>
+        private Task SaveStack(TaskContext context, TPara reqPara)
+        {
+            return _taskSaver.SaveTaskContext(context, reqPara);
+        }
+
+
+        #region 实现，重试，失败 执行方法
+
         /// <summary>
         ///     任务的具体执行
         /// </summary>
         /// <param name="req"></param>
         /// <returns>  特殊：ret=-100（EventFlowResult.Failed）  任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        protected abstract Task<TResult> Do(TPara req);
+        protected abstract Task<TRes> Do(TPara req);
 
         /// <summary>
         ///  执行失败回退操作
@@ -87,15 +111,9 @@ namespace OSS.EventFlow.Tasks
         {
         }
 
-        /// <summary>
-        ///  如果需要间隔重试，需要保存当前请求上下文信息
-        /// </summary>
-        /// <typeparam name="TPara"></typeparam>
-        /// <param name="context"></param>
-        /// <param name="reqPara"></param>
-        protected virtual async Task SaveStack(TaskContext context, TPara reqPara)
-        {
-        }
+         #endregion
+
+        #region 辅助判断方法
 
         /// <summary>
         ///  检查是否符合直接重试
@@ -137,7 +155,8 @@ namespace OSS.EventFlow.Tasks
             }
 
             return false;
-        }
+        }   
+        #endregion
     }
 
     
