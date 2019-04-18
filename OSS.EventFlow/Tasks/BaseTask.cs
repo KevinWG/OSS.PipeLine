@@ -15,6 +15,7 @@ namespace OSS.EventFlow.Tasks
         {
             _taskSaver = taskSaver;
         }
+
         /// <summary>
         ///   任务重试配置
         /// </summary>
@@ -55,9 +56,8 @@ namespace OSS.EventFlow.Tasks
             while (res.IsTaskFailed() && CheckDirectTryConfig(directExcuteTimes));
 
             // 判断是否间隔执行,生成重试信息
-            if (CheckIntervalTryConfig(context.IntervalTimes))
+            if (CheckIntervalTryConfig(context.IntervalTimes++))
             {
-                context.IntervalTimes++;
                 await SaveStack(context, reqPara);
                 res.ret = (int) EventFlowResult.WatingRetry;
             }
@@ -83,8 +83,7 @@ namespace OSS.EventFlow.Tasks
         {
             return _taskSaver.SaveTaskContext(context, reqPara);
         }
-
-
+        
         #region 实现，重试，失败 执行方法
 
         /// <summary>
@@ -111,7 +110,7 @@ namespace OSS.EventFlow.Tasks
         {
         }
 
-         #endregion
+        #endregion
 
         #region 辅助判断方法
 
@@ -122,16 +121,16 @@ namespace OSS.EventFlow.Tasks
         /// <returns></returns>
         private bool CheckDirectTryConfig(int directExcuteTimes)
         {
-            if (directExcuteTimes > RetryConfig?.MaxDirectTimes)
-            {
-                return false;
-            }
-
-            if (RetryConfig?.RetryType == TaskRetryType.Direct
-                || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
+            if (directExcuteTimes < RetryConfig?.DirectTimes)
             {
                 return true;
             }
+
+            //if (RetryConfig?.RetryType == TaskRetryType.Direct
+            //    || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
+            //{
+            //    return true;
+            //}
 
             return false;
         }
@@ -143,16 +142,16 @@ namespace OSS.EventFlow.Tasks
         /// <returns></returns>
         private bool CheckIntervalTryConfig(int intTimes)
         {
-            if (intTimes > RetryConfig?.MaxIntervalTimes)
-            {
-                return false;
-            }
-
-            if (RetryConfig?.RetryType == TaskRetryType.Interval
-                || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
+            if (intTimes < RetryConfig?.IntervalTimes)
             {
                 return true;
             }
+
+            //if (RetryConfig?.RetryType == TaskRetryType.Interval
+            //    || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
+            //{
+            //    return true;
+            //}
 
             return false;
         }   

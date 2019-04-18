@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\OSS.Common\OSS.Common\OSS.Common.csproj" />
+    <PackageReference Include="OSS.Common" Version="1.3.5.5" />
   </ItemGroup>
 
 </Project>

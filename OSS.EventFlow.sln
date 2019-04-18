@@ -10,9 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OSS.Common", "OSS.Common", "{35969590-B925-431E-BE64-17A074AFDFB1}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Common", "..\OSS.Common\OSS.Common\OSS.Common.csproj", "{DEC05A33-4E4C-45F2-B01B-AA8451A4309F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSS.EventFlow.Tests", "OSS.EventFlow.Tests\OSS.EventFlow.Tests.csproj", "{A014D4A7-546F-4051-B79E-0764C27DED3F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,16 +22,13 @@ Global
 		{1AE19B54-AD96-4075-8D87-8FD43E8AE90C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AE19B54-AD96-4075-8D87-8FD43E8AE90C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AE19B54-AD96-4075-8D87-8FD43E8AE90C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DEC05A33-4E4C-45F2-B01B-AA8451A4309F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DEC05A33-4E4C-45F2-B01B-AA8451A4309F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DEC05A33-4E4C-45F2-B01B-AA8451A4309F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DEC05A33-4E4C-45F2-B01B-AA8451A4309F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A014D4A7-546F-4051-B79E-0764C27DED3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A014D4A7-546F-4051-B79E-0764C27DED3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A014D4A7-546F-4051-B79E-0764C27DED3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A014D4A7-546F-4051-B79E-0764C27DED3F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{DEC05A33-4E4C-45F2-B01B-AA8451A4309F} = {35969590-B925-431E-BE64-17A074AFDFB1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5D7627E-6294-458A-88F8-15FBBEF5D080}

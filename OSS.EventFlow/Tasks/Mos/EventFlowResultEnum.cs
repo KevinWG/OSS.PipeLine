@@ -1,6 +1,6 @@
 ﻿using OSS.Common.ComModels;
 
-namespace OSS.EventFlow.Tasks
+namespace OSS.EventFlow.Tasks.Mos
 {
     public enum EventFlowResult
     {
