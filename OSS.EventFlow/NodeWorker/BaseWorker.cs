@@ -6,6 +6,6 @@ namespace OSS.EventFlow.NodeWorker
     /// </summary>
     public abstract class BaseWorker
     {
-        public string WorderId { get; set; }
+      
     }
 }

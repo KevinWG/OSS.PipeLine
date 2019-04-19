@@ -1,6 +1,10 @@
 ﻿namespace OSS.EventFlow.Tasks.Mos
 {
-    public class TaskContext<TReq> : TaskContext
+    /// <summary>
+    ///   上下文信息
+    /// </summary>
+    /// <typeparam name="TReq"></typeparam>
+    public class TaskContext<TReq> : TaskBaseContext
     {
         public TaskContext()
         {
@@ -11,20 +15,32 @@
             Body = req;
         }
 
+        /// <summary>
+        ///   执行任务内容主体
+        /// </summary>
         public TReq Body { get; set; }
     }
 
-    public abstract class TaskContext
+    /// <summary>
+    ///  任务上下文基类
+    /// </summary>
+    public abstract class TaskBaseContext
     {
         /// <summary>
-        ///  上下文Id
+        ///  当前流Id
         /// </summary>
-        public string WorkId { get; set; }
+        public string ContextId { get; set; }
 
         /// <summary>
-        ///  当前执行任务编号
+        ///   任务编码
         /// </summary>
         public string TaskCode { get; set; }
+
+        /// <summary>
+        ///   节点编码
+        /// </summary>
+        public string WorkerCode { get; set; }
+
 
         /// <summary>
         ///  当前执行任务名称

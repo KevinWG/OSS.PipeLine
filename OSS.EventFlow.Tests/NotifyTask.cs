@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Newtonsoft.Json;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventFlow.Tasks;
@@ -9,32 +8,20 @@ namespace OSS.EventFlow.Tests
 {
     public class NotifyTask : BaseTask<NotifyMsg, ResultMo>
     {
-        public NotifyTask()
-        {
-            SetContinueRetry(9);
-            SetIntervalRetry(2, SaveTaskContext);
-        }
-
-        public Task SaveTaskContext(TaskContext<NotifyMsg> context)
-        {
-            LogUtil.Info("临时保存任务相关请求信息：" + JsonConvert.SerializeObject(context));
-            return Task.CompletedTask;
-        }
-
-        protected override Task<ResultMo> Do(NotifyMsg req)
+        protected override Task<ResultMo> Do(TaskContext<NotifyMsg> context)
         {
             LogUtil.Info("已经开始在执行");
             // 手动表示执行出错！
             return Task.FromResult(new ResultMo((int) EventFlowResult.Failed));
         }
 
-        protected override Task Revert(NotifyMsg req)
+        protected override Task Revert(TaskContext<NotifyMsg> context)
         {
             LogUtil.Info("当次执行失败回退！");
             return Task.CompletedTask;
         }
 
-        protected override Task Failed(NotifyMsg req)
+        protected override Task Failed(TaskContext<NotifyMsg> context)
         {
             LogUtil.Info("任务彻底执行失败！");
             return Task.CompletedTask;
