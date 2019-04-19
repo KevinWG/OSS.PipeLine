@@ -6,12 +6,12 @@
     public class TaskRetryConfig
     {
         /// <summary>
-        ///  直接重试次数
+        ///  直接重试次数，默认系统执行一次
         /// </summary>
         public int ContinueTimes { get; set; }
 
         /// <summary>
-        ///  间隔重试次数
+        ///  间隔重试次数, 默认不会执行
         /// </summary>
         public int IntervalTimes { get; set; }
 

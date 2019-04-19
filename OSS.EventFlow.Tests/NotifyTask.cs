@@ -9,14 +9,13 @@ namespace OSS.EventFlow.Tests
 {
     public class NotifyTask : BaseTask<NotifyMsg, ResultMo>
     {
-        public NotifyTask() 
+        public NotifyTask()
         {
-           SetContinueRetry(3);
-           SetIntervalRetry(2, SaveTaskContext);
+            SetContinueRetry(9);
+            SetIntervalRetry(2, SaveTaskContext);
         }
 
-
-        public Task SaveTaskContext(TaskContext context)
+        public Task SaveTaskContext(TaskContext<NotifyMsg> context)
         {
             LogUtil.Info("临时保存任务相关请求信息：" + JsonConvert.SerializeObject(context));
             return Task.CompletedTask;
@@ -25,7 +24,8 @@ namespace OSS.EventFlow.Tests
         protected override Task<ResultMo> Do(NotifyMsg req)
         {
             LogUtil.Info("已经开始在执行");
-            return Task.FromResult(new ResultMo((int)EventFlowResult.Failed));
+            // 手动表示执行出错！
+            return Task.FromResult(new ResultMo((int) EventFlowResult.Failed));
         }
 
         protected override Task Revert(NotifyMsg req)
@@ -45,6 +45,7 @@ namespace OSS.EventFlow.Tests
     public class NotifyMsg
     {
         public string name { get; set; }
+
         public string msg { get; set; }
 
         public string num { get; set; }

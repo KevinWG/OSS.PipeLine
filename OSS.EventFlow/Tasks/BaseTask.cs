@@ -12,7 +12,7 @@ namespace OSS.EventFlow.Tasks
         #region 具体任务执行入口
 
         /// <summary>
-        ///     任务的具体执行
+        ///   任务的具体执行
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  </returns>
@@ -38,8 +38,9 @@ namespace OSS.EventFlow.Tasks
             while (res.IsTaskFailed() && CheckDirectTryConfig(directExcuteTimes));
 
             // 判断是否间隔执行,生成重试信息
-            if (CheckIntervalTryConfig(context.IntervalTimes++))
+            if (CheckIntervalTryConfig(context.IntervalTimes))
             {
+                context.IntervalTimes++;
                 await _contextKepper.Invoke(context);
                 res.ret = (int) EventFlowResult.WatingRetry;
             }
