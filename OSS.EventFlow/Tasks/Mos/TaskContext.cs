@@ -2,10 +2,19 @@
 {
     public class TaskContext<TReq> : TaskContext
     {
+        public TaskContext()
+        {
+        }
+
+        public TaskContext(TReq req)
+        {
+            Body = req;
+        }
+
         public TReq Body { get; set; }
     }
 
-    public class TaskContext
+    public abstract class TaskContext
     {
         /// <summary>
         ///  上下文Id

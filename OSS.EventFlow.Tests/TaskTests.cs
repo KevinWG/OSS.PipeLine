@@ -10,15 +10,17 @@ namespace OSS.EventFlow.Tests
         [TestMethod]
         public async Task TestMethod1()
         {
-            var msg = new NotifyMsg();
-            msg.msg = "测试消息!";
-            msg.num = "123456";
-            msg.name = "Hi,World";
+            var msg = new NotifyMsg
+            {
+                msg = "测试消息!",
+                num = "123456",
+                name = "Hi,World"
+            };
 
-            var taskContext = new TaskContext();
+            var taskContext = new TaskContext<NotifyMsg>(msg);
 
-            var task = new NotifyTask(new NotifySaver());
-            var res = await task.Process(taskContext, msg);
+            var task = new NotifyTask();
+            var res = await task.Process(taskContext);
         }
     }
 }

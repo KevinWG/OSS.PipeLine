@@ -3,69 +3,51 @@ using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventFlow.Dispatcher;
 using OSS.EventFlow.Tasks.Mos;
-using OSS.EventFlow.Tasks.Storage;
 
 namespace OSS.EventFlow.Tasks
 {
     public abstract class BaseTask<TPara, TRes> 
         where TRes : ResultMo
     {
-        private readonly ITaskContextSaver<TPara> _taskSaver;
-        public BaseTask(ITaskContextSaver<TPara> taskSaver)
-        {
-            _taskSaver = taskSaver;
-        }
-
-        /// <summary>
-        ///   任务重试配置
-        /// </summary>
-        public TaskRetryConfig RetryConfig { get; set; }
-
-        /// <summary>
-        ///  任务编号
-        /// </summary>
-        public string TaskCode { get; set; }
-
         #region 具体任务执行入口
 
         /// <summary>
         ///     任务的具体执行
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="reqPara"></param>
         /// <returns>  </returns>
-        public async Task<ResultMo> Process(TaskContext context, TPara reqPara)
+        public async Task<ResultMo> Process(TaskContext<TPara> context)
         {
             TRes res;
             var directExcuteTimes = 0;
             do
             {
                 //  直接执行
-                res = await Do(reqPara);
+                res = await Do(context.Body);
                 if (res == null)
-                    throw new ArgumentNullException($"{this.GetType().Name} 任务返回值为空！");
+                    throw new ArgumentNullException($"{this.GetType().Name} return null！");
 
                 // 判断是否失败回退
                 if (res.IsTaskFailed())
-                    await Revert(reqPara);
+                    await Revert(context.Body);
 
                 directExcuteTimes++;
                 context.ExcutedTimes++;
-
-            } // 判断是否执行直接重试 
+            } 
+            // 判断是否执行直接重试 
             while (res.IsTaskFailed() && CheckDirectTryConfig(directExcuteTimes));
 
             // 判断是否间隔执行,生成重试信息
             if (CheckIntervalTryConfig(context.IntervalTimes++))
             {
-                await SaveStack(context, reqPara);
+                await _contextKepper.Invoke(context);
                 res.ret = (int) EventFlowResult.WatingRetry;
             }
 
             if (res.IsTaskFailed())
             {
                 //  最终失败，执行失败方法
-                await Failed(reqPara);
+                await Failed(context.Body);
             }
 
             return res;
@@ -73,16 +55,7 @@ namespace OSS.EventFlow.Tasks
 
         #endregion
 
-        /// <summary>
-        ///  如果需要间隔重试，需要保存当前请求上下文信息
-        /// </summary>
-        /// <typeparam name="TPara"></typeparam>
-        /// <param name="context"></param>
-        /// <param name="reqPara"></param>
-        private Task SaveStack(TaskContext context, TPara reqPara)
-        {
-            return _taskSaver.SaveTaskContext(context, reqPara);
-        }
+    
         
         #region 实现，重试，失败 执行方法
 
@@ -112,6 +85,46 @@ namespace OSS.EventFlow.Tasks
 
         #endregion
 
+
+        #region 重试机制设置
+
+
+        /// <summary>
+        ///   任务重试配置
+        /// </summary>
+        public TaskRetryConfig RetryConfig { get;private set; }
+
+        /// <summary>
+        ///  设置持续重试信息
+        /// </summary>
+        /// <param name="continueTimes"></param>
+        public void SetContinueRetry(int continueTimes)
+        {
+            if (RetryConfig==null)
+                RetryConfig=new TaskRetryConfig();
+
+            RetryConfig.ContinueTimes = continueTimes;
+        }
+
+
+        private Func<TaskContext<TPara>, Task> _contextKepper;
+        /// <summary>
+        ///  设置持续重试信息
+        /// </summary>
+        /// <param name="intTimes"></param>
+        /// <param name="contextKeeper"></param>
+        public void SetIntervalRetry(int intTimes,Func<TaskContext<TPara>,Task> contextKeeper)
+        {
+            if (RetryConfig == null)
+                RetryConfig = new TaskRetryConfig();
+            
+            RetryConfig.IntervalTimes = intTimes;
+
+            _contextKepper = contextKeeper ?? throw new ArgumentNullException(nameof(contextKeeper), "Context Keeper will save the context info for the next time, can not be null!");
+        }
+
+        #endregion
+
         #region 辅助判断方法
 
         /// <summary>
@@ -121,18 +134,7 @@ namespace OSS.EventFlow.Tasks
         /// <returns></returns>
         private bool CheckDirectTryConfig(int directExcuteTimes)
         {
-            if (directExcuteTimes < RetryConfig?.DirectTimes)
-            {
-                return true;
-            }
-
-            //if (RetryConfig?.RetryType == TaskRetryType.Direct
-            //    || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
-            //{
-            //    return true;
-            //}
-
-            return false;
+            return directExcuteTimes < RetryConfig?.ContinueTimes;
         }
 
         /// <summary>
@@ -142,18 +144,7 @@ namespace OSS.EventFlow.Tasks
         /// <returns></returns>
         private bool CheckIntervalTryConfig(int intTimes)
         {
-            if (intTimes < RetryConfig?.IntervalTimes)
-            {
-                return true;
-            }
-
-            //if (RetryConfig?.RetryType == TaskRetryType.Interval
-            //    || RetryConfig?.RetryType == TaskRetryType.DirectThenInterval)
-            //{
-            //    return true;
-            //}
-
-            return false;
+            return intTimes < RetryConfig?.IntervalTimes;
         }   
         #endregion
     }

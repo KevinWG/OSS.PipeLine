@@ -8,7 +8,7 @@
         /// <summary>
         ///  直接重试次数
         /// </summary>
-        public int DirectTimes { get; set; }
+        public int ContinueTimes { get; set; }
 
         /// <summary>
         ///  间隔重试次数
