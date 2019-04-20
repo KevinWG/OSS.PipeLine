@@ -25,8 +25,7 @@ namespace OSS.EventFlow.Tests
             task.SetContinueRetry(9);
             task.SetIntervalRetry(2, SaveTaskContext);
 
-            var res =  await task.Process(taskContext);
-
+            await task.Process(taskContext);
         }
 
 

@@ -6,8 +6,12 @@ using OSS.EventFlow.Tasks.Mos;
 
 namespace OSS.EventFlow.Tasks
 {
-    public abstract class BaseTask<TPara, TRes> 
-        where TRes : ResultMo,new()
+    public abstract class BaseTask<TPara> : BaseTask<TPara, ResultMo>
+    {
+    }
+
+    public abstract class BaseTask<TPara, TRes>
+        where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
 
@@ -16,12 +20,12 @@ namespace OSS.EventFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  </returns>
-        public async Task<ResultMo> Process(TaskContext<TPara> context)
+        public async Task<TRes> Process(TaskContext<TPara> context)
         {
             var res = await Recurs(context);
-            
+
             // 判断是否间隔执行,生成重试信息
-            if (res.IsTaskFailed()&& context.IntervalTimes < RetryConfig?.IntervalTimes)
+            if (res.IsTaskFailed() && context.IntervalTimes < RetryConfig?.IntervalTimes)
             {
                 context.IntervalTimes++;
                 await _contextKepper.Invoke(context);
@@ -36,6 +40,7 @@ namespace OSS.EventFlow.Tasks
 
             return res;
         }
+
         /// <summary>
         ///   具体递归执行
         /// </summary>
@@ -67,7 +72,7 @@ namespace OSS.EventFlow.Tasks
         }
 
         #endregion
-        
+
         #region 实现，重试，失败 执行方法
 
         /// <summary>
@@ -100,11 +105,11 @@ namespace OSS.EventFlow.Tasks
 
 
         #region 重试机制设置
-        
+
         /// <summary>
         ///   任务重试配置
         /// </summary>
-        public TaskRetryConfig RetryConfig { get;private set; }
+        public TaskRetryConfig RetryConfig { get; private set; }
 
         /// <summary>
         ///  设置持续重试信息
@@ -112,29 +117,29 @@ namespace OSS.EventFlow.Tasks
         /// <param name="continueTimes"></param>
         public void SetContinueRetry(int continueTimes)
         {
-            if (RetryConfig==null)
-                RetryConfig=new TaskRetryConfig();
+            if (RetryConfig == null)
+                RetryConfig = new TaskRetryConfig();
 
             RetryConfig.ContinueTimes = continueTimes;
         }
 
         private Func<TaskContext<TPara>, Task> _contextKepper;
+
         /// <summary>
         ///  设置持续重试信息
         /// </summary>
         /// <param name="intTimes"></param>
         /// <param name="contextKeeper"></param>
-        public void SetIntervalRetry(int intTimes,Func<TaskContext<TPara>,Task> contextKeeper)
+        public void SetIntervalRetry(int intTimes, Func<TaskContext<TPara>, Task> contextKeeper)
         {
             if (RetryConfig == null)
                 RetryConfig = new TaskRetryConfig();
-            
+
             RetryConfig.IntervalTimes = intTimes;
-            _contextKepper = contextKeeper ?? throw new ArgumentNullException(nameof(contextKeeper), "Context Keeper will save the context info for the next time, can not be null!");
+            _contextKepper = contextKeeper ?? throw new ArgumentNullException(nameof(contextKeeper),
+                                 "Context Keeper will save the context info for the next time, can not be null!");
         }
 
         #endregion
     }
-
-    
 }
