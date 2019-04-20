@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventFlow.Tasks.Mos;
+using OSS.EventFlow.Tests.TestOrder;
+using OSS.EventFlow.Tests.TestOrder.Tasks;
 
 namespace OSS.EventFlow.Tests
 {
@@ -12,15 +14,14 @@ namespace OSS.EventFlow.Tests
         [TestMethod]
         public async Task TestMethod1()
         {
-            var msg = new NotifyMsg
+            var msg = new OrderInfo()
             {
-                msg = "测试消息!",
-                num = "123456",
-                name = "Hi,World"
+                order_name = "测试订单!",
+                id = 123456,
+                price = 10.23M
             };
-
-            var taskContext = new TaskContext<NotifyMsg>(msg);
-            var task = new NotifyTask();
+            var taskContext = new TaskContext<OrderInfo>(msg);
+            var task = new OrderNotifyTask();
 
             task.SetContinueRetry(9);
             task.SetIntervalRetry(2, SaveTaskContext);
@@ -31,7 +32,7 @@ namespace OSS.EventFlow.Tests
 
 
 
-        public Task SaveTaskContext(TaskContext<NotifyMsg> context)
+        public Task SaveTaskContext(TaskContext<OrderInfo> context)
         {
             LogUtil.Info("临时保存任务相关请求信息：" + JsonConvert.SerializeObject(context));
             return Task.CompletedTask;

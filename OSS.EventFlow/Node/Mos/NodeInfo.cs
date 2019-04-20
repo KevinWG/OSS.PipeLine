@@ -5,7 +5,8 @@
         public string NodeName { get; set; }
 
         public string NodeCode { get; set; }
-
-
     }
+
+ 
+
 }

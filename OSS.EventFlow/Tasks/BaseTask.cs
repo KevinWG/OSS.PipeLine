@@ -102,8 +102,7 @@ namespace OSS.EventFlow.Tasks
         }
 
         #endregion
-
-
+        
         #region 重试机制设置
 
         /// <summary>

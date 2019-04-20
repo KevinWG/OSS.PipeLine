@@ -39,7 +39,7 @@
         /// <summary>
         ///   节点编码
         /// </summary>
-        public string WorkerCode { get; set; }
+        public string NodeCode { get; set; }
 
 
         /// <summary>
