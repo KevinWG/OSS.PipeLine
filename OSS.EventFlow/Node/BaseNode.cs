@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using OSS.EventFlow.Tasks.Mos;
 
 namespace OSS.EventFlow.Node
 {
@@ -9,10 +10,10 @@ namespace OSS.EventFlow.Node
     public abstract class BaseNode<TPara>
     {
         private List<string> _taskCodes = new List<string>();
-
-
+        
         //  TODO  任务时序处理（顺序，图序）
-        public abstract Task Call(TPara para);
+        public abstract Task<TaskResultMo> Call(TPara para);
+
         //{
         //    // todo 执行
         //    return Task.CompletedTask;
