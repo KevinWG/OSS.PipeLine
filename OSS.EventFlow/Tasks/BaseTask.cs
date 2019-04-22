@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
 using OSS.EventFlow.Dispatcher;
 using OSS.EventFlow.Tasks.Mos;
 
@@ -15,7 +14,7 @@ namespace OSS.EventFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  </returns>
-        internal async Task<ResultMo> Process(TaskBaseContext context)
+        internal async Task<TaskResultMo> Process(TaskBaseContext context)
         {
             var res = await Recurs(context);
 
@@ -24,7 +23,7 @@ namespace OSS.EventFlow.Tasks
             {
                 context.IntervalTimes++;
                 await SaveTaskContext(context);
-                res.ret = (int) EventFlowResult.WatingRetry;
+                res.ret = (int) TaskResultType.WatingRetry;
             }
 
             if (res.IsTaskFailed())
@@ -41,9 +40,9 @@ namespace OSS.EventFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task<ResultMo> Recurs(TaskBaseContext context)
+        private async Task<TaskResultMo> Recurs(TaskBaseContext context)
         {
-            ResultMo res;
+            TaskResultMo res;
 
             var directExcuteTimes = 0;
             do
@@ -75,7 +74,7 @@ namespace OSS.EventFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  特殊：ret=-100（EventFlowResult.Failed）任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        internal abstract Task<ResultMo> Do_Internal(TaskBaseContext context);
+        internal abstract Task<TaskResultMo> Do_Internal(TaskBaseContext context);
 
         /// <summary>
         ///  执行失败回退操作
@@ -110,7 +109,7 @@ namespace OSS.EventFlow.Tasks
     }
 
     public abstract class BaseTask<TPara, TRes> : BaseTask
-        where TRes : ResultMo, new()
+        where TRes : TaskResultMo, new()
     {
         #region 具体任务执行入口
 
@@ -128,7 +127,7 @@ namespace OSS.EventFlow.Tasks
 
         #region 实现，重试，失败 执行  重写父类方法
 
-        internal override async Task<ResultMo> Do_Internal(TaskBaseContext context)
+        internal override async Task<TaskResultMo> Do_Internal(TaskBaseContext context)
         {
             return await Do((TaskContext<TPara>)context);
         }

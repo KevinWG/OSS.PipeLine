@@ -2,7 +2,7 @@
 
 namespace OSS.EventFlow.Tasks.Mos
 {
-    public enum EventFlowResult
+    public enum TaskResultType
     {
         /// <summary>
         ///  执行失败
@@ -22,9 +22,9 @@ namespace OSS.EventFlow.Tasks.Mos
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsTaskFailed(this ResultMo res)
+        public static bool IsTaskFailed(this TaskResultMo res)
         {
-            return res.ret == (int) EventFlowResult.Failed;
+            return res.task_ret == (int) TaskResultType.Failed;
         }
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace OSS.EventFlow.Tasks.Mos
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsTaskWaiting(this ResultMo res)
+        public static bool IsTaskWaiting(this TaskResultMo res)
         {
-            return res.ret == (int)EventFlowResult.WatingRetry;
+            return res.task_ret == (int)TaskResultType.WatingRetry;
         }
 
 

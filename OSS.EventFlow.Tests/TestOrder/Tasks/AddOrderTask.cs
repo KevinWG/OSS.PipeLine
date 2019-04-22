@@ -6,14 +6,14 @@ using OSS.EventFlow.Tasks.Mos;
 
 namespace OSS.EventFlow.Tests.TestOrder.Tasks
 {
-    public class AddOrderTask : BaseTask<OrderInfo, ResultMo>
+    public class AddOrderTask : BaseTask<OrderInfo, TaskResultMo>
     {
-        protected override async Task<ResultMo> Do(TaskContext<OrderInfo> context)
+        protected override async Task<TaskResultMo> Do(TaskContext<OrderInfo> context)
         {
             LogUtil.Info("添加订单！");
 
             //  todo 修改订单状态为已确认
-            return new ResultMo();
+            return new TaskResultMo();
         }
       
     }

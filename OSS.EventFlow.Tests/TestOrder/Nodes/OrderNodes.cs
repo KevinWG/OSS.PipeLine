@@ -29,7 +29,6 @@ namespace OSS.EventFlow.Tests.TestOrder.Nodes
  
             var notice = new OrderNotifyTask();
             await notice.Process(context);
-            
         }
 
     }

@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.NodeWorker.Mos
+﻿namespace OSS.EventFlow.Node.Mos
 {
     public class NodeInfo
     {
@@ -6,7 +6,4 @@
 
         public string NodeCode { get; set; }
     }
-
- 
-
 }
