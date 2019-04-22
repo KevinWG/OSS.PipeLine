@@ -20,6 +20,7 @@ namespace OSS.EventFlow.Tests
                 id = 123456,
                 price = 10.23M
             };
+
             var taskContext = new TaskContext<OrderInfo>(msg);
             var task = new OrderNotifyTask();
 

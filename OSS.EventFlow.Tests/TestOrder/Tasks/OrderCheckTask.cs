@@ -7,7 +7,7 @@ using OSS.EventFlow.Tasks.Mos;
 
 namespace OSS.EventFlow.Tests.TestOrder.Tasks
 {
-    public class OrderCheckTask : BaseTask<OrderInfo>
+    public class OrderCheckTask : BaseTask<OrderInfo, ResultMo>
     {
         protected override async Task<ResultMo> Do(TaskContext<OrderInfo> context)
         {
