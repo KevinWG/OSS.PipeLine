@@ -18,9 +18,9 @@ namespace OSS.EventFlow.Tests
             };
 
 
-            var flow=new OrderFlow();
+            //var flow=new OrderFlow();
 
-            flow.Entry();
+            //flow.Entry();
 
 
         }
