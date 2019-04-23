@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.Node.Mos
+﻿namespace OSS.TaskFlow.Node.Mos
 {
     public class NodeInfo
     {

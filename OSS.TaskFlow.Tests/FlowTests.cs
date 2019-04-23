@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OSS.EventFlow.Tests.TestOrder;
+using OSS.TaskFlow.Tests.TestOrder;
 
-namespace OSS.EventFlow.Tests
+namespace OSS.TaskFlow.Tests
 {
     [TestClass]
     public class FlowTests

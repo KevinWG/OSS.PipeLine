@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.FlowLine.Mos
+﻿namespace OSS.TaskFlow.FlowLine.Mos
 {
     public class FlowReq
     {

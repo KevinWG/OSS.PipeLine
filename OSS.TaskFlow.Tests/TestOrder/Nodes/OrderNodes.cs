@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Node;
 using OSS.EventFlow.Tasks.Mos;
-using OSS.EventFlow.Tests.TestOrder.Tasks;
+using OSS.TaskFlow.Tests.TestOrder.Tasks;
 
-namespace OSS.EventFlow.Tests.TestOrder.Nodes
+namespace OSS.TaskFlow.Tests.TestOrder.Nodes
 {
-    public class AddOrderNode : BaseNode<OrderInfo>
+    public class AddOrderNode : TaskFlow.Node.BaseNode<OrderInfo>
     {
         public override async Task<TaskResultMo> Call(OrderInfo para)
         {
@@ -19,7 +18,7 @@ namespace OSS.EventFlow.Tests.TestOrder.Nodes
             return new TaskResultMo();
         }
     }
-    public class CheckOrderNode:BaseNode<OrderCheckReq>
+    public class CheckOrderNode: TaskFlow.Node.BaseNode<OrderCheckReq>
     {
         public override async Task<TaskResultMo> Call(OrderCheckReq para)
         {

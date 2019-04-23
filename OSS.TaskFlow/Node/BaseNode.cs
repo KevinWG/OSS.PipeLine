@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.FlowLine.Mos;
 using OSS.EventFlow.Tasks.Mos;
+using OSS.TaskFlow.FlowLine.Mos;
 
-namespace OSS.EventFlow.Node
+namespace OSS.TaskFlow.Node
 {
     /// <summary>
     ///  基础工作者

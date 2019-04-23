@@ -3,7 +3,7 @@ using OSS.Common.Plugs.LogPlug;
 using OSS.EventFlow.Tasks;
 using OSS.EventFlow.Tasks.Mos;
 
-namespace OSS.EventFlow.Tests.TestOrder.Tasks
+namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
     public class OrderNotifyTask : BaseTask<OrderInfo,TaskResultMo>
     {

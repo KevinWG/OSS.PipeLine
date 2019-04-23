@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.Tests.TestOrder
+﻿namespace OSS.TaskFlow.Tests.TestOrder
 {
     public class Order
     {

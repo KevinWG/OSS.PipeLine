@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.Node
+﻿namespace OSS.TaskFlow.Node
 {
     /// <summary>
     ///  基础工作者

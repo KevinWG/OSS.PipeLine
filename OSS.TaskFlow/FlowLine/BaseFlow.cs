@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.EventFlow.FlowLine.Mos;
-using OSS.EventFlow.Tasks.Mos;
+using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Tasks.Mos;
 
-namespace OSS.EventFlow.FlowLine
+namespace OSS.TaskFlow.FlowLine
 {
     public abstract partial class BaseFlow
     {
@@ -23,7 +23,7 @@ namespace OSS.EventFlow.FlowLine
         public override Task<ResultMo<FlowInfo>> Apply()
         {
             //  需创建数据
-           return Task.CompletedTask;
+           return Task.FromResult(new ResultMo<FlowInfo>());
         }
 
         //  获取流核心信息

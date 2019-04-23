@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.ComModels.Enums;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventFlow.Tasks;
 using OSS.EventFlow.Tasks.Mos;
 
-namespace OSS.EventFlow.Tests.TestOrder.Tasks
+namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
     public class OrderCheckReq
     {

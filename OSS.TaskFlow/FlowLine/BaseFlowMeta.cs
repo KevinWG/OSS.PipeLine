@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.FlowLine
+﻿namespace OSS.TaskFlow.FlowLine
 {
     public abstract partial class BaseFlow
     {
