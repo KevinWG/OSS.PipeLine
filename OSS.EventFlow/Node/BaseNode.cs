@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using OSS.EventFlow.FlowLine.Mos;
 using OSS.EventFlow.Tasks.Mos;
 
 namespace OSS.EventFlow.Node
@@ -7,16 +7,19 @@ namespace OSS.EventFlow.Node
     /// <summary>
     ///  基础工作者
     /// </summary>
-    public abstract class BaseNode<TPara>
+    public abstract partial class BaseNode<TPara>:BaseNode// : INode<TPara>,IFlowNode
     {
-        private List<string> _taskCodes = new List<string>();
-        
-        //  TODO  任务时序处理（顺序，图序）
         public abstract Task<TaskResultMo> Call(TPara para);
 
-        //{
-        //    // todo 执行
-        //    return Task.CompletedTask;
-        //}
+        internal override Task<TaskResultMo> Call(FlowReq fReq, object taskData)
+        {
+            return Call((TPara)taskData);
+        }
     }
+
+    public abstract class BaseNode
+    {
+        internal abstract Task<TaskResultMo> Call(FlowReq fReq, object taskData);
+    }
+
 }

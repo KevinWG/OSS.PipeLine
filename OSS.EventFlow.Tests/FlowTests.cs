@@ -17,12 +17,8 @@ namespace OSS.EventFlow.Tests
                 price = 10.23M
             };
 
-
             //var flow=new OrderFlow();
-
             //flow.Entry();
-
-
         }
 
 

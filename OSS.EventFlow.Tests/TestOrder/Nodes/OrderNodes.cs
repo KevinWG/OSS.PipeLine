@@ -19,17 +19,17 @@ namespace OSS.EventFlow.Tests.TestOrder.Nodes
             return new TaskResultMo();
         }
     }
-    public class CheckOrderNode:BaseNode<OrderInfo>
+    public class CheckOrderNode:BaseNode<OrderCheckReq>
     {
-        public override async Task<TaskResultMo> Call(OrderInfo para)
+        public override async Task<TaskResultMo> Call(OrderCheckReq para)
         {
-            var context = new TaskContext<OrderInfo>(para);
+            var context = new TaskContext<OrderCheckReq>(para);
 
             var check=new OrderCheckTask();
             await check.Process(context);
  
-            var notice = new OrderNotifyTask();
-            await notice.Process(context);
+            //var notice = new OrderNotifyTask();
+            //await notice.Process(context);
             return new TaskResultMo();
         }
 

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.EventFlow.Dispatcher;
 using OSS.EventFlow.Tasks.Mos;
 
 namespace OSS.EventFlow.Tasks
 {
-    public abstract class BaseTask
+    public abstract partial class  BaseTask
     {
         #region 具体任务执行入口
 
@@ -88,27 +87,12 @@ namespace OSS.EventFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         internal abstract Task Failed_Internal(TaskBaseContext context);
-
-
-        /// <summary>
-        ///  保存
-        /// </summary>
-        /// <param name="context"></param>
-        internal abstract Task SaveTaskContext(TaskBaseContext context);
-
+        
         #endregion
 
-        #region 重试机制设置
-
-        /// <summary>
-        ///   任务重试配置
-        /// </summary>
-        public TaskRetryConfig RetryConfig { get; internal set; }
-
-        #endregion
     }
-
-    public abstract class BaseTask<TPara, TRes> : BaseTask
+    
+    public abstract partial class BaseTask<TPara, TRes> : BaseTask
         where TRes : TaskResultMo, new()
     {
         #region 具体任务执行入口
@@ -180,37 +164,6 @@ namespace OSS.EventFlow.Tasks
 
         #endregion
 
-        #region 重试机制设置
-        
-        /// <summary>
-        ///  设置持续重试信息
-        /// </summary>
-        /// <param name="continueTimes"></param>
-        public void SetContinueRetry(int continueTimes)
-        {
-            if (RetryConfig == null)
-                RetryConfig = new TaskRetryConfig();
-
-            RetryConfig.ContinueTimes = continueTimes;
-        }
-
-        private Func<TaskContext<TPara>, Task> _contextKepper;
-
-        /// <summary>
-        ///  设置持续重试信息
-        /// </summary>
-        /// <param name="intTimes"></param>
-        /// <param name="contextKeeper"></param>
-        public void SetIntervalRetry(int intTimes, Func<TaskContext<TPara>, Task> contextKeeper)
-        {
-            if (RetryConfig == null)
-                RetryConfig = new TaskRetryConfig();
-
-            RetryConfig.IntervalTimes = intTimes;
-            _contextKepper = contextKeeper ?? throw new ArgumentNullException(nameof(contextKeeper),
-                                 "Context Keeper will save the context info for the next time, can not be null!");
-        }
-
-        #endregion
+       
     }
 }
