@@ -2,10 +2,11 @@
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventFlow.Tasks;
 using OSS.EventFlow.Tasks.Mos;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
-    public class OrderNotifyTask : BaseTask<OrderInfo,TaskResultMo>
+    public class OrderNotifyTask : TaskFlow.Tasks.BaseTask<OrderInfo,TaskResultMo>
     {
         protected override Task<TaskResultMo> Do(TaskContext<OrderInfo> context)
         {

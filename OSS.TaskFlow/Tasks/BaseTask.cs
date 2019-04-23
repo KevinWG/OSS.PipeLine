@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using OSS.EventFlow.Tasks.Mos;
+using OSS.TaskFlow.Tasks.Mos;
 
-namespace OSS.EventFlow.Tasks
+namespace OSS.TaskFlow.Tasks
 {
     public abstract partial class  BaseTask
     {

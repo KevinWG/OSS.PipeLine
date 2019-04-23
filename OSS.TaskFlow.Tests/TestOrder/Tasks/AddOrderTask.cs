@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.Plugs.LogPlug;
-using OSS.EventFlow.Tasks;
 using OSS.EventFlow.Tasks.Mos;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
-    public class AddOrderTask : BaseTask<OrderInfo, TaskResultMo>
+    public class AddOrderTask : TaskFlow.Tasks.BaseTask<OrderInfo, TaskResultMo>
     {
         protected override async Task<TaskResultMo> Do(TaskContext<OrderInfo> context)
         {

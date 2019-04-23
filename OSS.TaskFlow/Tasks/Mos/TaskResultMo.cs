@@ -2,7 +2,7 @@
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 
-namespace OSS.EventFlow.Tasks.Mos
+namespace OSS.TaskFlow.Tasks.Mos
 {
     public class TaskResultMo : ResultMo
     {

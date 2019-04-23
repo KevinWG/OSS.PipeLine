@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OSS.EventFlow.Tasks.Mos;
 using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
 {

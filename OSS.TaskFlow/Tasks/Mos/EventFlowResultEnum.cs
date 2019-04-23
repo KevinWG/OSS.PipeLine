@@ -1,6 +1,6 @@
-﻿using OSS.Common.ComModels;
+﻿using OSS.EventFlow.Tasks.Mos;
 
-namespace OSS.EventFlow.Tasks.Mos
+namespace OSS.TaskFlow.Tasks.Mos
 {
     public enum TaskResultType
     {

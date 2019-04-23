@@ -2,6 +2,7 @@
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventFlow.Tasks;
 using OSS.EventFlow.Tasks.Mos;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
@@ -11,7 +12,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
     }
 
 
-    public class OrderCheckTask : BaseTask<OrderCheckReq, TaskResultMo>
+    public class OrderCheckTask : TaskFlow.Tasks.BaseTask<OrderCheckReq, TaskResultMo>
     {
         protected override async Task<TaskResultMo> Do(TaskContext<OrderCheckReq> context)
         {

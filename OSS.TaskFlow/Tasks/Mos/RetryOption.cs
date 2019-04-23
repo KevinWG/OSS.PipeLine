@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.Dispatcher
+﻿namespace OSS.TaskFlow.Tasks.Mos
 {
     /// <summary>
     ///  重试配置
