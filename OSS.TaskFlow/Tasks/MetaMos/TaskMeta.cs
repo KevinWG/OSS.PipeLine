@@ -17,14 +17,31 @@ namespace OSS.TaskFlow.Tasks.MetaMos
         public string task_name { get; set; }
 
 
-        public int status { get; set; }
+        public TaskStatus status { get; set; }
+
+        public RunType run_type { get; set; }
 
     }
 
 
     public enum TaskStatus
     {
-        Enable
+        Delete=-1000,
+        Disable=-1,
+        Enable=0
+    }
+    public enum RunType
+    {
+        /// <summary>
+        ///   当前任务失败后后续任务中断
+        /// </summary>
+        FailedBreak=0,
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        ContinueOnFailed
     }
 
 }

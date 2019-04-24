@@ -19,7 +19,7 @@ namespace OSS.TaskFlow.Node
             var task = taskMetas.FirstOrDefault(t => t.task_key == context.task_key);
             if (task==null)
             {
-                return new ResultMo(ResultTypes.UnKnowOperate,"未知的操作处理！");
+                return new ResultMo(ResultTypes.UnKnowOperate, "未知的处理操作！");
             }
 
             return new ResultMo();
