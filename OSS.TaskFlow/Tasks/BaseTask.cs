@@ -93,7 +93,7 @@ namespace OSS.TaskFlow.Tasks
 
     }
     
-    public abstract partial class BaseTask<TPara, TRes> : BaseTask
+    public abstract partial class BaseTask<TReq, TRes> : BaseTask
         where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
@@ -103,7 +103,7 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  </returns>
-        public async Task<TRes> Process(TaskContext<TPara> context)
+        public async Task<TRes> Process(TaskContext<TReq> context)
         {
             return (await base.Process(context)) as TRes;
         }
@@ -114,22 +114,22 @@ namespace OSS.TaskFlow.Tasks
 
         internal override async Task<ResultMo> Do_Internal(TaskBaseContext context)
         {
-            return await Do((TaskContext<TPara>)context);
+            return await Do((TaskContext<TReq>)context);
         }
 
         internal override Task Failed_Internal(TaskBaseContext context)
         {
-            return Failed((TaskContext<TPara>)context);
+            return Failed((TaskContext<TReq>)context);
         }
 
         internal override Task Revert_Internal(TaskBaseContext context)
         {
-            return Revert((TaskContext<TPara>)context);
+            return Revert((TaskContext<TReq>)context);
         }
 
         internal override Task SaveTaskContext(TaskBaseContext context)
         {
-            return _contextKepper.Invoke((TaskContext<TPara>)context);
+            return _contextKepper.Invoke((TaskContext<TReq>)context);
         }
 
         #endregion
@@ -142,14 +142,14 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  特殊：ret=-100（EventFlowResult.Failed）任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        protected abstract Task<TRes> Do(TaskContext<TPara> context);
+        protected abstract Task<TRes> Do(TaskContext<TReq> context);
 
         /// <summary>
         ///  执行失败回退操作
         ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="context"></param>
-        protected internal virtual Task Revert(TaskContext<TPara> context)
+        protected internal virtual Task Revert(TaskContext<TReq> context)
         {
             return Task.CompletedTask;
         }
@@ -158,7 +158,7 @@ namespace OSS.TaskFlow.Tasks
         ///  最终执行失败会执行
         /// </summary>
         /// <param name="context"></param>
-        protected virtual Task Failed(TaskContext<TPara> context)
+        protected virtual Task Failed(TaskContext<TReq> context)
         {
             return Task.CompletedTask;
         }

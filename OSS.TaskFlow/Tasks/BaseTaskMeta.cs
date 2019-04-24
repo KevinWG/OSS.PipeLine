@@ -23,7 +23,7 @@ namespace OSS.TaskFlow.Tasks
     }
 
 
-    public abstract partial class BaseTask<TPara, TRes> 
+    public abstract partial class BaseTask<TReq, TRes> 
     {
         #region 重试机制设置
 
@@ -39,14 +39,14 @@ namespace OSS.TaskFlow.Tasks
             RetryConfig.continue_times = continueTimes;
         }
 
-        private Func<TaskContext<TPara>, Task> _contextKepper;
+        private Func<TaskContext<TReq>, Task> _contextKepper;
 
         /// <summary>
         ///  设置持续重试信息
         /// </summary>
         /// <param name="intTimes"></param>
         /// <param name="contextKeeper"></param>
-        public void SetIntervalRetry(int intTimes, Func<TaskContext<TPara>, Task> contextKeeper)
+        public void SetIntervalRetry(int intTimes, Func<TaskContext<TReq>, Task> contextKeeper)
         {
             if (RetryConfig == null)
                 RetryConfig = new TaskRetryConfig();

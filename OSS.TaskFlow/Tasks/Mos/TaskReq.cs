@@ -1,10 +1,10 @@
 ﻿namespace OSS.TaskFlow.Tasks.Mos
 {
-    public class TaskReq<TPara>
+    public class TaskReq<TReq>
     {
         /// <summary>
         /// 事件内容体
         /// </summary>
-        public TPara Body { get; set; }
+        public TReq Body { get; set; }
     }
 }

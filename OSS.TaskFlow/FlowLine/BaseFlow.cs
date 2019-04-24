@@ -11,7 +11,7 @@ namespace OSS.TaskFlow.FlowLine
         // 默认第一步，申请流程开始 
         public abstract Task<ResultMo<FlowInfo>> Apply();
         
-        public abstract Task<ResultMo> Entry(FlowReq req);
+        public abstract Task<ResultMo> Entry(ExcuteReq req);
         
         public abstract Task End();
    

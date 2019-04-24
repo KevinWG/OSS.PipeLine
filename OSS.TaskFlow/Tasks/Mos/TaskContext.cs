@@ -10,13 +10,16 @@
 
         public TaskContext(TReq req)
         {
-            Body = req;
+            body = req;
         }
 
         /// <summary>
         ///   执行任务内容主体
         /// </summary>
-        public TReq Body { get; set; }
+        public TReq body { get; set; }
+
+
+        public object flow_data { get; set; }
     }
 
     /// <summary>

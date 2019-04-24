@@ -16,4 +16,8 @@
     <ProjectReference Include="..\OSS.TaskFlow\OSS.TaskFlow.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="TestForms\" />
+  </ItemGroup>
+
 </Project>
