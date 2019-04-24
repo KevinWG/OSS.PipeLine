@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Tasks.Mos;
+using OSS.Common.ComModels;
 using OSS.TaskFlow.Tasks.Mos;
 using OSS.TaskFlow.Tests.TestOrder.Tasks;
 
@@ -7,7 +7,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
 {
     public class AddOrderNode : TaskFlow.Node.BaseNode<OrderInfo>
     {
-        public override async Task<TaskResultMo> Call(OrderInfo para)
+        public override async Task<ResultMo> Call(OrderInfo para)
         {
             var context = new TaskContext<OrderInfo>();
 
@@ -16,12 +16,12 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
 
             var notice = new OrderNotifyTask();
             await notice.Process(context);
-            return new TaskResultMo();
+            return new ResultMo();
         }
     }
     public class CheckOrderNode: TaskFlow.Node.BaseNode<OrderCheckReq>
     {
-        public override async Task<TaskResultMo> Call(OrderCheckReq para)
+        public override async Task<ResultMo> Call(OrderCheckReq para)
         {
             var context = new TaskContext<OrderCheckReq>(para);
 
@@ -30,7 +30,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
  
             //var notice = new OrderNotifyTask();
             //await notice.Process(context);
-            return new TaskResultMo();
+            return new ResultMo();
         }
 
     }

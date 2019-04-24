@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using OSS.Common.Plugs.LogPlug;
-using OSS.EventFlow.Tasks.Mos;
+using OSS.TaskFlow.Tasks.Mos;
 using OSS.TaskFlow.Tests.TestOrder;
 using OSS.TaskFlow.Tests.TestOrder.Tasks;
 

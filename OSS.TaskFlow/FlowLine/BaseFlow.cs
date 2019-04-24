@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.TaskFlow.FlowLine.Mos;
-using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.FlowLine
 {
@@ -12,7 +11,7 @@ namespace OSS.TaskFlow.FlowLine
         // 默认第一步，申请流程开始 
         public abstract Task<ResultMo<FlowInfo>> Apply();
         
-        public abstract Task Entry();
+        public abstract Task<ResultMo> Entry(FlowReq req);
         
         public abstract Task End();
    
@@ -26,8 +25,8 @@ namespace OSS.TaskFlow.FlowLine
            return Task.FromResult(new ResultMo<FlowInfo>());
         }
 
-        //  获取流核心信息
-        public abstract Task GetFlowInfo(TaskReq req);
+        //  获取流核心数据信息
+        //public abstract Task GetFlowInfo(TaskReq<> req);
     }
 
 }

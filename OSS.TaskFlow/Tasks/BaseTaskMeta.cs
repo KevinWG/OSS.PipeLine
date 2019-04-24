@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.EventFlow.Tasks.Mos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
@@ -37,7 +36,7 @@ namespace OSS.TaskFlow.Tasks
             if (RetryConfig == null)
                 RetryConfig = new TaskRetryConfig();
 
-            RetryConfig.ContinueTimes = continueTimes;
+            RetryConfig.continue_times = continueTimes;
         }
 
         private Func<TaskContext<TPara>, Task> _contextKepper;
@@ -52,7 +51,7 @@ namespace OSS.TaskFlow.Tasks
             if (RetryConfig == null)
                 RetryConfig = new TaskRetryConfig();
 
-            RetryConfig.IntervalTimes = intTimes;
+            RetryConfig.interval_times = intTimes;
             _contextKepper = contextKeeper ?? throw new ArgumentNullException(nameof(contextKeeper),
                                  "Context Keeper will save the context info for the next time, can not be null!");
         }

@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventFlow.Tasks;
-using OSS.EventFlow.Tasks.Mos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks

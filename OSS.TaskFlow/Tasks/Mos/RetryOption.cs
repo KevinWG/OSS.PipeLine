@@ -8,12 +8,12 @@
         /// <summary>
         ///  直接重试次数，默认系统执行一次
         /// </summary>
-        public int ContinueTimes { get; set; }
+        public int continue_times { get; set; }
 
         /// <summary>
         ///  间隔重试次数, 默认不会执行
         /// </summary>
-        public int IntervalTimes { get; set; }
+        public int interval_times { get; set; }
 
         ///// <summary>
         /////  重试类型

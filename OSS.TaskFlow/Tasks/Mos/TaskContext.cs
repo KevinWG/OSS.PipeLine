@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.Tasks.Mos
+﻿namespace OSS.TaskFlow.Tasks.Mos
 {
     /// <summary>
     ///   上下文信息
@@ -6,9 +6,7 @@
     /// <typeparam name="TReq"></typeparam>
     public class TaskContext<TReq> : TaskBaseContext
     {
-        public TaskContext()
-        {
-        }
+        public TaskContext(){}
 
         public TaskContext(TReq req)
         {
@@ -26,41 +24,44 @@
     /// </summary>
     public abstract class TaskBaseContext
     {
-        /// <summary>
-        ///  当前流Id
-        /// </summary>
-        public string ContextId { get; set; }
+        #region 元数据信息
 
         /// <summary>
         ///   任务编码
         /// </summary>
-        public string TaskCode { get; set; }
+        public string task_key { get; set; }
 
         /// <summary>
-        ///   节点编码
+        ///   流节点编码
         /// </summary>
-        public string NodeCode { get; set; }
-
+        public string node_key { get; set; }
 
         /// <summary>
-        ///  当前执行任务名称
+        ///   流编码
         /// </summary>
-        public string TaskName { get; set; }
+        public string flow_key { get; set; }
+
+        #endregion
+
+        /// <summary>
+        ///  实例流Id
+        /// </summary>
+        public string flow_id { get; set; }
 
         /// <summary>
         ///  执行总次数
         /// </summary>
-        public int ExcutedTimes { get;internal set; }
+        public int exced_times { get;internal set; }
         
         /// <summary>
         ///  间隔执行次数
         /// </summary>
-        public int IntervalTimes { get; internal set; }
+        public int interval_times { get; internal set; }
 
         /// <summary>
         ///  上次执行时间
         /// </summary>
-        public int LastExcuteDate { get; set; }
+        public int last_excutedate { get; set; }
 
     }
 }

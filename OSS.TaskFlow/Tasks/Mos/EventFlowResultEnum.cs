@@ -1,18 +1,12 @@
-﻿using OSS.EventFlow.Tasks.Mos;
+﻿using OSS.Common.ComModels;
+using OSS.Common.ComModels.Enums;
 
 namespace OSS.TaskFlow.Tasks.Mos
 {
+
     public enum TaskResultType
     {
-        /// <summary>
-        ///  执行失败
-        /// </summary>
-        Failed = -9999,
-
-        /// <summary>
-        /// 等待重试
-        /// </summary>
-        WatingRetry = 1
+        WatingRetry=400
     }
 
     public static class EventFlowResultExtention
@@ -22,9 +16,9 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsTaskFailed(this TaskResultMo res)
+        public static bool IsTaskFailed(this ResultMo res)
         {
-            return res.task_ret == (int) TaskResultType.Failed;
+            return res.sys_ret == (int) SysResultTypes.TaskFailed;
         }
 
         /// <summary>
@@ -32,9 +26,9 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsTaskWaiting(this TaskResultMo res)
+        public static bool IsTaskWaiting(this ResultMo res)
         {
-            return res.task_ret == (int)TaskResultType.WatingRetry;
+            return res.sys_ret == (int)TaskResultType.WatingRetry;
         }
 
 
