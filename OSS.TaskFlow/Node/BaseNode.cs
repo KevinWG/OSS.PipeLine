@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.ComUtils;
 using OSS.TaskFlow.Node.MetaMos;
 using OSS.TaskFlow.Tasks;
+using OSS.TaskFlow.Tasks.MetaMos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
@@ -15,6 +17,8 @@ namespace OSS.TaskFlow.Node
     /// </summary>
     public abstract partial class BaseNode<TReq> : BaseNode // : INode<TReq>,IFlowNode
     {
+     
+
         public async Task<ResultMo> Excute(TaskContext<TReq> context)
         {
             var taskMetaRes = await GetTaskMetas(context);
@@ -22,24 +26,44 @@ namespace OSS.TaskFlow.Node
                 return new ResultMo(ResultTypes.UnKnowOperate, "未知的处理操作！");
 
             var taskMetas = taskMetaRes.data;
+            Dictionary<TaskMeta, ResultMo> taskResults;
+
             if (NodeMeta.node_type == NodeType.Parallel)
             {
-                var taskList = new List<Task<ResultMo>>(taskMetas.Count);
+                var taskDirRes = new Dictionary<TaskMeta, Task<ResultMo>>(taskMetas.Count);
                 foreach (var tm in taskMetas)
                 {
                     var tRes = GetTask(tm.task_key);
-                    taskList.Add(!tRes.IsSuccess() ? Task.FromResult((ResultMo) tRes) : tRes.data.Process(context));
+                    taskDirRes.Add(tm, tRes.IsSuccess() ? tRes.data.Process(context): Task.FromResult((ResultMo) tRes));
                     //taskList.Add(t);
                 }
 
-                var taskListRes = await Task.WhenAll(taskList);
+                await Task.WhenAll(taskDirRes.Select(tr=>tr.Value));
+                taskResults = taskDirRes.ToDictionary(p => p.Key, p => p.Value.Result);
+            }
+            else
+            {
+                taskResults=new Dictionary<TaskMeta, ResultMo>(taskMetas.Count);
+                foreach (var tm in taskMetas)
+                {
+                    var tRes = GetTask(tm.task_key);
+                    taskResults.Add(tm, tRes.IsSuccess() ?await tRes.data.Process(context): tRes);
+                    //taskList.Add(t);
 
+                }
             }
 
-            return new ResultMo();
+            return await Excuted(taskResults);
         }
-        
-        
+
+
+        protected  Task<ResultMo> Excuted(Dictionary<TaskMeta,ResultMo> taskResults)
+        {
+            var res= taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
+            return Task.FromResult(res??new ResultMo());
+        }
+
+
         //protected  virtual Task TaskExcuted(TaskMeta taskMeta,)
 
         internal override Task<ResultMo> Excute(ExcuteReq fReq, object flowData)
