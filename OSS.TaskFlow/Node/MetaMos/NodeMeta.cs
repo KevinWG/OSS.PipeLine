@@ -9,4 +9,12 @@
         public NodeType node_type { get; set; }
 
     }
+
+
+    public enum NodeType
+    {
+        Sequence,
+        Parallel
+    }
+
 }
