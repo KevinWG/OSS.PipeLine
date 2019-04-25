@@ -1,6 +1,6 @@
 ﻿namespace OSS.TaskFlow.FlowLine.MetaMos
 {
-    public class FlowMetaInfo
+    public class FlowMeta
     {
         public string FlowName { get; set; }
 

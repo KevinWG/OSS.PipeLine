@@ -1,4 +1,6 @@
-﻿namespace OSS.TaskFlow.FlowLine
+﻿using OSS.TaskFlow.FlowLine.MetaMos;
+
+namespace OSS.TaskFlow.FlowLine
 {
     public abstract partial class BaseFlow
     {
@@ -10,7 +12,7 @@
         /// <summary>
         ///   当前流编码
         /// </summary>
-        public string FlowCode { get; set; }
+        public FlowMeta  FlowMeta { get; set; }
 
 
     }

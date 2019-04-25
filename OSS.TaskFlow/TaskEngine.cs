@@ -1,17 +1,17 @@
 ﻿namespace OSS.TaskFlow
 {
-    public abstract class TaskEngine
-    {
+    //public abstract class TaskEngine
+    //{
 
-        public void Excute(ExcuteReq req)
-        {
+    //    public void Excute(ExcuteReq req)
+    //    {
 
-        }
+    //    }
 
-        public abstract void AddFlow();
-        public abstract void AddNode();
-        public abstract void AddTask();
-    }
+    //    public abstract void AddFlow();
+    //    public abstract void AddNode();
+    //    public abstract void AddTask();
+    //}
 
 
 

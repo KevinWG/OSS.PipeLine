@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OSS.TaskFlow.Tasks.MetaMos
+﻿namespace OSS.TaskFlow.Tasks.MetaMos
 {
     public class TaskMeta
     {
@@ -16,6 +12,9 @@ namespace OSS.TaskFlow.Tasks.MetaMos
         /// </summary>
         public string task_name { get; set; }
 
+        public string node_key { get; set; }
+
+        public string flow_key { get; set; }
 
         public TaskStatus status { get; set; }
 

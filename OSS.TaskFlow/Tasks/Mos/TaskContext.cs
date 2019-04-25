@@ -64,7 +64,7 @@
         /// <summary>
         ///  上次执行时间
         /// </summary>
-        public int last_excutedate { get; set; }
+        public long last_excutedate { get; set; }
 
     }
 }
