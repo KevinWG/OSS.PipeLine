@@ -10,4 +10,18 @@ namespace OSS.TaskFlow.Node.Mos
         /// </summary>
         public NodeMeta NodeMeta { get; set; }
     }
+
+    public static class NodeContextExtention
+    {
+        public static NodeContext ConvertToTaskContext(this FlowContext node)
+        {
+            var nodeCon = new NodeContext
+            {
+                run_id = node.run_id,
+                FlowMeta = node.FlowMeta
+            };
+            return nodeCon;
+        }
+    }
+
 }

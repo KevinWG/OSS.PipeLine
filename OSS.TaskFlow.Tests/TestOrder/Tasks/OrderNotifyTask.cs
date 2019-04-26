@@ -9,7 +9,9 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
     public class OrderNotifyTask : BaseTask<OrderInfo,ResultMo>
     {
-        protected override Task<ResultMo> Do(TaskContext<OrderInfo> context)
+     
+
+        protected override Task<ResultMo> Do(TaskContext context, TaskReqData<OrderInfo> data)
         {
             Task.Delay(2000);
             LogUtil.Info("执行通知！");

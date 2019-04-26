@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.TaskFlow.Node.MetaMos;
+using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks;
 using OSS.TaskFlow.Tasks.MetaMos;
 using OSS.TaskFlow.Tasks.Mos;
@@ -17,26 +18,15 @@ namespace OSS.TaskFlow.Node
     /// todo  协议处理
     /// todo   flowentitytype
     /// </summary>
-    public abstract partial class BaseNode<TReq> : BaseNode // : INode<TReq>,IFlowNode
+    public abstract partial class BaseNode<TReq> // : INode<TReq>,IFlowNode
     {
-        internal override Task<ResultMo> Excute(ExcuteReq fReq, object flowData)
-        {
-            // 初始化相关上下文信息
-            return Excute(fReq);
-        }
+        
+        #region 节点具体执行方法
 
-        protected virtual Task<ResultMo> Excuted(Dictionary<TaskMeta, ResultMo> taskResults)
-        {
-            var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
-            return Task.FromResult(res ?? new ResultMo());
-        }
-
-        #region 节点具体执行
-
-        public async Task<ResultMo> Excute(ExcuteReq req)
+        public async Task<ResultMo> Excuting(NodeContext con)
         {
             // 获取任务元数据列表
-            var taskMetaRes = await GetTaskMetas(req);
+            var taskMetaRes = await GetTaskMetas(con);
             if (!taskMetaRes.IsSuccess())
                 return new ResultMo(ResultTypes.UnKnowOperate, "未知的处理操作！");
             var taskMetas = taskMetaRes.data;
@@ -45,24 +35,27 @@ namespace OSS.TaskFlow.Node
             var taskDirs = GetTasks(taskMetas);
 
             // 执行处理结果
-            var taskResults = await Excute_Results(req, taskDirs);
+            var taskResults = await Excuting_Results(con, taskDirs);
 
             // 处理结束后加工处理
-            return await Excuted(taskResults);
+            return await Excute_End(taskResults);
         }
+        
+        #region 节点执行过程中分解方法
 
-        private async Task<Dictionary<TaskMeta, ResultMo>> Excute_Results(ExcuteReq req,
+    
+        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Results(NodeContext req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
             if (NodeMeta.node_type == NodeType.Parallel)
             {
-                taskResults = Excute_Parallel(req, taskDirs);
+                taskResults = Excuting_Parallel(req, taskDirs);
             }
             else
             {
-                taskResults = await Excute_Sequence(req, taskDirs);
+                taskResults = await Excuting_Sequence(req, taskDirs);
             }
 
             return taskResults;
@@ -74,7 +67,7 @@ namespace OSS.TaskFlow.Node
         /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static async Task<Dictionary<TaskMeta, ResultMo>> Excute_Sequence(ExcuteReq req,
+        private static async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
@@ -94,7 +87,7 @@ namespace OSS.TaskFlow.Node
         /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static Dictionary<TaskMeta, ResultMo> Excute_Parallel(ExcuteReq req,
+        private static Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
@@ -126,24 +119,39 @@ namespace OSS.TaskFlow.Node
             return taskResults;
         }
 
-        private static TaskContext ConvertToContext(ExcuteReq req, TaskMeta meta, object flowData = null)
+
+        private static TaskContext ConvertToContext(NodeContext req, TaskMeta meta)
         {
-            var context = new TaskContext();
+            var context = req.ConvertToTaskContext();
 
             //context.body = (TReq) req.body; //  todo 添加协议转化处理
             //context.flow_data = flowData;
-            context.exced_times = 0;
-            context.flow_id = req.flow_id;
-            context.interval_times = 0;
-
             context.task_meta = meta;
+
             return context;
         }
 
+
+        #endregion
+        
         #endregion
 
-        #region 节点下Task处理
 
+        #region 节点完成后执行
+
+
+        protected virtual Task<ResultMo> Excute_End(Dictionary<TaskMeta, ResultMo> taskResults)
+        {
+            var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
+            return Task.FromResult(res ?? new ResultMo());
+        }
+
+
+        #endregion
+
+
+
+        #region 节点下Task处理
         private IDictionary<TaskMeta, BaseTask> GetTasks(IList<TaskMeta> metas)
         {
             var taskDirs = new Dictionary<TaskMeta, BaseTask>(metas.Count);
@@ -161,49 +169,7 @@ namespace OSS.TaskFlow.Node
 
             return taskDirs;
         }
-
-
-
-        //private static readonly IDictionary<string, BaseTask> _taskContainer = new Dictionary<string, BaseTask>();
-
-        //private static ResultMo<BaseTask> GetTask(string taskKey)
-        //{
-        //    return _taskContainer.TryGetValue(taskKey, out BaseTask task)
-        //        ? new ResultMo<BaseTask>(task)
-        //        : new ResultMo<BaseTask>(ResultTypes.UnKnowOperate, "未找到对应的任务处理器！");
-        //}
-
-        //private static void RegisteTask<TTask>(string taskKey, bool isSingle = true)
-        //    where TTask : BaseTask, new()
-        //{
-        //    var task = default(TTask);
-        //    //if (!InsContainer<TTask>.TryGet(out task))
-        //    //{
-        //    InsContainer<TTask>.Set<TTask>(isSingle);
-        //    task = InsContainer<TTask>.Instance;
-        //    //}
-
-        //    RegisteTask(taskKey, task);
-        //}
-
-        //private static void RegisteTask(string taskKey, BaseTask task)
-        //{
-        //    if (_taskContainer.ContainsKey(taskKey))
-        //    {
-        //        throw new ArgumentException($"have more than one task name with '{taskKey}' in this node!",
-        //            nameof(taskKey));
-        //    }
-
-        //    _taskContainer.Add(taskKey, task);
-        //}
-
         #endregion
 
     }
-
-    public abstract class BaseNode
-    {
-        internal abstract Task<ResultMo> Excute(ExcuteReq fReq, object flowData);
-    }
-
 }

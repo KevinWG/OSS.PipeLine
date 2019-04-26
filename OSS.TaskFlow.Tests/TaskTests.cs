@@ -21,19 +21,19 @@ namespace OSS.TaskFlow.Tests
                 price = 10.23M
             };
 
-            var taskContext = new TaskContext<OrderInfo>(msg);
+            var taskContext = new TaskContext();
             var task = new OrderNotifyTask();
 
             task.SetContinueRetry(9);
             task.SetIntervalRetry(2, SaveTaskContext);
 
-            await task.Process(taskContext);
+            await task.Process(taskContext,msg);
         }
 
 
 
 
-        public Task SaveTaskContext(TaskContext<OrderInfo> context)
+        public Task SaveTaskContext(TaskContext context,TaskReqData<OrderInfo> req)
         {
             LogUtil.Info("临时保存任务相关请求信息：" + JsonConvert.SerializeObject(context));
             return Task.CompletedTask;

@@ -1,5 +1,4 @@
-﻿using OSS.TaskFlow.FlowLine.Mos;
-using OSS.TaskFlow.Node.Mos;
+﻿using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks.MetaMos;
 
 namespace OSS.TaskFlow.Tasks.Mos
@@ -9,17 +8,13 @@ namespace OSS.TaskFlow.Tasks.Mos
     /// </summary>
     public class TaskContext:NodeContext
     {
-        #region 元数据信息
 
+        /// <summary>
+        ///  task元信息
+        /// </summary>
         public TaskMeta  task_meta { get; set; }
 
-        #endregion
         
-        /// <summary>
-        ///  实例流Id
-        /// </summary>
-        public string flow_id { get; set; }
-
         /// <summary>
         ///  执行总次数
         /// </summary>
@@ -34,5 +29,19 @@ namespace OSS.TaskFlow.Tasks.Mos
         ///  上次执行时间
         /// </summary>
         public long last_excutedate { get; set; }
+    }
+
+    public static class TaskContextExtention
+    {
+        public static TaskContext ConvertToTaskContext(this NodeContext node)
+        {
+            var taskCon=new TaskContext();
+
+            taskCon.run_id = node.run_id;
+            taskCon.FlowMeta = node.FlowMeta;
+            taskCon.NodeMeta = node.NodeMeta;
+
+            return taskCon;
+        }
     }
 }
