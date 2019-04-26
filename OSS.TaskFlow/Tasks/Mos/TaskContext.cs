@@ -1,32 +1,13 @@
-﻿using OSS.TaskFlow.Tasks.MetaMos;
+﻿using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Node.Mos;
+using OSS.TaskFlow.Tasks.MetaMos;
 
 namespace OSS.TaskFlow.Tasks.Mos
 {
     /// <summary>
-    ///   上下文信息
-    /// </summary>
-    /// <typeparam name="TReq"></typeparam>
-    public class TaskContext<TReq> : TaskBaseContext
-    {
-        public TaskContext(){}
-
-        public TaskContext(TReq req)
-        {
-            body = req;
-        }
-
-        /// <summary>
-        ///   执行任务内容主体
-        /// </summary>
-        public TReq body { get; set; }
-        
-        public object flow_data { get; set; }
-    }
-
-    /// <summary>
     ///  任务上下文基类
     /// </summary>
-    public abstract class TaskBaseContext
+    public class TaskContext:NodeContext
     {
         #region 元数据信息
 
@@ -53,6 +34,5 @@ namespace OSS.TaskFlow.Tasks.Mos
         ///  上次执行时间
         /// </summary>
         public long last_excutedate { get; set; }
-
     }
 }

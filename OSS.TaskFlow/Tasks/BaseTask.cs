@@ -2,20 +2,30 @@
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
-using OSS.TaskFlow.Tasks.MetaMos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class  BaseTask
+    public abstract partial class BaseTask
     {
-        //private static AsyncLocal<TaskMeta> _taskAsyncLocal=new AsyncLocal<TaskMeta>();
+        #region 重试机制设置
 
         /// <summary>
-        ///  节点信息
+        ///   任务重试配置
         /// </summary>
-        protected  internal TaskMeta TaskMeta { get; set; }
+        public TaskRetryConfig RetryConfig { get; internal set; }
 
+
+        #endregion
+
+        /// <summary>
+        ///  保存
+        /// </summary>
+        /// <param name="context"></param>
+        internal abstract Task SaveTaskContext(TaskContext context, TaskReqData data);
+    }
+    public abstract partial class  BaseTask
+    {
         #region 具体任务执行入口
 
         /// <summary>
@@ -23,26 +33,26 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  </returns>
-        internal async Task<ResultMo> Process(TaskBaseContext context)
+        internal async Task<ResultMo> Process(TaskContext context, TaskReqData data)
         {
-            var checkRes = CheckTask();
+            var checkRes = InitailTask(context);
             if (!checkRes.IsSysResultType(SysResultTypes.None))
                 return checkRes;
 
-            var res = await Recurs(context);
+            var res = await Recurs(context, data);
 
             // 判断是否间隔执行,生成重试信息
             if (res.IsTaskFailed() && context.interval_times < RetryConfig?.interval_times)
             {
                 context.interval_times++;
-                await SaveTaskContext(context);
+                await SaveTaskContext(context, data);
                 res.sys_ret = (int) TaskResultType.WatingActivation;
             }
 
             if (res.IsTaskFailed())
             {
                 //  最终失败，执行失败方法
-                await Failed_Internal(context);
+                await Failed_Internal(context, data);
             }
 
             return res;
@@ -53,7 +63,7 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task<ResultMo> Recurs(TaskBaseContext context)
+        private async Task<ResultMo> Recurs(TaskContext context, TaskReqData data)
         {
             ResultMo res;
 
@@ -61,13 +71,13 @@ namespace OSS.TaskFlow.Tasks
             do
             {
                 //  直接执行
-                res = await Do_Internal(context);
+                res = await Do_Internal(context, data);
                 if (res == null)
                     throw new ArgumentNullException($"{this.GetType().Name} return null！");
 
                 // 判断是否失败回退
                 if (res.IsTaskFailed())
-                    await Revert_Internal(context);
+                    await Revert_Internal(context, data);
                 
                 directExcuteTimes++;
                 context.exced_times++;
@@ -86,20 +96,20 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  特殊：sys_ret= SysResultType.TaskFailed 任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        internal abstract Task<ResultMo> Do_Internal(TaskBaseContext context);
+        internal abstract Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data);
 
         /// <summary>
         ///  执行失败回退操作
         ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="context"></param>
-        internal abstract Task Revert_Internal(TaskBaseContext context);
+        internal abstract Task Revert_Internal(TaskContext context, TaskReqData data);
 
         /// <summary>
         ///  最终执行失败会执行
         /// </summary>
         /// <param name="context"></param>
-        internal abstract Task Failed_Internal(TaskBaseContext context);
+        internal abstract Task Failed_Internal(TaskContext context, TaskReqData data);
 
         #endregion
 
@@ -107,106 +117,17 @@ namespace OSS.TaskFlow.Tasks
         ///  运行校验
         /// </summary>
         /// <returns></returns>
-        internal virtual ResultMo CheckTask()
+        internal virtual ResultMo InitailTask(TaskContext context)
         {
-            if (TaskMeta == null)
+            if (context.task_meta == null)
             {
                 return new ResultMo((int)TaskResultType.ConfigError, (int)ResultTypes.InnerError, $"can't find metainfo in task with type '{this.GetType().Name}'");
             }
-            if (string.IsNullOrEmpty(TaskMeta.task_key))
+            if (string.IsNullOrEmpty(context.task_meta.task_key))
             {
                 return new ResultMo((int)TaskResultType.ConfigError, (int)ResultTypes.InnerError, $"task key can't be null!");
             }
             return new ResultMo();
         }
-    }
-    
-    public abstract partial class BaseTask<TReq, TRes> : BaseTask
-        where TRes : ResultMo, new()
-    {
-
-   
-
-        #region 具体任务执行入口
-
-        /// <summary>
-        ///   任务的具体执行
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns>  </returns>
-        public async Task<TRes> Process(TaskContext<TReq> context)
-        {
-            return (await base.Process(context)) as TRes;
-        }
-        
-        #endregion
-
-        #region 实现，重试，失败 执行  重写父类方法
-
-        internal override async Task<ResultMo> Do_Internal(TaskBaseContext context)
-        {
-            return await Do((TaskContext<TReq>)context);
-        }
-
-        internal override Task Failed_Internal(TaskBaseContext context)
-        {
-            return Failed((TaskContext<TReq>)context);
-        }
-
-        internal override Task Revert_Internal(TaskBaseContext context)
-        {
-            return Revert((TaskContext<TReq>)context);
-        }
-
-        internal override Task SaveTaskContext(TaskBaseContext context)
-        {
-            return _contextKepper.Invoke((TaskContext<TReq>)context);
-        }
-
-        #endregion
-
-
-        #region 实现，重试，失败 执行  扩展方法
-
-        /// <summary>
-        ///     任务的具体执行
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns>  特殊：ret=-100（EventFlowResult.Failed）任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        protected abstract Task<TRes> Do(TaskContext<TReq> context);
-
-        /// <summary>
-        ///  执行失败回退操作
-        ///   如果设置了重试配置，调用后重试
-        /// </summary>
-        /// <param name="context"></param>
-        protected internal virtual Task Revert(TaskContext<TReq> context)
-        {
-            return Task.CompletedTask;
-        }
-
-        /// <summary>
-        ///  最终执行失败会执行
-        /// </summary>
-        /// <param name="context"></param>
-        protected virtual Task Failed(TaskContext<TReq> context)
-        {
-            return Task.CompletedTask;
-        }
-
-        #endregion
-
-
-        /// <summary>
-        ///  运行校验处理
-        ///   如果不通过需要转换的为当前泛型类型，否则类型转化时结果为空
-        /// </summary>
-        /// <returns></returns>
-        internal override ResultMo CheckTask()
-        {
-            var res = base.CheckTask();
-            return res.sys_ret != (int) SysResultTypes.None ? res.ConvertToResult<TRes>() : res;
-        }
-
     }
 }

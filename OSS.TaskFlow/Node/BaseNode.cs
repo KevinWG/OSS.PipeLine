@@ -13,19 +13,22 @@ namespace OSS.TaskFlow.Node
 {
     /// <summary>
     ///  基础工作节点
+    /// todo  重新激活处理
+    /// todo  协议处理
+    /// todo   flowentitytype
     /// </summary>
     public abstract partial class BaseNode<TReq> : BaseNode // : INode<TReq>,IFlowNode
     {
-        protected virtual Task<ResultMo> Excuted(Dictionary<TaskMeta, ResultMo> taskResults)
-        {
-            var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
-            return Task.FromResult(res ?? new ResultMo());
-        }
-
         internal override Task<ResultMo> Excute(ExcuteReq fReq, object flowData)
         {
             // 初始化相关上下文信息
             return Excute(fReq);
+        }
+
+        protected virtual Task<ResultMo> Excuted(Dictionary<TaskMeta, ResultMo> taskResults)
+        {
+            var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
+            return Task.FromResult(res ?? new ResultMo());
         }
 
         #region 节点具体执行
@@ -122,13 +125,13 @@ namespace OSS.TaskFlow.Node
             });
             return taskResults;
         }
-        
-        private static TaskContext<TReq> ConvertToContext(ExcuteReq req, TaskMeta meta, object flowData = null)
-        {
-            var context = new TaskContext<TReq>();
 
-            context.body = (TReq) req.body; //  todo 添加协议转化处理
-            context.flow_data = flowData;
+        private static TaskContext ConvertToContext(ExcuteReq req, TaskMeta meta, object flowData = null)
+        {
+            var context = new TaskContext();
+
+            //context.body = (TReq) req.body; //  todo 添加协议转化处理
+            //context.flow_data = flowData;
             context.exced_times = 0;
             context.flow_id = req.flow_id;
             context.interval_times = 0;
@@ -136,9 +139,8 @@ namespace OSS.TaskFlow.Node
             context.task_meta = meta;
             return context;
         }
+
         #endregion
-
-
 
         #region 节点下Task处理
 

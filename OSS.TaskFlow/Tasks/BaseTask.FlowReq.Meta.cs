@@ -4,28 +4,8 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseTask
-    {
-        
-        #region 重试机制设置
-
-        /// <summary>
-        ///   任务重试配置
-        /// </summary>
-        public TaskRetryConfig RetryConfig { get; internal set; }
-
-
-        #endregion
-
-        /// <summary>
-        ///  保存
-        /// </summary>
-        /// <param name="context"></param>
-        internal abstract Task SaveTaskContext(TaskBaseContext context);
-    }
-
-
-    public abstract partial class BaseTask<TReq, TRes> 
+    
+    public abstract partial class BaseTask<TReq, TFlowData, TRes> 
     {
         #region 重试机制设置
 
@@ -41,14 +21,14 @@ namespace OSS.TaskFlow.Tasks
             RetryConfig.continue_times = continueTimes;
         }
 
-        private Func<TaskContext<TReq>, Task> _contextKepper;
+        private Func<TaskContext,TaskReqData<TReq,TFlowData>, Task> _contextKepper;
 
         /// <summary>
         ///  设置持续重试信息
         /// </summary>
         /// <param name="intTimes"></param>
         /// <param name="contextKeeper"></param>
-        public void SetIntervalRetry(int intTimes, Func<TaskContext<TReq>, Task> contextKeeper)
+        public void SetIntervalRetry(int intTimes, Func<TaskContext, TaskReqData<TReq, TFlowData>, Task> contextKeeper)
         {
             if (RetryConfig == null)
                 RetryConfig = new TaskRetryConfig();

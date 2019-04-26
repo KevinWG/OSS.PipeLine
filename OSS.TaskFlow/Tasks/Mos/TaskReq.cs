@@ -1,10 +1,28 @@
-﻿namespace OSS.TaskFlow.Tasks.Mos
+﻿using OSS.TaskFlow.FlowLine.Mos;
+
+namespace OSS.TaskFlow.Tasks.Mos
 {
-    public class TaskReq<TReq>
+    public class TaskReqData<TReq, TFlowData> : TaskReqData<TReq>
     {
         /// <summary>
-        /// 事件内容体
+        ///   核心流数据
         /// </summary>
-        public TReq Body { get; set; }
+        public TFlowData flow_data { get; set; }
+    }
+
+    /// <summary>
+    ///   请求数据
+    /// </summary>
+    /// <typeparam name="TReq"></typeparam>
+    public class TaskReqData<TReq> : TaskReqData
+    {
+        /// <summary>
+        ///   执行请求内容主体
+        /// </summary>
+        public TReq req_data { get; set; }
+    }
+
+    public abstract class TaskReqData
+    {
     }
 }
