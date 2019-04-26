@@ -7,13 +7,24 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
     public class OrderCheckReq
     {
-
     }
 
 
     public class OrderCheckTask : TaskFlow.Tasks.BaseTask<OrderCheckReq, ResultMo>
     {
-        protected override async Task<ResultMo> Do(TaskContext<OrderCheckReq> context)
+        protected override Task Revert(TaskContext context, TaskReqData<OrderCheckReq> data)
+        {
+            LogUtil.Info("执行确认订单回退！");
+            return Task.CompletedTask;
+        }
+
+        protected override Task Failed(TaskContext context, TaskReqData<OrderCheckReq> data)
+        {
+            LogUtil.Info("执行确认订单失败！");
+            return Task.CompletedTask;
+        }
+
+        protected override async Task<ResultMo> Do(TaskContext context, TaskReqData<OrderCheckReq> data)
         {
             LogUtil.Info("执行确认订单！");
             //if (context.Body.status <= 0)
@@ -21,19 +32,6 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 
             //  todo 修改订单状态为已确认
             return new ResultMo();
-        }
-
- 
-        protected override Task Revert(TaskContext<OrderCheckReq> context)
-        {
-            LogUtil.Info("执行确认订单回退！");
-            return Task.CompletedTask;
-        }
-
-        protected override Task Failed(TaskContext<OrderCheckReq> context)
-        {
-            LogUtil.Info("执行确认订单失败！");
-            return Task.CompletedTask;
         }
     }
 

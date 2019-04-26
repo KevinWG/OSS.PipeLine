@@ -20,10 +20,16 @@ namespace OSS.TaskFlow.Node
     /// </summary>
     public abstract partial class BaseNode<TReq> // : INode<TReq>,IFlowNode
     {
-        
+        public async Task<ResultMo> Excute(NodeContext con,TaskReqData<TReq> req)
+        {
+            // todo 初始化信息run_id
+            return await Excuting(con, req);
+        }
+
+
         #region 节点具体执行方法
 
-        public async Task<ResultMo> Excuting(NodeContext con)
+        private async Task<ResultMo> Excuting(NodeContext con, TaskReqData<TReq> req)
         {
             // 获取任务元数据列表
             var taskMetaRes = await GetTaskMetas(con);
@@ -35,27 +41,27 @@ namespace OSS.TaskFlow.Node
             var taskDirs = GetTasks(taskMetas);
 
             // 执行处理结果
-            var taskResults = await Excuting_Results(con, taskDirs);
+            var taskResults = await Excuting_Results(con, req, taskDirs);
 
             // 处理结束后加工处理
-            return await Excute_End(taskResults);
+            return await Excute_End(con, req, taskResults);
         }
         
         #region 节点执行过程中分解方法
 
     
-        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Results(NodeContext req,
+        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Results(NodeContext con, TaskReqData<TReq> req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
             if (NodeMeta.node_type == NodeType.Parallel)
             {
-                taskResults = Excuting_Parallel(req, taskDirs);
+                taskResults = Excuting_Parallel(con, req, taskDirs);
             }
             else
             {
-                taskResults = await Excuting_Sequence(req, taskDirs);
+                taskResults = await Excuting_Sequence(con, req, taskDirs);
             }
 
             return taskResults;
@@ -64,17 +70,17 @@ namespace OSS.TaskFlow.Node
         /// <summary>
         ///  顺序执行
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="con"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext req,
+        private static async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext con, TaskReqData<TReq> req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
             {
-                var context = ConvertToContext(req, td.Key);
-                var retRes = await td.Value.Process(context);
+                var context = ConvertToContext(con, td.Key);
+                var retRes = await td.Value.Process(context,req);
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -84,16 +90,16 @@ namespace OSS.TaskFlow.Node
         /// <summary>
         ///   并行执行
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="con"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext req,
+        private static Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext con, TaskReqData<TReq> req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
-                var context = ConvertToContext(req, tr.Key);
-                return tr.Value.Process(context);
+                var context = ConvertToContext(con, tr.Key);
+                return tr.Value.Process(context, req);
             });
 
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
@@ -120,9 +126,9 @@ namespace OSS.TaskFlow.Node
         }
 
 
-        private static TaskContext ConvertToContext(NodeContext req, TaskMeta meta)
+        private static TaskContext ConvertToContext(NodeContext con, TaskMeta meta)
         {
-            var context = req.ConvertToTaskContext();
+            var context = con.ConvertToTaskContext();
 
             //context.body = (TReq) req.body; //  todo 添加协议转化处理
             //context.flow_data = flowData;
@@ -140,7 +146,7 @@ namespace OSS.TaskFlow.Node
         #region 节点完成后执行
 
 
-        protected virtual Task<ResultMo> Excute_End(Dictionary<TaskMeta, ResultMo> taskResults)
+        protected virtual Task<ResultMo> Excute_End(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResults)
         {
             var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
             return Task.FromResult(res ?? new ResultMo());

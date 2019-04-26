@@ -12,29 +12,29 @@ namespace OSS.TaskFlow.Tests
         [TestMethod]
         public async Task TestMethod1()
         {
-            var order = new OrderInfo()
-            {
-                order_name = "²âÊÔ¶©µ¥!",
-                id = 123456,
-                price = 10.23M
-            };
+            //var order = new OrderInfo()
+            //{
+            //    order_name = "²âÊÔ¶©µ¥!",
+            //    id = 123456,
+            //    price = 10.23M
+            //};
 
-            var orderNode = new AddOrderNode();
-            var req = new ExcuteReq();
+            //var orderNode = new AddOrderNode();
+            //var req = new ExcuteReq();
 
-            req.body = order ;
+            //req.body = order ;
 
-            req.flow_key = "OrderFlow";
-            req.node_key = "AddOrder";
+            //req.flow_key = "OrderFlow";
+            //req.node_key = "AddOrder";
 
-            try
-            {
-                await orderNode.Excute(req);
-            }
-            catch (Exception e)
-            {
+            //try
+            //{
+            //    await orderNode.Excute(req);
+            //}
+            //catch (Exception e)
+            //{
       
-            }
+            //}
        
         }
         

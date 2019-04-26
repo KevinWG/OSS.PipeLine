@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.TaskFlow.Node;
 using OSS.TaskFlow.Node.MetaMos;
+using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks;
 using OSS.TaskFlow.Tasks.MetaMos;
 using OSS.TaskFlow.Tests.TestOrder.Tasks;
@@ -20,7 +21,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
         }
 
 
-        protected override Task<ResultListMo<TaskMeta>> GetTaskMetas(ExcuteReq req)
+        protected override Task<ResultListMo<TaskMeta>> GetTaskMetas(NodeContext req)
         {
             var addOrderTaskMeta=new TaskMeta();
             addOrderTaskMeta.task_key = "AddOrder";
@@ -42,6 +43,8 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
             return Task.FromResult(new ResultListMo<TaskMeta>(list));
         }
 
+     
+
         protected override BaseTask GetTaskByMeta(TaskMeta meta)
         {
             switch (meta.task_key)
@@ -58,7 +61,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
     }
     public class CheckOrderNode: BaseNode<OrderCheckReq>
     {
-        protected override Task<ResultListMo<TaskMeta>> GetTaskMetas(ExcuteReq req)
+        protected override Task<ResultListMo<TaskMeta>> GetTaskMetas(NodeContext req)
         {
             var addOrderTaskMeta = new TaskMeta();
             addOrderTaskMeta.task_key = "CheckOrder";

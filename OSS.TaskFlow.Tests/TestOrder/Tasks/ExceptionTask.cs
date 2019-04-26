@@ -8,9 +8,10 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
     public class ExceptionTask : BaseTask<OrderInfo,ResultMo>
     {
-        protected override Task<ResultMo> Do(TaskContext<OrderInfo> context)
+   
+        protected override Task<ResultMo> Do(TaskContext context, TaskReqData<OrderInfo> data)
         {
-             throw new Exception("执行失败！");
+            throw new Exception("执行失败！");
         }
     }
     
