@@ -6,7 +6,6 @@ namespace OSS.TaskFlow
 {
     public interface IMetaProvider
     {
-
         //  
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
+using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
-using OSS.EventFlow.Tasks;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
@@ -11,16 +11,16 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
     }
 
 
-    public class OrderCheckTask : TaskFlow.Tasks.BaseTask<OrderCheckReq, TaskResultMo>
+    public class OrderCheckTask : TaskFlow.Tasks.BaseTask<OrderCheckReq, ResultMo>
     {
-        protected override async Task<TaskResultMo> Do(TaskContext<OrderCheckReq> context)
+        protected override async Task<ResultMo> Do(TaskContext<OrderCheckReq> context)
         {
             LogUtil.Info("执行确认订单！");
             //if (context.Body.status <= 0)
             //    return new TaskResultMo(TaskResultType.Failed, ResultTypes.ObjectNull, "当前订单状态异常！");
 
             //  todo 修改订单状态为已确认
-            return new TaskResultMo();
+            return new ResultMo();
         }
 
  

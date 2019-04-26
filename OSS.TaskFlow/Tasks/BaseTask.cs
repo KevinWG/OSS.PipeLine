@@ -7,6 +7,10 @@ namespace OSS.TaskFlow.Tasks
 {
     public abstract partial class  BaseTask
     {
+        //private static AsyncLocal<TaskMeta> _taskAsyncLocal=new AsyncLocal<TaskMeta>();
+        
+
+
         #region 具体任务执行入口
 
         /// <summary>
@@ -64,7 +68,6 @@ namespace OSS.TaskFlow.Tasks
 
             return res;
         }
-
         #endregion
 
         #region 实现，重试，失败 执行  基础方法

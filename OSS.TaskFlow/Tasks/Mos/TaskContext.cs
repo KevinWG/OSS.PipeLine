@@ -1,4 +1,6 @@
-﻿namespace OSS.TaskFlow.Tasks.Mos
+﻿using OSS.TaskFlow.Tasks.MetaMos;
+
+namespace OSS.TaskFlow.Tasks.Mos
 {
     /// <summary>
     ///   上下文信息
@@ -17,8 +19,7 @@
         ///   执行任务内容主体
         /// </summary>
         public TReq body { get; set; }
-
-
+        
         public object flow_data { get; set; }
     }
 
@@ -29,23 +30,10 @@
     {
         #region 元数据信息
 
-        /// <summary>
-        ///   任务编码
-        /// </summary>
-        public string task_key { get; set; }
-
-        /// <summary>
-        ///   流节点编码
-        /// </summary>
-        public string node_key { get; set; }
-
-        /// <summary>
-        ///   流编码
-        /// </summary>
-        public string flow_key { get; set; }
+        public TaskMeta  task_meta { get; set; }
 
         #endregion
-
+        
         /// <summary>
         ///  实例流Id
         /// </summary>

@@ -5,7 +5,10 @@ using OSS.TaskFlow.Node.MetaMos;
 
 namespace OSS.TaskFlow.FlowLine
 {
-    public abstract partial class BaseFlow
+    /// <summary>
+    /// 流运行时元数据信息
+    /// </summary>
+    public abstract partial class BaseFlow<TFlowEntity>
     {
         // todo 配置处理
         // todo  1。 读取配置初始化信息

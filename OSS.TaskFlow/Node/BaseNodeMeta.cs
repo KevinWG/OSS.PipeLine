@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.TaskFlow.Node.MetaMos;
+using OSS.TaskFlow.Tasks;
 using OSS.TaskFlow.Tasks.MetaMos;
-using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
 {
     /// <summary>
-    ///  基础工作者
+    ///  节点运行时元数据信息
     /// </summary>
     public abstract partial class BaseNode<TReq>
     {
@@ -16,6 +16,8 @@ namespace OSS.TaskFlow.Node
         /// </summary>
         public NodeMeta NodeMeta { get; set; }
 
-        public abstract Task<ResultListMo<TaskMeta>> GetTaskMetas(TaskBaseContext context);
+        public abstract Task<ResultListMo<TaskMeta>> GetTaskMetas(ExcuteReq fReq);
+        
+        public abstract BaseTask GetTaskByMeta(TaskMeta meta);
     }
 }

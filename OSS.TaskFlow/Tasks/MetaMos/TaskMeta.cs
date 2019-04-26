@@ -16,14 +16,14 @@
 
         public string flow_key { get; set; }
 
-        public TaskStatus status { get; set; }
+        public TaskMetaStatus status { get; set; }
 
         public RunType run_type { get; set; }
 
     }
 
 
-    public enum TaskStatus
+    public enum TaskMetaStatus
     {
         Delete=-1000,
         Disable=-1,
