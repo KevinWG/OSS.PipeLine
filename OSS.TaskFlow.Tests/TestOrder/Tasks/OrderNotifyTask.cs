@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
 using OSS.TaskFlow.Tasks;
@@ -10,6 +11,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
     {
         protected override Task<ResultMo> Do(TaskContext<OrderInfo> context)
         {
+            Task.Delay(2000);
             LogUtil.Info("执行通知！");
             // 手动表示执行出错！
             return Task.FromResult(new ResultMo());

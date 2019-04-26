@@ -107,7 +107,14 @@ namespace OSS.TaskFlow.Node
             //if (t.Status == TaskStatus.RanToCompletion)
             //else if (t.Status == TaskStatus.Faulted)
             //  todo 待测试多个时抛错，结果处理
-            var taskResults = taskDirRes.ToDictionary(p => p.Key, p => p.Value.Result);
+            var taskResults = taskDirRes.ToDictionary(p => p.Key, p =>
+            {
+                var t = p.Value;
+                return t.Status == TaskStatus.Faulted
+                    ? new ResultMo(SysResultTypes.InnerError, ResultTypes.InnerError
+                        , $"unexcept error with task {p.Key.task_name}({p.Key.task_key})")
+                    : t.Result;
+            });
             return taskResults;
         }
 

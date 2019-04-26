@@ -16,8 +16,8 @@ namespace OSS.TaskFlow.Node
         /// </summary>
         public NodeMeta NodeMeta { get; set; }
 
-        public abstract Task<ResultListMo<TaskMeta>> GetTaskMetas(ExcuteReq fReq);
-        
-        public abstract BaseTask GetTaskByMeta(TaskMeta meta);
+        protected abstract Task<ResultListMo<TaskMeta>> GetTaskMetas(ExcuteReq fReq);
+
+        protected abstract BaseTask GetTaskByMeta(TaskMeta meta);
     }
 }

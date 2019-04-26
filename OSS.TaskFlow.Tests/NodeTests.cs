@@ -1,10 +1,8 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Newtonsoft.Json;
-using OSS.Common.Plugs.LogPlug;
-using OSS.TaskFlow.Tasks.Mos;
 using OSS.TaskFlow.Tests.TestOrder;
-using OSS.TaskFlow.Tests.TestOrder.Tasks;
+using OSS.TaskFlow.Tests.TestOrder.Nodes;
 
 namespace OSS.TaskFlow.Tests
 {
@@ -14,26 +12,32 @@ namespace OSS.TaskFlow.Tests
         [TestMethod]
         public async Task TestMethod1()
         {
-            var msg = new OrderInfo()
+            var order = new OrderInfo()
             {
                 order_name = "测试订单!",
                 id = 123456,
                 price = 10.23M
             };
 
-            var taskContext = new TaskContext<OrderInfo>(msg);
-            var task = new OrderNotifyTask();
+            var orderNode = new AddOrderNode();
+            var req = new ExcuteReq();
 
-            task.SetContinueRetry(9);
-            task.SetIntervalRetry(2, SaveTaskContext);
+            req.body = order ;
 
-            await task.Process(taskContext);
+            req.flow_key = "OrderFlow";
+            req.node_key = "AddOrder";
+
+            try
+            {
+                await orderNode.Excute(req);
+            }
+            catch (Exception e)
+            {
+      
+            }
+       
         }
         
-        public Task SaveTaskContext(TaskContext<OrderInfo> context)
-        {
-            LogUtil.Info("临时保存任务相关请求信息：" + JsonConvert.SerializeObject(context));
-            return Task.CompletedTask;
-        }
+    
     }
 }
