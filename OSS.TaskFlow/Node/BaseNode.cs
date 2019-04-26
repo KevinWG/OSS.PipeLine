@@ -10,10 +10,9 @@ using OSS.TaskFlow.Tasks.MetaMos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
-{ 
+{
     /// <summary>
     ///  基础工作节点
-    /// todo  添加返回类型，结果比对类型，决定返回
     /// </summary>
     public abstract partial class BaseNode<TReq> : BaseNode // : INode<TReq>,IFlowNode
     {
@@ -28,7 +27,7 @@ namespace OSS.TaskFlow.Node
             // 初始化相关上下文信息
             return Excute(fReq);
         }
-        
+
         #region 节点具体执行
 
         public async Task<ResultMo> Excute(ExcuteReq req)
@@ -49,7 +48,8 @@ namespace OSS.TaskFlow.Node
             return await Excuted(taskResults);
         }
 
-        private async Task<Dictionary<TaskMeta, ResultMo>> Excute_Results(ExcuteReq req, IDictionary<TaskMeta, BaseTask> taskDirs)
+        private async Task<Dictionary<TaskMeta, ResultMo>> Excute_Results(ExcuteReq req,
+            IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
@@ -61,6 +61,7 @@ namespace OSS.TaskFlow.Node
             {
                 taskResults = await Excute_Sequence(req, taskDirs);
             }
+
             return taskResults;
         }
 
@@ -70,7 +71,8 @@ namespace OSS.TaskFlow.Node
         /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static async Task<Dictionary<TaskMeta, ResultMo>> Excute_Sequence(ExcuteReq req, IDictionary<TaskMeta, BaseTask> taskDirs)
+        private static async Task<Dictionary<TaskMeta, ResultMo>> Excute_Sequence(ExcuteReq req,
+            IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
@@ -79,6 +81,7 @@ namespace OSS.TaskFlow.Node
                 var retRes = await td.Value.Process(context);
                 taskResults.Add(td.Key, retRes);
             }
+
             return taskResults;
         }
 
@@ -88,14 +91,15 @@ namespace OSS.TaskFlow.Node
         /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static Dictionary<TaskMeta, ResultMo> Excute_Parallel(ExcuteReq req, IDictionary<TaskMeta, BaseTask> taskDirs)
+        private static Dictionary<TaskMeta, ResultMo> Excute_Parallel(ExcuteReq req,
+            IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
                 var context = ConvertToContext(req, tr.Key);
                 return tr.Value.Process(context);
             });
-     
+
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
             try
             {
@@ -104,6 +108,7 @@ namespace OSS.TaskFlow.Node
             catch
             {
             }
+
             //if (t.Status == TaskStatus.RanToCompletion)
             //else if (t.Status == TaskStatus.Faulted)
             //  todo 待测试多个时抛错，结果处理
@@ -117,10 +122,8 @@ namespace OSS.TaskFlow.Node
             });
             return taskResults;
         }
-
-
         
-        private static TaskContext<TReq> ConvertToContext(ExcuteReq req ,TaskMeta meta,object flowData=null)
+        private static TaskContext<TReq> ConvertToContext(ExcuteReq req, TaskMeta meta, object flowData = null)
         {
             var context = new TaskContext<TReq>();
 
@@ -133,27 +136,27 @@ namespace OSS.TaskFlow.Node
             context.task_meta = meta;
             return context;
         }
-
-
-
         #endregion
 
 
 
         #region 节点下Task处理
 
-        private IDictionary<TaskMeta,BaseTask> GetTasks(IList<TaskMeta> metas)
+        private IDictionary<TaskMeta, BaseTask> GetTasks(IList<TaskMeta> metas)
         {
-            var taskDirs=new Dictionary<TaskMeta, BaseTask>(metas.Count);
+            var taskDirs = new Dictionary<TaskMeta, BaseTask>(metas.Count);
             foreach (var meta in metas)
             {
                 var task = GetTaskByMeta(meta);
-                if (task==null)
+                if (task == null)
                 {
                     throw new ArgumentNullException($"can't find task named {meta.task_name}({meta.task_key})");
                 }
-                taskDirs.Add(meta,task);
+
+                task.TaskMeta = meta;
+                taskDirs.Add(meta, task);
             }
+
             return taskDirs;
         }
 

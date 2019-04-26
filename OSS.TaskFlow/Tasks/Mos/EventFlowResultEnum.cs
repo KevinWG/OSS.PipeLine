@@ -6,7 +6,15 @@ namespace OSS.TaskFlow.Tasks.Mos
 
     public enum TaskResultType
     {
-        WatingRetry=400
+        /// <summary>
+        ///  配置信息出现错误
+        /// </summary>
+        ConfigError = 10,
+
+        /// <summary>
+        ///  等待激活
+        /// </summary>
+        WatingActivation = 400
     }
 
     public static class EventFlowResultExtention
@@ -28,7 +36,7 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// <returns></returns>
         public static bool IsTaskWaiting(this ResultMo res)
         {
-            return res.sys_ret == (int)TaskResultType.WatingRetry;
+            return res.sys_ret == (int)TaskResultType.WatingActivation;
         }
 
 

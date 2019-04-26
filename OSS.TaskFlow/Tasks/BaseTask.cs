@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
+using OSS.Common.ComModels.Enums;
+using OSS.TaskFlow.Tasks.MetaMos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
@@ -8,7 +10,12 @@ namespace OSS.TaskFlow.Tasks
     public abstract partial class  BaseTask
     {
         //private static AsyncLocal<TaskMeta> _taskAsyncLocal=new AsyncLocal<TaskMeta>();
-        
+
+        /// <summary>
+        ///  节点信息
+        /// </summary>
+        protected  internal TaskMeta TaskMeta { get; set; }
+
         #region 具体任务执行入口
 
         /// <summary>
@@ -18,6 +25,10 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         internal async Task<ResultMo> Process(TaskBaseContext context)
         {
+            var checkRes = CheckTask();
+            if (!checkRes.IsSysResultType(SysResultTypes.None))
+                return checkRes;
+
             var res = await Recurs(context);
 
             // 判断是否间隔执行,生成重试信息
@@ -25,7 +36,7 @@ namespace OSS.TaskFlow.Tasks
             {
                 context.interval_times++;
                 await SaveTaskContext(context);
-                res.sys_ret = (int) TaskResultType.WatingRetry;
+                res.sys_ret = (int) TaskResultType.WatingActivation;
             }
 
             if (res.IsTaskFailed())
@@ -89,14 +100,33 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         internal abstract Task Failed_Internal(TaskBaseContext context);
-        
+
         #endregion
 
+        /// <summary>
+        ///  运行校验
+        /// </summary>
+        /// <returns></returns>
+        internal virtual ResultMo CheckTask()
+        {
+            if (TaskMeta == null)
+            {
+                return new ResultMo((int)TaskResultType.ConfigError, (int)ResultTypes.InnerError, $"can't find metainfo in task with type '{this.GetType().Name}'");
+            }
+            if (string.IsNullOrEmpty(TaskMeta.task_key))
+            {
+                return new ResultMo((int)TaskResultType.ConfigError, (int)ResultTypes.InnerError, $"task key can't be null!");
+            }
+            return new ResultMo();
+        }
     }
     
     public abstract partial class BaseTask<TReq, TRes> : BaseTask
         where TRes : ResultMo, new()
     {
+
+   
+
         #region 具体任务执行入口
 
         /// <summary>
@@ -166,6 +196,17 @@ namespace OSS.TaskFlow.Tasks
 
         #endregion
 
-       
+
+        /// <summary>
+        ///  运行校验处理
+        ///   如果不通过需要转换的为当前泛型类型，否则类型转化时结果为空
+        /// </summary>
+        /// <returns></returns>
+        internal override ResultMo CheckTask()
+        {
+            var res = base.CheckTask();
+            return res.sys_ret != (int) SysResultTypes.None ? res.ConvertToResult<TRes>() : res;
+        }
+
     }
 }

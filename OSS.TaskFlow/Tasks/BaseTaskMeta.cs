@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.TaskFlow.Tasks.MetaMos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
     public abstract partial class BaseTask
     {
-        public TaskMeta TaskMeta { get; set; }
-
+        
         #region 重试机制设置
 
         /// <summary>

@@ -19,7 +19,6 @@
         public TaskMetaStatus status { get; set; }
 
         public RunType run_type { get; set; }
-
     }
 
 
