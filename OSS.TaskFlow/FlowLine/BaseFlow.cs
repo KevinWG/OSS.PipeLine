@@ -21,7 +21,12 @@ namespace OSS.TaskFlow.FlowLine
         public abstract Task End();
 
 
-        //internal virtual Task<List<NodeMeta>> GetNextNodes(FlowContext context);
+
+        //internal virtual Task<List<NodeMeta>> GetNextNodes(FlowContext context)
+        //internal virtual Task<List<NodeMeta>> GetNextNodes(FlowContext context)
+        //{
+            
+        //}
 
 
         //  获取流核心数据信息

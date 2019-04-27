@@ -6,24 +6,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseTask
-    {
-        #region 重试机制设置
 
-        /// <summary>
-        ///   任务重试配置
-        /// </summary>
-        public TaskRetryConfig RetryConfig { get; internal set; }
-
-
-        #endregion
-
-        /// <summary>
-        ///  保存
-        /// </summary>
-        /// <param name="context"></param>
-        internal abstract Task SaveTaskContext(TaskContext context, TaskReqData data);
-    }
     public abstract partial class  BaseTask
     {
         #region 具体任务执行入口

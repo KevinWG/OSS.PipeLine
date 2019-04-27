@@ -6,29 +6,16 @@ using OSS.TaskFlow.Tasks.Mos;
 namespace OSS.TaskFlow.Tasks
 {
     
-    public abstract partial class BaseTask<TReq, TFlowData, TRes> 
+    public abstract partial class BaseFlowTask<TReq, TFlowData, TRes> 
     {
-        public InstanceType InstanceType { get; }
 
-        public BaseTask()
+        protected BaseFlowTask()
         {
             InstanceType = InstanceType.WithFlow;
         }
         
 
         #region 重试机制设置
-
-        /// <summary>
-        ///  设置持续重试信息
-        /// </summary>
-        /// <param name="continueTimes"></param>
-        public void SetContinueRetry(int continueTimes)
-        {
-            if (RetryConfig == null)
-                RetryConfig = new TaskRetryConfig();
-
-            RetryConfig.continue_times = continueTimes;
-        }
 
         private Func<TaskContext,TaskReqData<TReq,TFlowData>, Task> _contextKepper;
 

@@ -5,7 +5,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseTask<TReq, TRes> : BaseTask
+    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask
         where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
