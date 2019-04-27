@@ -1,5 +1,10 @@
-﻿using OSS.TaskFlow.FlowLine.Mos;
+﻿using System;
+using OSS.Common.ComModels;
+using OSS.Common.ComModels.Enums;
+using OSS.Common.Extention;
+using OSS.TaskFlow.FlowLine.Mos;
 using OSS.TaskFlow.Node.MetaMos;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node.Mos
 {
@@ -8,7 +13,7 @@ namespace OSS.TaskFlow.Node.Mos
         /// <summary>
         ///  当前流-节点元信息
         /// </summary>
-        public NodeMeta NodeMeta { get; set; }
+        public NodeMeta node_meta { get; set; }
     }
 
     public static class NodeContextExtention
@@ -18,9 +23,25 @@ namespace OSS.TaskFlow.Node.Mos
             var nodeCon = new NodeContext
             {
                 run_id = node.run_id,
-                FlowMeta = node.FlowMeta
+                flow_meta = node.flow_meta
             };
             return nodeCon;
+        }
+
+
+        public static ResultMo CheckNodeContext(this NodeContext context, Func<string> idGenerate = null)
+        {
+            var res= context.CheckFlowContext(idGenerate);
+            if (!res.IsSysResultType(SysResultTypes.None))
+                return res;
+
+            if (string.IsNullOrEmpty(context.node_meta?.node_key))
+            {
+                res.sys_ret = (int) TaskResultType.ConfigError;
+                res.ret = (int)ResultTypes.InnerError;
+                res.msg = "node metainfo has error!";
+            }
+            return res;
         }
     }
 

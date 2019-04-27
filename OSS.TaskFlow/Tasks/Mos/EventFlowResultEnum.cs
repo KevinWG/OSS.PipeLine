@@ -14,7 +14,9 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// <summary>
         ///  等待激活
         /// </summary>
-        WatingActivation = 400
+        WatingActivation = 400,
+
+
     }
 
     public static class EventFlowResultExtention

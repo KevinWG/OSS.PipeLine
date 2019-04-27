@@ -2,8 +2,8 @@
 {
     public class FlowMeta
     {
-        public string FlowName { get; set; }
+        public string flow_name { get; set; }
 
-        public string FlowCode { get; set; }
+        public string flow_key { get; set; }
     }
 }

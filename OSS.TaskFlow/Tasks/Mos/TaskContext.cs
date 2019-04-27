@@ -1,4 +1,8 @@
-﻿using OSS.TaskFlow.Node.Mos;
+﻿using System;
+using OSS.Common.ComModels;
+using OSS.Common.ComModels.Enums;
+using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks.MetaMos;
 
 namespace OSS.TaskFlow.Tasks.Mos
@@ -38,10 +42,25 @@ namespace OSS.TaskFlow.Tasks.Mos
             var taskCon=new TaskContext();
 
             taskCon.run_id = node.run_id;
-            taskCon.FlowMeta = node.FlowMeta;
-            taskCon.NodeMeta = node.NodeMeta;
+            taskCon.flow_meta = node.flow_meta;
+            taskCon.node_meta = node.node_meta;
 
             return taskCon;
+        }
+
+        public static ResultMo CheckTaskContext(this TaskContext context, Func<string> idGenerate = null)
+        {
+            var res = context.CheckNodeContext(idGenerate);
+            if (!res.IsSysResultType(SysResultTypes.None))
+                return res;
+
+            if (string.IsNullOrEmpty(context.task_meta?.task_key))
+            {
+                res.sys_ret = (int)TaskResultType.ConfigError;
+                res.ret = (int)ResultTypes.InnerError;
+                res.msg = "task metainfo has error!";
+            }
+            return res;
         }
     }
 }

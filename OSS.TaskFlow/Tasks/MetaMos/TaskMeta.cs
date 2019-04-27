@@ -11,10 +11,7 @@
         ///  任务名称
         /// </summary>
         public string task_name { get; set; }
-
-        public string node_key { get; set; }
-
-        public string flow_key { get; set; }
+        
 
         public TaskMetaStatus status { get; set; }
 
