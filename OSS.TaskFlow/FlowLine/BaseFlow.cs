@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
+using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Node.MetaMos;
 
 namespace OSS.TaskFlow.FlowLine
 {
@@ -16,6 +19,9 @@ namespace OSS.TaskFlow.FlowLine
         public abstract Task<ResultMo> Entry(ExcuteReq req);
 
         public abstract Task End();
+
+
+        //internal virtual Task<List<NodeMeta>> GetNextNodes(FlowContext context);
 
 
         //  获取流核心数据信息

@@ -26,6 +26,18 @@ namespace OSS.TaskFlow.Node
             return await Excuting(con, req);
         }
 
+        /// <summary>
+        ///  前置进入方法
+        /// </summary>
+        /// <returns></returns>
+        protected internal virtual Task MoveIn()
+        {
+            return Task.CompletedTask;
+        }
+
+
+
+
 
         #region 节点具体执行方法
 
@@ -55,7 +67,7 @@ namespace OSS.TaskFlow.Node
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
-            if (NodeMeta.node_type == NodeType.Parallel)
+            if (con.node_meta.node_type == NodeType.Parallel)
             {
                 taskResults = Excuting_Parallel(con, req, taskDirs);
             }
@@ -166,7 +178,6 @@ namespace OSS.TaskFlow.Node
                     throw new ArgumentNullException($"can't find task named {meta.task_name}({meta.task_key})");
                 }
 
-                task.TaskMeta = meta;
                 taskDirs.Add(meta, task);
             }
 

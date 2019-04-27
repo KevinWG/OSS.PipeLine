@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using OSS.TaskFlow.FlowLine.Mos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
@@ -7,6 +8,14 @@ namespace OSS.TaskFlow.Tasks
     
     public abstract partial class BaseTask<TReq, TFlowData, TRes> 
     {
+        public InstanceType InstanceType { get; }
+
+        public BaseTask()
+        {
+            InstanceType = InstanceType.WithFlow;
+        }
+        
+
         #region 重试机制设置
 
         /// <summary>

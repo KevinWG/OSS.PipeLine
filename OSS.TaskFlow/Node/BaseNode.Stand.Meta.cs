@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.TaskFlow.Node.MetaMos;
+using OSS.TaskFlow.FlowLine.Mos;
 using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks;
 using OSS.TaskFlow.Tasks.MetaMos;
@@ -12,10 +12,12 @@ namespace OSS.TaskFlow.Node
     /// </summary>
     public abstract partial class BaseNode<TReq>
     {
-        /// <summary>
-        ///  节点信息
-        /// </summary>
-        public NodeMeta NodeMeta { get; set; }
+        public InstanceType InstanceType { get; }
+
+        protected BaseNode()
+        {
+            InstanceType = InstanceType.Stand;
+        }
 
         protected abstract Task<ResultListMo<TaskMeta>> GetTaskMetas(NodeContext context);
 

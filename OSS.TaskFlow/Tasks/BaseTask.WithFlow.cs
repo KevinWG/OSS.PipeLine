@@ -9,6 +9,9 @@ namespace OSS.TaskFlow.Tasks
     public abstract partial class BaseTask<TReq,TFlowData, TRes> : BaseTask
         where TRes : ResultMo, new()
     {
+
+
+
         #region 具体任务执行入口
 
         /// <summary>
