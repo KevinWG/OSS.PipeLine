@@ -12,8 +12,6 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
 {
-
-
     /// <summary>
     ///  基础工作节点
     /// todo  重新激活处理
@@ -21,7 +19,6 @@ namespace OSS.TaskFlow.Node
     /// </summary>
     public abstract partial class BaseNode<TReq> // : INode<TReq>,IFlowNode
     {
-
         #region 前置进入方法
 
         /// <summary>
@@ -37,20 +34,14 @@ namespace OSS.TaskFlow.Node
         #endregion
 
         #region 节点执行
-
-
-        public async Task<ResultMo> Excute(NodeContext con, TaskReqData<TReq> req)
+        
+        internal async Task<ResultMo> Excute(NodeContext con, TaskReqData<TReq> req)
         {
             // todo 初始化信息run_id
             return await Excuting(con, req);
         }
+        
 
-
-        protected virtual Task<ResultMo> Excute_End(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResults)
-        {
-            var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
-            return Task.FromResult(res ?? new ResultMo());
-        }
 
         #endregion
         
@@ -74,10 +65,15 @@ namespace OSS.TaskFlow.Node
             // 处理结束后加工处理
             return await Excute_End(con, req, taskResults);
         }
-        
+
+        protected virtual Task<ResultMo> Excute_End(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResults)
+        {
+            var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
+            return Task.FromResult(res ?? new ResultMo());
+        }
         #region 节点执行过程中分解方法
 
-    
+
         private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Results(NodeContext con, TaskReqData<TReq> req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {

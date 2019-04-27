@@ -5,7 +5,6 @@
     /// </summary>
     public abstract partial class BaseStandNode<TReq> :BaseNode<TReq>
     {
-
-
+   
     }
 }
