@@ -6,7 +6,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
-    public class AddOrderTask : BaseTask<OrderInfo, ResultIdMo>
+    public class AddOrderTask : BaseStandTask<OrderInfo, ResultIdMo>
     {
      
         protected override async Task<ResultIdMo> Do(TaskContext context, TaskReqData<OrderInfo> data)

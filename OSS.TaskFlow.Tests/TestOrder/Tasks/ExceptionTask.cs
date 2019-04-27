@@ -6,7 +6,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
-    public class ExceptionTask : BaseTask<OrderInfo,ResultMo>
+    public class ExceptionTask : BaseStandTask<OrderInfo,ResultMo>
     {
    
         protected override Task<ResultMo> Do(TaskContext context, TaskReqData<OrderInfo> data)

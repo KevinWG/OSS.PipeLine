@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
 using OSS.TaskFlow.Tasks;
@@ -7,7 +6,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
-    public class OrderNotifyTask : BaseTask<OrderInfo,ResultMo>
+    public class OrderNotifyTask : BaseStandTask<OrderInfo,ResultMo>
     {
      
 

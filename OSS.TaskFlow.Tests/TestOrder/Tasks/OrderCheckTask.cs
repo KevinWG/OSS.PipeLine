@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
+using OSS.TaskFlow.Tasks;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
@@ -10,7 +11,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Tasks
     }
 
 
-    public class OrderCheckTask : TaskFlow.Tasks.BaseTask<OrderCheckReq, ResultMo>
+    public class OrderCheckTask : BaseStandTask<OrderCheckReq, ResultMo>
     {
         protected override Task Revert(TaskContext context, TaskReqData<OrderCheckReq> data)
         {

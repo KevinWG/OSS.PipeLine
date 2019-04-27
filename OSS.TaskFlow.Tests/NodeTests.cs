@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OSS.Common.ComModels;
 using OSS.TaskFlow.Tests.TestOrder;
 using OSS.TaskFlow.Tests.TestOrder.Nodes;
 
@@ -33,9 +34,15 @@ namespace OSS.TaskFlow.Tests
             //}
             //catch (Exception e)
             //{
-      
+
             //}
-       
+        }
+
+
+
+        public class RESTest:ResultMo
+        {
+            public string NN { get; set; }
         }
         
     

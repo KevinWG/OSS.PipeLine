@@ -14,10 +14,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
     {
         public AddOrderNode()
         {
-            NodeMeta=new NodeMeta();
-
-            NodeMeta.node_type = NodeType.Parallel;
-            NodeMeta.node_key = "AddOrderNode";
+    
         }
 
 
