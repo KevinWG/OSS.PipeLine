@@ -8,7 +8,7 @@ namespace OSS.TaskFlow.Node
     /// <summary>
     ///  基础工作节点
     /// </summary>
-    public abstract partial class BaseFlowNode<TReq,TFlowData> :BaseNode<TReq>
+    public abstract partial class BaseFlowNode<TReq, TFlowData, TRes> : BaseNode<TReq, TRes> where TRes : ResultMo, new()
     {
         public  Task<ResultMo> Excute(NodeContext con, TaskReqData<TReq, TFlowData> req)
         {

@@ -17,7 +17,8 @@ namespace OSS.TaskFlow.Node
     /// todo  重新激活处理
     /// todo  协议处理
     /// </summary>
-    public abstract partial class BaseNode<TReq> // : INode<TReq>,IFlowNode
+    public abstract partial class BaseNode<TReq,TRes> 
+        where TRes : ResultMo, new()
     {
         #region 前置进入方法
 
@@ -42,18 +43,23 @@ namespace OSS.TaskFlow.Node
         }
         
 
-
         #endregion
         
 
         #region 节点内部任务执行方法
 
-        private async Task<ResultMo> Excuting(NodeContext con, TaskReqData<TReq> req)
+        private async Task<TRes> Excuting(NodeContext con, TaskReqData<TReq> req)
         {
+            
             // 获取任务元数据列表
             var taskMetaRes = await GetTaskMetas(con);
             if (!taskMetaRes.IsSuccess())
-                return new ResultMo(ResultTypes.UnKnowOperate, "未知的处理操作！");
+                return new TRes()
+                {
+                    sys_ret = (int)TaskResultType.ConfigError,
+                    ret =(int)ResultTypes.UnKnowOperate,msg= "未知的处理操作！"
+                };
+
             var taskMetas = taskMetaRes.data;
 
             // 获取元信息对应任务处理实例
@@ -66,11 +72,34 @@ namespace OSS.TaskFlow.Node
             return await ExcuteEnd(con, req, taskResults);
         }
 
-        protected virtual Task<ResultMo> ExcuteEnd(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResults)
+        protected virtual Task<TRes> ExcuteEnd(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResDirs)
         {
-            var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
-            return Task.FromResult(res ?? new ResultMo());
+            TRes tRes = default(TRes);
+
+            foreach (var tItemPair in taskResDirs)
+            {
+                var tItemRes = tItemPair.Value;
+
+                if (tItemRes.sys_ret!=(int)SysResultTypes.None)
+                {
+                    tRes = tItemRes.ConvertToResultInherit<TRes>();
+                    break;
+                }
+
+                if (tItemRes is TRes res)
+                {
+                    tRes = res;
+                }
+
+            }
+            if (tRes==null)
+            {
+                throw new ArgumentNullException($"can't find a task of return value match node({this.GetType()}) of return value!");
+            }
+            
+            return Task.FromResult(tRes);
         }
+
         #region 节点执行过程中分解方法
 
 
