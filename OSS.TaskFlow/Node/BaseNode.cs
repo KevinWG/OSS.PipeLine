@@ -63,10 +63,10 @@ namespace OSS.TaskFlow.Node
             var taskResults = await Excuting_Results(con, req, taskDirs);
 
             // 处理结束后加工处理
-            return await Excute_End(con, req, taskResults);
+            return await ExcuteEnd(con, req, taskResults);
         }
 
-        protected virtual Task<ResultMo> Excute_End(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResults)
+        protected virtual Task<ResultMo> ExcuteEnd(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResults)
         {
             var res = taskResults.FirstOrDefault(p => p.Value.sys_ret != 0).Value;
             return Task.FromResult(res ?? new ResultMo());
