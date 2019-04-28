@@ -10,7 +10,7 @@ namespace OSS.TaskFlow.Node
     /// <summary>
     ///  节点运行时元数据信息
     /// </summary>
-    public abstract partial class BaseNode<TReq, TRes>
+    public abstract partial class BaseNode
     {
         public InstanceType InstanceType { get; protected set; }
 
