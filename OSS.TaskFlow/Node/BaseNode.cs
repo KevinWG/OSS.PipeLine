@@ -33,32 +33,60 @@ namespace OSS.TaskFlow.Node
 
 
         #endregion
-
+        
         #region 节点执行
-        
-        internal async Task<ResultMo> Excute(NodeContext con, TaskReqData<TReq> req)
+        //  执行
+        internal async Task<TRes> Excute(NodeContext con, TaskReqData<TReq> req)
         {
-            // todo 初始化信息run_id
-            return await Excuting(con, req);
+            //  检查初始化
+            var checkRes = con.CheckNodeContext();
+            if (!checkRes.IsSysResultType(SysResultTypes.None))
+                return checkRes.ConvertToResultInherit<TRes>();
+            // 【1】 扩展前置执行方法
+            await ExcutePreInternal(con, req);
+
+            // 【2】 任务处理执行方法
+            var taskResults = await Excuting(con, req);
+            if (!taskResults.IsSuccess())
+                return taskResults.ConvertToResultInherit<TRes>();
+          
+            var nodeRes = await ExcuteResult(con, req, taskResults.data);   // 任务结果加工处理
+
+            //  【3】 扩展后置执行方法
+            await ExcuteEnd(nodeRes, taskResults.data, con);
+
+            return nodeRes;
         }
-        
+
+
+
+        internal virtual Task ExcutePreInternal(NodeContext con, TaskReqData<TReq> req)
+        {
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task ExcuteEnd(TRes nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs, NodeContext con)
+        {
+            return Task.CompletedTask;
+        }
+
 
         #endregion
-        
 
         #region 节点内部任务执行方法
 
-        private async Task<TRes> Excuting(NodeContext con, TaskReqData<TReq> req)
+        private async Task<ResultMo<Dictionary<TaskMeta, ResultMo>>> Excuting(NodeContext con, TaskReqData<TReq> req)
         {
             
             // 获取任务元数据列表
             var taskMetaRes = await GetTaskMetas(con);
             if (!taskMetaRes.IsSuccess())
-                return new TRes()
-                {
-                    sys_ret = (int)TaskResultType.ConfigError,
-                    ret =(int)ResultTypes.UnKnowOperate,msg= "未知的处理操作！"
-                };
+                return taskMetaRes.ConvertToResult<Dictionary<TaskMeta, ResultMo>>();
+                //return new ResultMo<Dictionary<TaskMeta, ResultMo>>()
+                //{
+                //    sys_ret = (int)TaskResultType.ConfigError,
+                //    ret =(int)ResultTypes.UnKnowOperate,msg= "未知的处理操作！"
+                //};
 
             var taskMetas = taskMetaRes.data;
 
@@ -66,45 +94,15 @@ namespace OSS.TaskFlow.Node
             var taskDirs = GetTasks(taskMetas);
 
             // 执行处理结果
-            var taskResults = await Excuting_Results(con, req, taskDirs);
-
-            // 处理结束后加工处理
-            return await ExcuteEnd(con, req, taskResults);
-        }
-
-        //  todo 修改至其它方法
-        protected virtual Task<TRes> ExcuteEnd(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResDirs)
-        {
-            TRes tRes = default(TRes);
-
-            foreach (var tItemPair in taskResDirs)
-            {
-                var tItemRes = tItemPair.Value;
-
-                if (tItemRes.sys_ret!=(int)SysResultTypes.None)
-                {
-                    tRes = tItemRes.ConvertToResultInherit<TRes>();
-                    break;
-                }
-
-                if (tItemRes is TRes res)
-                {
-                    tRes = res;
-                }
-
-            }
-            if (tRes==null)
-            {
-                throw new ArgumentNullException($"can't find a task of return value match node({this.GetType()}) of return value!");
-            }
-            
-            return Task.FromResult(tRes);
+            var taskResults = await ExcutingWithTasks(con, req, taskDirs);
+            return new ResultMo<Dictionary<TaskMeta, ResultMo>>(taskResults);
+ 
         }
 
         #region 节点执行过程中分解方法
 
 
-        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Results(NodeContext con, TaskReqData<TReq> req,
+        private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData<TReq> req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
@@ -134,7 +132,7 @@ namespace OSS.TaskFlow.Node
             foreach (var td in taskDirs)
             {
                 var context = ConvertToContext(con, td.Key);
-                var retRes = await td.Value.Process(context,req);
+                var retRes = await td.Value.Process(context, req);
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -193,6 +191,37 @@ namespace OSS.TaskFlow.Node
 
 
         #endregion
+
+        //  todo 修改至其它方法
+        protected virtual Task<TRes> ExcuteResult(NodeContext con, TaskReqData<TReq> req, Dictionary<TaskMeta, ResultMo> taskResDirs)
+        {
+            var tRes = default(TRes);
+
+            foreach (var tItemPair in taskResDirs)
+            {
+                var tItemRes = tItemPair.Value;
+
+                if (tItemRes.sys_ret!=(int)SysResultTypes.None)
+                {
+                    tRes = tItemRes.ConvertToResultInherit<TRes>();
+                    break;
+                }
+
+                if (tItemRes is TRes res)
+                {
+                    tRes = res;
+                }
+
+            }
+            if (tRes==null)
+            {
+                throw new ArgumentNullException($"can't find a task of return value match node({this.GetType()}) of return value!");
+            }
+            
+            return Task.FromResult(tRes);
+        }
+
+     
         
         #endregion
         
