@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Node.MetaMos;
 using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
@@ -15,9 +15,9 @@ namespace OSS.TaskFlow.Tasks
 
         #region 存储处理
 
-        public IStandTaskMetaProvider<TReq> MetaProvider => (IStandTaskMetaProvider<TReq>)m_metaProvider;
+        public IStandTaskProvider<TReq> MetaProvider => (IStandTaskProvider<TReq>)m_metaProvider;
         
-        public void RegisteProvider(IStandTaskMetaProvider<TReq> metaPro)
+        public void RegisteProvider(IStandTaskProvider<TReq> metaPro)
         {
             base.RegisteProvider_Internal(metaPro);
         }

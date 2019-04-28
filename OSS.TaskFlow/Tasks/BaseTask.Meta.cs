@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Node.Interfaces;
+using OSS.TaskFlow.Node.MetaMos;
 using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
@@ -12,9 +13,9 @@ namespace OSS.TaskFlow.Tasks
 
         #region 注册存储接口
 
-        internal ITaskMetaProvider m_metaProvider;
+        internal INodeProvider m_metaProvider;
 
-        internal void RegisteProvider_Internal(ITaskMetaProvider metaPpro)
+        internal void RegisteProvider_Internal(INodeProvider metaPpro)
         {
             m_metaProvider = metaPpro;
         }

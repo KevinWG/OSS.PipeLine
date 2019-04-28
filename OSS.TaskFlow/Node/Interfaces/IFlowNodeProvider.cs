@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using OSS.TaskFlow.Tasks.Mos;
 
-namespace OSS.TaskFlow.Tasks.Interfaces
+namespace OSS.TaskFlow.Node.Interfaces
 {
-    public interface IFlowTaskMetaProvider<TReq,TFlowData>:ITaskMetaProvider
+    public interface IFlowNodeProvider<TReq,TFlowData>:INodeProvider
     {
         Task SaveTaskContext(TaskContext context, TaskReqData<TReq, TFlowData> data);
     }

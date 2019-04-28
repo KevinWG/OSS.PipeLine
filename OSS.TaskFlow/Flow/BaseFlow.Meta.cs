@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.TaskFlow.FlowLine.MetaMos;
+using OSS.TaskFlow.Flow.MetaMos;
 using OSS.TaskFlow.Node.MetaMos;
 
-namespace OSS.TaskFlow.FlowLine
+namespace OSS.TaskFlow.Flow
 {
     /// <summary>
     /// 流运行时元数据信息

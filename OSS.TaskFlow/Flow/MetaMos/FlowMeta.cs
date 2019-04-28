@@ -1,4 +1,4 @@
-﻿namespace OSS.TaskFlow.FlowLine.MetaMos
+﻿namespace OSS.TaskFlow.Flow.MetaMos
 {
     public class FlowMeta
     {

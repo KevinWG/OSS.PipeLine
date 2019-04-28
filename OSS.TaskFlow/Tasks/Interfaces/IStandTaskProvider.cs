@@ -3,7 +3,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks.Interfaces
 {
-    public interface IStandTaskMetaProvider<TReq>:ITaskMetaProvider
+    public interface IStandTaskProvider<TReq>: ITaskProvider
     {
         Task SaveTaskContext(TaskContext context, TaskReqData<TReq> data);
     }

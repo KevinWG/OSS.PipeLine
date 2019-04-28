@@ -2,9 +2,9 @@
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
-using OSS.TaskFlow.FlowLine.MetaMos;
+using OSS.TaskFlow.Flow.MetaMos;
 
-namespace OSS.TaskFlow.FlowLine.Mos
+namespace OSS.TaskFlow.Flow.Mos
 {
     //public class FlowData<TFlowData>
     //{

@@ -1,7 +1,7 @@
 ﻿using System;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
-using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Flow.Mos;
 using OSS.TaskFlow.Node.MetaMos;
 
 namespace OSS.TaskFlow.Node.Mos

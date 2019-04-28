@@ -22,6 +22,15 @@ namespace OSS.TaskFlow.Node
     public abstract class BaseNode<TRes> : BaseNode
         where TRes : ResultMo, new()
     {
+        #region 对外扩展方法
+
+        protected virtual Task ExcuteEnd(TRes nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+            NodeContext con)
+        {
+            return Task.CompletedTask;
+        }
+
+        #endregion
 
         #region 重写父类扩展方法
 
@@ -55,17 +64,6 @@ namespace OSS.TaskFlow.Node
         }
 
         #endregion
-
-        #region 对外扩展方法
-
-        protected virtual Task ExcuteEnd(TRes nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
-            NodeContext con)
-        {
-            return Task.CompletedTask;
-        }
-
-        #endregion
-
     }
 
     /// <summary>
@@ -102,18 +100,7 @@ namespace OSS.TaskFlow.Node
             return nodeRes;
         }
 
-        #endregion
-
-        #region 内部（执行前，执行后）扩展方法
-
-        //  处理结果
-        internal abstract ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs);
-
-        internal abstract Task ExcutePre_Internal(NodeContext con, TaskReqData req);
-
-        internal abstract Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
-            NodeContext con);
-        #endregion
+        #endregion 
 
         #region 对外扩展方法
 
@@ -128,6 +115,17 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
+        #region 内部（执行前，执行后）扩展方法
+
+        //  处理结果
+        internal abstract ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs);
+
+        internal abstract Task ExcutePre_Internal(NodeContext con, TaskReqData req);
+
+        internal abstract Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+            NodeContext con);
+        #endregion
+        
         #region 辅助方法 —— 节点内部任务执行
 
         private async Task<ResultMo<Dictionary<TaskMeta, ResultMo>>> Excuting(NodeContext con, TaskReqData req)

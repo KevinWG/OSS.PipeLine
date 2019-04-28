@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Node.MetaMos;
 using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
@@ -17,9 +17,9 @@ namespace OSS.TaskFlow.Tasks
 
         #region 存储处理
 
-        public IFlowTaskMetaProvider<TReq, TFlowData> MetaProvider => (IFlowTaskMetaProvider<TReq, TFlowData>)m_metaProvider;
+        public IFlowTaskProvider<TReq, TFlowData> MetaProvider => (IFlowTaskProvider<TReq, TFlowData>)m_metaProvider;
 
-        public void RegisteProvider(IFlowTaskMetaProvider<TReq, TFlowData> metaPro)
+        public void RegisteProvider(IFlowTaskProvider<TReq, TFlowData> metaPro)
         {
             base.RegisteProvider_Internal(metaPro);
         }

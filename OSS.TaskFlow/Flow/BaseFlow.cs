@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
 
-namespace OSS.TaskFlow.FlowLine
+namespace OSS.TaskFlow.Flow
 {
     
     public abstract partial class BaseFlow<TFlowEntity> 
