@@ -19,6 +19,7 @@ Metric -  Http，消息队列，数据库
 
 
 1. Flow基础实现
+		applyid 实现
 2. Req参数处理  
    请求内容的协议处理
 

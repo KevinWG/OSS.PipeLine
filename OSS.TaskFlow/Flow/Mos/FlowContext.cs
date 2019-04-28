@@ -1,7 +1,5 @@
-﻿using System;
-using OSS.Common.ComModels;
+﻿using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
-using OSS.Common.Extention;
 using OSS.TaskFlow.Flow.MetaMos;
 
 namespace OSS.TaskFlow.Flow.Mos
@@ -22,18 +20,16 @@ namespace OSS.TaskFlow.Flow.Mos
 
     public static class FlowContextExtention
     {
-        public static ResultMo CheckFlowContext(this FlowContext context,Func<string> idGenerate=null)
+        public static ResultMo CheckFlowContext(this FlowContext context)
         {
             if (string.IsNullOrEmpty(context.flow_meta?.flow_key))
             {
                 return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "flow metainfo has error!");
             }
-       
-            if (string.IsNullOrEmpty(context.run_id))
-            {
-                context.run_id = idGenerate?.Invoke()??DateTime.Now.ToUtcTicks().ToString();
-            }
-            return new ResultMo();
+            
+            return string.IsNullOrEmpty(context.run_id) 
+                ? new ResultMo(SysResultTypes.InnerError, ResultTypes.InnerError, "run_id can't be null !") 
+                : new ResultMo();
         }
     }
 }

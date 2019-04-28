@@ -26,6 +26,6 @@
         /// <summary>
         ///  流Id
         /// </summary>
-        public string flow_id { get; set; }
+        public string run_id { get; set; }
     }
 }

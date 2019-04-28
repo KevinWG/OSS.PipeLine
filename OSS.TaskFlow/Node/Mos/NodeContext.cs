@@ -1,6 +1,7 @@
 ﻿using System;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
+using OSS.Common.Extention;
 using OSS.TaskFlow.Flow.Mos;
 using OSS.TaskFlow.Node.MetaMos;
 
@@ -27,9 +28,14 @@ namespace OSS.TaskFlow.Node.Mos
         }
 
 
-        public static ResultMo CheckNodeContext(this NodeContext context, Func<string> idGenerate = null)
+        public static ResultMo CheckNodeContext(this NodeContext context)
         {
-            var res= context.CheckFlowContext(idGenerate);
+            if (string.IsNullOrEmpty(context.run_id))
+            {
+                context.run_id = DateTime.Now.ToUtcMilliSeconds().ToString();
+            }
+
+            var res= context.CheckFlowContext();
             if (!res.IsSysOk())
                 return res;
 
