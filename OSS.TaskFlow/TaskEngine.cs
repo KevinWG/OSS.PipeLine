@@ -33,8 +33,7 @@
         ///   任务key
         /// </summary>
         public string task_key { get; set; }
-
-
+        
         /// <summary>
         ///  流Id
         /// </summary>

@@ -11,6 +11,8 @@ namespace OSS.TaskFlow.FlowLine
         //    //  需创建数据
         //   return Task.FromResult(new ResultMo<FlowInfo>());
         //}
+
+
         public abstract Task<ResultMo<TFlowEntity>> Apply();
 
         public abstract Task<ResultMo> Entry(ExcuteReq req);

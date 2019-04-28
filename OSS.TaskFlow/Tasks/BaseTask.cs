@@ -6,7 +6,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class  BaseTask<TReq>
+    public abstract partial class  BaseTask
     {
         #region 具体任务执行入口
 
@@ -16,7 +16,7 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns>  </returns>
-        internal async Task<ResultMo> ProcessInternal(TaskContext context, TaskReqData<TReq> data)
+        internal async Task<ResultMo> ProcessInternal(TaskContext context, TaskReqData data)
         {
             var checkRes = context.CheckTaskContext();
             if (!checkRes.IsSysOk())
@@ -42,17 +42,14 @@ namespace OSS.TaskFlow.Tasks
             return res;
         }
 
-
-
-
-
+        
         /// <summary>
         ///   具体递归执行
         /// </summary>
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        private async Task<ResultMo> Recurs(TaskContext context, TaskReqData<TReq> data)
+        private async Task<ResultMo> Recurs(TaskContext context, TaskReqData data)
         {
             ResultMo res;
 
@@ -71,6 +68,7 @@ namespace OSS.TaskFlow.Tasks
                 directExcuteTimes++;
                 context.exced_times++;
             }
+
             // 判断是否执行直接重试 
             while (res.IsTaskFailed() && directExcuteTimes < RetryConfig?.continue_times);
 
@@ -86,8 +84,8 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <param name="data"></param>
-        /// <returns>  特殊：sys_ret= SysResultType.TaskFailed 任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        internal abstract Task<ResultMo> Do_Internal(TaskContext context, TaskReqData<TReq> data);
+        /// <returns> sys_ret = (int)SysResultTypes.RunFailed 系统会字段判断是否满足重试条件执行重试    </returns>
+        internal abstract Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data);
 
         /// <summary>
         ///  执行失败回退操作
@@ -95,23 +93,26 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <param name="data"></param>
-        internal abstract Task Revert_Internal(TaskContext context, TaskReqData<TReq> data);
+        internal abstract Task Revert_Internal(TaskContext context, TaskReqData data);
 
         /// <summary>
         ///  最终执行失败会执行
         /// </summary>
         /// <param name="context"></param>
         /// <param name="data"></param>
-        internal abstract Task Failed_Internal(TaskContext context, TaskReqData<TReq> data);
+        internal abstract Task Failed_Internal(TaskContext context, TaskReqData data);
 
         /// <summary>
         /// 执行结束方法
         /// </summary>
-        /// <param name="taskRes"></param>
-        /// <param name="data"></param>
-        /// <param name="context"></param>
+        /// <param name="taskRes">任务结果 :
+        ///  sys_ret = (int)SysResultTypes.RunFailed表明最终执行失败，
+        ///  sys_ret = (int)SysResultTypes.RunPause表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
+        /// </param>
+        /// <param name="data">请求的数据信息</param>
+        /// <param name="context">请求的上线文</param>
         /// <returns></returns>
-        internal virtual Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData<TReq> data, TaskContext context)
+        internal virtual Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData data, TaskContext context)
         {
             return Task.CompletedTask;
         }

@@ -21,22 +21,14 @@ namespace OSS.TaskFlow.Node
     public abstract partial class BaseNode<TReq,TRes> 
         where TRes : ResultMo, new()
     {
-        #region 前置进入方法
-
-        /// <summary>
-        ///  前置进入方法
-        /// </summary>
-        /// <returns></returns>
-        protected internal virtual Task MoveIn(NodeContext con)
-        {
-            return Task.CompletedTask;
-        }
-
-
-        #endregion
-        
         #region 节点执行
-        //  执行
+      
+        /// <summary>
+        ///   具体执行方法
+        /// </summary>
+        /// <param name="con"></param>
+        /// <param name="req"></param>
+        /// <returns></returns>
         internal async Task<TRes> Excute(NodeContext con, TaskReqData<TReq> req)
         {
             //  检查初始化
@@ -58,8 +50,10 @@ namespace OSS.TaskFlow.Node
 
             return nodeRes;
         }
+        
+        #endregion
 
-
+        #region 内部（执行前，执行后）扩展方法
 
         internal virtual Task ExcutePreInternal(NodeContext con, TaskReqData<TReq> req)
         {
@@ -71,23 +65,29 @@ namespace OSS.TaskFlow.Node
             return Task.CompletedTask;
         }
 
+        #endregion
+
+        #region 外部扩展方法
+
+        /// <summary>
+        ///  前置进入方法
+        /// </summary>
+        /// <returns></returns>
+        protected internal virtual Task MoveIn(NodeContext con)
+        {
+            return Task.CompletedTask;
+        }
 
         #endregion
 
-        #region 节点内部任务执行方法
+        #region 辅助方法 —— 节点内部任务执行
 
         private async Task<ResultMo<Dictionary<TaskMeta, ResultMo>>> Excuting(NodeContext con, TaskReqData<TReq> req)
         {
-            
             // 获取任务元数据列表
             var taskMetaRes = await GetTaskMetas(con);
             if (!taskMetaRes.IsSuccess())
                 return taskMetaRes.ConvertToResult<Dictionary<TaskMeta, ResultMo>>();
-                //return new ResultMo<Dictionary<TaskMeta, ResultMo>>()
-                //{
-                //    sys_ret = (int)TaskResultType.ConfigError,
-                //    ret =(int)ResultTypes.UnKnowOperate,msg= "未知的处理操作！"
-                //};
 
             var taskMetas = taskMetaRes.data;
 
@@ -97,14 +97,13 @@ namespace OSS.TaskFlow.Node
             // 执行处理结果
             var taskResults = await ExcutingWithTasks(con, req, taskDirs);
             return new ResultMo<Dictionary<TaskMeta, ResultMo>>(taskResults);
- 
         }
 
-        #region 节点执行过程中分解方法
+        #region 辅助方法 —— 节点内部任务执行 —— 分解
 
 
         private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData<TReq> req,
-            IDictionary<TaskMeta, BaseTask<TReq>> taskDirs)
+            IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
@@ -116,7 +115,6 @@ namespace OSS.TaskFlow.Node
             {
                 taskResults = await Excuting_Sequence(con, req, taskDirs);
             }
-
             return taskResults;
         }
 
@@ -128,7 +126,7 @@ namespace OSS.TaskFlow.Node
         /// <param name="taskDirs"></param>
         /// <returns></returns>
         private static async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext con, TaskReqData<TReq> req,
-            IDictionary<TaskMeta, BaseTask<TReq>> taskDirs)
+            IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
@@ -148,7 +146,7 @@ namespace OSS.TaskFlow.Node
         /// <param name="taskDirs"></param>
         /// <returns></returns>
         private static Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext con, TaskReqData<TReq> req,
-            IDictionary<TaskMeta, BaseTask<TReq>> taskDirs)
+            IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
@@ -172,8 +170,7 @@ namespace OSS.TaskFlow.Node
             });
             return taskResults;
         }
-
-
+        
         private static TaskContext ConvertToContext(NodeContext con, TaskMeta meta)
         {
             var context = con.ConvertToTaskContext();
@@ -184,7 +181,6 @@ namespace OSS.TaskFlow.Node
 
             return context;
         }
-
 
         #endregion
 
@@ -216,15 +212,13 @@ namespace OSS.TaskFlow.Node
             
             return Task.FromResult(tRes);
         }
-
-     
         
         #endregion
         
         #region 节点下Task处理
-        private IDictionary<TaskMeta, BaseTask<TReq>> GetTasks(IList<TaskMeta> metas)
+        private IDictionary<TaskMeta, BaseTask> GetTasks(IList<TaskMeta> metas)
         {
-            var taskDirs = new Dictionary<TaskMeta, BaseTask<TReq>>(metas.Count);
+            var taskDirs = new Dictionary<TaskMeta, BaseTask>(metas.Count);
             foreach (var meta in metas)
             {
                 var task = GetTaskByMeta(meta);

@@ -8,7 +8,7 @@
 
         public TaskReqData(TReq req, TFlowData flowData):base(req)
         {
-            flow_data = flow_data;
+            flow_data = flowData;
         }
 
         /// <summary>

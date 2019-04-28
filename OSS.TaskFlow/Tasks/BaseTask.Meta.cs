@@ -4,11 +4,10 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseTask<TReq>
+    public abstract partial class BaseTask
     {
         public InstanceType InstanceType { get; protected set; }
-
-
+        
         #region 重试机制设置
 
         /// <summary>
@@ -27,12 +26,14 @@ namespace OSS.TaskFlow.Tasks
 
             RetryConfig.continue_times = continueTimes;
         }
+
         #endregion
 
         /// <summary>
         ///  保存
         /// </summary>
         /// <param name="context"></param>
-        internal abstract Task SaveTaskContext(TaskContext context, TaskReqData<TReq> data);
+        /// <param name="data"></param>
+        internal abstract Task SaveTaskContext(TaskContext context, TaskReqData data);
     }
 }
