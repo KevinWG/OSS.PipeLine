@@ -50,12 +50,12 @@ namespace OSS.TaskFlow.Tasks.Mos
         public static ResultMo CheckTaskContext(this TaskContext context, Func<string> idGenerate = null)
         {
             var res = context.CheckNodeContext(idGenerate);
-            if (!res.IsSysResultType(SysResultTypes.None))
+            if (!res.IsSysOk())
                 return res;
 
             if (string.IsNullOrEmpty(context.task_meta?.task_key))
             {
-                res.sys_ret = (int)TaskResultType.ConfigError;
+                res.sys_ret = (int)SysResultTypes.ConfigError;
                 res.ret = (int)ResultTypes.InnerError;
                 res.msg = "task metainfo has error!";
             }

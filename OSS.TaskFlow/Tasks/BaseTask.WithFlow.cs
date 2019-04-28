@@ -5,7 +5,6 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-   
     public abstract partial class BaseFlowTask<TReq,TFlowData, TRes> : BaseTask
         where TRes : ResultMo, new()
     {
@@ -46,8 +45,7 @@ namespace OSS.TaskFlow.Tasks
         }
 
         #endregion
-
-
+        
         #region 实现，重试，失败 执行  扩展方法
 
         /// <summary>
@@ -77,8 +75,7 @@ namespace OSS.TaskFlow.Tasks
         }
 
         #endregion
-
-
+        
         /// <summary>
         ///  运行校验处理
         ///   如果不通过需要转换的为当前泛型类型，否则类型转化时结果为空
@@ -87,8 +84,7 @@ namespace OSS.TaskFlow.Tasks
         internal override ResultMo InitailTask(TaskContext context)
         {
             var res = base.InitailTask(context);
-            return res.sys_ret != (int)SysResultTypes.None ? res.ConvertToResult<TRes>() : res;
+            return res.IsSysOk() ?res: res.ConvertToResult<TRes>();
         }
-
     }
 }

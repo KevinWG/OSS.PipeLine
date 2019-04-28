@@ -35,7 +35,7 @@ namespace OSS.TaskFlow.FlowLine.Mos
         {
             if (string.IsNullOrEmpty(context.flow_meta?.flow_key))
             {
-                return new ResultMo((int)TaskResultType.ConfigError, (int)ResultTypes.InnerError, "flow metainfo has error!");
+                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "flow metainfo has error!");
             }
        
             if (string.IsNullOrEmpty(context.run_id))

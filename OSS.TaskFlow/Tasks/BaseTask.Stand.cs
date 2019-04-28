@@ -19,29 +19,29 @@ namespace OSS.TaskFlow.Tasks
         {
             return (await base.Process(context, data)) as TRes;
         }
-        
+
         #endregion
 
         #region 实现，重试，失败 执行  重写父类方法
 
         internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data)
         {
-            return await Do(context,(TaskReqData<TReq>)data);
+            return await Do(context, (TaskReqData<TReq>) data);
         }
 
         internal override Task Failed_Internal(TaskContext context, TaskReqData data)
         {
-            return Failed(context, (TaskReqData<TReq>)data);
+            return Failed(context, (TaskReqData<TReq>) data);
         }
 
         internal override Task Revert_Internal(TaskContext context, TaskReqData data)
         {
-            return Revert(context, (TaskReqData<TReq>)data);
+            return Revert(context, (TaskReqData<TReq>) data);
         }
 
         internal override Task SaveTaskContext(TaskContext context, TaskReqData data)
         {
-            return _contextKepper.Invoke(context, (TaskReqData<TReq>)data);
+            return _contextKepper.Invoke(context, (TaskReqData<TReq>) data);
         }
 
         #endregion
@@ -86,7 +86,7 @@ namespace OSS.TaskFlow.Tasks
         internal override ResultMo InitailTask(TaskContext context)
         {
             var res = base.InitailTask(context);
-            return res.sys_ret != (int)SysResultTypes.None ? res.ConvertToResult<TRes>() : res;
+            return res.IsSysOk() ? res : res.ConvertToResult<TRes>();
         }
 
     }

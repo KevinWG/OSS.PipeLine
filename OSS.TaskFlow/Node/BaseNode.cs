@@ -40,7 +40,7 @@ namespace OSS.TaskFlow.Node
         {
             //  检查初始化
             var checkRes = con.CheckNodeContext();
-            if (!checkRes.IsSysResultType(SysResultTypes.None))
+            if (!checkRes.IsSysOk())
                 return checkRes.ConvertToResultInherit<TRes>();
             // 【1】 扩展前置执行方法
             await ExcutePreInternal(con, req);
@@ -159,13 +159,7 @@ namespace OSS.TaskFlow.Node
             {
                 tAll.Wait();
             }
-            catch
-            {
-            }
-
-            //if (t.Status == TaskStatus.RanToCompletion)
-            //else if (t.Status == TaskStatus.Faulted)
-            //  todo 待测试多个时抛错，结果处理
+            catch{}
             var taskResults = taskDirRes.ToDictionary(p => p.Key, p =>
             {
                 var t = p.Value;
@@ -201,7 +195,7 @@ namespace OSS.TaskFlow.Node
             {
                 var tItemRes = tItemPair.Value;
 
-                if (tItemRes.sys_ret!=(int)SysResultTypes.None)
+                if (!tItemRes.IsSysOk())
                 {
                     tRes = tItemRes.ConvertToResultInherit<TRes>();
                     break;

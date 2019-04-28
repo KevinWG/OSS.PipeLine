@@ -19,7 +19,7 @@ namespace OSS.TaskFlow.Tasks
         internal async Task<ResultMo> Process(TaskContext context, TaskReqData data)
         {
             var checkRes = InitailTask(context);
-            if (!checkRes.IsSysResultType(SysResultTypes.None))
+            if (!checkRes.IsSysOk())
                 return checkRes;
 
             var res = await Recurs(context, data);
@@ -29,7 +29,7 @@ namespace OSS.TaskFlow.Tasks
             {
                 context.interval_times++;
                 await SaveTaskContext(context, data);
-                res.sys_ret = (int) TaskResultType.WatingActivation;
+                res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
             }
 
             if (res.IsTaskFailed())
@@ -104,11 +104,11 @@ namespace OSS.TaskFlow.Tasks
         {
             if (context.task_meta == null)
             {
-                return new ResultMo((int)TaskResultType.ConfigError, (int)ResultTypes.InnerError, $"can't find metainfo in task with type '{this.GetType().Name}'");
+                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, $"can't find metainfo in task with type '{this.GetType().Name}'");
             }
             if (string.IsNullOrEmpty(context.task_meta.task_key))
             {
-                return new ResultMo((int)TaskResultType.ConfigError, (int)ResultTypes.InnerError, $"task key can't be null!");
+                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, $"task key can't be null!");
             }
             return new ResultMo();
         }

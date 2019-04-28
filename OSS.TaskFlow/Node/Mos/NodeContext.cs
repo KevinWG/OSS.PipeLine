@@ -31,12 +31,12 @@ namespace OSS.TaskFlow.Node.Mos
         public static ResultMo CheckNodeContext(this NodeContext context, Func<string> idGenerate = null)
         {
             var res= context.CheckFlowContext(idGenerate);
-            if (!res.IsSysResultType(SysResultTypes.None))
+            if (!res.IsSysOk())
                 return res;
 
             if (string.IsNullOrEmpty(context.node_meta?.node_key))
             {
-                res.sys_ret = (int) TaskResultType.ConfigError;
+                res.sys_ret = (int)SysResultTypes.ConfigError;
                 res.ret = (int)ResultTypes.InnerError;
                 res.msg = "node metainfo has error!";
             }

@@ -3,22 +3,6 @@ using OSS.Common.ComModels.Enums;
 
 namespace OSS.TaskFlow.Tasks.Mos
 {
-
-    public enum TaskResultType
-    {
-        /// <summary>
-        ///  配置信息出现错误
-        /// </summary>
-        ConfigError = 10,
-
-        /// <summary>
-        ///  等待激活
-        /// </summary>
-        WatingActivation = 400,
-
-
-    }
-
     public static class EventFlowResultExtention
     {
         /// <summary>
@@ -28,7 +12,7 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// <returns></returns>
         public static bool IsTaskFailed(this ResultMo res)
         {
-            return res.sys_ret == (int) SysResultTypes.TaskFailed;
+            return res.sys_ret == (int) SysResultTypes.RunFailed;
         }
 
         /// <summary>
@@ -36,9 +20,9 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsTaskWaiting(this ResultMo res)
+        public static bool IsTaskPause(this ResultMo res)
         {
-            return res.sys_ret == (int)TaskResultType.WatingActivation;
+            return res.sys_ret == (int)SysResultTypes.RunPause;
         }
 
 
