@@ -25,7 +25,7 @@ namespace OSS.TaskFlow.Node
 
         #region 重写父类扩展方法
 
-        internal override ResultMo ExcuteResult(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
+        internal override ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
         {
             var tRes = default(TRes);
             foreach (var tItemPair in taskResDirs)
@@ -48,7 +48,7 @@ namespace OSS.TaskFlow.Node
             return tRes;
         }
 
-        internal override Task ExcuteEnd(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+        internal override Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
             NodeContext con)
         {
             return ExcuteEnd((TRes)nodeRes, tastItemDirs, con);
@@ -88,18 +88,17 @@ namespace OSS.TaskFlow.Node
             if (!checkRes.IsSysOk())
                 return checkRes.ConvertToResultInherit<ResultMo>();
             // 【1】 扩展前置执行方法
-            await ExcutePreInternal(con, req);
+            await ExcutePre_Internal(con, req);
 
             // 【2】 任务处理执行方法
             var taskResults = await Excuting(con, req);
             if (!taskResults.IsSuccess())
                 return taskResults.ConvertToResultInherit<ResultMo>();
 
-            var nodeRes = ExcuteResult(con, taskResults.data); // 任务结果加工处理
+            var nodeRes = ExcuteResult_Internal(con, taskResults.data); // 任务结果加工处理
 
             //  【3】 扩展后置执行方法
-            await ExcuteEnd(nodeRes, taskResults.data, con);
-
+            await ExcuteEnd_Internal(nodeRes, taskResults.data, con);
             return nodeRes;
         }
 
@@ -108,11 +107,11 @@ namespace OSS.TaskFlow.Node
         #region 内部（执行前，执行后）扩展方法
 
         //  处理结果
-        internal abstract ResultMo ExcuteResult(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs);
+        internal abstract ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs);
 
-        internal abstract Task ExcutePreInternal(NodeContext con, TaskReqData req);
+        internal abstract Task ExcutePre_Internal(NodeContext con, TaskReqData req);
 
-        internal abstract Task ExcuteEnd(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+        internal abstract Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
             NodeContext con);
         #endregion
 

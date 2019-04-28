@@ -25,10 +25,10 @@ namespace OSS.TaskFlow.Tasks
             var res = await Recurs(context, data);
 
             // 判断是否间隔执行,生成重试信息
-            if (res.IsTaskFailed() && context.interval_times < RetryConfig?.interval_times)
+            if (res.IsTaskFailed() && context.interval_times < context.task_meta.interval_times)
             {
                 context.interval_times++;
-                await SaveTaskContext(context, data);
+                await SaveTaskContext_Internal(context, data);
                 res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
             }
 
@@ -70,7 +70,7 @@ namespace OSS.TaskFlow.Tasks
             }
 
             // 判断是否执行直接重试 
-            while (res.IsTaskFailed() && directExcuteTimes < RetryConfig?.continue_times);
+            while (res.IsTaskFailed() && directExcuteTimes < context.task_meta.continue_times);
 
             return res;
         }

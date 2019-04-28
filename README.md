@@ -4,15 +4,11 @@
 可以配置 重试/并发 等执行策略。事件节点参数具有多数据源组装的能力。
 
 
-
-
 workernode
 	  work   只能顺序执行
 
 Processer
-
 	Task  可以并行执行
-
 
 
 Strategy 
@@ -24,11 +20,12 @@ Metric -  Http，消息队列，数据库
 
 
 
+1. Flow基础实现
+2. Req参数处理
 
 1.  context  校验
-2. 执行前后方法
 
-
+3.  全局MetaProvider
 
 
 解决问题：

@@ -25,7 +25,7 @@ namespace OSS.TaskFlow.Node
 
         #region 重写父类扩展
 
-        internal override Task ExcutePreInternal(NodeContext con, TaskReqData req)
+        internal override Task ExcutePre_Internal(NodeContext con, TaskReqData req)
         {
             return ExcutePre(con, (TaskReqData<TReq>)req);
         }

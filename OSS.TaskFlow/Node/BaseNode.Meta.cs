@@ -22,6 +22,8 @@ namespace OSS.TaskFlow.Node
         protected abstract Task<ResultListMo<TaskMeta>> GetTaskMetas(NodeContext context);
 
         protected abstract BaseTask GetTaskByMeta(TaskMeta meta);
+
+
     }
 
 }

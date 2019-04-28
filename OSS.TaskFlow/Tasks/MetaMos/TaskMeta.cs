@@ -16,8 +16,21 @@
         /// 
         /// </summary>
         public TaskMetaStatus status { get; set; }
-
+        
+        /// <summary>
+        ///  运行类型
+        /// </summary>
         public RunType run_type { get; set; }
+        
+        /// <summary>
+        ///  直接重试次数，默认系统执行一次
+        /// </summary>
+        public int continue_times { get; set; }
+
+        /// <summary>
+        ///  间隔重试次数, 默认不会执行
+        /// </summary>
+        public int interval_times { get; set; }
     }
 
 

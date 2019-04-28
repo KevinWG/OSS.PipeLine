@@ -39,10 +39,6 @@ namespace OSS.TaskFlow.Tasks
             return Revert(context, (TaskReqData<TReq>)data);
         }
 
-        internal override Task SaveTaskContext(TaskContext context, TaskReqData data)
-        {
-            return _contextKepper.Invoke(context, (TaskReqData<TReq>)data);
-        }
 
         internal override Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData data, TaskContext context)
         {

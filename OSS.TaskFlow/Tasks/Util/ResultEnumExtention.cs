@@ -3,7 +3,7 @@ using OSS.Common.ComModels.Enums;
 
 namespace OSS.TaskFlow.Tasks.Mos
 {
-    public static class EventFlowResultExtention
+    public static class FlowResultExtention
     {
         /// <summary>
         ///  是否任务执行失败

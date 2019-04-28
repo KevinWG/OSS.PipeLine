@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.TaskFlow.FlowLine.Mos;
+using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
@@ -7,33 +8,26 @@ namespace OSS.TaskFlow.Tasks
     public abstract partial class BaseTask
     {
         public InstanceType InstanceType { get; protected set; }
-        
-        #region 重试机制设置
 
-        /// <summary>
-        ///   任务重试配置
-        /// </summary>
-        public TaskRetryConfig RetryConfig { get; internal set; }
 
-        /// <summary>
-        ///  设置持续重试信息
-        /// </summary>
-        /// <param name="continueTimes"></param>
-        public void SetContinueRetry(int continueTimes)
+        #region 注册存储接口
+
+        internal ITaskMetaProvider m_metaProvider;
+
+        internal void RegisteProvider_Internal(ITaskMetaProvider metaPpro)
         {
-            if (RetryConfig == null)
-                RetryConfig = new TaskRetryConfig();
-
-            RetryConfig.continue_times = continueTimes;
+            m_metaProvider = metaPpro;
         }
+        
+        #endregion
+        
 
+        #region 内部扩展方法
+
+        internal abstract Task SaveTaskContext_Internal(TaskContext context, TaskReqData data);
+        
         #endregion
 
-        /// <summary>
-        ///  保存
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="data"></param>
-        internal abstract Task SaveTaskContext(TaskContext context, TaskReqData data);
+
     }
 }
