@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using OSS.Common.ComModels;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks;
 using OSS.TaskFlow.Tasks.MetaMos;
@@ -18,12 +18,8 @@ namespace OSS.TaskFlow.Node
         {
             InstanceType = InstanceType.Stand;
         }
-
-        protected abstract Task<ResultListMo<TaskMeta>> GetTaskMetas(NodeContext context);
-
-        protected abstract BaseTask GetTaskByMeta(TaskMeta meta);
-
-
+        
+        protected abstract Task<Dictionary<TaskMeta,BaseTask>> GetTaskMetas(NodeContext context);
     }
 
 }

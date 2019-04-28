@@ -131,14 +131,9 @@ namespace OSS.TaskFlow.Node
         private async Task<ResultMo<Dictionary<TaskMeta, ResultMo>>> Excuting(NodeContext con, TaskReqData req)
         {
             // 获取任务元数据列表
-            var taskMetaRes = await GetTaskMetas(con);
-            if (!taskMetaRes.IsSuccess())
-                return taskMetaRes.ConvertToResult<Dictionary<TaskMeta, ResultMo>>();
-
-            var taskMetas = taskMetaRes.data;
-
-            // 获取元信息对应任务处理实例
-            var taskDirs = GetTasks(taskMetas);
+            var taskDirs = await GetTaskMetas(con);
+            if (taskDirs==null||taskDirs.Count==0)
+                return new ResultMo<Dictionary<TaskMeta, ResultMo>>(SysResultTypes.ConfigError,ResultTypes.ObjectNull,$"{this.GetType()} have no tasks can be processed!");
 
             // 执行处理结果
             var taskResults = await ExcutingWithTasks(con, req, taskDirs);
@@ -234,26 +229,7 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
-        #region 辅助方法 —— 节点内部任务执行 - 获取对应的task
-
-        private IDictionary<TaskMeta, BaseTask> GetTasks(IList<TaskMeta> metas)
-        {
-            var taskDirs = new Dictionary<TaskMeta, BaseTask>(metas.Count);
-            foreach (var meta in metas)
-            {
-                var task = GetTaskByMeta(meta);
-                if (task == null)
-                {
-                    throw new ArgumentNullException($"can't find task named {meta.task_name}({meta.task_key})");
-                }
-
-                taskDirs.Add(meta, task);
-            }
-
-            return taskDirs;
-        }
-
-        #endregion
+   
 
         #endregion
     }

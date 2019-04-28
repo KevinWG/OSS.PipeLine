@@ -1,4 +1,4 @@
-﻿using OSS.TaskFlow.Node.MetaMos;
+﻿using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
 {
