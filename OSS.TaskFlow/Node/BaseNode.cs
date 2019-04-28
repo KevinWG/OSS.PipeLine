@@ -16,6 +16,7 @@ namespace OSS.TaskFlow.Node
     ///  基础工作节点
     /// todo  重新激活处理
     /// todo  协议处理
+    /// todo  全部节点回退
     /// </summary>
     public abstract partial class BaseNode<TReq,TRes> 
         where TRes : ResultMo, new()

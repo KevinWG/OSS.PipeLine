@@ -7,7 +7,7 @@ namespace OSS.TaskFlow.Node
     /// </summary>
     public abstract partial class BaseStandNode<TReq, TRes>
     {
-        public BaseStandNode()
+        protected BaseStandNode()
         {
             InstanceType = InstanceType.Stand;
         }

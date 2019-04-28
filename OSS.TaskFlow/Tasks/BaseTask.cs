@@ -18,7 +18,7 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         internal async Task<ResultMo> ProcessInternal(TaskContext context, TaskReqData<TReq> data)
         {
-            var checkRes = InitailTask(context);
+            var checkRes = context.CheckTaskContext();
             if (!checkRes.IsSysOk())
                 return checkRes;
 
@@ -45,6 +45,7 @@ namespace OSS.TaskFlow.Tasks
         ///   具体递归执行
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
         private async Task<ResultMo> Recurs(TaskContext context, TaskReqData<TReq> data)
         {
@@ -99,21 +100,5 @@ namespace OSS.TaskFlow.Tasks
 
         #endregion
 
-        /// <summary>
-        ///  运行校验
-        /// </summary>
-        /// <returns></returns>
-        internal virtual ResultMo InitailTask(TaskContext context)
-        {
-            if (context.task_meta == null)
-            {
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, $"can't find metainfo in task with type '{this.GetType().Name}'");
-            }
-            if (string.IsNullOrEmpty(context.task_meta.task_key))
-            {
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, $"task key can't be null!");
-            }
-            return new ResultMo();
-        }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.Common.ComModels.Enums;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
@@ -75,16 +74,5 @@ namespace OSS.TaskFlow.Tasks
         }
 
         #endregion
-        
-        /// <summary>
-        ///  运行校验处理
-        ///   如果不通过需要转换的为当前泛型类型，否则类型转化时结果为空
-        /// </summary>
-        /// <returns></returns>
-        internal override ResultMo InitailTask(TaskContext context)
-        {
-            var res = base.InitailTask(context);
-            return res.IsSysOk() ?res: res.ConvertToResult<TRes>();
-        }
     }
 }
