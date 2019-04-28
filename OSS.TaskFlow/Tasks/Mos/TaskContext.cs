@@ -16,7 +16,6 @@ namespace OSS.TaskFlow.Tasks.Mos
         ///  task元信息
         /// </summary>
         public TaskMeta  task_meta { get; set; }
-
         
         /// <summary>
         ///  执行总次数
