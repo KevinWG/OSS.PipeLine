@@ -21,7 +21,7 @@ namespace OSS.TaskFlow.Tasks
             var checkRes = context.CheckTaskContext();
             if (!checkRes.IsSysOk())
                 return checkRes;
-
+            
             var res = await Recurs(context, data);
 
             // 判断是否间隔执行,生成重试信息
@@ -38,8 +38,13 @@ namespace OSS.TaskFlow.Tasks
                 await Failed_Internal(context, data);
             }
 
+            await ProcessEnd_Internal(res, data, context);
             return res;
         }
+
+
+
+
 
         /// <summary>
         ///   具体递归执行
@@ -71,9 +76,10 @@ namespace OSS.TaskFlow.Tasks
 
             return res;
         }
+
         #endregion
 
-        #region 实现，重试，失败 执行  基础方法
+        #region 实现，重试，失败, 结束基础内部扩展方法
 
         /// <summary>
         ///     任务的具体执行
@@ -98,6 +104,18 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="data"></param>
         internal abstract Task Failed_Internal(TaskContext context, TaskReqData<TReq> data);
 
+        /// <summary>
+        /// 执行结束方法
+        /// </summary>
+        /// <param name="taskRes"></param>
+        /// <param name="data"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal virtual Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData<TReq> data, TaskContext context)
+        {
+            return Task.CompletedTask;
+        }
+        
         #endregion
 
     }

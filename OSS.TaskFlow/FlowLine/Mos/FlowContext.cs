@@ -3,17 +3,16 @@ using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
 using OSS.TaskFlow.FlowLine.MetaMos;
-using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.FlowLine.Mos
 {
-    public class FlowData<TFlowData>
-    {
-        /// <summary>
-        ///  核心流运行数据
-        /// </summary>
-        public TFlowData flow_data { get; set; }
-    }
+    //public class FlowData<TFlowData>
+    //{
+    //    /// <summary>
+    //    ///  核心流运行数据
+    //    /// </summary>
+    //    public TFlowData flow_data { get; set; }
+    //}
 
     public class FlowContext
     {

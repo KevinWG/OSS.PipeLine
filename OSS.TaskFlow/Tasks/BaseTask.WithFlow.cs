@@ -43,8 +43,13 @@ namespace OSS.TaskFlow.Tasks
             return _contextKepper.Invoke(context, (TaskReqData<TReq, TFlowData>)data);
         }
 
+
+        internal override Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData<TReq> data, TaskContext context)
+        {
+            return ProcessEnd((TRes)taskRes, (TaskReqData<TReq, TFlowData>)data, context);
+        }
         #endregion
-        
+
         #region 实现，重试，失败 执行  扩展方法
 
         /// <summary>
@@ -65,13 +70,27 @@ namespace OSS.TaskFlow.Tasks
         }
 
         /// <summary>
-        ///  最终执行失败会执行
+        ///  最终失败执行方法
         /// </summary>
         /// <param name="context"></param>
         protected virtual Task Failed(TaskContext context, TaskReqData<TReq, TFlowData> data)
         {
             return Task.CompletedTask;
         }
+
+
+        /// <summary>
+        /// 执行结束方法
+        /// </summary>
+        /// <param name="taskRes"></param>
+        /// <param name="data"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected virtual Task ProcessEnd(TRes taskRes, TaskReqData<TReq,TFlowData> data, TaskContext context)
+        {
+            return Task.CompletedTask;
+        }
+
 
         #endregion
     }

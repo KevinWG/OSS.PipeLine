@@ -124,6 +124,7 @@ namespace OSS.TaskFlow.Node
         ///  顺序执行
         /// </summary>
         /// <param name="con"></param>
+        /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
         private static async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext con, TaskReqData<TReq> req,
