@@ -1,4 +1,5 @@
-﻿using OSS.TaskFlow.Tasks.Mos;
+﻿using OSS.TaskFlow.Node.Interfaces;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
 {
@@ -11,6 +12,21 @@ namespace OSS.TaskFlow.Node
         {
             InstanceType = InstanceType.WithFlow;
         }
+        
+
+        #region 存储处理
+
+        public IFlowNodeProvider<TReq, TFlowData> MetaProvider => (IFlowNodeProvider<TReq, TFlowData>)m_metaProvider;
+
+        public void RegisteProvider(IFlowNodeProvider<TReq, TFlowData> metaPro)
+        {
+            base.RegisteProvider_Internal(metaPro);
+        }
+
+
+        #endregion
+
+
 
     }
 

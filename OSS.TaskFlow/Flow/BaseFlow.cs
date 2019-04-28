@@ -4,7 +4,7 @@ using OSS.Common.ComModels;
 namespace OSS.TaskFlow.Flow
 {
     
-    public abstract partial class BaseFlow<TFlowEntity> 
+    public abstract partial class BaseFlow<TFlowData> 
     {
         //public override Task<ResultMo<FlowInfo>> Apply()
         //{
@@ -12,7 +12,7 @@ namespace OSS.TaskFlow.Flow
         //   return Task.FromResult(new ResultMo<FlowInfo>());
         //}
         
-        public abstract Task<ResultMo<TFlowEntity>> Apply();
+        public abstract Task<ResultMo<TFlowData>> Apply();
 
         public abstract Task<ResultMo> Enter(ExcuteReq req);
 

@@ -1,4 +1,5 @@
-﻿using OSS.TaskFlow.Tasks.Mos;
+﻿using OSS.TaskFlow.Node.Interfaces;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
 {
@@ -11,6 +12,24 @@ namespace OSS.TaskFlow.Node
         {
             InstanceType = InstanceType.Stand;
         }
+
+        #region 存储处理
+
+        public IStandNodeProvider<TReq> MetaProvider => (IStandNodeProvider<TReq>)m_metaProvider;
+
+        public void RegisteProvider(IStandNodeProvider<TReq> metaPro)
+        {
+            base.RegisteProvider_Internal(metaPro);
+        }
+
+
+        #endregion
+
+
+        #region 重写基类方法
+
+    
+        #endregion
     }
 
 }

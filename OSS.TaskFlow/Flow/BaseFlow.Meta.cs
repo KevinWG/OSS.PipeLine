@@ -1,14 +1,12 @@
-﻿using System.Threading.Tasks;
-using OSS.Common.ComModels;
+﻿using OSS.TaskFlow.Flow.Interfaces;
 using OSS.TaskFlow.Flow.MetaMos;
-using OSS.TaskFlow.Node.MetaMos;
 
 namespace OSS.TaskFlow.Flow
 {
     /// <summary>
     /// 流运行时元数据信息
     /// </summary>
-    public abstract partial class BaseFlow<TFlowEntity>
+    public abstract partial class BaseFlow<TFlowData>
     {
         // todo 配置处理
         // todo  1。 读取配置初始化信息
@@ -19,6 +17,17 @@ namespace OSS.TaskFlow.Flow
         /// </summary>
         public FlowMeta  FlowMeta { get; set; }
         
-        public abstract Task<ResultListMo<NodeMeta>> GetTaskMetas(ExcuteReq context);
+        #region 存储处理
+
+        public IFlowProvider<TFlowData> MetaProvider { get; private set; }
+
+        public void RegisteProvider(IFlowProvider<TFlowData> metaPro)
+        {
+            MetaProvider = metaPro;
+        }
+
+        #endregion
+
+
     }
 }
