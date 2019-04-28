@@ -14,7 +14,7 @@ namespace OSS.TaskFlow.Flow
         
         public abstract Task<ResultMo<TFlowData>> Apply();
 
-        public abstract Task<ResultMo> Enter(ExcuteReq req);
+        public abstract Task<ResultMo> Enter( req);
 
         public abstract Task End();
 

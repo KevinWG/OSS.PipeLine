@@ -1,13 +1,11 @@
-﻿namespace OSS.TaskFlow.Node.Mos
+﻿namespace OSS.TaskFlow.Flow.Mos
 {
-    public class NodeReq
+    public class FlowReq
     {
-        public string flow_key { get; set; }
-
         /// <summary>
-        ///   请求内容体
+        /// 
         /// </summary>
-        public object body { get; set; }
+        public string flow_key { get; set; }
 
         /// <summary>
         /// 节点Key
@@ -18,6 +16,12 @@
         ///   任务key
         /// </summary>
         public string task_key { get; set; }
+
+        /// <summary>
+        ///   请求内容体
+        /// </summary>
+        public object body { get; set; }
+
 
         /// <summary>
         ///  流Id
