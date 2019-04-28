@@ -5,7 +5,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask
+    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<TReq>
         where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
@@ -14,34 +14,35 @@ namespace OSS.TaskFlow.Tasks
         ///   任务的具体执行
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="data"></param>
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq> data)
         {
-            return (await base.Process(context, data)) as TRes;
+            return (await ProcessInternal(context, data)) as TRes;
         }
 
         #endregion
 
         #region 实现，重试，失败 执行  重写父类方法
 
-        internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data)
+        internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData<TReq> data)
         {
-            return await Do(context, (TaskReqData<TReq>) data);
+            return await Do(context,  data);
         }
 
-        internal override Task Failed_Internal(TaskContext context, TaskReqData data)
+        internal override Task Failed_Internal(TaskContext context, TaskReqData<TReq> data)
         {
-            return Failed(context, (TaskReqData<TReq>) data);
+            return Failed(context, data);
         }
 
-        internal override Task Revert_Internal(TaskContext context, TaskReqData data)
+        internal override Task Revert_Internal(TaskContext context, TaskReqData<TReq> data)
         {
-            return Revert(context, (TaskReqData<TReq>) data);
+            return Revert(context, data);
         }
 
-        internal override Task SaveTaskContext(TaskContext context, TaskReqData data)
+        internal override Task SaveTaskContext(TaskContext context, TaskReqData<TReq> data)
         {
-            return _contextKepper.Invoke(context, (TaskReqData<TReq>) data);
+            return _contextKepper.Invoke(context,  data);
         }
 
         #endregion

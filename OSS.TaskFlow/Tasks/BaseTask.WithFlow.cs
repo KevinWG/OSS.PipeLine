@@ -5,7 +5,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseFlowTask<TReq,TFlowData, TRes> : BaseTask
+    public abstract partial class BaseFlowTask<TReq,TFlowData, TRes> : BaseTask<TReq>
         where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
@@ -17,29 +17,29 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq,TFlowData> data)
         {
-            return (await base.Process(context, data)) as TRes;
+            return (await base.ProcessInternal(context, data)) as TRes;
         }
         
         #endregion
 
         #region 实现，重试，失败 执行  重写父类方法
 
-        internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data)
+        internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData<TReq> data)
         {
             return await Do(context,(TaskReqData<TReq, TFlowData>)data);
         }
 
-        internal override Task Failed_Internal(TaskContext context, TaskReqData data)
+        internal override Task Failed_Internal(TaskContext context, TaskReqData<TReq> data)
         {
             return Failed(context, (TaskReqData<TReq, TFlowData>)data);
         }
 
-        internal override Task Revert_Internal(TaskContext context, TaskReqData data)
+        internal override Task Revert_Internal(TaskContext context, TaskReqData<TReq> data)
         {
             return Revert(context, (TaskReqData<TReq, TFlowData>)data);
         }
 
-        internal override Task SaveTaskContext(TaskContext context, TaskReqData data)
+        internal override Task SaveTaskContext(TaskContext context, TaskReqData<TReq> data)
         {
             return _contextKepper.Invoke(context, (TaskReqData<TReq, TFlowData>)data);
         }

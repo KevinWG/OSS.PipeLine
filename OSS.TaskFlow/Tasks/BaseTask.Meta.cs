@@ -4,7 +4,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseTask
+    public abstract partial class BaseTask<TReq>
     {
         public InstanceType InstanceType { get; protected set; }
 
@@ -33,6 +33,6 @@ namespace OSS.TaskFlow.Tasks
         ///  保存
         /// </summary>
         /// <param name="context"></param>
-        internal abstract Task SaveTaskContext(TaskContext context, TaskReqData data);
+        internal abstract Task SaveTaskContext(TaskContext context, TaskReqData<TReq> data);
     }
 }

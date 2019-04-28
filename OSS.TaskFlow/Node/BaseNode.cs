@@ -103,7 +103,7 @@ namespace OSS.TaskFlow.Node
 
 
         private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData<TReq> req,
-            IDictionary<TaskMeta, BaseTask> taskDirs)
+            IDictionary<TaskMeta, BaseTask<TReq>> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
@@ -126,13 +126,13 @@ namespace OSS.TaskFlow.Node
         /// <param name="taskDirs"></param>
         /// <returns></returns>
         private static async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext con, TaskReqData<TReq> req,
-            IDictionary<TaskMeta, BaseTask> taskDirs)
+            IDictionary<TaskMeta, BaseTask<TReq>> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
             {
                 var context = ConvertToContext(con, td.Key);
-                var retRes = await td.Value.Process(context, req);
+                var retRes = await td.Value.ProcessInternal(context, req);
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -146,12 +146,12 @@ namespace OSS.TaskFlow.Node
         /// <param name="taskDirs"></param>
         /// <returns></returns>
         private static Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext con, TaskReqData<TReq> req,
-            IDictionary<TaskMeta, BaseTask> taskDirs)
+            IDictionary<TaskMeta, BaseTask<TReq>> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
                 var context = ConvertToContext(con, tr.Key);
-                return tr.Value.Process(context, req);
+                return tr.Value.ProcessInternal(context, req);
             });
 
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
@@ -220,9 +220,9 @@ namespace OSS.TaskFlow.Node
         #endregion
         
         #region 节点下Task处理
-        private IDictionary<TaskMeta, BaseTask> GetTasks(IList<TaskMeta> metas)
+        private IDictionary<TaskMeta, BaseTask<TReq>> GetTasks(IList<TaskMeta> metas)
         {
-            var taskDirs = new Dictionary<TaskMeta, BaseTask>(metas.Count);
+            var taskDirs = new Dictionary<TaskMeta, BaseTask<TReq>>(metas.Count);
             foreach (var meta in metas)
             {
                 var task = GetTaskByMeta(meta);

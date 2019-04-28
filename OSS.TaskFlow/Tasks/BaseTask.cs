@@ -6,8 +6,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-
-    public abstract partial class  BaseTask
+    public abstract partial class  BaseTask<TReq>
     {
         #region 具体任务执行入口
 
@@ -15,8 +14,9 @@ namespace OSS.TaskFlow.Tasks
         ///   任务的具体执行
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="data"></param>
         /// <returns>  </returns>
-        internal async Task<ResultMo> Process(TaskContext context, TaskReqData data)
+        internal async Task<ResultMo> ProcessInternal(TaskContext context, TaskReqData<TReq> data)
         {
             var checkRes = InitailTask(context);
             if (!checkRes.IsSysOk())
@@ -46,7 +46,7 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task<ResultMo> Recurs(TaskContext context, TaskReqData data)
+        private async Task<ResultMo> Recurs(TaskContext context, TaskReqData<TReq> data)
         {
             ResultMo res;
 
@@ -78,21 +78,24 @@ namespace OSS.TaskFlow.Tasks
         ///     任务的具体执行
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="data"></param>
         /// <returns>  特殊：sys_ret= SysResultType.TaskFailed 任务处理失败，执行回退，并根据重试设置发起重试</returns>
-        internal abstract Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data);
+        internal abstract Task<ResultMo> Do_Internal(TaskContext context, TaskReqData<TReq> data);
 
         /// <summary>
         ///  执行失败回退操作
         ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="context"></param>
-        internal abstract Task Revert_Internal(TaskContext context, TaskReqData data);
+        /// <param name="data"></param>
+        internal abstract Task Revert_Internal(TaskContext context, TaskReqData<TReq> data);
 
         /// <summary>
         ///  最终执行失败会执行
         /// </summary>
         /// <param name="context"></param>
-        internal abstract Task Failed_Internal(TaskContext context, TaskReqData data);
+        /// <param name="data"></param>
+        internal abstract Task Failed_Internal(TaskContext context, TaskReqData<TReq> data);
 
         #endregion
 
