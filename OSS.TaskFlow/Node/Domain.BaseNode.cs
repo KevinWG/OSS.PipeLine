@@ -7,7 +7,8 @@ using OSS.TaskFlow.Tasks.Mos;
 namespace OSS.TaskFlow.Node
 {
     /// <summary>
-    ///  基础工作节点
+    ///  基础领域节点
+    ///   todo 获取领域信息
     /// </summary>
     public abstract partial class BaseDomainNode<TReq, TDomain, TRes> : BaseNode<TRes>
         where TRes : ResultMo, new()
@@ -21,7 +22,7 @@ namespace OSS.TaskFlow.Node
         /// <returns></returns>
         public async Task<TRes> Excute(NodeContext con, TaskReqData<TReq, TDomain> req)
         {
-            return await Excute_Internal(con, req) as TRes;
+            return (TRes)await Excute_Internal(con, req);
         }
 
         #region  进入-执行-返回 -   对外扩展方法

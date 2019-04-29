@@ -17,7 +17,7 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq> data)
         {
-            return (await Process(context, (TaskReqData)data)) as TRes;
+            return (TRes)await Process(context, (TaskReqData)data);
         }
 
         #endregion
@@ -46,7 +46,6 @@ namespace OSS.TaskFlow.Tasks
         }
 
         #endregion
-
 
         #region 实现，重试，失败 执行  扩展方法
 

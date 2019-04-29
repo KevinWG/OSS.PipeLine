@@ -3,7 +3,6 @@ using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.TaskFlow.Flow.Mos;
 using OSS.TaskFlow.Tasks.Interfaces;
-using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Flow
 {
@@ -11,10 +10,13 @@ namespace OSS.TaskFlow.Flow
     {
         public async Task<ResultMo> Enter(FlowReq req)
         {
+
+            //  todo 获取领域信息
+            //  todo 赋值领域Id => run_id
+
             var context = new FlowContext();
 
-            var checkRes =
-                await context.CheckFlowContext(InstanceType.Domain, () => MetaProvider.GenerateRunId(context));
+            var checkRes =  context.CheckFlowContext();
             if (!checkRes.IsSuccess())
                 return checkRes;
 
