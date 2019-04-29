@@ -24,7 +24,7 @@ namespace OSS.TaskFlow.Tasks
 
     public abstract partial class  BaseTask
     {
-        #region 具体任务执行入口
+        #region 任务进入入口
 
         /// <summary> 
         ///   任务的具体执行
@@ -34,6 +34,7 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         internal virtual async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
         {
+
             var checkRes = context.CheckTaskContext();
             if (!checkRes.IsSuccess())
                 return checkRes;
@@ -58,39 +59,7 @@ namespace OSS.TaskFlow.Tasks
             return res;
         }
 
-        
-        /// <summary>
-        ///   具体递归执行
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        private async Task<ResultMo> Recurs(TaskContext context, TaskReqData data)
-        {
-            ResultMo res;
-
-            var directExcuteTimes = 0;
-            do
-            {
-                //  直接执行
-                res = await Do_Internal(context, data);
-                if (res == null)
-                    throw new ArgumentNullException($"{this.GetType().Name} return null！");
-
-                // 判断是否失败回退
-                if (res.IsTaskFailed())
-                    await Revert_Internal(context, data);
-                
-                directExcuteTimes++;
-                context.exced_times++;
-            }
-
-            // 判断是否执行直接重试 
-            while (res.IsTaskFailed() && directExcuteTimes < context.task_meta.continue_times);
-
-            return res;
-        }
-
+       
         #endregion
 
         #region 实现，重试，失败, 结束基础内部扩展方法
@@ -132,7 +101,45 @@ namespace OSS.TaskFlow.Tasks
         {
             return Task.CompletedTask;
         }
-        
+
+        #endregion
+
+
+        #region 辅助方法
+
+
+        /// <summary>
+        ///   具体递归执行
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private async Task<ResultMo> Recurs(TaskContext context, TaskReqData data)
+        {
+            ResultMo res;
+            var directExcuteTimes = 0;
+            do
+            {
+                //  直接执行
+                res = await Do_Internal(context, data);
+                if (res == null)
+                    throw new ArgumentNullException($"{this.GetType().Name} return null！");
+
+                // 判断是否失败回退
+                if (res.IsTaskFailed())
+                    await Revert_Internal(context, data);
+
+                directExcuteTimes++;
+                context.exced_times++;
+            }
+
+            // 判断是否执行直接重试 
+            while (res.IsTaskFailed() && directExcuteTimes < context.task_meta.continue_times);
+
+            return res;
+        }
+
+
         #endregion
     }
 }
