@@ -49,7 +49,9 @@ namespace OSS.TaskFlow.Tasks.Mos
 
         public static async Task<ResultMo> CheckTaskContext(this TaskContext context,InstanceType insType, Func<Task<ResultIdMo>> idGenerater)
         {
-            var res =await context.CheckNodeContext(insType, idGenerater);
+            var res = insType == InstanceType.Stand
+                ? new ResultMo()
+                : await context.CheckNodeContext(insType, idGenerater);
             if (!res.IsSysOk())
                 return res;
 
@@ -58,8 +60,19 @@ namespace OSS.TaskFlow.Tasks.Mos
                 res.sys_ret = (int)SysResultTypes.ConfigError;
                 res.ret = (int)ResultTypes.InnerError;
                 res.msg = "task metainfo has error!";
+                return res;
             }
+
+            if (!string.IsNullOrEmpty(context.run_id))
+                return res;
+
+            var idRes = await idGenerater.Invoke();
+            if (!idRes.IsSuccess())
+                return idRes;
+
+            context.run_id = idRes.id;
             return res;
+        
         }
     }
 }
