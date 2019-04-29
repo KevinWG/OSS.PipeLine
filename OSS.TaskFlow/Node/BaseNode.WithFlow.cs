@@ -11,7 +11,6 @@ namespace OSS.TaskFlow.Node
     public abstract partial class BaseFlowNode<TReq, TFlowData, TRes> : BaseNode<TRes>
         where TRes : ResultMo, new()
     {
-
         /// <summary>
         ///   主执行方法
         /// </summary>

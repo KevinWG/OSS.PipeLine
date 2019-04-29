@@ -15,10 +15,14 @@ namespace OSS.TaskFlow.Node
     /// </summary>
     public abstract partial class BaseNode
     {
-        public InstanceType InstanceType { get; protected set; }
+        public InstanceType InstanceType { get; internal set; }
+
+        public FlowNodeType FlowNodeType { get; internal set; }
+
 
         protected BaseNode()
         {
+            FlowNodeType = FlowNodeType.None;
             InstanceType = InstanceType.Stand;
         }
         
