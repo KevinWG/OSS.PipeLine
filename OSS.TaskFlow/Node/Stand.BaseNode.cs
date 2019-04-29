@@ -20,7 +20,7 @@ namespace OSS.TaskFlow.Node
         /// <returns></returns>
         public  async Task<TRes> Excute(NodeContext con, TaskReqData<TReq> req)
         {
-            return (TRes)await Excute_Internal(con, req) ;
+            return (TRes)await Excute_Internal(con, req);
         }
         
         internal override async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)

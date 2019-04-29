@@ -4,7 +4,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask
+    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<TRes>
         where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
@@ -17,7 +17,7 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq> data)
         {
-            return (TRes)await Process(context, (TaskReqData)data);
+            return (TRes)await Process_Internal(context, (TaskReqData)data);
         }
 
         #endregion

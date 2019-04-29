@@ -7,13 +7,13 @@ namespace OSS.TaskFlow.Tasks
 {
     /// <summary>
     /// 基础领域任务
-    ///      todo 获取领域信息
+    ///     todo 获取领域信息
     ///     todo  赋值run——id
     /// </summary>
     /// <typeparam name="TReq"></typeparam>
     /// <typeparam name="TDomain"></typeparam>
     /// <typeparam name="TRes"></typeparam>
-    public abstract partial class BaseDomainTask<TReq,TDomain, TRes> : BaseTask
+    public abstract partial class BaseDomainTask<TReq,TDomain, TRes> : BaseTask<TRes>
         where TRes : ResultMo, new()
         where TDomain : IDomainMo
     {
@@ -27,7 +27,7 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq,TDomain> data)
         {
-            return (TRes)await base.Process(context, data);
+            return (TRes)await base.Process_Internal(context, data);
         }
         
         #endregion

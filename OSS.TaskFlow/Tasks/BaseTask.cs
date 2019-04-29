@@ -6,6 +6,22 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
+    public abstract class BaseTask<TRes>: BaseTask
+        where TRes : ResultMo, new()
+    {
+        internal override async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
+        {
+            var res = await base.Process_Internal(context, data);
+            if (res.IsSuccess())
+                return res;
+
+            if (res is TRes)
+                return res;
+
+            return res.ConvertToResultInherit<TRes>();
+        }
+    }
+
     public abstract partial class  BaseTask
     {
         #region 具体任务执行入口
@@ -16,7 +32,7 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns>  </returns>
-        internal async Task<ResultMo> Process(TaskContext context, TaskReqData data)
+        internal virtual async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
         {
             var checkRes = context.CheckTaskContext();
             if (!checkRes.IsSuccess())

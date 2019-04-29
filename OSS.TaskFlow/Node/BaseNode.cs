@@ -40,10 +40,12 @@ namespace OSS.TaskFlow.Node
             if (res.IsSuccess())
                 return res;
 
-            if (!(res is TRes))
-                return res.ConvertToResultInherit<TRes>();
-            return res;
+            if (res is TRes)
+                return res;
+
+            return res.ConvertToResultInherit<TRes>();
         }
+
         internal override ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
         {
             var tRes = default(TRes);
@@ -176,7 +178,7 @@ namespace OSS.TaskFlow.Node
             foreach (var td in taskDirs)
             {
                 var context = ConvertToContext(con, td.Key);
-                var retRes = await td.Value.Process(context, req);
+                var retRes = await td.Value.Process_Internal(context, req);
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -195,7 +197,7 @@ namespace OSS.TaskFlow.Node
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
                 var context = ConvertToContext(con, tr.Key);
-                return tr.Value.Process(context, req);
+                return tr.Value.Process_Internal(context, req);
             });
 
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
