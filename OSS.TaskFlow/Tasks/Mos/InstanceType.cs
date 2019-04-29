@@ -3,6 +3,6 @@
     public enum InstanceType
     {
         Stand,
-        WithFlow,
+        WithData,
     }
 }

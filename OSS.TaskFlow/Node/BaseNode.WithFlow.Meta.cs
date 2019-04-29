@@ -10,13 +10,12 @@ namespace OSS.TaskFlow.Node
     {
         protected BaseFlowNode()
         {
-            InstanceType = InstanceType.WithFlow;
+            InstanceType = InstanceType.WithData;
         }
-        
 
         #region 存储处理
 
-        public IFlowNodeProvider<TReq, TFlowData> MetaProvider => (IFlowNodeProvider<TReq, TFlowData>)m_metaProvider;
+        public IFlowNodeProvider<TReq, TFlowData> MetaProvider => (IFlowNodeProvider<TReq, TFlowData>) m_metaProvider;
 
         public void RegisteProvider(IFlowNodeProvider<TReq, TFlowData> metaPro)
         {
@@ -25,9 +24,5 @@ namespace OSS.TaskFlow.Node
 
 
         #endregion
-
-
-
     }
-
 }

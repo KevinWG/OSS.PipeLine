@@ -24,8 +24,8 @@ namespace OSS.TaskFlow.Tests
             var taskContext = new TaskContext();
             var task = new OrderNotifyTask();
 
-            task.SetContinueRetry(9);
-            task.SetIntervalRetry(2, SaveTaskContext);
+            //task.SetContinueRetry(9);
+            //task.SetIntervalRetry(2, SaveTaskContext);
 
             await task.Process(taskContext,new TaskReqData<OrderInfo>(msg));
         }

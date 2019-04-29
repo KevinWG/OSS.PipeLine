@@ -17,7 +17,7 @@ namespace OSS.TaskFlow.Flow
         {
             var context = new FlowContext();
 
-            var checkRes = await context.CheckFlowContext(InstanceType.WithFlow, () => MetaProvider.GenerateRunId(context));
+            var checkRes = await context.CheckFlowContext(InstanceType.WithData, () => MetaProvider.GenerateRunId(context));
             if (!checkRes.IsSuccess())
                 return checkRes;
 

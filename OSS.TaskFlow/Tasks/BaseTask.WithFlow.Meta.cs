@@ -12,7 +12,7 @@ namespace OSS.TaskFlow.Tasks
 
         protected BaseFlowTask()
         {
-            InstanceType = InstanceType.WithFlow;
+            InstanceType = InstanceType.WithData;
         }
 
         #region 存储处理
