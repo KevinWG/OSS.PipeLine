@@ -1,20 +1,20 @@
 ﻿namespace OSS.TaskFlow.Tasks.Mos
 {
-    public class TaskReqData<TReq, TFlowData> : TaskReqData<TReq>
+    public class TaskReqData<TReq, TDomain> : TaskReqData<TReq>
     {
         public TaskReqData()
         {
         }
 
-        public TaskReqData(TReq req, TFlowData flowData):base(req)
+        public TaskReqData(TReq req, TDomain flowData):base(req)
         {
-            flow_data = flowData;
+            domain = flowData;
         }
 
         /// <summary>
         ///   核心流数据
         /// </summary>
-        public TFlowData flow_data { get; set; }
+        public TDomain domain { get; set; }
     }
 
     /// <summary>

@@ -4,7 +4,7 @@ using OSS.TaskFlow.Flow.Mos;
 
 namespace OSS.TaskFlow.Flow.Interfaces
 {
-    public interface IFlowProvider<TFlowData>
+    public interface IFlowProvider<TDomain>
     {
         /// <summary>
         ///  生成运行Id

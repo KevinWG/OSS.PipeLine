@@ -8,13 +8,13 @@ namespace OSS.TaskFlow.Flow
     /// <summary>
     /// 流运行时元数据信息
     /// </summary>
-    public abstract partial class BaseFlow<TFlowData>
+    public abstract partial class BaseFlow<TDomain>
     {
         #region 存储处理
 
-        public IFlowProvider<TFlowData> MetaProvider { get; private set; }
+        public IFlowProvider<TDomain> MetaProvider { get; private set; }
 
-        public void RegisteProvider(IFlowProvider<TFlowData> metaPro)
+        public void RegisteProvider(IFlowProvider<TDomain> metaPro)
         {
             MetaProvider = metaPro;
         }

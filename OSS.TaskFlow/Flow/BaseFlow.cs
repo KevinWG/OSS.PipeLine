@@ -6,9 +6,9 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Flow
 {
-    public abstract partial class BaseFlow<TFlowData>
+    public abstract partial class BaseFlow<TDomain>
     {
-        //public async Task<ResultIdMo> Apply( TFlowData req)
+        //public async Task<ResultIdMo> Apply( TDomain req)
         //{
 
         //}
@@ -17,7 +17,7 @@ namespace OSS.TaskFlow.Flow
         {
             var context = new FlowContext();
 
-            var checkRes = await context.CheckFlowContext(InstanceType.WithData, () => MetaProvider.GenerateRunId(context));
+            var checkRes = await context.CheckFlowContext(InstanceType.Domain, () => MetaProvider.GenerateRunId(context));
             if (!checkRes.IsSuccess())
                 return checkRes;
 

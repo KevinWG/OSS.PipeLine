@@ -212,7 +212,7 @@ namespace OSS.TaskFlow.Node
             var context = con.ConvertToTaskContext();
 
             //context.body = (TReq) req.body; //  todo 添加协议转化处理
-            //context.flow_data = flowData;
+            //context.domain = flowData;
             context.task_meta = meta;
 
             return context;

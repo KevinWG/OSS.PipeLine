@@ -3,8 +3,8 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks.Interfaces
 {
-    public interface IFlowTaskProvider<TReq,TFlowData>: ITaskProvider
+    public interface IFlowTaskProvider<TReq,TDomain>: ITaskProvider
     {
-        Task SaveTaskContext(TaskContext context, TaskReqData<TReq, TFlowData> data);
+        Task SaveTaskContext(TaskContext context, TaskReqData<TReq, TDomain> data);
     }
 }

@@ -8,7 +8,7 @@ namespace OSS.TaskFlow.Node
     /// <summary>
     ///  基础工作节点
     /// </summary>
-    public abstract partial class BaseFlowNode<TReq, TFlowData, TRes> : BaseNode<TRes>
+    public abstract partial class BaseDomainNode<TReq, TDomain, TRes> : BaseNode<TRes>
         where TRes : ResultMo, new()
     {
         /// <summary>
@@ -17,7 +17,7 @@ namespace OSS.TaskFlow.Node
         /// <param name="con"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        public Task<TRes> Excute(NodeContext con, TaskReqData<TReq, TFlowData> req)
+        public Task<TRes> Excute(NodeContext con, TaskReqData<TReq, TDomain> req)
         {
             return Excute(con, req);
         }
@@ -46,7 +46,7 @@ namespace OSS.TaskFlow.Node
 
         #region 执行 -- 对外扩展方法
          
-        protected virtual Task ExcutePre(NodeContext con, TaskReqData<TReq, TFlowData> req)
+        protected virtual Task ExcutePre(NodeContext con, TaskReqData<TReq, TDomain> req)
         {
             return Task.CompletedTask;
         }
@@ -59,7 +59,7 @@ namespace OSS.TaskFlow.Node
 
         internal override Task ExcutePre_Internal(NodeContext con, TaskReqData req)
         {
-            return ExcutePre(con,(TaskReqData<TReq, TFlowData>)req);
+            return ExcutePre(con,(TaskReqData<TReq, TDomain>)req);
         }  
         #endregion
     }

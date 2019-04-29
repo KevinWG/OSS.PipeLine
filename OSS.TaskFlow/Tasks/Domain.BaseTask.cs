@@ -4,7 +4,7 @@ using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract partial class BaseFlowTask<TReq,TFlowData, TRes> : BaseTask
+    public abstract partial class BaseDomainTask<TReq,TDomain, TRes> : BaseTask
         where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
@@ -15,7 +15,7 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns>  </returns>
-        public async Task<TRes> Process(TaskContext context, TaskReqData<TReq,TFlowData> data)
+        public async Task<TRes> Process(TaskContext context, TaskReqData<TReq,TDomain> data)
         {
             return (await base.ProcessInternal(context, data)) as TRes;
         }
@@ -26,22 +26,22 @@ namespace OSS.TaskFlow.Tasks
 
         internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data)
         {
-            return await Do(context,(TaskReqData<TReq, TFlowData>)data);
+            return await Do(context,(TaskReqData<TReq, TDomain>)data);
         }
 
         internal override Task Failed_Internal(TaskContext context, TaskReqData data)
         {
-            return Failed(context, (TaskReqData<TReq, TFlowData>)data);
+            return Failed(context, (TaskReqData<TReq, TDomain>)data);
         }
 
         internal override Task Revert_Internal(TaskContext context, TaskReqData data)
         {
-            return Revert(context, (TaskReqData<TReq, TFlowData>)data);
+            return Revert(context, (TaskReqData<TReq, TDomain>)data);
         }
 
         internal override Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData data, TaskContext context)
         {
-            return ProcessEnd((TRes)taskRes, (TaskReqData<TReq, TFlowData>)data, context);
+            return ProcessEnd((TRes)taskRes, (TaskReqData<TReq, TDomain>)data, context);
         }
         #endregion
 
@@ -53,7 +53,7 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns> sys_ret = (int)SysResultTypes.RunFailed 系统会字段判断是否满足重试条件执行重试    </returns>
-        protected abstract Task<TRes> Do(TaskContext context, TaskReqData<TReq, TFlowData> data);
+        protected abstract Task<TRes> Do(TaskContext context, TaskReqData<TReq, TDomain> data);
 
         /// <summary>
         ///  执行失败回退操作
@@ -61,7 +61,7 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <param name="data"></param>
-        protected internal virtual Task Revert(TaskContext context, TaskReqData<TReq, TFlowData> data)
+        protected internal virtual Task Revert(TaskContext context, TaskReqData<TReq, TDomain> data)
         {
             return Task.CompletedTask;
         }
@@ -71,7 +71,7 @@ namespace OSS.TaskFlow.Tasks
         /// </summary>
         /// <param name="context"></param>
         /// <param name="data"></param>
-        protected virtual Task Failed(TaskContext context, TaskReqData<TReq, TFlowData> data)
+        protected virtual Task Failed(TaskContext context, TaskReqData<TReq, TDomain> data)
         {
             return Task.CompletedTask;
         }
@@ -87,7 +87,7 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="data">请求的数据信息</param>
         /// <param name="context">请求的上线文</param>
         /// <returns></returns>
-        protected virtual Task ProcessEnd(TRes taskRes, TaskReqData<TReq,TFlowData> data, TaskContext context)
+        protected virtual Task ProcessEnd(TRes taskRes, TaskReqData<TReq,TDomain> data, TaskContext context)
         {
             return Task.CompletedTask;
         }
