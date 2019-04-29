@@ -49,18 +49,20 @@ namespace OSS.TaskFlow.Node
                 if (tItemRes is TRes res)
                     tRes = res;
             }
+
             if (tRes == null)
             {
                 throw new ArgumentNullException(
                     $"can't find a task of return value match node({this.GetType()}) of return value!");
             }
+
             return tRes;
         }
 
         internal override Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
             NodeContext con)
         {
-            return ExcuteEnd((TRes)nodeRes, tastItemDirs, con);
+            return ExcuteEnd((TRes) nodeRes, tastItemDirs, con);
         }
 
         #endregion
@@ -82,8 +84,8 @@ namespace OSS.TaskFlow.Node
         internal async Task<ResultMo> Excute(NodeContext con, TaskReqData req)
         {
             //  检查初始化
-            var checkRes = con.CheckNodeContext();
-            if (!checkRes.IsSysOk())
+            var checkRes = await con.CheckNodeContext(InstanceType, () => GenerateRunId(con));
+            if (!checkRes.IsSuccess())
                 return checkRes.ConvertToResultInherit<ResultMo>();
             // 【1】 扩展前置执行方法
             await ExcutePre_Internal(con, req);
@@ -100,7 +102,7 @@ namespace OSS.TaskFlow.Node
             return nodeRes;
         }
 
-        #endregion 
+        #endregion
 
         #region 对外扩展方法
 
@@ -124,16 +126,18 @@ namespace OSS.TaskFlow.Node
 
         internal abstract Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
             NodeContext con);
+
         #endregion
-        
+
         #region 辅助方法 —— 节点内部任务执行
 
         private async Task<ResultMo<Dictionary<TaskMeta, ResultMo>>> Excuting(NodeContext con, TaskReqData req)
         {
             // 获取任务元数据列表
             var taskDirs = await GetTaskMetas(con);
-            if (taskDirs==null||taskDirs.Count==0)
-                return new ResultMo<Dictionary<TaskMeta, ResultMo>>(SysResultTypes.ConfigError,ResultTypes.ObjectNull,$"{this.GetType()} have no tasks can be processed!");
+            if (taskDirs == null || taskDirs.Count == 0)
+                return new ResultMo<Dictionary<TaskMeta, ResultMo>>(SysResultTypes.ConfigError, ResultTypes.ObjectNull,
+                    $"{this.GetType()} have no tasks can be processed!");
 
             // 执行处理结果
             var taskResults = await ExcutingWithTasks(con, req, taskDirs);
@@ -229,7 +233,7 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
-   
+
 
         #endregion
     }

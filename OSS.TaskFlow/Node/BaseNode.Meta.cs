@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using OSS.Common.ComModels;
+using OSS.Common.ComModels.Enums;
 using OSS.TaskFlow.Node.Interfaces;
 using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks;
@@ -19,7 +21,7 @@ namespace OSS.TaskFlow.Node
         {
             InstanceType = InstanceType.Stand;
         }
-
+        
 
         #region 注册存储接口
 
@@ -35,6 +37,11 @@ namespace OSS.TaskFlow.Node
 
         #region 内部扩展方法
 
+        internal virtual Task<ResultIdMo> GenerateRunId(NodeContext context)
+        {
+            return Task.FromResult(new ResultIdMo(SysResultTypes.ConfigError, ResultTypes.ObjectStateError, "Node with data cann't generate run_id by itself!"));
+        }
+
         #endregion
 
         #region 内部基础方法
@@ -42,7 +49,6 @@ namespace OSS.TaskFlow.Node
         {
             return m_metaProvider.GetTaskMetas(context);
         }
-
         #endregion
 
 

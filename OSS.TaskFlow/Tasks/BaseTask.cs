@@ -18,8 +18,8 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         internal async Task<ResultMo> ProcessInternal(TaskContext context, TaskReqData data)
         {
-            var checkRes = context.CheckTaskContext();
-            if (!checkRes.IsSysOk())
+            var checkRes =await context.CheckTaskContext(InstanceType, () => GenerateRunId(context));
+            if (!checkRes.IsSuccess())
                 return checkRes;
             
             var res = await Recurs(context, data);

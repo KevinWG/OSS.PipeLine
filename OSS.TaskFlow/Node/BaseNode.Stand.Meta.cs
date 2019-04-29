@@ -1,4 +1,7 @@
-﻿using OSS.TaskFlow.Node.Interfaces;
+﻿using System.Threading.Tasks;
+using OSS.Common.ComModels;
+using OSS.TaskFlow.Node.Interfaces;
+using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node
@@ -12,7 +15,7 @@ namespace OSS.TaskFlow.Node
         {
             InstanceType = InstanceType.Stand;
         }
-
+        
         #region 存储处理
 
         public IStandNodeProvider<TReq> MetaProvider => (IStandNodeProvider<TReq>)m_metaProvider;
@@ -25,10 +28,13 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
-
         #region 重写基类方法
 
-    
+        internal override Task<ResultIdMo> GenerateRunId(NodeContext context)
+        {
+            return MetaProvider.GenerateRunId(context);
+        }
+
         #endregion
     }
 

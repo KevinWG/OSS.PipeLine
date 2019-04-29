@@ -8,8 +8,6 @@ namespace OSS.TaskFlow.Node.Interfaces
 {
     public interface INodeProvider
     {
-
-
         Task<Dictionary<TaskMeta, BaseTask>> GetTaskMetas(NodeContext context);
     }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.TaskFlow.Node.Mos;
@@ -46,9 +47,9 @@ namespace OSS.TaskFlow.Tasks.Mos
             return taskCon;
         }
 
-        public static ResultMo CheckTaskContext(this TaskContext context, Func<string> idGenerate = null)
+        public static async Task<ResultMo> CheckTaskContext(this TaskContext context,InstanceType insType, Func<Task<ResultIdMo>> idGenerater)
         {
-            var res = context.CheckNodeContext(idGenerate);
+            var res =await context.CheckNodeContext(insType, idGenerater);
             if (!res.IsSysOk())
                 return res;
 

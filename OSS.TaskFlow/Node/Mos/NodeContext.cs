@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
-using OSS.Common.Extention;
 using OSS.TaskFlow.Flow.Mos;
 using OSS.TaskFlow.Node.MetaMos;
+using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node.Mos
 {
@@ -27,15 +28,9 @@ namespace OSS.TaskFlow.Node.Mos
             return nodeCon;
         }
 
-
-        public static ResultMo CheckNodeContext(this NodeContext context)
+        public static async Task<ResultMo> CheckNodeContext(this NodeContext context, InstanceType insType,Func<Task<ResultIdMo>> idGenerater)
         {
-            if (string.IsNullOrEmpty(context.run_id))
-            {
-                context.run_id = DateTime.Now.ToUtcMilliSeconds().ToString();
-            }
-
-            var res= context.CheckFlowContext();
+            var res=await context.CheckFlowContext(insType, idGenerater);
             if (!res.IsSysOk())
                 return res;
 

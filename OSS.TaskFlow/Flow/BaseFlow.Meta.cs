@@ -1,4 +1,7 @@
-﻿using OSS.TaskFlow.Flow.Interfaces;
+﻿using System.Threading.Tasks;
+using OSS.Common.ComModels;
+using OSS.TaskFlow.Flow.Interfaces;
+using OSS.TaskFlow.Flow.Mos;
 
 namespace OSS.TaskFlow.Flow
 {
@@ -18,6 +21,14 @@ namespace OSS.TaskFlow.Flow
 
         #endregion
 
+        #region 内部扩展方法
+
+        internal Task<ResultIdMo> GenerateRunId(FlowContext context)
+        {
+            return MetaProvider.GenerateRunId(context);
+        }
+
+        #endregion
 
         //  获取流核心数据信息
         //public abstract Task GetFlowInfo(TaskReq<> req);
