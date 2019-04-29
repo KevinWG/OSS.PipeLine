@@ -6,12 +6,11 @@
 
         public string node_name { get; set; }
 
-        public NodeType node_type { get; set; }
-
+        public NodeExcuteType excute_type { get; set; }
     }
 
 
-    public enum NodeType
+    public enum NodeExcuteType
     {
         Sequence,
         Parallel

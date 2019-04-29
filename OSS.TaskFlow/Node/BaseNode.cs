@@ -104,18 +104,7 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
-        #region 对外扩展方法
-
-        /// <summary>
-        ///  前置进入方法
-        /// </summary>
-        /// <returns></returns>
-        protected internal virtual Task MoveIn(NodeContext con)
-        {
-            return Task.CompletedTask;
-        }
-
-        #endregion
+   
 
         #region 内部（执行前，执行后）扩展方法
 
@@ -152,7 +141,7 @@ namespace OSS.TaskFlow.Node
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
-            if (con.node_meta.node_type == NodeType.Parallel)
+            if (con.node_meta.excute_type == NodeExcuteType.Parallel)
             {
                 taskResults = Excuting_Parallel(con, req, taskDirs);
             }

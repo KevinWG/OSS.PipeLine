@@ -23,10 +23,30 @@ namespace OSS.TaskFlow.Node
             return Excute(con, req);
         }
 
+        #region  进入-执行-返回 -   对外扩展方法
 
 
-        #region 对外扩展方法
+        public Task Activate(NodeContext context)
+        {
+            return MoveIn(context);
+        }
 
+
+        /// <summary>
+        ///  前置进入方法
+        /// </summary>
+        /// <returns></returns>
+        protected internal virtual Task MoveIn(NodeContext con)
+        {
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
+
+
+        #region 执行 -- 对外扩展方法
+         
         protected virtual Task ExcutePre(NodeContext con, TaskReqData<TReq, TFlowData> req)
         {
             return Task.CompletedTask;
