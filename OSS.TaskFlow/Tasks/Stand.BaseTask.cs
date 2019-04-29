@@ -17,7 +17,7 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq> data)
         {
-            return (await ProcessInternal(context, data)) as TRes;
+            return (await Process(context, (TaskReqData)data)) as TRes;
         }
 
         #endregion

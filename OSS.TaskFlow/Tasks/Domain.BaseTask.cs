@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
+using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
     public abstract partial class BaseDomainTask<TReq,TDomain, TRes> : BaseTask
         where TRes : ResultMo, new()
+        where TDomain : IDomainMo
     {
         #region 具体任务执行入口
 
@@ -17,7 +19,7 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq,TDomain> data)
         {
-            return (await base.ProcessInternal(context, data)) as TRes;
+            return (await base.Process(context, data)) as TRes;
         }
         
         #endregion

@@ -1,10 +1,7 @@
-﻿using System;
-using System.Threading.Tasks;
-using OSS.Common.ComModels;
+﻿using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.TaskFlow.Flow.Mos;
 using OSS.TaskFlow.Node.MetaMos;
-using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Node.Mos
 {
@@ -28,34 +25,19 @@ namespace OSS.TaskFlow.Node.Mos
             return nodeCon;
         }
 
-        public static async Task<ResultMo> CheckNodeContext(this NodeContext context, InstanceType insType,
-            Func<Task<ResultIdMo>> idGenerater)
+        public static ResultMo CheckNodeContext(this NodeContext context)
         {
-            var res = insType == InstanceType.Stand
-                ? new ResultMo()
-                : await context.CheckFlowContext(insType, idGenerater);
-
-            if (!res.IsSysOk())
-                return res;
-            
+         
             if (string.IsNullOrEmpty(context.node_meta?.node_key))
             {
-                res.sys_ret = (int) SysResultTypes.ConfigError;
-                res.ret = (int) ResultTypes.InnerError;
-                res.msg = "node metainfo has error!";
-
-                return res;
+                return new ResultMo
+                {
+                    sys_ret = (int) SysResultTypes.ConfigError,
+                    ret = (int) ResultTypes.InnerError,
+                    msg = "node metainfo has error!"
+                };
             }
-
-            if (!string.IsNullOrEmpty(context.run_id))
-                return res;
-
-            var idRes = await idGenerater.Invoke();
-            if (!idRes.IsSuccess())
-                return idRes;
-
-            context.run_id = idRes.id;
-            return res;
+            return new ResultMo();
         }
     }
 

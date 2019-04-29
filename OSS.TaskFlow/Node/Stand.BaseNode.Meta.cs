@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
+using OSS.Common.ComModels.Enums;
 using OSS.TaskFlow.Node.Interfaces;
 using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks.Mos;
@@ -24,15 +25,23 @@ namespace OSS.TaskFlow.Node
         {
             base.RegisteProvider_Internal(metaPro);
         }
-
-
+        
         #endregion
 
         #region 重写基类方法
 
-        internal override Task<ResultIdMo> GenerateRunId(NodeContext context)
+        internal async Task<TRes> InitailRunId(NodeContext context)
         {
-            return MetaProvider.GenerateRunId(context);
+            if (!string.IsNullOrEmpty(context.run_id))
+                return new TRes();
+
+            var idRes=await MetaProvider.GenerateRunId(context);
+            if (idRes.IsSuccess())
+            {
+                context.run_id = idRes.id;
+            }
+
+            return idRes.ConvertToResultInherit<TRes>();
         }
 
         #endregion

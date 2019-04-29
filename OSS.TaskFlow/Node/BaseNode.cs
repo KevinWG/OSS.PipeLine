@@ -34,6 +34,16 @@ namespace OSS.TaskFlow.Node
 
         #region 重写父类扩展方法
 
+        internal override async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)
+        {
+            var res = await base.Excute_Internal(con, req);
+            if (res.IsSuccess())
+                return res;
+
+            if (!(res is TRes))
+                return res.ConvertToResultInherit<TRes>();
+            return res;
+        }
         internal override ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
         {
             var tRes = default(TRes);
@@ -81,12 +91,13 @@ namespace OSS.TaskFlow.Node
         /// <param name="con"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        internal async Task<ResultMo> Excute(NodeContext con, TaskReqData req)
+        internal virtual async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)
         {
             //  检查初始化
-            var checkRes = await con.CheckNodeContext(InstanceType, () => GenerateRunId(con));
+            var checkRes = con.CheckNodeContext();
             if (!checkRes.IsSuccess())
-                return checkRes.ConvertToResultInherit<ResultMo>();
+                return checkRes;
+
             // 【1】 扩展前置执行方法
             await ExcutePre_Internal(con, req);
 
@@ -165,7 +176,7 @@ namespace OSS.TaskFlow.Node
             foreach (var td in taskDirs)
             {
                 var context = ConvertToContext(con, td.Key);
-                var retRes = await td.Value.ProcessInternal(context, req);
+                var retRes = await td.Value.Process(context, req);
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -184,7 +195,7 @@ namespace OSS.TaskFlow.Node
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
                 var context = ConvertToContext(con, tr.Key);
-                return tr.Value.ProcessInternal(context, req);
+                return tr.Value.Process(context, req);
             });
 
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
@@ -219,7 +230,6 @@ namespace OSS.TaskFlow.Node
         }
 
         #endregion
-
 
 
         #endregion

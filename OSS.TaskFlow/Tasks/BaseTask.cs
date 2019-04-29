@@ -16,9 +16,9 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns>  </returns>
-        internal async Task<ResultMo> ProcessInternal(TaskContext context, TaskReqData data)
+        internal async Task<ResultMo> Process(TaskContext context, TaskReqData data)
         {
-            var checkRes =await context.CheckTaskContext(InstanceType, () => GenerateRunId(context));
+            var checkRes = context.CheckTaskContext();
             if (!checkRes.IsSuccess())
                 return checkRes;
             
@@ -118,6 +118,5 @@ namespace OSS.TaskFlow.Tasks
         }
         
         #endregion
-
     }
 }
