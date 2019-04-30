@@ -5,6 +5,7 @@ using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
 using OSS.Common.Plugs.LogPlug;
 using OSS.TaskFlow.Tasks.Mos;
+using OSS.TaskFlow.Tasks.Util;
 
 namespace OSS.TaskFlow.Tasks
 {
@@ -43,14 +44,14 @@ namespace OSS.TaskFlow.Tasks
                 res = await Recurs(context, data);
 
                 // 判断是否间隔执行,生成重试信息
-                if (res.IsTaskFailed() && context.interval_times < context.task_meta.interval_times)
+                if (res.IsRunFailed() && context.interval_times < context.task_meta.interval_times)
                 {
                     context.interval_times++;
                     await SaveTaskContext(context, data);
                     res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
                 }
 
-                if (res.IsTaskFailed())
+                if (res.IsRunFailed())
                 {
                     //  最终失败，执行失败方法
                     await Failed_Internal(context, data);
@@ -63,15 +64,11 @@ namespace OSS.TaskFlow.Tasks
                     , "TaskFlow_TaskProcess", "Oss.TaskFlow");
                 await SaveTaskContext(context, data);
             }
-            catch 
-            {
-                throw;
-            }
+
             await ProcessEnd_Internal(res, data, context);
             return res;
         }
-
-
+        
         #endregion
 
         #region 实现，重试，失败, 结束基础内部扩展方法
@@ -138,14 +135,14 @@ namespace OSS.TaskFlow.Tasks
                     throw new ArgumentNullException($"{this.GetType().Name} return null！");
 
                 // 判断是否失败回退
-                if (res.IsTaskFailed())
+                if (res.IsRunFailed())
                     await Revert_Internal(context, data);
 
                 directExcuteTimes++;
                 context.exced_times++;
             }
             // 判断是否执行直接重试 
-            while (res.IsTaskFailed() && directExcuteTimes < context.task_meta.continue_times);
+            while (res.IsRunFailed() && directExcuteTimes < context.task_meta.continue_times);
 
             return res;
         }

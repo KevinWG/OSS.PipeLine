@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
+using OSS.Common.Extention;
 using OSS.TaskFlow.Node.MetaMos;
 using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks;
@@ -90,28 +91,23 @@ namespace OSS.TaskFlow.Node
         /// <summary>
         ///   具体执行方法
         /// </summary>
-        /// <param name="con"></param>
+        /// <param name="context"></param>
         /// <param name="req"></param>
         /// <returns></returns>
-        internal virtual async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)
+        internal virtual async Task<ResultMo> Excute_Internal(NodeContext context, TaskReqData req)
         {
             //  检查初始化
-            var checkRes = con.CheckNodeContext();
-            if (!checkRes.IsSuccess())
-                return checkRes;
+            CheckNodeContext(context);
 
             // 【1】 扩展前置执行方法
-            await ExcutePre_Internal(con, req);
+            await ExcutePre_Internal(context, req);
 
             // 【2】 任务处理执行方法
-            var taskResults = await Excuting(con, req);
-            if (!taskResults.IsSuccess())
-                return taskResults.ConvertToResultInherit<ResultMo>();
-
-            var nodeRes = ExcuteResult_Internal(con, taskResults.data); // 任务结果加工处理
+            var taskResults = await Excuting(context, req);
+            var nodeRes = ExcuteResult_Internal(context, taskResults); // 任务结果加工处理
 
             //  【3】 扩展后置执行方法
-            await ExcuteEnd_Internal(nodeRes, taskResults.data, con);
+            await ExcuteEnd_Internal(nodeRes, taskResults, context);
             return nodeRes;
         }
 
@@ -130,24 +126,23 @@ namespace OSS.TaskFlow.Node
         #endregion
 
         #region 辅助方法 —— 节点内部任务执行
-
-        private async Task<ResultMo<Dictionary<TaskMeta, ResultMo>>> Excuting(NodeContext con, TaskReqData req)
+        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting(NodeContext con, TaskReqData req)
         {
             // 获取任务元数据列表
             var taskDirs = await GetTaskMetas(con);
             if (taskDirs == null || taskDirs.Count == 0)
-                return new ResultMo<Dictionary<TaskMeta, ResultMo>>(SysResultTypes.ConfigError, ResultTypes.ObjectNull,
+                 throw new ResultException(SysResultTypes.ConfigError, ResultTypes.ObjectNull,
                     $"{this.GetType()} have no tasks can be processed!");
 
             // 执行处理结果
             var taskResults = await ExcutingWithTasks(con, req, taskDirs);
-            return new ResultMo<Dictionary<TaskMeta, ResultMo>>(taskResults);
+            return new Dictionary<TaskMeta, ResultMo>(taskResults);
         }
 
         #region 辅助方法 —— 节点内部任务执行 —— 分解
 
 
-        private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData req,
+        private static async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
@@ -233,7 +228,14 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
+        private static ResultMo CheckNodeContext(NodeContext context)
+        {
+            //  todo  状态有效判断等
+            if (!string.IsNullOrEmpty(context.node_meta?.node_key))
+                return new ResultMo();
 
+            throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError, "node metainfo has error!");
+        }
         #endregion
     }
 }

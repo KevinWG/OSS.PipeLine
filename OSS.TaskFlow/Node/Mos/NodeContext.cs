@@ -25,20 +25,7 @@ namespace OSS.TaskFlow.Node.Mos
             return nodeCon;
         }
 
-        public static ResultMo CheckNodeContext(this NodeContext context)
-        {
-         
-            if (string.IsNullOrEmpty(context.node_meta?.node_key))
-            {
-                return new ResultMo
-                {
-                    sys_ret = (int) SysResultTypes.ConfigError,
-                    ret = (int) ResultTypes.InnerError,
-                    msg = "node metainfo has error!"
-                };
-            }
-            return new ResultMo();
-        }
+     
     }
 
 }

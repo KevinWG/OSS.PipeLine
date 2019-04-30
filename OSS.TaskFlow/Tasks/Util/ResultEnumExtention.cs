@@ -1,7 +1,7 @@
 ﻿using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 
-namespace OSS.TaskFlow.Tasks.Mos
+namespace OSS.TaskFlow.Tasks.Util
 {
     public static class FlowResultExtention
     {
@@ -10,7 +10,7 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsTaskFailed(this ResultMo res)
+        public static bool IsRunFailed(this ResultMo res)
         {
             return res.sys_ret == (int) SysResultTypes.RunFailed;
         }
@@ -20,7 +20,7 @@ namespace OSS.TaskFlow.Tasks.Mos
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsTaskPause(this ResultMo res)
+        public static bool IsRunPause(this ResultMo res)
         {
             return res.sys_ret == (int)SysResultTypes.RunPause;
         }
