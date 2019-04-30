@@ -9,26 +9,7 @@ using OSS.TaskFlow.Tasks.Util;
 
 namespace OSS.TaskFlow.Tasks
 {
-    /// <summary>
-    ///  任务基类
-    /// </summary>
-    /// <typeparam name="TRes"></typeparam>
-    public abstract class BaseTask<TRes> : BaseTask
-        where TRes : ResultMo, new()
-    {
-        internal override async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
-        {
-
-            var res = await base.Process_Internal(context, data);
-            if (res.IsSuccess())
-                return res;
-
-            if (res is TRes)
-                return res;
-
-            return res.ConvertToResultInherit<TRes>();
-        }
-    }
+   
 
     public abstract partial class BaseTask
     {
@@ -40,7 +21,7 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns>  </returns>
-        internal virtual async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
+        internal async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
         {
             ResultMo res;
             try
@@ -69,8 +50,6 @@ namespace OSS.TaskFlow.Tasks
                     , "TaskFlow_TaskProcess", "Oss.TaskFlow");
                 await SaveTaskContext(context, data);
             }
-
-            await ProcessEnd_Internal(res, data, context);
             return res;
         }
         
@@ -100,21 +79,6 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         internal abstract Task Failed_Internal(TaskContext context, TaskReqData data);
-
-        /// <summary>
-        /// 执行结束方法
-        /// </summary>
-        /// <param name="taskRes">任务结果 :
-        ///  sys_ret = (int)SysResultTypes.RunFailed表明最终执行失败，
-        ///  sys_ret = (int)SysResultTypes.RunPause表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
-        /// </param>
-        /// <param name="data">请求的数据信息</param>
-        /// <param name="context">请求的上线文</param>
-        /// <returns></returns>
-        internal virtual Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData data, TaskContext context)
-        {
-            return Task.CompletedTask;
-        }
 
         #endregion
 

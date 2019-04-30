@@ -11,15 +11,11 @@ namespace OSS.TaskFlow.Flow
     {
         public async Task<ResultMo> Enter(FlowReq req)
         {
-
             //  todo 获取领域信息
-            //  todo 赋值领域Id => run_id
-
             var context = new FlowContext();
 
             CheckInitailContext(context);
 
- 
             return new ResultMo();
         }
 

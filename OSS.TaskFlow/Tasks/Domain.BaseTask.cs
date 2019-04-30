@@ -1,18 +1,18 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.TaskFlow.Tasks.Mos;
+using OSS.TaskFlow.Tasks.Util;
 
 namespace OSS.TaskFlow.Tasks
 {
     /// <summary>
     /// 基础领域任务
     ///     todo 获取领域信息
-    ///     todo  赋值run——id
     /// </summary>
     /// <typeparam name="TReq"></typeparam>
     /// <typeparam name="TDomain"></typeparam>
     /// <typeparam name="TRes"></typeparam>
-    public abstract partial class BaseDomainTask<TReq,TDomain, TRes> : BaseTask<TRes>
+    public abstract partial class BaseDomainTask<TReq,TDomain, TRes> : BaseTask
         where TRes : ResultMo, new()
     {
         #region 具体任务执行入口
@@ -23,34 +23,47 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns>  </returns>
-        public async Task<TRes> Process(TaskContext context, TaskReqData<TReq,TDomain> data)
+        public async Task<TRes> Process(TaskContext context, TaskReqData<TReq, TDomain> data)
         {
-            return (TRes)await base.Process_Internal(context, data);
+            // 【1】 执行起始方法
+            await ProcessStart(context, data);
+            // 【2】  执行核心方法
+            var res = (await Process_Internal(context, data)).CheckConvertToResult<TRes>();
+            // 【3】 执行结束方法
+            await ProcessEnd(res, context, data);
+            return res;
         }
-        
+
         #endregion
 
-        #region 实现，重试，失败 执行  重写父类方法
+        #region 生命周期扩展方法
 
-        internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data)
+        /// <summary>
+        /// 任务开始方法
+        /// </summary>
+        /// <param name="context">请求的上下文</param>
+        /// <param name="data">请求的数据信息</param>
+        /// <returns></returns>
+        protected virtual Task ProcessStart(TaskContext context, TaskReqData<TReq, TDomain> data )
         {
-            return await Do(context,(TaskReqData<TReq, TDomain>)data);
+            return Task.CompletedTask;
         }
 
-        internal override Task Failed_Internal(TaskContext context, TaskReqData data)
+        /// <summary>
+        /// 任务结束方法
+        /// </summary>
+        /// <param name="taskRes">任务结果 :
+        ///  sys_ret = (int)SysResultTypes.RunFailed表明最终执行失败，
+        ///  sys_ret = (int)SysResultTypes.RunPause表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
+        /// </param>
+        /// <param name="context">请求的上下文</param>
+        /// <param name="data">请求的数据信息</param>
+        /// <returns></returns>
+        protected virtual Task ProcessEnd(TRes taskRes, TaskContext context, TaskReqData<TReq, TDomain> data)
         {
-            return Failed(context, (TaskReqData<TReq, TDomain>)data);
+            return Task.CompletedTask;
         }
 
-        internal override Task Revert_Internal(TaskContext context, TaskReqData data)
-        {
-            return Revert(context, (TaskReqData<TReq, TDomain>)data);
-        }
-
-        internal override Task ProcessEnd_Internal(ResultMo taskRes, TaskReqData data, TaskContext context)
-        {
-            return ProcessEnd((TRes)taskRes, (TaskReqData<TReq, TDomain>)data, context);
-        }
         #endregion
 
         #region 实现，重试，失败 执行  扩展方法
@@ -85,22 +98,28 @@ namespace OSS.TaskFlow.Tasks
         }
 
 
-        /// <summary>
-        /// 执行结束方法
-        /// </summary>
-        /// <param name="taskRes">任务结果 :
-        ///  sys_ret = (int)SysResultTypes.RunFailed表明最终执行失败，
-        ///  sys_ret = (int)SysResultTypes.RunPause表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
-        /// </param>
-        /// <param name="data">请求的数据信息</param>
-        /// <param name="context">请求的上线文</param>
-        /// <returns></returns>
-        protected virtual Task ProcessEnd(TRes taskRes, TaskReqData<TReq,TDomain> data, TaskContext context)
+        #endregion
+
+        #region 实现，重试，失败 执行  重写父类方法
+
+        internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data)
         {
-            return Task.CompletedTask;
+            return await Do(context,(TaskReqData<TReq, TDomain>)data);
         }
 
+        internal override Task Failed_Internal(TaskContext context, TaskReqData data)
+        {
+            return Failed(context, (TaskReqData<TReq, TDomain>)data);
+        }
 
+        internal override Task Revert_Internal(TaskContext context, TaskReqData data)
+        {
+            return Revert(context, (TaskReqData<TReq, TDomain>)data);
+        }
+
+ 
         #endregion
+
+     
     }
 }
