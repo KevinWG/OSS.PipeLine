@@ -19,18 +19,5 @@ namespace OSS.TaskFlow.Flow.Mos
     }
 
 
-    public static class FlowContextExtention
-    {
-        public static  ResultMo CheckFlowContext(this FlowContext context)
-        {
-            if (string.IsNullOrEmpty(context.flow_meta?.flow_key))
-            {
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "flow metainfo has error!");
-            }
 
-            return string.IsNullOrEmpty(context.run_id)
-                ? new ResultMo(SysResultTypes.InnerError, ResultTypes.InnerError, "run_id can't be null !")
-                : new ResultMo();
-        }
-    }
 }

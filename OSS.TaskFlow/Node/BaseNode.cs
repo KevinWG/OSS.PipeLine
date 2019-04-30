@@ -97,7 +97,7 @@ namespace OSS.TaskFlow.Node
         internal virtual async Task<ResultMo> Excute_Internal(NodeContext context, TaskReqData req)
         {
             //  检查初始化
-            CheckNodeContext(context);
+            CheckInitailNodeContext(context);
 
             // 【1】 扩展前置执行方法
             await ExcutePre_Internal(context, req);
@@ -110,7 +110,7 @@ namespace OSS.TaskFlow.Node
             await ExcuteEnd_Internal(nodeRes, taskResults, context);
             return nodeRes;
         }
-
+        
         #endregion
         
         #region 内部（执行前，执行后）扩展方法
@@ -200,9 +200,7 @@ namespace OSS.TaskFlow.Node
             {
                 tAll.Wait();
             }
-            catch
-            {
-            }
+            catch{}
 
             var taskResults = taskDirRes.ToDictionary(p => p.Key, p =>
             {
@@ -228,14 +226,18 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
-        private static ResultMo CheckNodeContext(NodeContext context)
+        private static void CheckInitailNodeContext(NodeContext context)
         {
             //  todo  状态有效判断等
-            if (!string.IsNullOrEmpty(context.node_meta?.node_key))
-                return new ResultMo();
+            if (string.IsNullOrEmpty(context.node_meta?.node_key))
+            {
+                throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError,
+                    "node metainfo has error!");
+            }
+            if (string.IsNullOrEmpty(context.run_id))
+                context.run_id = DateTime.Now.Ticks.ToString();
+            }
 
-            throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError, "node metainfo has error!");
-        }
         #endregion
     }
 }

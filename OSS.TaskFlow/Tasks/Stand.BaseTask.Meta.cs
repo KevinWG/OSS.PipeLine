@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using OSS.Common.ComModels;
-using OSS.Common.Plugs.LogPlug;
+﻿using System.Threading.Tasks;
 using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
@@ -32,12 +29,7 @@ namespace OSS.TaskFlow.Tasks
         {
             return MetaProvider.SaveTaskContext(context, (TaskReqData<TReq>) data);
         }
-
-        internal override Task<ResultIdMo> GenerateRunId(TaskContext context)
-        {
-            return MetaProvider.GenerateRunId(context);
-        }
-
+        
         #endregion
     }
 }

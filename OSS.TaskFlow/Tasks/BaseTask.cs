@@ -9,11 +9,16 @@ using OSS.TaskFlow.Tasks.Util;
 
 namespace OSS.TaskFlow.Tasks
 {
+    /// <summary>
+    ///  任务基类
+    /// </summary>
+    /// <typeparam name="TRes"></typeparam>
     public abstract class BaseTask<TRes> : BaseTask
         where TRes : ResultMo, new()
     {
         internal override async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
         {
+
             var res = await base.Process_Internal(context, data);
             if (res.IsSuccess())
                 return res;
@@ -157,9 +162,7 @@ namespace OSS.TaskFlow.Tasks
 
             throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError, "task metainfo has error!");
         }
-
-
-    
+        
         #endregion
     }
 }

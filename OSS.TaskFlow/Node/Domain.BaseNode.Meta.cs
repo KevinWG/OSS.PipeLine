@@ -21,8 +21,7 @@ namespace OSS.TaskFlow.Node
         {
             base.RegisteProvider_Internal(metaPro);
         }
-
-
+        
         #endregion
     }
 }

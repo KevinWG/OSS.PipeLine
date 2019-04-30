@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
-using OSS.Common.ComModels.Enums;
 using OSS.Common.Plugs.LogPlug;
 using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
@@ -27,11 +25,7 @@ namespace OSS.TaskFlow.Tasks
 
         internal abstract Task SaveTaskContext_Internal(TaskContext context, TaskReqData data);
 
-        internal virtual Task<ResultIdMo> GenerateRunId(TaskContext context)
-        {
-            return Task.FromResult(new ResultIdMo(SysResultTypes.ConfigError, ResultTypes.ObjectStateError,
-                "Task with data cann't generate run_id by itself!"));
-        }
+
 
         #endregion
 

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
@@ -15,7 +14,6 @@ namespace OSS.TaskFlow.Tasks
     /// <typeparam name="TRes"></typeparam>
     public abstract partial class BaseDomainTask<TReq,TDomain, TRes> : BaseTask<TRes>
         where TRes : ResultMo, new()
-        where TDomain : IDomainMo
     {
         #region 具体任务执行入口
 

@@ -14,7 +14,6 @@ namespace OSS.TaskFlow.Node
     public abstract partial class BaseNode
     {
         public InstanceType InstanceType { get; internal set; }
-
         public FlowNodeType FlowNodeType { get; internal set; }
         
         protected BaseNode()
@@ -22,7 +21,6 @@ namespace OSS.TaskFlow.Node
             FlowNodeType = FlowNodeType.None;
             InstanceType = InstanceType.Stand;
         }
-        
 
         #region 注册存储接口
 
@@ -34,8 +32,7 @@ namespace OSS.TaskFlow.Node
         }
 
         #endregion
-
-
+        
         #region 内部基础方法
         internal Task<Dictionary<TaskMeta, BaseTask>> GetTaskMetas(NodeContext context)
         {

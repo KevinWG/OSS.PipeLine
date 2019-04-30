@@ -9,8 +9,7 @@ workernode
 
 Processer
 	Task  可以并行执行
-
-
+	
 Strategy 
 	重试策略等
 
@@ -18,17 +17,14 @@ Metric -  Http，消息队列，数据库
 
 
 
-1. Flow基础实现
-		
+1. Flow基础实现		
+
 2. Req参数处理  
    请求内容的协议处理
 
-   	 
 4. 获取stand下的metainfo
-
 5. 流程状态码
-
-异常处理问题
+6. 异常处理问题
 
 
 

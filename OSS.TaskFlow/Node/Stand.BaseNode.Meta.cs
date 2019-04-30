@@ -28,23 +28,6 @@ namespace OSS.TaskFlow.Node
         
         #endregion
 
-        #region 重写基类方法
-
-        internal async Task<TRes> InitailRunId(NodeContext context)
-        {
-            if (!string.IsNullOrEmpty(context.run_id))
-                return new TRes();
-
-            var idRes=await MetaProvider.GenerateRunId(context);
-            if (idRes.IsSuccess())
-            {
-                context.run_id = idRes.id;
-            }
-
-            return idRes.ConvertToResultInherit<TRes>();
-        }
-
-        #endregion
     }
 
 }
