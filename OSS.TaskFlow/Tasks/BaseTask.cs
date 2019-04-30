@@ -21,7 +21,7 @@ namespace OSS.TaskFlow.Tasks
         /// <param name="context"></param>
         /// <param name="data"></param>
         /// <returns>  </returns>
-        internal async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
+        internal virtual async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
         {
             ResultMo res;
             try
@@ -52,10 +52,10 @@ namespace OSS.TaskFlow.Tasks
             }
             return res;
         }
-        
+
         #endregion
 
-        #region 实现，重试，失败, 结束基础内部扩展方法
+        #region 基础内部扩展方法（实现，回退，失败）
 
         /// <summary>
         ///     任务的具体执行
@@ -81,8 +81,7 @@ namespace OSS.TaskFlow.Tasks
         internal abstract Task Failed_Internal(TaskContext context, TaskReqData data);
 
         #endregion
-
-
+        
         #region 辅助方法
 
 

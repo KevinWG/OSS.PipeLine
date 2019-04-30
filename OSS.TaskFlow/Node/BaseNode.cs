@@ -20,76 +20,54 @@ namespace OSS.TaskFlow.Node
     /// todo  全部节点回退
     /// </summary>
     /// <typeparam name="TRes"></typeparam>
-    public abstract class BaseNode<TRes> : BaseNode
-        where TRes : ResultMo, new()
-    {
-        #region 对外扩展方法
+    //public abstract class BaseNode<TRes> : BaseNode
+    //    where TRes : ResultMo, new()
+    //{
+    //    #region 对外扩展方法
 
-        protected virtual Task ExcuteEnd(TRes nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
-            NodeContext con)
-        {
-            return Task.CompletedTask;
-        }
+    //    protected virtual Task ExcuteEnd(TRes nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+    //        NodeContext con)
+    //    {
+    //        return Task.CompletedTask;
+    //    }
 
-        #endregion
+    //    #endregion
 
-        #region 重写父类扩展方法
+    //    #region 重写父类扩展方法
 
-        internal override async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)
-        {
-            var res = await base.Excute_Internal(con, req);
-            if (res.IsSuccess())
-                return res;
+    //    internal override async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)
+    //    {
+    //        var res = await base.Excute_Internal(con, req);
+    //        if (res.IsSuccess())
+    //            return res;
 
-            if (res is TRes)
-                return res;
+    //        if (res is TRes)
+    //            return res;
 
-            return res.ConvertToResultInherit<TRes>();
-        }
+    //        return res.ConvertToResultInherit<TRes>();
+    //    }
 
-        internal override ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
-        {
-            var tRes = default(TRes);
-            foreach (var tItemPair in taskResDirs)
-            {
-                var tItemRes = tItemPair.Value;
-                if (!tItemRes.IsSysOk())
-                {
-                    tRes = tItemRes.ConvertToResultInherit<TRes>();
-                    break;
-                }
+    //    internal override Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+    //        NodeContext con)
+    //    {
+    //        return ExcuteEnd((TRes) nodeRes, tastItemDirs, con);
+    //    }
 
-                if (tItemRes is TRes res)
-                    tRes = res;
-            }
-
-            if (tRes == null)
-            {
-                throw new ArgumentNullException(
-                    $"can't find a task of return value match node({this.GetType()}) of return value!");
-            }
-
-            return tRes;
-        }
-
-        internal override Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
-            NodeContext con)
-        {
-            return ExcuteEnd((TRes) nodeRes, tastItemDirs, con);
-        }
-
-        #endregion
-    }
+    //    #endregion
+    //}
 
     /// <summary>
     ///  基础工作节点
+    /// todo  重新激活处理
+    /// todo  协议处理
+    /// todo  全部节点回退
     /// </summary>
     public abstract partial class BaseNode
     {
-        #region 节点执行
+        #region 节点执行入口
 
         /// <summary>
-        ///   具体执行方法
+        ///   主入口方法
         /// </summary>
         /// <param name="context"></param>
         /// <param name="req"></param>
@@ -99,45 +77,50 @@ namespace OSS.TaskFlow.Node
             //  检查初始化
             CheckInitailNodeContext(context);
 
-            // 【1】 扩展前置执行方法
-            await ExcutePre_Internal(context, req);
-
-            // 【2】 任务处理执行方法
             var taskResults = await Excuting(context, req);
             var nodeRes = ExcuteResult_Internal(context, taskResults); // 任务结果加工处理
 
             //  【3】 扩展后置执行方法
-            await ExcuteEnd_Internal(nodeRes, taskResults, context);
+            await ExcuteEnd(context, nodeRes, taskResults);
             return nodeRes;
         }
-        
+
+
         #endregion
-        
-        #region 内部（执行前，执行后）扩展方法
 
-        //  处理结果
-        internal abstract ResultMo ExcuteResult_Internal(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs);
+        #region 节点生命周期事件扩展方法
 
-        internal abstract Task ExcutePre_Internal(NodeContext con, TaskReqData req);
+        protected virtual Task ExcuteEnd(NodeContext con,
+            ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> taskResults)
+        {
+            return Task.CompletedTask;
+        }
 
-        internal abstract Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
-            NodeContext con);
+        #endregion
+
+        #region 节点生命周期内部扩展方法
+
+        internal abstract ResultMo ExcuteResult_Internal(NodeContext context,
+            Dictionary<TaskMeta, ResultMo> taskResults);
 
         #endregion
 
         #region 辅助方法 —— 节点内部任务执行
+
         private async Task<Dictionary<TaskMeta, ResultMo>> Excuting(NodeContext con, TaskReqData req)
         {
             // 获取任务元数据列表
             var taskDirs = await GetTaskMetas(con);
             if (taskDirs == null || taskDirs.Count == 0)
-                 throw new ResultException(SysResultTypes.ConfigError, ResultTypes.ObjectNull,
+                throw new ResultException(SysResultTypes.ConfigError, ResultTypes.ObjectNull,
                     $"{this.GetType()} have no tasks can be processed!");
 
             // 执行处理结果
             var taskResults = await ExcutingWithTasks(con, req, taskDirs);
             return new Dictionary<TaskMeta, ResultMo>(taskResults);
         }
+
+        #endregion
 
         #region 辅助方法 —— 节点内部任务执行 —— 分解
 
@@ -200,7 +183,9 @@ namespace OSS.TaskFlow.Node
             {
                 tAll.Wait();
             }
-            catch{}
+            catch
+            {
+            }
 
             var taskResults = taskDirRes.ToDictionary(p => p.Key, p =>
             {
@@ -226,6 +211,9 @@ namespace OSS.TaskFlow.Node
 
         #endregion
 
+        #region 其他辅助方法
+
+        //  检查context内容
         private static void CheckInitailNodeContext(NodeContext context)
         {
             //  todo  状态有效判断等
@@ -234,10 +222,42 @@ namespace OSS.TaskFlow.Node
                 throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError,
                     "node metainfo has error!");
             }
+
             if (string.IsNullOrEmpty(context.run_id))
                 context.run_id = DateTime.Now.Ticks.ToString();
+        }
+
+        // 处理结果转换
+        internal TRes GetNodeResult<TRes>(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
+            where TRes : ResultMo, new()
+        {
+            var tRes = default(TRes);
+            foreach (var tItemPair in taskResDirs)
+            {
+                var tItemRes = tItemPair.Value;
+                if (!tItemRes.IsSysOk())
+                {
+                    tRes = tItemRes.ConvertToResultInherit<TRes>();
+                    break;
+                }
+
+                if (tItemRes is TRes res)
+                    tRes = res;
             }
 
+            if (tRes == null)
+            {
+                throw new ArgumentNullException(
+                    $"can't find a task of return value match node({this.GetType()}) of return value!");
+            }
+
+            return tRes;
+        }
+
         #endregion
+
+
     }
+
+
 }

@@ -18,15 +18,19 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         public async Task<TRes> Process(TaskContext context, TaskReqData<TReq> data)
         {
-            // 【1】 执行起始方法
-            await ProcessStart(context, data);
-            // 【2】  执行核心方法
-            var res = (await Process_Internal(context, data)).CheckConvertToResult<TRes>();
-            // 【3】 执行结束方法
-            await ProcessEnd(res, context, data);
-            return res;
+            return (TRes)(await Process_Internal(context, data));
         }
 
+        internal override async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
+        {
+            // 【1】 执行起始方法
+            await ProcessStart(context, (TaskReqData<TReq>)data);
+            // 【2】  执行核心方法
+            var res = (await base.Process_Internal(context, data)).CheckConvertToResult<TRes>();
+            // 【3】 执行结束方法
+            await ProcessEnd(res, context, (TaskReqData<TReq>)data);
+            return res;
+        }
         #endregion
 
         #region 生命周期扩展方法
@@ -59,7 +63,7 @@ namespace OSS.TaskFlow.Tasks
 
         #endregion
 
-        #region 实现，重试，失败 执行  扩展方法
+        #region 扩展方法（实现，回退，失败）  扩展方法
 
         /// <summary>
         ///     任务的具体执行
@@ -91,7 +95,7 @@ namespace OSS.TaskFlow.Tasks
         }
         #endregion
 
-        #region 实现，重试，失败 执行  重写父类方法
+        #region 基础内部扩展方法（实现，回退，失败） 重写
 
         internal override async Task<ResultMo> Do_Internal(TaskContext context, TaskReqData data)
         {

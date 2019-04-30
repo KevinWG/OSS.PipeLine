@@ -22,10 +22,6 @@ namespace OSS.TaskFlow.Flow
 
 
         #endregion
-
-        //  获取流核心数据信息
-        //public abstract Task GetFlowInfo(TaskReq<> req);
-
-
+        
     }
 }
