@@ -25,12 +25,12 @@ namespace OSS.TaskFlow.Tasks
         #endregion
 
         #region 重写基类方法
-        
+
         internal override Task SaveTaskContext_Internal(TaskContext context, TaskReqData data)
         {
-            return MetaProvider.SaveTaskContext(context, (TaskReqData<TReq, TDomain>)data);
+            return MetaProvider.SaveTaskContext(context, (TaskReqData<TReq, TDomain>) data);
         }
-        
+
         #endregion
     }
 }

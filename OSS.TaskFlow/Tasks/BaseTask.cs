@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
+using OSS.Common.Extention;
+using OSS.Common.Plugs.LogPlug;
 using OSS.TaskFlow.Tasks.Mos;
 
 namespace OSS.TaskFlow.Tasks
 {
-    public abstract class BaseTask<TRes>: BaseTask
+    public abstract class BaseTask<TRes> : BaseTask
         where TRes : ResultMo, new()
     {
         internal override async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
@@ -22,7 +24,7 @@ namespace OSS.TaskFlow.Tasks
         }
     }
 
-    public abstract partial class  BaseTask
+    public abstract partial class BaseTask
     {
         #region 任务进入入口
 
@@ -34,32 +36,42 @@ namespace OSS.TaskFlow.Tasks
         /// <returns>  </returns>
         internal virtual async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
         {
-
-            var checkRes = context.CheckTaskContext();
-            if (!checkRes.IsSuccess())
-                return checkRes;
-            
-            var res = await Recurs(context, data);
-
-            // 判断是否间隔执行,生成重试信息
-            if (res.IsTaskFailed() && context.interval_times < context.task_meta.interval_times)
+            ResultMo res;
+            try
             {
-                context.interval_times++;
-                await SaveTaskContext_Internal(context, data);
-                res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
-            }
+                CheckTaskContext(context);
+                res = await Recurs(context, data);
 
-            if (res.IsTaskFailed())
+                // 判断是否间隔执行,生成重试信息
+                if (res.IsTaskFailed() && context.interval_times < context.task_meta.interval_times)
+                {
+                    context.interval_times++;
+                    await SaveTaskContext(context, data);
+                    res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
+                }
+
+                if (res.IsTaskFailed())
+                {
+                    //  最终失败，执行失败方法
+                    await Failed_Internal(context, data);
+                }
+            }
+            catch (ResultException e)
             {
-                //  最终失败，执行失败方法
-                await Failed_Internal(context, data);
+                res = e.ConvertToReult();
+                LogUtil.Error($"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
+                    , "TaskFlow_TaskProcess", "Oss.TaskFlow");
+                await SaveTaskContext(context, data);
             }
-
+            catch 
+            {
+                throw;
+            }
             await ProcessEnd_Internal(res, data, context);
             return res;
         }
 
-       
+
         #endregion
 
         #region 实现，重试，失败, 结束基础内部扩展方法
@@ -132,7 +144,6 @@ namespace OSS.TaskFlow.Tasks
                 directExcuteTimes++;
                 context.exced_times++;
             }
-
             // 判断是否执行直接重试 
             while (res.IsTaskFailed() && directExcuteTimes < context.task_meta.continue_times);
 
@@ -140,6 +151,18 @@ namespace OSS.TaskFlow.Tasks
         }
 
 
+        // 状态有效判断
+        private static ResultMo CheckTaskContext(TaskContext context)
+        {
+            //  todo  状态有效判断等
+            if (!string.IsNullOrEmpty(context.task_meta?.task_key))
+                return new ResultMo();
+
+            throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError, "task metainfo has error!");
+        }
+
+
+    
         #endregion
     }
 }

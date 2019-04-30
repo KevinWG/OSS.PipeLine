@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
+using OSS.Common.Plugs.LogPlug;
 using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
@@ -26,10 +28,9 @@ namespace OSS.TaskFlow.Tasks
         
         #region 重写基类方法
         
-
         internal override Task SaveTaskContext_Internal(TaskContext context, TaskReqData data)
         {
-            return MetaProvider.SaveTaskContext(context, (TaskReqData<TReq>)data);
+            return MetaProvider.SaveTaskContext(context, (TaskReqData<TReq>) data);
         }
 
         internal override Task<ResultIdMo> GenerateRunId(TaskContext context)

@@ -44,18 +44,6 @@ namespace OSS.TaskFlow.Tasks.Mos
             return taskCon;
         }
 
-        public static ResultMo CheckTaskContext(this TaskContext context)
-        {
-            if (!string.IsNullOrEmpty(context.task_meta?.task_key))
-                return new ResultMo();
-
-            var res = new ResultMo
-            {
-                sys_ret = (int) SysResultTypes.ConfigError,
-                ret = (int) ResultTypes.InnerError,
-                msg = "task metainfo has error!"
-            };
-            return res;
-        }
+ 
     }
 }

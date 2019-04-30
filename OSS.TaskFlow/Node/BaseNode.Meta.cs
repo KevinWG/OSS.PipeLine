@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
 using OSS.TaskFlow.Node.Interfaces;
 using OSS.TaskFlow.Node.Mos;
 using OSS.TaskFlow.Tasks;
@@ -17,8 +16,7 @@ namespace OSS.TaskFlow.Node
         public InstanceType InstanceType { get; internal set; }
 
         public FlowNodeType FlowNodeType { get; internal set; }
-
-
+        
         protected BaseNode()
         {
             FlowNodeType = FlowNodeType.None;

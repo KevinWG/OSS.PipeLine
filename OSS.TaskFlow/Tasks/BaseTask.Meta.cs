@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
+using OSS.Common.Plugs.LogPlug;
 using OSS.TaskFlow.Tasks.Interfaces;
 using OSS.TaskFlow.Tasks.Mos;
 
@@ -29,6 +31,25 @@ namespace OSS.TaskFlow.Tasks
         {
             return Task.FromResult(new ResultIdMo(SysResultTypes.ConfigError, ResultTypes.ObjectStateError,
                 "Task with data cann't generate run_id by itself!"));
+        }
+
+        #endregion
+
+
+        #region 辅助方法
+
+        private Task SaveTaskContext(TaskContext context, TaskReqData data)
+        {
+            try
+            {
+                return SaveTaskContext_Internal(context, data);
+            }
+            catch (Exception e)
+            {
+                //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
+                LogUtil.Error(e, "Oss.TaskFlow.Task.SaveTaskContext", "Oss.TaskFlow");
+            }
+            return Task.CompletedTask;
         }
 
         #endregion
