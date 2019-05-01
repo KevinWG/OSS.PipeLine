@@ -1,5 +1,5 @@
-﻿using OSS.EventTask.Mos;
-using OSS.TaskFlow.Node.Interfaces;
+﻿using OSS.EventNode.Interfaces;
+using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
 {

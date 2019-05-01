@@ -1,11 +1,11 @@
 ﻿
 
-using OSS.EventNode.Interfaces;
+using System.Threading.Tasks;
 
-namespace OSS.TaskFlow.Node.Interfaces
+namespace OSS.EventNode.Interfaces
 {
     public interface IStandNodeProvider<TReq> : INodeProvider
     {
-      
+
     }
 }

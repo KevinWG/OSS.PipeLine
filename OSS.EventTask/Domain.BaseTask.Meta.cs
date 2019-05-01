@@ -14,9 +14,9 @@ namespace OSS.EventTask
 
         #region 存储处理
 
-        public IFlowTaskProvider<TReq, TDomain> MetaProvider => (IFlowTaskProvider<TReq, TDomain>)m_metaProvider;
+        public IDomainTaskProvider<TReq, TDomain> MetaProvider => (IDomainTaskProvider<TReq, TDomain>)m_metaProvider;
 
-        public void RegisteProvider(IFlowTaskProvider<TReq, TDomain> metaPro)
+        public void RegisteProvider(IDomainTaskProvider<TReq, TDomain> metaPro)
         {
             base.RegisteProvider_Internal(metaPro);
         }

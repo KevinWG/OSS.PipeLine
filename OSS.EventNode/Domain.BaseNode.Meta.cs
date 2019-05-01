@@ -1,5 +1,5 @@
-﻿using OSS.EventTask.Mos;
-using OSS.TaskFlow.Node.Interfaces;
+﻿using OSS.EventNode.Interfaces;
+using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
 {
@@ -15,9 +15,9 @@ namespace OSS.EventNode
 
         #region 存储处理
 
-        public IFlowNodeProvider<TReq, TDomain> MetaProvider => (IFlowNodeProvider<TReq, TDomain>) m_metaProvider;
+        public IDomainNodeProvider<TReq, TDomain> MetaProvider => (IDomainNodeProvider<TReq, TDomain>) m_metaProvider;
 
-        public void RegisteProvider(IFlowNodeProvider<TReq, TDomain> metaPro)
+        public void RegisteProvider(IDomainNodeProvider<TReq, TDomain> metaPro)
         {
             base.RegisteProvider_Internal(metaPro);
         }
