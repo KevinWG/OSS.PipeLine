@@ -1,10 +1,10 @@
-﻿using OSS.TaskFlow.Flow.MetaMos;
-using OSS.TaskFlow.Node.Mos;
+﻿using OSS.EventFlow.MetaMos;
 
-namespace OSS.TaskFlow.Flow.Mos
+namespace OSS.EventFlow.Mos
 {
-    public class FlowContext:NodeContext
+    public class FlowContext
     {
+      
 
         /// <summary>
         ///  当前流元信息

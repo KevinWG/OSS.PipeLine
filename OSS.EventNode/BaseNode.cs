@@ -5,14 +5,57 @@ using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
-using OSS.TaskFlow.Node.MetaMos;
-using OSS.TaskFlow.Node.Mos;
-using OSS.TaskFlow.Tasks;
-using OSS.TaskFlow.Tasks.MetaMos;
-using OSS.TaskFlow.Tasks.Mos;
+using OSS.EventNode.MetaMos;
+using OSS.EventNode.Mos;
+using OSS.EventTask;
+using OSS.EventTask.MetaMos;
+using OSS.EventTask.Mos;
 
-namespace OSS.TaskFlow.Node
+namespace OSS.EventNode
 {
+    /// <summary>
+    /// 基础工作节点
+    /// todo  重新激活处理
+    /// todo  协议处理
+    /// todo  全部节点回退
+    /// </summary>
+    /// <typeparam name="TRes"></typeparam>
+    //public abstract class BaseNode<TRes> : BaseNode
+    //    where TRes : ResultMo, new()
+    //{
+    //    #region 对外扩展方法
+
+    //    protected virtual Task ExcuteEnd(TRes nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+    //        NodeContext con)
+    //    {
+    //        return Task.CompletedTask;
+    //    }
+
+    //    #endregion
+
+    //    #region 重写父类扩展方法
+
+    //    internal override async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)
+    //    {
+    //        var res = await base.Excute_Internal(con, req);
+    //        if (res.IsSuccess())
+    //            return res;
+
+    //        if (res is TRes)
+    //            return res;
+
+    //        return res.ConvertToResultInherit<TRes>();
+    //    }
+
+    //    internal override Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
+    //        NodeContext con)
+    //    {
+    //        return ExcuteEnd((TRes) nodeRes, tastItemDirs, con);
+    //    }
+
+    //    #endregion
+    //}
+
     /// <summary>
     ///  基础工作节点
     /// todo  重新激活处理
@@ -60,6 +103,8 @@ namespace OSS.TaskFlow.Node
         internal abstract ResultMo ExcuteResult_Internal(NodeContext context,
             Dictionary<TaskMeta, ResultMo> taskResults);
 
+        internal abstract Task<ResultMo> GetTaskItemResult(BaseTask task, NodeContext con, TaskReqData req);
+
         #endregion
 
         #region 辅助方法 —— 节点内部任务执行
@@ -82,7 +127,7 @@ namespace OSS.TaskFlow.Node
         #region 辅助方法 —— 节点内部任务执行 —— 分解
 
 
-        private static async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData req,
+        private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
@@ -106,14 +151,13 @@ namespace OSS.TaskFlow.Node
         /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext con, TaskReqData req,
+        private  async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext con, TaskReqData req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
             {
-                var context = ConvertToContext(con, td.Key);
-                var retRes = await td.Value.Process_Internal(context, req);
+                var retRes = await GetTaskItemResult(td.Value, con, req);
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -126,13 +170,13 @@ namespace OSS.TaskFlow.Node
         /// <param name="con"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private static Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext con, TaskReqData req,
+        private  Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext con, TaskReqData req,
             IDictionary<TaskMeta, BaseTask> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
-                var context = ConvertToContext(con, tr.Key);
-                return tr.Value.Process_Internal(context, req);
+                var task = tr.Value;
+                return GetTaskItemResult(task, con, req);
             });
 
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
@@ -140,9 +184,7 @@ namespace OSS.TaskFlow.Node
             {
                 tAll.Wait();
             }
-            catch
-            {
-            }
+            catch{}
 
             var taskResults = taskDirRes.ToDictionary(p => p.Key, p =>
             {
@@ -155,12 +197,15 @@ namespace OSS.TaskFlow.Node
             return taskResults;
         }
 
-        private static TaskContext ConvertToContext(NodeContext con, TaskMeta meta)
+
+
+
+        internal static TaskContext ConvertToContext(NodeContext con, TaskMeta meta)
         {
-            var context = con.ConvertToTaskContext();
+            var context = new TaskContext();
 
             //context.body = (TReq) req.body; //  todo 添加协议转化处理
-            //context.domain = flowData;
+            //context.domain = domainData;
             context.task_meta = meta;
 
             return context;
@@ -212,6 +257,8 @@ namespace OSS.TaskFlow.Node
         }
 
         #endregion
+
+
 
 
     }

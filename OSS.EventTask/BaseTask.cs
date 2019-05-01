@@ -4,11 +4,13 @@ using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
 using OSS.Common.Plugs.LogPlug;
-using OSS.TaskFlow.Tasks.Mos;
-using OSS.TaskFlow.Tasks.Util;
+using OSS.EventTask.Mos;
+using OSS.EventTask.Util;
 
-namespace OSS.TaskFlow.Tasks
+namespace OSS.EventTask
 {
+   
+
     public abstract partial class BaseTask
     {
         #region 任务进入入口

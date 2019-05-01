@@ -1,6 +1,6 @@
-﻿using OSS.TaskFlow.Tasks.MetaMos;
+﻿using OSS.EventTask.MetaMos;
 
-namespace OSS.TaskFlow.Tasks.Mos
+namespace OSS.EventTask.Mos
 {
     /// <summary>
     ///  任务上下文基类
@@ -33,5 +33,17 @@ namespace OSS.TaskFlow.Tasks.Mos
         public long last_excutedate { get; set; }
     }
 
-   
+    //public static class TaskContextExtention
+    //{
+    //    public static TaskContext ConvertToTaskContext(this NodeContext node)
+    //    {
+    //        var taskCon=new TaskContext();
+
+    //        taskCon.run_id = node.run_id;
+    //        taskCon.flow_meta = node.flow_meta;
+    //        taskCon.node_meta = node.node_meta;
+
+    //        return taskCon;
+    //    }
+    //}
 }

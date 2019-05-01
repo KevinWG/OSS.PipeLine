@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OSS.TaskFlow\OSS.TaskFlow.csproj" />
+    <Folder Include="TestForms\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TestForms\" />
+    <ProjectReference Include="..\OSS.EventFlow\OSS.EventFlow.csproj" />
   </ItemGroup>
 
 </Project>
