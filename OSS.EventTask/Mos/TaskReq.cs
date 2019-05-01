@@ -8,13 +8,13 @@
 
         public TaskReqData(TReq req, TDomain domainData):base(req)
         {
-            domain = domainData;
+            domain_data = domainData;
         }
 
         /// <summary>
         ///   核心流数据
         /// </summary>
-        public TDomain domain { get; set; }
+        public TDomain domain_data { get; set; }
     }
 
     /// <summary>

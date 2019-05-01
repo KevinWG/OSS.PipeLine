@@ -33,6 +33,9 @@ namespace OSS.EventNode
         // 重写基类入口方法
         internal override async Task<ResultMo> Excute_Internal(NodeContext context, TaskReqData req)
         {
+            //  检查初始化
+            CheckInitailNodeContext(context);
+
             // 【1】 扩展前置执行方法
             await ExcutePre(context, (TaskReqData<TReq>)req);
 

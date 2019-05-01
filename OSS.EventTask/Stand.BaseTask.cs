@@ -23,6 +23,7 @@ namespace OSS.EventTask
 
         internal override async Task<ResultMo> Process_Internal(TaskContext context, TaskReqData data)
         {
+            CheckTaskContext(context);
             // 【1】 执行起始方法
             await ProcessStart(context, (TaskReqData<TReq>)data);
             // 【2】  执行核心方法

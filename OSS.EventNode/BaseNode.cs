@@ -31,9 +31,6 @@ namespace OSS.EventNode
         /// <returns></returns>
         internal virtual async Task<ResultMo> Excute_Internal(NodeContext context, TaskReqData req)
         {
-            //  检查初始化
-            CheckInitailNodeContext(context);
-
             var taskResults = await Excuting(context, req);
             var nodeRes = ExcuteResult_Internal(context, taskResults); // 任务结果加工处理
 
@@ -173,7 +170,7 @@ namespace OSS.EventNode
         #region 其他辅助方法
 
         //  检查context内容
-        private static void CheckInitailNodeContext(NodeContext context)
+        internal static void CheckInitailNodeContext(NodeContext context)
         {
             //  todo  状态有效判断等
             if (string.IsNullOrEmpty(context.node_meta?.node_key))

@@ -24,7 +24,6 @@ namespace OSS.EventTask
             ResultMo res;
             try
             {
-                CheckTaskContext(context);
                 res = await Recurs(context, data);
 
                 // 判断是否间隔执行,生成重试信息
@@ -115,7 +114,7 @@ namespace OSS.EventTask
 
 
         // 状态有效判断
-        private static ResultMo CheckTaskContext(TaskContext context)
+        internal static ResultMo CheckTaskContext(TaskContext context)
         {
             //  todo  状态有效判断等
             if (!string.IsNullOrEmpty(context.task_meta?.task_key))
