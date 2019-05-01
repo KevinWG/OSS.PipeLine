@@ -14,49 +14,6 @@ using OSS.EventTask.Mos;
 namespace OSS.EventNode
 {
     /// <summary>
-    /// 基础工作节点
-    /// todo  重新激活处理
-    /// todo  协议处理
-    /// todo  全部节点回退
-    /// </summary>
-    /// <typeparam name="TRes"></typeparam>
-    //public abstract class BaseNode<TRes> : BaseNode
-    //    where TRes : ResultMo, new()
-    //{
-    //    #region 对外扩展方法
-
-    //    protected virtual Task ExcuteEnd(TRes nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
-    //        NodeContext con)
-    //    {
-    //        return Task.CompletedTask;
-    //    }
-
-    //    #endregion
-
-    //    #region 重写父类扩展方法
-
-    //    internal override async Task<ResultMo> Excute_Internal(NodeContext con, TaskReqData req)
-    //    {
-    //        var res = await base.Excute_Internal(con, req);
-    //        if (res.IsSuccess())
-    //            return res;
-
-    //        if (res is TRes)
-    //            return res;
-
-    //        return res.ConvertToResultInherit<TRes>();
-    //    }
-
-    //    internal override Task ExcuteEnd_Internal(ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> tastItemDirs,
-    //        NodeContext con)
-    //    {
-    //        return ExcuteEnd((TRes) nodeRes, tastItemDirs, con);
-    //    }
-
-    //    #endregion
-    //}
-
-    /// <summary>
     ///  基础工作节点
     /// todo  重新激活处理
     /// todo  协议处理

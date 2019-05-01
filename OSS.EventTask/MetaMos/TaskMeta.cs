@@ -18,9 +18,9 @@
         public TaskMetaStatus status { get; set; }
         
         /// <summary>
-        ///  运行类型
+        ///  结果动作
         /// </summary>
-        public RunType run_type { get; set; }
+        public ResultAction result_action { get; set; }
         
         /// <summary>
         ///  直接重试次数，默认系统执行一次
@@ -40,7 +40,7 @@
         Disable=-1,
         Enable=0
     }
-    public enum RunType
+    public enum ResultAction
     {
         /// <summary>
         /// 

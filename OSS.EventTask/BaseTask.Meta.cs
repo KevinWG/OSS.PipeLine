@@ -9,7 +9,14 @@ namespace OSS.EventTask
     public abstract partial class BaseTask
     {
         public InstanceType InstanceType { get; protected set; }
-        
+        public RunType RunType { get; protected set; }
+
+        protected BaseTask()
+        {
+            RunType = RunType.None;
+        }
+
+
         #region 注册存储接口
 
         internal ITaskProvider m_metaProvider;

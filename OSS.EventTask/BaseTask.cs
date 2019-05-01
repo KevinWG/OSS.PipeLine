@@ -9,8 +9,6 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-   
-
     public abstract partial class BaseTask
     {
         #region 任务进入入口
