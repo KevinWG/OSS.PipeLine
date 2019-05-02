@@ -2,26 +2,62 @@
 
 namespace OSS.EventTask.Mos
 {
+    public class TaskContext<TReq, TDomain> : TaskContext<TReq>
+    {
+        /// <summary>
+        ///   核心流数据
+        /// </summary>
+        public TDomain domain_data { get; set; }
+    }
+
+    /// <summary>
+    ///   请求数据
+    /// </summary>
+    /// <typeparam name="TReq"></typeparam>
+    public class TaskContext<TReq> : TaskContext
+    {
+        /// <summary>
+        ///   执行请求内容主体
+        /// </summary>
+        public TReq req_data { get; set; }
+    }
+
+
     /// <summary>
     ///  任务上下文基类
     /// </summary>
-    public class TaskContext
+    public class TaskContext: BaseContext
     {
-        /// <summary>
-        ///  当前系统运行Id
-        /// </summary>
-        public string run_id { get; set; }
+        #region 基础配置信息
 
         /// <summary>
-        ///  task元信息
+        ///  task元信息【配置信息】
         /// </summary>
         public TaskMeta  task_meta { get; set; }
-        
+
+        #endregion
+
+
+        #region 运行信息
+
+        /// <summary>
+        ///  任务已运行统计信息
+        /// </summary>
+        public TaskStatisticsMo task_statis { get; set; }
+
+        #endregion
+
+    }
+
+
+
+    public class TaskStatisticsMo
+    {
         /// <summary>
         ///  执行总次数
         /// </summary>
-        public int exced_times { get;internal set; }
-        
+        public int exced_times { get; internal set; }
+
         /// <summary>
         ///  间隔执行次数
         /// </summary>
@@ -32,6 +68,19 @@ namespace OSS.EventTask.Mos
         /// </summary>
         public long last_excutedate { get; set; }
     }
+
+
+
+    public class BaseContext
+    {
+        #region 运行信息
+
+        public string run_id { get; set; }
+
+        #endregion
+    }
+
+
 
     //public static class TaskContextExtention
     //{

@@ -16,7 +16,7 @@ namespace OSS.EventTask
 
         #region 存储处理
 
-        public IDomainTaskProvider<TReq, TDomain> MetaProvider => (IDomainTaskProvider<TReq, TDomain>) m_metaProvider;
+        public IDomainTaskProvider<TReq, TDomain> TaskProvider => (IDomainTaskProvider<TReq, TDomain>) m_metaProvider;
 
         public void RegisteProvider(IDomainTaskProvider<TReq, TDomain> metaPro)
         {
@@ -40,13 +40,6 @@ namespace OSS.EventTask
 
         #endregion
 
-        #region 重写基类方法
 
-        internal override Task SaveTaskContext_Internal(TaskContext context, TaskReqData data)
-        {
-            return MetaProvider.SaveTaskContext(context, (TaskReqData<TReq, TDomain>) data);
-        }
-
-        #endregion
     }
 }

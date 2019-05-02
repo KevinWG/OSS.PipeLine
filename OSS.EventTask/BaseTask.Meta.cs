@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask
+    public abstract partial class BaseTask<TTContext,TTRes> where TTContext : TaskContext
+        where TTRes : ResultMo, new()
     {
         public InstanceType InstanceType { get; protected set; }
         public RunType RunType { get; protected set; }
@@ -21,27 +23,30 @@ namespace OSS.EventTask
 
         internal ITaskProvider m_metaProvider;
 
-        internal void RegisteProvider_Internal(ITaskProvider metaPpro)
+        internal void RegisteProvider_Internal(ITaskProvider taskPro)
         {
-            m_metaProvider = metaPpro;
+            m_metaProvider = taskPro;
         }
 
         #endregion
 
         #region 内部扩展方法
 
-        internal abstract Task SaveTaskContext_Internal(TaskContext context, TaskReqData data);
-        
+        protected virtual Task SaveTaskContext(TTContext context)
+        {
+            return Task.CompletedTask;
+        }
+
         #endregion
 
 
         #region 辅助方法
 
-        private Task SaveTaskContext(TaskContext context, TaskReqData data)
+        private Task TrySaveTaskContext(TTContext context)
         {
             try
             {
-                return SaveTaskContext_Internal(context, data);
+                return SaveTaskContext(context);
             }
             catch (Exception e)
             {

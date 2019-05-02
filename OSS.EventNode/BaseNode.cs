@@ -7,9 +7,8 @@ using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
 using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
-using OSS.EventTask;
+using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
-using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
 {
@@ -19,32 +18,52 @@ namespace OSS.EventNode
     /// todo  协议处理
     /// todo  全部节点回退
     /// </summary>
-    public abstract partial class BaseNode
+    public abstract partial class BaseNode<TTContext,TTRes>
+        where TTContext : NodeContext
+        where TTRes : ResultMo, new()
     {
         #region 节点执行入口
 
-        /// <summary>
-        ///   主入口方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        internal virtual async Task<ResultMo> Excute_Internal(NodeContext context, TaskReqData req)
+    // 重写基类入口方法
+        public async Task<TTRes> Excute(TTContext context)
         {
-            var taskResults = await Excuting(context, req);
-            var nodeRes = ExcuteResult_Internal(context, taskResults); // 任务结果加工处理
+            //  检查初始化
+            CheckInitailNodeContext(context);
+            
+            // 【1】 扩展前置执行方法
+            await ExcutePre(context);
+
+            // 【2】 任务处理执行方法
+
+            var taskResults = await Excuting(context);
+            var nodeRes = GetNodeResult(context, taskResults); // 任务结果加工处理
 
             //  【3】 扩展后置执行方法
             await ExcuteEnd(context, nodeRes, taskResults);
             return nodeRes;
+
         }
 
+    
 
+        #endregion
+        
+        #region 生命周期扩展方法
+
+        protected virtual Task ExcutePre(TTContext con)
+        {
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
+        #region 内部扩展方法重写
+        internal abstract Task<TTRes> GetTaskItemResult(IBaseTask task, TTContext con);
         #endregion
 
         #region 节点生命周期事件扩展方法
 
-        protected virtual Task ExcuteEnd(NodeContext con,
+        protected virtual Task ExcuteEnd(TTContext con,
             ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> taskResults)
         {
             return Task.CompletedTask;
@@ -52,18 +71,9 @@ namespace OSS.EventNode
 
         #endregion
 
-        #region 节点生命周期内部扩展方法
-
-        internal abstract ResultMo ExcuteResult_Internal(NodeContext context,
-            Dictionary<TaskMeta, ResultMo> taskResults);
-
-        internal abstract Task<ResultMo> GetTaskItemResult(BaseTask task, NodeContext con, TaskReqData req);
-
-        #endregion
-
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting(NodeContext con, TaskReqData req)
+        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting(TTContext con)
         {
             // 获取任务元数据列表
             var taskDirs = await GetTaskMetas(con);
@@ -72,7 +82,7 @@ namespace OSS.EventNode
                     $"{this.GetType()} have no tasks can be processed!");
 
             // 执行处理结果
-            var taskResults = await ExcutingWithTasks(con, req, taskDirs);
+            var taskResults = await ExcutingWithTasks(con, taskDirs);
             return new Dictionary<TaskMeta, ResultMo>(taskResults);
         }
 
@@ -81,18 +91,18 @@ namespace OSS.EventNode
         #region 辅助方法 —— 节点内部任务执行 —— 分解
 
 
-        private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(NodeContext con, TaskReqData req,
-            IDictionary<TaskMeta, BaseTask> taskDirs)
+        private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(TTContext con, 
+            IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
             if (con.node_meta.excute_type == NodeExcuteType.Parallel)
             {
-                taskResults = Excuting_Parallel(con, req, taskDirs);
+                taskResults = Excuting_Parallel(con, taskDirs);
             }
             else
             {
-                taskResults = await Excuting_Sequence(con, req, taskDirs);
+                taskResults = await Excuting_Sequence(con, taskDirs);
             }
 
             return taskResults;
@@ -105,13 +115,13 @@ namespace OSS.EventNode
         /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private  async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(NodeContext con, TaskReqData req,
-            IDictionary<TaskMeta, BaseTask> taskDirs)
+        private  async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(TTContext con, 
+            IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
             {
-                var retRes = await GetTaskItemResult(td.Value, con, req);
+                var retRes = await GetTaskItemResult(td.Value, con);
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -124,13 +134,13 @@ namespace OSS.EventNode
         /// <param name="con"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
-        private  Dictionary<TaskMeta, ResultMo> Excuting_Parallel(NodeContext con, TaskReqData req,
-            IDictionary<TaskMeta, BaseTask> taskDirs)
+        private  Dictionary<TaskMeta, ResultMo> Excuting_Parallel(TTContext con, 
+            IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
                 var task = tr.Value;
-                return GetTaskItemResult(task, con, req);
+                return GetTaskItemResult(task, con);
             });
 
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
@@ -152,25 +162,12 @@ namespace OSS.EventNode
         }
 
 
-
-
-        internal static TaskContext ConvertToContext(NodeContext con, TaskMeta meta)
-        {
-            var context = new TaskContext();
-
-            //context.body = (TReq) req.body; //  todo 添加协议转化处理
-            //context.domain = domainData;
-            context.task_meta = meta;
-
-            return context;
-        }
-
         #endregion
 
         #region 其他辅助方法
 
         //  检查context内容
-        internal static void CheckInitailNodeContext(NodeContext context)
+        internal static void CheckInitailNodeContext(TTContext context)
         {
             //  todo  状态有效判断等
             if (string.IsNullOrEmpty(context.node_meta?.node_key))
@@ -184,20 +181,19 @@ namespace OSS.EventNode
         }
 
         // 处理结果转换
-        internal TRes GetNodeResult<TRes>(NodeContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
-            where TRes : ResultMo, new()
+        internal TTRes GetNodeResult(TTContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
         {
-            var tRes = default(TRes);
+            var tRes = default(TTRes);
             foreach (var tItemPair in taskResDirs)
             {
                 var tItemRes = tItemPair.Value;
                 if (!tItemRes.IsSysOk())
                 {
-                    tRes = tItemRes.ConvertToResultInherit<TRes>();
+                    tRes = tItemRes.ConvertToResultInherit<TTRes>();
                     break;
                 }
 
-                if (tItemRes is TRes res)
+                if (tItemRes is TTRes res)
                     tRes = res;
             }
 

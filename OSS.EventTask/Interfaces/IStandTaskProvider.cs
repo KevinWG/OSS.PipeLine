@@ -5,6 +5,6 @@ namespace OSS.EventTask.Interfaces
 {
     public interface IStandTaskProvider<TReq>: ITaskProvider
     {
-        Task SaveTaskContext(TaskContext context, TaskReqData<TReq> data);
+        Task SaveTaskContext(TaskContext<TReq> context);
     }
 }
