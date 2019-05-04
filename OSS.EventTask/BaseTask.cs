@@ -18,14 +18,26 @@ namespace OSS.EventTask
 
         public async Task<TTRes> Process(TTContext context)
         {
-            CheckTaskContext(context);
+            TTRes res;
+            try
+            {
+                CheckAndInitalTaskContext(context);
 
-            // 【1】 执行起始方法
-            await ProcessStart(context);
-            // 【2】  执行核心方法
-            var res = (await ProcessingInternal(context));
-            // 【3】 执行结束方法
-            await ProcessEnd(res, context);
+                // 【1】 执行起始方法
+                await ProcessStart(context);
+                // 【2】  执行核心方法
+                res = (await Processing(context));
+                // 【3】 执行结束方法
+                await ProcessEnd(res, context);
+                return res;
+            }
+            catch (ResultException e)
+            {
+                res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
+                LogUtil.Error($"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
+                    , "TaskFlow_TaskProcess", "Oss.TaskFlow");
+                await TrySaveTaskContext(context);
+            }
             return res;
         }
 
@@ -35,33 +47,23 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="context"></param>
         /// <returns>  </returns>
-        internal async Task<TTRes> ProcessingInternal(TTContext context)
+        private async Task<TTRes> Processing(TTContext context)
         {
-            TTRes res=default(TTRes);
-            try
-            {
-                var statistics = context.task_statis ?? (context.task_statis = new TaskStatisticsMo());
-                res = await Recurs(context);
-                // 判断是否间隔执行,生成重试信息
-                if (res.IsRunFailed() && statistics.interval_times < context.task_meta.interval_times)
-                {
-                    statistics.interval_times++;
-                    await TrySaveTaskContext(context);
-                    res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
-                }
+            var statistics = context.task_statis ?? (context.task_statis = new TaskStatisticsMo());
 
-                if (res.IsRunFailed())
-                {
-                    //  最终失败，执行失败方法
-                    await Failed(context);
-                }
-            }
-            catch (ResultException e)
+            var res = await Recurs(context);
+            // 判断是否间隔执行,生成重试信息
+            if (res.IsRunFailed() && statistics.interval_times < context.task_meta.interval_times)
             {
-   
-                LogUtil.Error($"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
-                    , "TaskFlow_TaskProcess", "Oss.TaskFlow");
+                statistics.interval_times++;
                 await TrySaveTaskContext(context);
+                res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
+            }
+
+            if (res.IsRunFailed())
+            {
+                //  最终失败，执行失败方法
+                await Failed(context);
             }
             return res;
         }
@@ -164,11 +166,17 @@ namespace OSS.EventTask
 
 
         // 状态有效判断
-        internal static ResultMo CheckTaskContext(TaskContext context)
+        internal static ResultMo CheckAndInitalTaskContext(TaskContext context)
         {
+
             //  todo  状态有效判断等
             if (!string.IsNullOrEmpty(context.task_meta?.task_key))
                 return new ResultMo();
+
+            if (context.task_statis==null)
+            {
+               context.task_statis = new TaskStatisticsMo();
+            }
 
             throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError, "task metainfo has error!");
         }
