@@ -32,7 +32,7 @@ namespace OSS.EventTask
 
         #region 内部扩展方法
 
-        protected virtual Task SaveTaskContext(TTContext context)
+        protected virtual Task SaveTaskContext(TTContext context, RunCondition runCondition)
         {
             return Task.CompletedTask;
         }
@@ -42,11 +42,11 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
-        private Task TrySaveTaskContext(TTContext context)
+        private Task TrySaveTaskContext(TTContext context,RunCondition runCondition)
         {
             try
             {
-                return SaveTaskContext(context);
+                return SaveTaskContext(context, runCondition);
             }
             catch (Exception e)
             {

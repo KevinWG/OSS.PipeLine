@@ -38,20 +38,13 @@ namespace OSS.EventTask.Mos
         #endregion
 
 
-        #region 运行信息
-
-        /// <summary>
-        ///  任务已运行统计信息
-        /// </summary>
-        public TaskStatisticsMo task_statis { get; set; }
-
-        #endregion
+     
 
     }
 
 
 
-    public class TaskStatisticsMo
+    public class RunCondition
     {
         /// <summary>
         ///  执行总次数

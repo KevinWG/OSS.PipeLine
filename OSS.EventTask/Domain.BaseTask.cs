@@ -13,14 +13,19 @@ namespace OSS.EventTask
     public abstract partial class BaseDomainTask<TReq, TDomain, TRes> : BaseTask<TaskContext<TReq, TDomain>, TRes>
         where TRes : ResultMo, new()
     {
-        internal override ResultMo ProcessCheck(TaskContext<TReq, TDomain> context)
+        //public virtual async Task<TTRes> Process(me)
+        //{
+            
+        //}
+
+        internal override ResultMo ProcessCheck(TaskContext<TReq, TDomain> context,RunCondition runCondition)
         {
             if (context.domain_data == null)
             {
                 return new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
                     "Domain task must process with domain_data!");
             }
-            return base.ProcessCheck(context);
+            return base.ProcessCheck(context, runCondition);
         }
     }
 }
