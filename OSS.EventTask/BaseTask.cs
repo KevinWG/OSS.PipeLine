@@ -21,12 +21,16 @@ namespace OSS.EventTask
             TTRes res;
             try
             {
-                CheckAndInitalTaskContext(context);
+                var checkRes = ProcessCheck(context);
+                if (!checkRes.IsSuccess())
+                    return checkRes.ConvertToResultInherit<TTRes>();
 
                 // 【1】 执行起始方法
                 await ProcessStart(context);
+
                 // 【2】  执行核心方法
                 res = (await Processing(context));
+
                 // 【3】 执行结束方法
                 await ProcessEnd(res, context);
                 return res;
@@ -34,7 +38,8 @@ namespace OSS.EventTask
             catch (ResultException e)
             {
                 res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
-                LogUtil.Error($"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
+                LogUtil.Error(
+                    $"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
                     , "TaskFlow_TaskProcess", "Oss.TaskFlow");
                 await TrySaveTaskContext(context);
             }
@@ -76,6 +81,8 @@ namespace OSS.EventTask
 
         #region 生命周期扩展方法
 
+    
+
         /// <summary>
         /// 任务开始方法
         /// </summary>
@@ -100,6 +107,19 @@ namespace OSS.EventTask
             return Task.CompletedTask;
         }
 
+        internal virtual ResultMo ProcessCheck(TTContext context)
+        {
+            //  todo  状态有效判断等
+            if (string.IsNullOrEmpty(context.task_meta?.task_key))
+                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "task metainfo has error!");
+
+            if (context.task_statis == null)
+            {
+                context.task_statis = new TaskStatisticsMo();
+            }
+            return new ResultMo();
+
+        }
         #endregion
 
         #region 扩展方法（实现，回退，失败）  扩展方法
@@ -132,6 +152,7 @@ namespace OSS.EventTask
 
 
         #endregion
+
 
         #region 辅助方法
 
@@ -166,20 +187,7 @@ namespace OSS.EventTask
 
 
         // 状态有效判断
-        internal static ResultMo CheckAndInitalTaskContext(TaskContext context)
-        {
 
-            //  todo  状态有效判断等
-            if (!string.IsNullOrEmpty(context.task_meta?.task_key))
-                return new ResultMo();
-
-            if (context.task_statis==null)
-            {
-               context.task_statis = new TaskStatisticsMo();
-            }
-
-            throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError, "task metainfo has error!");
-        }
         
         #endregion
     }
