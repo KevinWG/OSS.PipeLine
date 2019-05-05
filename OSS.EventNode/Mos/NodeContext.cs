@@ -27,6 +27,8 @@ namespace OSS.EventNode.Mos
 
     public class NodeContext :BaseContext
     {
+        public string flow_key { get; set; }
+
         /// <summary>
         ///  当前流-节点元信息
         /// </summary>
@@ -39,7 +41,10 @@ namespace OSS.EventNode.Mos
         {
             var taskContext = new TaskContext<TReq>
             {
-                run_id = nodeContext.run_id,
+                flow_key = nodeContext.flow_key,
+                node_key = nodeContext.node_meta.node_key,
+                exc_id = nodeContext.exc_id,
+
                 req_data = nodeContext.req_data,
                 task_meta = taskMeta
             };
@@ -52,8 +57,11 @@ namespace OSS.EventNode.Mos
         {
             var taskContext = new TaskContext<TReq, TDomain>
             {
-                run_id = nodeContext.run_id,
+                flow_key = nodeContext.flow_key,
+                node_key = nodeContext.node_meta.node_key,
+                exc_id = nodeContext.exc_id,
                 req_data = nodeContext.req_data,
+
                 task_meta = taskMeta,
                 domain_data =  nodeContext.domain_data
             };

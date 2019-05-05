@@ -6,11 +6,11 @@
 
         public string node_name { get; set; }
 
-        public NodeExcuteType excute_type { get; set; }
+        public NodeProcessType Process_type { get; set; }
     }
 
 
-    public enum NodeExcuteType
+    public enum NodeProcessType
     {
         Sequence,
         Parallel

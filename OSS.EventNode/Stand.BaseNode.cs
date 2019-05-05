@@ -29,7 +29,7 @@ namespace OSS.EventNode
             var taskContext = con.ConvertToTaskContext(taskMeta);
 
             var standTask = (BaseStandTask<TReq, TRes>) task;
-            return await standTask.ProcessWithRetry(taskContext,taskRunCondition);
+            return await standTask.RunWithRetry(taskContext,taskRunCondition);
         }
 
         #endregion

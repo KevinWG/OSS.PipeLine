@@ -21,9 +21,9 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="context">任务的上下文数据信息</param>
         /// <returns></returns>
-        public Task<TTRes> Process(TTContext context)
+        public Task<TTRes> Run(TTContext context)
         {
-            return Process(context, new RunCondition());
+            return Run(context, new RunCondition());
         }
 
         /// <summary>
@@ -32,9 +32,9 @@ namespace OSS.EventTask
         /// <param name="context">任务的上下文数据信息</param>
         /// <param name="runCondition">运行情况信息(重试校验依据)</param>
         /// <returns></returns>
-        public Task<TTRes> ProcessWithRetry(TTContext context, RunCondition runCondition)
+        public Task<TTRes> RunWithRetry(TTContext context, RunCondition runCondition)
         {
-            return Process(context, runCondition);
+            return Run(context, runCondition);
         }
 
         #endregion
@@ -46,7 +46,7 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="context">请求的上下文</param>
         /// <returns></returns>
-        protected virtual Task ProcessStart(TTContext context)
+        protected virtual Task RunStart(TTContext context)
         {
             return Task.CompletedTask;
         }
@@ -60,12 +60,12 @@ namespace OSS.EventTask
         /// </param>
         /// <param name="context">请求的上下文</param>
         /// <returns></returns>
-        protected virtual Task ProcessEnd(TTRes taskRes, TTContext context)
+        protected virtual Task RunEnd(TTRes taskRes, TTContext context)
         {
             return Task.CompletedTask;
         }
 
-        internal virtual ResultMo ProcessCheck(TTContext context, RunCondition runCondition)
+        internal virtual ResultMo RunCheck(TTContext context, RunCondition runCondition)
         {
             if (string.IsNullOrEmpty(context.task_meta?.task_key))
                 return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "Task metainfo has error!");
@@ -112,24 +112,24 @@ namespace OSS.EventTask
         #region 辅助方法
 
         // 串联流程，以及框架内部异常处理
-        private async Task<TTRes> Process(TTContext context, RunCondition runCondition)
+        private async Task<TTRes> Run(TTContext context, RunCondition runCondition)
         {
             var res = default(TTRes);
             string errorMsg;
             try
             {
-                var checkRes = ProcessCheck(context, runCondition);
+                var checkRes = RunCheck(context, runCondition);
                 if (!checkRes.IsSuccess())
                     return checkRes.ConvertToResultInherit<TTRes>();
 
                 // 【1】 执行起始方法
-                await ProcessStart(context);
+                await RunStart(context);
 
                 // 【2】  执行核心方法
-                res = await Processing(context, runCondition);
+                res = await Runing(context, runCondition);
 
                 // 【3】 执行结束方法
-                await ProcessEnd(res, context);
+                await RunEnd(res, context);
                 return res;
             }
             catch (ResultException e)
@@ -146,7 +146,7 @@ namespace OSS.EventTask
                     {
                         sys_ret = (int) SysResultTypes.InnerError,
                         ret = (int) ResultTypes.InnerError,
-                        msg = "Error occurred during task [Process]!"
+                        msg = "Error occurred during task [Run]!"
                     };
             }
 
@@ -164,7 +164,7 @@ namespace OSS.EventTask
         /// <param name="context"></param>
         /// <param name="runCondition"></param>
         /// <returns>  </returns>
-        private async Task<TTRes> Processing(TTContext context, RunCondition runCondition)
+        private async Task<TTRes> Runing(TTContext context, RunCondition runCondition)
         {
             var res = await Recurs(context, runCondition);
             // 判断是否间隔执行,生成重试信息
@@ -192,7 +192,7 @@ namespace OSS.EventTask
         private async Task<TTRes> Recurs(TTContext context, RunCondition runCondition)
         {
             TTRes res;
-            var directExcuteTimes = 0;
+            var directProcessTimes = 0;
             do
             {
                 //  直接执行
@@ -204,16 +204,17 @@ namespace OSS.EventTask
                 if (res.IsRunFailed())
                     await Revert(context);
 
-                directExcuteTimes++;
+                directProcessTimes++;
                 runCondition.exced_times++;
             }
             // 判断是否执行直接重试 
-            while (res.IsRunFailed() && directExcuteTimes < context.task_meta.continue_times);
+            while (res.IsRunFailed() && directProcessTimes < context.task_meta.continue_times);
 
             return res;
         }
 
         //  保证外部异常不会对框架内部运转造成影响
+        //  如果失败返回 RunFailed 保证系统后续重试处理
         private Task<TTRes> TryDo(TTContext context)
         {
             try

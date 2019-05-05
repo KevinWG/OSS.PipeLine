@@ -1,8 +1,44 @@
 ﻿using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
+using OSS.Common.Extention;
 
 namespace OSS.EventTask.Util
 {
+    public enum TaskRunStatus
+    {
+        /// <summary>
+        ///  等待运行
+        /// </summary>
+        [OSDescript("等待运行")] WaitRun = 0,
+
+        /// <summary>
+        ///  运行暂停
+        /// </summary>
+        [OSDescript("运行暂停")] RunPause = 10,
+        
+        /// <summary>
+        /// 运行回退
+        /// </summary>
+        [OSDescript("运行回退")] RunReverted = 20,
+
+        /// <summary>
+        /// 运行失败
+        /// </summary>
+        [OSDescript("运行失败")] RunFailed = 30,
+        
+        /// <summary>
+        /// 运行失败
+        /// </summary>
+        [OSDescript("运行成功")] RunCompoleted = 40
+    }
+
+    public class TaskResultMo : ResultMo
+    {
+        //public 
+    }
+
+
+   
     public static class FlowResultExtention
     {
         /// <summary>

@@ -30,21 +30,21 @@ namespace OSS.EventNode
             if (task.InstanceType == InstanceType.Domain)
             {
                 var domainTask = (BaseDomainTask<TReq, TDomain, TRes>)task;
-                return await domainTask.ProcessWithRetry(taskContext,taskRunCondition);
+                return await domainTask.RunWithRetry(taskContext,taskRunCondition);
             }
 
             var standTask = (BaseStandTask<TReq, TRes>)task;
-            return await standTask.ProcessWithRetry(taskContext, taskRunCondition);
+            return await standTask.RunWithRetry(taskContext, taskRunCondition);
         }
         
-        internal override  ResultMo ExcuteCheck(NodeContext<TReq, TDomain> context)
+        internal override  ResultMo ProcessCheck(NodeContext<TReq, TDomain> context)
         {
             if (context.domain_data == null)
             {
                 return  new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
-                    "Domain node must excute with domain_data!");
+                    "Domain node must Process with domain_data!");
             }
-            return base.ExcuteCheck(context);
+            return base.ProcessCheck(context);
         }
 
         #endregion

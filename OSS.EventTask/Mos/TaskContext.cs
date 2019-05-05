@@ -27,6 +27,10 @@ namespace OSS.EventTask.Mos
     /// </summary>
     public class TaskContext: BaseContext
     {
+        public string flow_key { get; set; }
+
+        public string node_key { get; set; }
+
         #region 基础配置信息
 
         /// <summary>
@@ -52,7 +56,7 @@ namespace OSS.EventTask.Mos
         /// <summary>
         ///  上次执行时间
         /// </summary>
-        public long last_excutedate { get; set; }
+        public long last_Processdate { get; set; }
     }
 
 
@@ -61,7 +65,7 @@ namespace OSS.EventTask.Mos
     {
         #region 运行信息
 
-        public string run_id { get; set; }
+        public string exc_id { get; set; }
 
         #endregion
     }
@@ -74,7 +78,7 @@ namespace OSS.EventTask.Mos
     //    {
     //        var taskCon=new TaskContext();
 
-    //        taskCon.run_id = node.run_id;
+    //        taskCon.exc_id = node.exc_id;
     //        taskCon.flow_meta = node.flow_meta;
     //        taskCon.node_meta = node.node_meta;
 

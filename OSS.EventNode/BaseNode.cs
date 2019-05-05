@@ -10,6 +10,7 @@ using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
+using OSS.EventTask.Util;
 
 namespace OSS.EventNode
 {
@@ -25,22 +26,22 @@ namespace OSS.EventNode
         #region 节点执行入口
 
         // 重写基类入口方法
-        public async Task<TTRes> Excute(TTContext context)
+        public async Task<TTRes> Process(TTContext context)
         {
             //  检查初始化
-            var res =  ExcuteCheck(context);
+            var res =  ProcessCheck(context);
             if (!res.IsSuccess())
                 return res.ConvertToResultInherit<TTRes>();
 
             // 【1】 扩展前置执行方法
-            await ExcutePre(context);
+            await ProcessPre(context);
 
             // 【2】 任务处理执行方法
             var taskResults = await Excuting(context);
             var nodeRes = GetNodeResult(context, taskResults); // 任务结果加工处理
 
             //  【3】 扩展后置执行方法
-            await ExcuteEnd(context, nodeRes, taskResults);
+            await ProcessEnd(context, nodeRes, taskResults);
             return nodeRes;
         }
 
@@ -48,11 +49,11 @@ namespace OSS.EventNode
 
         #region 生命周期扩展方法
 
-        protected virtual Task ExcutePre(TTContext con)
+        protected virtual Task ProcessPre(TTContext con)
         {
             return Task.CompletedTask;
         }
-        protected virtual Task ExcuteEnd(TTContext con,
+        protected virtual Task ProcessEnd(TTContext con,
             ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> taskResults)
         {
             return Task.CompletedTask;
@@ -66,7 +67,7 @@ namespace OSS.EventNode
             RunCondition taskRunCondition);
 
         //  检查context内容
-        internal virtual ResultMo ExcuteCheck(TTContext context)
+        internal virtual ResultMo ProcessCheck(TTContext context)
         {
             //  todo  状态有效判断等
             if (string.IsNullOrEmpty(context.node_meta?.node_key))
@@ -75,8 +76,8 @@ namespace OSS.EventNode
                     "node metainfo has error!");
             }
 
-            if (string.IsNullOrEmpty(context.run_id))
-                context.run_id = DateTime.Now.Ticks.ToString();
+            if (string.IsNullOrEmpty(context.exc_id))
+                context.exc_id = DateTime.Now.Ticks.ToString();
 
             return new ResultMo();
         }
@@ -91,7 +92,7 @@ namespace OSS.EventNode
             var taskDirs = await GetTaskMetas(con);
             if (taskDirs == null || taskDirs.Count == 0)
                 throw new ResultException(SysResultTypes.ConfigError, ResultTypes.ObjectNull,
-                    $"{this.GetType()} have no tasks can be processed!");
+                    $"{this.GetType()} have no tasks can be Runed!");
 
             // 执行处理结果
             var taskResults = await ExcutingWithTasks(con, taskDirs);
@@ -107,7 +108,7 @@ namespace OSS.EventNode
         {
             Dictionary<TaskMeta, ResultMo> taskResults;
 
-            if (con.node_meta.excute_type == NodeExcuteType.Parallel)
+            if (con.node_meta.Process_type == NodeProcessType.Parallel)
             {
                 taskResults = Excuting_Parallel(con, taskDirs);
             }
@@ -128,6 +129,11 @@ namespace OSS.EventNode
             {
                 InitailTaskRunType(td.Value,RunType);
                 var retRes = await GetTaskItemResult(con, td.Value, td.Key, new RunCondition());
+                if (retRes.IsRunFailed())
+                {
+                    
+                }
+
                 taskResults.Add(td.Key, retRes);
             }
 

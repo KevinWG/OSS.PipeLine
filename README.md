@@ -7,7 +7,7 @@
 workernode
 	  work   只能顺序执行
 
-Processer
+Runer
 	Task  可以并行执行
 	
 Strategy 
