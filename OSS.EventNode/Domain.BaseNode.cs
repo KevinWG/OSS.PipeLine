@@ -40,12 +40,12 @@ namespace OSS.EventNode
 
 
 
-        internal override  Task<ResultMo> ExcuteCheck(NodeContext<TReq, TDomain> context)
+        internal override  ResultMo ExcuteCheck(NodeContext<TReq, TDomain> context)
         {
             if (context.domain_data == null)
             {
-                return Task.FromResult( new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
-                    "Domain node must excute with domain_data!"));
+                return  new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
+                    "Domain node must excute with domain_data!");
             }
             return base.ExcuteCheck(context);
         }

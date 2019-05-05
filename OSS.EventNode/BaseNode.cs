@@ -28,7 +28,7 @@ namespace OSS.EventNode
         public async Task<TTRes> Excute(TTContext context)
         {
             //  检查初始化
-            var res = await ExcuteCheck(context);
+            var res =  ExcuteCheck(context);
             if (!res.IsSuccess())
                 return res.ConvertToResultInherit<TTRes>();
 
@@ -61,20 +61,19 @@ namespace OSS.EventNode
             RunCondition taskRunCondition);
 
         //  检查context内容
-        internal virtual Task<ResultMo> ExcuteCheck(TTContext context)
+        internal virtual ResultMo ExcuteCheck(TTContext context)
         {
             //  todo  状态有效判断等
             if (string.IsNullOrEmpty(context.node_meta?.node_key))
             {
-                var res = new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError,
+                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError,
                     "node metainfo has error!");
-                return Task.FromResult(res);
             }
 
             if (string.IsNullOrEmpty(context.run_id))
                 context.run_id = DateTime.Now.Ticks.ToString();
 
-            return Task.FromResult(new ResultMo());
+            return new ResultMo();
         }
 
         #endregion

@@ -10,7 +10,7 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTContext, TTRes>:IBaseTask
+    public abstract partial class BaseTask<TTContext, TTRes> : IBaseTask
         where TTContext : TaskContext
         where TTRes : ResultMo, new()
     {
@@ -21,7 +21,7 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="context">任务的上下文数据信息</param>
         /// <returns></returns>
-        public  Task<TTRes> Process(TTContext context)
+        public Task<TTRes> Process(TTContext context)
         {
             return Process(context, new RunCondition());
         }
@@ -37,38 +37,11 @@ namespace OSS.EventTask
             return Process(context, runCondition);
         }
 
-      
-
-        /// <summary> 
-        ///   任务的具体执行
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="runCondition"></param>
-        /// <returns>  </returns>
-        private async Task<TTRes> Processing(TTContext context, RunCondition runCondition)
-        {
-            var res = await Recurs(context, runCondition);
-            // 判断是否间隔执行,生成重试信息
-            if (res.IsRunFailed() && runCondition.interval_times < context.task_meta.interval_times)
-            {
-                runCondition.interval_times++;
-                await TrySaveTaskContext(context,runCondition);
-                res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
-            }
-
-            if (res.IsRunFailed())
-            {
-                //  最终失败，执行失败方法
-                await Failed(context);
-            }
-            return res;
-        }
-
         #endregion
-        
+
         #region 生命周期扩展方法
 
-    
+
 
         /// <summary>
         /// 任务开始方法
@@ -94,18 +67,18 @@ namespace OSS.EventTask
             return Task.CompletedTask;
         }
 
-        internal virtual ResultMo ProcessCheck(TTContext context,RunCondition runCondition)
+        internal virtual ResultMo ProcessCheck(TTContext context, RunCondition runCondition)
         {
-            //  todo  状态有效判断等
             if (string.IsNullOrEmpty(context.task_meta?.task_key))
                 return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "task metainfo has error!");
 
-            if (runCondition==null)
+            if (runCondition == null)
                 return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "运行数据不能为空！");
 
             return new ResultMo();
 
         }
+
         #endregion
 
         #region 扩展方法（实现，回退，失败）  扩展方法
@@ -140,9 +113,12 @@ namespace OSS.EventTask
         #endregion
 
         #region 辅助方法
+
+        // 串联流程，以及框架内部异常处理
         private async Task<TTRes> Process(TTContext context, RunCondition runCondition)
         {
-            TTRes res;
+            var res = default(TTRes);
+            string errorMsg;
             try
             {
                 var checkRes = ProcessCheck(context, runCondition);
@@ -161,20 +137,60 @@ namespace OSS.EventTask
             }
             catch (ResultException e)
             {
-                res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
-                LogUtil.Error(
-                    $"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
-                    , "TaskFlow_TaskProcess", "Oss.TaskFlow");
-                await TrySaveTaskContext(context, runCondition);
+                errorMsg = e.ToString();
+                if (res == null)
+                    res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
             }
+            catch (Exception e)
+            {
+                errorMsg = e.ToString();
+                if (res == null)
+                    res = new TTRes()
+                    {
+                        sys_ret = (int) SysResultTypes.InnerError,
+                        ret = (int) ResultTypes.InnerError,
+                        msg = "Error occurred during task execution!"
+                    };
+            }
+
+            LogUtil.Error(
+                $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{errorMsg}"
+                , context.task_meta.task_key, "Oss.TaskFlow");
+
+            await TrySaveTaskContext(context, runCondition);
             return res;
         }
 
+        /// <summary> 
+        ///   任务的具体执行
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="runCondition"></param>
+        /// <returns>  </returns>
+        private async Task<TTRes> Processing(TTContext context, RunCondition runCondition)
+        {
+            var res = await Recurs(context, runCondition);
+            // 判断是否间隔执行,生成重试信息
+            if (res.IsRunFailed() && runCondition.interval_times < context.task_meta.interval_times)
+            {
+                runCondition.interval_times++;
+                await TrySaveTaskContext(context, runCondition);
+                res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
+            }
+
+            if (res.IsRunFailed())
+            {
+                //  最终失败，执行失败方法
+                await Failed(context);
+            }
+            return res;
+        }
 
         /// <summary>
         ///   具体递归执行
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="runCondition"></param>
         /// <returns></returns>
         private async Task<TTRes> Recurs(TTContext context, RunCondition runCondition)
         {
@@ -183,7 +199,7 @@ namespace OSS.EventTask
             do
             {
                 //  直接执行
-                res = await Do(context);
+                res = await TryDo(context);
                 if (res == null)
                     throw new ArgumentNullException($"{this.GetType().Name} return null！");
 
@@ -200,9 +216,27 @@ namespace OSS.EventTask
             return res;
         }
 
-
-        // 状态有效判断
-
+        //  保证外部异常不会对框架内部运转造成影响
+        private Task<TTRes> TryDo(TTContext context)
+        {
+            try
+            {
+                return Do(context);
+            }
+            catch (Exception e)
+            {
+                var res = new TTRes()
+                {
+                    sys_ret = (int) SysResultTypes.RunFailed,
+                    ret = (int) ResultTypes.InnerError,
+                    msg = "Error occurred during task execution!"
+                };
+                LogUtil.Error(
+                    $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{e}"
+                    , context.task_meta.task_key, "Oss.TaskFlow");
+                return Task.FromResult(res);
+            }
+        }
         
         #endregion
     }
