@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using OSS.Common.Plugs.LogPlug;
+using OSS.EventTask.Mos;
 using OSS.TaskFlow.Tasks.Mos;
 using OSS.TaskFlow.Tests.TestOrder;
 using OSS.TaskFlow.Tests.TestOrder.Tasks;
@@ -21,22 +22,18 @@ namespace OSS.TaskFlow.Tests
                 price = 10.23M
             };
 
-            var taskContext = new TaskContext();
+            var taskContext = new TaskContext<OrderInfo>();
             var task = new OrderNotifyTask();
 
             //task.SetContinueRetry(9);
             //task.SetIntervalRetry(2, SaveTaskContext);
 
-            await task.Process(taskContext,new TaskReqData<OrderInfo>(msg));
+            await task.Process(taskContext);
         }
 
 
 
 
-        public Task SaveTaskContext(TaskContext context,TaskReqData<OrderInfo> req)
-        {
-            LogUtil.Info("临时保存任务相关请求信息：" + JsonConvert.SerializeObject(context));
-            return Task.CompletedTask;
-        }
+     
     }
 }

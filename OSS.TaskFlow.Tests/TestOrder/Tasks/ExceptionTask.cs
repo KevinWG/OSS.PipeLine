@@ -1,18 +1,15 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.TaskFlow.Tasks.Mos;
+using OSS.EventTask;
+using OSS.EventTask.Mos;
 
 namespace OSS.TaskFlow.Tests.TestOrder.Tasks
 {
-    public class ExceptionTask : EventTask.BaseStandTask<OrderInfo,ResultMo>
+    public class ExceptionTask : BaseStandTask<OrderInfo, ResultMo>
     {
-   
-        protected override Task<ResultMo> Do(TaskContext context, TaskReqData<OrderInfo> data)
+        protected override Task<ResultMo> Do(TaskContext<OrderInfo> context)
         {
-            throw new Exception("执行失败！");
+            return Task.FromResult(new ResultMo());
         }
     }
-    
- 
 }

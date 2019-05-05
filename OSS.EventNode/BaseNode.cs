@@ -124,19 +124,15 @@ namespace OSS.EventNode
 
             return taskResults;
         }
-
-        /// <summary>
+        
         ///  顺序执行
-        /// </summary>
-        /// <param name="con"></param>
-        /// <param name="taskDirs"></param>
-        /// <returns></returns>
         private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(TTContext con,
             IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
             {
+                InitailTaskRunType(td.Value,RunType);
                 var retRes = await GetTaskItemResult(con, td.Value, td.Key, new RunCondition());
                 taskResults.Add(td.Key, retRes);
             }
@@ -144,18 +140,16 @@ namespace OSS.EventNode
             return taskResults;
         }
 
-        /// <summary>
+
         ///   并行执行
-        /// </summary>
-        /// <param name="con"></param>
-        /// <param name="taskDirs"></param>
-        /// <returns></returns>
         private Dictionary<TaskMeta, ResultMo> Excuting_Parallel(TTContext con,
             IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
                 var task = tr.Value;
+
+                InitailTaskRunType(task, RunType);
                 return GetTaskItemResult(con, tr.Value, tr.Key, new RunCondition());
             });
 
@@ -208,6 +202,13 @@ namespace OSS.EventNode
             }
 
             return tRes;
+        }
+
+
+        // 初始化task相关属性
+        private static void InitailTaskRunType(IBaseTask task,RunType nodeRunType)
+        {
+            task.RunType = nodeRunType!=RunType.WithFlow ? RunType.None : RunType.WithFlow;
         }
 
         #endregion

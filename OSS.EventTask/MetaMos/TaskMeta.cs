@@ -13,7 +13,7 @@
         public string task_name { get; set; }
         
         /// <summary>
-        /// 
+        /// 当前状态
         /// </summary>
         public TaskMetaStatus status { get; set; }
         

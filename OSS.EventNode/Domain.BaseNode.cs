@@ -36,10 +36,7 @@ namespace OSS.EventNode
             var standTask = (BaseStandTask<TReq, TRes>)task;
             return await standTask.ProcessWithRetry(taskContext, taskRunCondition);
         }
-
-
-
-
+        
         internal override  ResultMo ExcuteCheck(NodeContext<TReq, TDomain> context)
         {
             if (context.domain_data == null)

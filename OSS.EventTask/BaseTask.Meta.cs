@@ -10,14 +10,10 @@ namespace OSS.EventTask
     public abstract partial class BaseTask<TTContext,TTRes> where TTContext : TaskContext
         where TTRes : ResultMo, new()
     {
-        public InstanceType InstanceType { get; protected set; }
-        public RunType RunType { get; protected set; }
-
         protected BaseTask()
         {
             RunType = RunType.None;
         }
-
 
         #region 注册存储接口
 
