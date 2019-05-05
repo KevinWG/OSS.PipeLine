@@ -10,3 +10,16 @@
 
 2. 对结果的影响（无直接影响，整体回退）
 
+
+
+重要错误标识信息：
+
+  Do方法
+  --【出参】
+	sys_ret = (int)SysResultTypes.RunFailed 系统会字段判断是否满足重试条件执行重试 
+
+  ProcessEnd
+  --【入参】   
+	sys_ret = (int)SysResultTypes.RunFailed 表明最终执行失败，
+	sys_ret = (int)SysResultTypes.RunPause 表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
+

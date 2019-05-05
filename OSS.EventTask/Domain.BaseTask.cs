@@ -17,8 +17,7 @@ namespace OSS.EventTask
         //{
             
         //}
-
-        internal override ResultMo ProcessCheck(TaskContext<TReq, TDomain> context,RunCondition runCondition)
+       internal override ResultMo ProcessCheck(TaskContext<TReq, TDomain> context,RunCondition runCondition)
         {
             if (context.domain_data == null)
             {

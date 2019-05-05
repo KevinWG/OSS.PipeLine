@@ -19,7 +19,6 @@ namespace OSS.EventNode
 
         internal override async Task<TRes> GetTaskItemResult(IBaseTask task, NodeContext<TReq> con)
         {
-
             if (task.InstanceType == InstanceType.Domain)
             {
                 throw new ResultException(SysResultTypes.InnerError, ResultTypes.InnerError,

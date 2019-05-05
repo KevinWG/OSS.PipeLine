@@ -32,36 +32,12 @@ namespace OSS.EventTask
         /// <param name="context">任务的上下文数据信息</param>
         /// <param name="runCondition">运行情况信息(重试校验依据)</param>
         /// <returns></returns>
-        public async Task<TTRes> Process(TTContext context,RunCondition runCondition)
+        public Task<TTRes> Retry(TTContext context, RunCondition runCondition)
         {
-            TTRes res;
-            try
-            {
-                var checkRes = ProcessCheck(context,runCondition);
-                if (!checkRes.IsSuccess())
-                    return checkRes.ConvertToResultInherit<TTRes>();
-
-                // 【1】 执行起始方法
-                await ProcessStart(context);
-
-                // 【2】  执行核心方法
-                res = await Processing(context, runCondition);
-
-                // 【3】 执行结束方法
-                await ProcessEnd(res, context);
-                return res;
-            }
-            catch (ResultException e)
-            {
-                res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
-                LogUtil.Error(
-                    $"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
-                    , "TaskFlow_TaskProcess", "Oss.TaskFlow");
-                await TrySaveTaskContext(context, runCondition);
-            }
-            return res;
+            return Process(context, runCondition);
         }
 
+      
 
         /// <summary> 
         ///   任务的具体执行
@@ -108,8 +84,8 @@ namespace OSS.EventTask
         /// 任务结束方法
         /// </summary>
         /// <param name="taskRes">任务结果 :
-        ///  sys_ret = (int)SysResultTypes.RunFailed表明最终执行失败，
-        ///  sys_ret = (int)SysResultTypes.RunPause表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
+        ///  sys_ret = (int)SysResultTypes.RunFailed 表明最终执行失败，
+        ///  sys_ret = (int)SysResultTypes.RunPause 表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
         /// </param>
         /// <param name="context">请求的上下文</param>
         /// <returns></returns>
@@ -162,8 +138,38 @@ namespace OSS.EventTask
 
 
         #endregion
-        
+
         #region 辅助方法
+        private async Task<TTRes> Process(TTContext context, RunCondition runCondition)
+        {
+            TTRes res;
+            try
+            {
+                var checkRes = ProcessCheck(context, runCondition);
+                if (!checkRes.IsSuccess())
+                    return checkRes.ConvertToResultInherit<TTRes>();
+
+                // 【1】 执行起始方法
+                await ProcessStart(context);
+
+                // 【2】  执行核心方法
+                res = await Processing(context, runCondition);
+
+                // 【3】 执行结束方法
+                await ProcessEnd(res, context);
+                return res;
+            }
+            catch (ResultException e)
+            {
+                res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
+                LogUtil.Error(
+                    $"Error occurred during task execution! sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}"
+                    , "TaskFlow_TaskProcess", "Oss.TaskFlow");
+                await TrySaveTaskContext(context, runCondition);
+            }
+            return res;
+        }
+
 
         /// <summary>
         ///   具体递归执行
