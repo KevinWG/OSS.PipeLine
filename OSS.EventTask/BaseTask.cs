@@ -32,7 +32,7 @@ namespace OSS.EventTask
         /// <param name="context">任务的上下文数据信息</param>
         /// <param name="runCondition">运行情况信息(重试校验依据)</param>
         /// <returns></returns>
-        public Task<TTRes> Retry(TTContext context, RunCondition runCondition)
+        public Task<TTRes> ProcessWithRetry(TTContext context, RunCondition runCondition)
         {
             return Process(context, runCondition);
         }

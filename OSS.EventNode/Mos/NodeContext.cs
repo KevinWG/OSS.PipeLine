@@ -1,4 +1,5 @@
 ﻿using OSS.EventNode.MetaMos;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.Mos
@@ -32,17 +33,33 @@ namespace OSS.EventNode.Mos
         public NodeMeta node_meta { get; set; }
     }
 
-    //public static class NodeContextExtention
-    //{
-    //    public static NodeContext ConvertToTaskContext(this FlowContext node)
-    //    {
-    //        var nodeCon = new NodeContext
-    //        {
-    //            run_id = node.run_id,
-    //            flow_meta = node.flow_meta
-    //        };
-    //        return nodeCon;
-    //    }
-    //}
+    public static class NodeContextExtention
+    {
+        public static TaskContext<TReq> ConvertToTaskContext<TReq>(this NodeContext<TReq> nodeContext,TaskMeta taskMeta)
+        {
+            var taskContext = new TaskContext<TReq>
+            {
+                run_id = nodeContext.run_id,
+                req_data = nodeContext.req_data,
+                task_meta = taskMeta
+            };
+            return taskContext;
+        }
+
+
+        public static TaskContext<TReq, TDomain> ConvertToTaskContext<TReq, TDomain>(this NodeContext<TReq, TDomain> nodeContext,
+            TaskMeta taskMeta)
+        {
+            var taskContext = new TaskContext<TReq, TDomain>
+            {
+                run_id = nodeContext.run_id,
+                req_data = nodeContext.req_data,
+                task_meta = taskMeta,
+                domain_data =  nodeContext.domain_data
+            };
+            return taskContext;
+
+        }
+    }
 
 }

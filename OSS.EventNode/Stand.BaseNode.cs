@@ -5,6 +5,7 @@ using OSS.Common.Extention;
 using OSS.EventNode.Mos;
 using OSS.EventTask;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
@@ -17,17 +18,24 @@ namespace OSS.EventNode
     {
         #region 内部扩展方法重写
 
-        internal override async Task<TRes> GetTaskItemResult(IBaseTask task, NodeContext<TReq> con)
+        internal override async Task<TRes> GetTaskItemResult(NodeContext<TReq> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
         {
             if (task.InstanceType == InstanceType.Domain)
             {
                 throw new ResultException(SysResultTypes.InnerError, ResultTypes.InnerError,
                     "StandNode can't use DomainTask!");
             }
-            var taskContext = new TaskContext<TReq>(); // todo 完善
+
+            var taskContext = con.ConvertToTaskContext(taskMeta);
+
             var standTask = (BaseStandTask<TReq, TRes>) task;
-            return await standTask.Process(taskContext);
+            return await standTask.ProcessWithRetry(taskContext,taskRunCondition);
         }
+
+        #endregion
+
+
+        #region 辅助方法
 
         #endregion
     }

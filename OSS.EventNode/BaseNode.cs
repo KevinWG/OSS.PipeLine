@@ -9,13 +9,13 @@ using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
+using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
 {
     /// <summary>
     ///  基础工作节点
     /// todo  重新激活处理
-    /// todo  协议处理
     /// todo  全部节点回退
     /// </summary>
     public abstract partial class BaseNode<TTContext, TTRes>
@@ -28,7 +28,7 @@ namespace OSS.EventNode
         public async Task<TTRes> Excute(TTContext context)
         {
             //  检查初始化
-            var res = CheckInitailNodeContext(context);
+            var res = await ExcuteCheck(context);
             if (!res.IsSuccess())
                 return res.ConvertToResultInherit<TTRes>();
 
@@ -57,7 +57,25 @@ namespace OSS.EventNode
 
         #region 内部扩展方法重写
 
-        internal abstract Task<TTRes> GetTaskItemResult(IBaseTask task, TTContext con);
+        internal abstract Task<TTRes> GetTaskItemResult(TTContext con, IBaseTask task, TaskMeta taskMeta,
+            RunCondition taskRunCondition);
+
+        //  检查context内容
+        internal virtual Task<ResultMo> ExcuteCheck(TTContext context)
+        {
+            //  todo  状态有效判断等
+            if (string.IsNullOrEmpty(context.node_meta?.node_key))
+            {
+                var res = new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError,
+                    "node metainfo has error!");
+                return Task.FromResult(res);
+            }
+
+            if (string.IsNullOrEmpty(context.run_id))
+                context.run_id = DateTime.Now.Ticks.ToString();
+
+            return Task.FromResult(new ResultMo());
+        }
 
         #endregion
 
@@ -112,7 +130,6 @@ namespace OSS.EventNode
         ///  顺序执行
         /// </summary>
         /// <param name="con"></param>
-        /// <param name="req"></param>
         /// <param name="taskDirs"></param>
         /// <returns></returns>
         private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(TTContext con,
@@ -121,7 +138,7 @@ namespace OSS.EventNode
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
             {
-                var retRes = await GetTaskItemResult(td.Value, con);
+                var retRes = await GetTaskItemResult(con, td.Value, td.Key, new RunCondition());
                 taskResults.Add(td.Key, retRes);
             }
 
@@ -140,7 +157,7 @@ namespace OSS.EventNode
             var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
             {
                 var task = tr.Value;
-                return GetTaskItemResult(task, con);
+                return GetTaskItemResult(con, tr.Value, tr.Key, new RunCondition());
             });
 
             var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
@@ -167,23 +184,6 @@ namespace OSS.EventNode
         #endregion
 
         #region 其他辅助方法
-
-        //  检查context内容
-        internal virtual Task<ResultMo> CheckInitailNodeContext(TTContext context)
-        {
-            //  todo  状态有效判断等
-            if (string.IsNullOrEmpty(context.node_meta?.node_key))
-            {
-                var res= new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError,
-                    "node metainfo has error!");
-                return Task.FromResult(res);
-            }
-
-            if (string.IsNullOrEmpty(context.run_id))
-                context.run_id = DateTime.Now.Ticks.ToString();
-
-            return Task.FromResult(new ResultMo());
-        }
 
         // 处理结果转换
         internal TTRes GetNodeResult(TTContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)

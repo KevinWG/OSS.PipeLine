@@ -4,71 +4,57 @@ using OSS.Common.ComModels.Enums;
 using OSS.EventNode.Mos;
 using OSS.EventTask;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
 {
-    /// <summary>
-    ///  基础领域节点
-    /// </summary>
+    /// <inheritdoc />
     public abstract partial class BaseDomainNode<TReq, TDomain, TRes> : BaseNode<NodeContext<TReq, TDomain>, TRes>
         where TRes : ResultMo, new()
     {
 
         #region 扩展方法
 
-        /// <summary>
-        /// 获取领域数据
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected virtual Task<ResultMo<TDomain>> GetDomainData(NodeContext<TReq> context)
-        {
-            return Task.FromResult(new ResultMo<TDomain>(SysResultTypes.NoResponse, ResultTypes.ObjectNull,
-                "domain data can't be null in domain node!"));
-        }
-
+   
 
         #endregion
 
 
         #region 内部扩展方法重写
 
-        internal override async Task<TRes> GetTaskItemResult(IBaseTask task, NodeContext<TReq, TDomain> con)
+        internal override async Task<TRes> GetTaskItemResult(NodeContext<TReq, TDomain> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
         {
-            var taskContext = new TaskContext<TReq, TDomain>(); //  todo  完善
+            var taskContext = con.ConvertToTaskContext(taskMeta);
+
             if (task.InstanceType == InstanceType.Domain)
             {
                 var domainTask = (BaseDomainTask<TReq, TDomain, TRes>)task;
-                return await domainTask.Process(taskContext);
+                return await domainTask.ProcessWithRetry(taskContext,taskRunCondition);
             }
-            else
-            {
-                var standTask = (BaseStandTask<TReq, TRes>)task;
-                return await standTask.Process(taskContext);
-            }
+
+            var standTask = (BaseStandTask<TReq, TRes>)task;
+            return await standTask.ProcessWithRetry(taskContext, taskRunCondition);
         }
 
 
-        internal override async Task<ResultMo> CheckInitailNodeContext(NodeContext<TReq, TDomain> context)
-        {
-            var res = await base.CheckInitailNodeContext(context); // todo  添加获取领域信息 扩展方法
-            if (!res.IsSuccess())
-                return res;
 
+
+        internal override  Task<ResultMo> ExcuteCheck(NodeContext<TReq, TDomain> context)
+        {
             if (context.domain_data == null)
             {
-                var domainRes = await GetDomainData(context);
-                if (domainRes.IsSuccess() && domainRes.data != null)
-                {
-                    context.domain_data = domainRes.data;
-                    return domainRes;
-                }
-                return new ResultMo<TDomain>(SysResultTypes.NoResponse, ResultTypes.ObjectNull,
-                    "domain data can't be null in domain node!");
+                return Task.FromResult( new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
+                    "Domain node must excute with domain_data!"));
             }
-            return res;
+            return base.ExcuteCheck(context);
         }
+
+        #endregion
+
+        #region 辅助方法
+
+  
 
         #endregion
 
