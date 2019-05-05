@@ -200,9 +200,9 @@ namespace OSS.EventNode
 
 
         // 初始化task相关属性
-        private static void InitailTaskRunType(IBaseTask task,RunType nodeRunType)
+        private static void InitailTaskRunType(IBaseTask task,FollowType nodeRunType)
         {
-            task.RunType = nodeRunType!=RunType.WithFlow ? RunType.None : RunType.WithFlow;
+            task.RunType = nodeRunType!=FollowType.WithFlow ? FollowType.None : FollowType.WithFlow;
         }
 
         #endregion

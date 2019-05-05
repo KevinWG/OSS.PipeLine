@@ -12,7 +12,7 @@ namespace OSS.EventTask
     {
         protected BaseTask()
         {
-            RunType = RunType.None;
+            RunType = FollowType.None;
         }
 
         #region 注册存储接口
