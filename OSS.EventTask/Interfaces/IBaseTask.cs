@@ -5,6 +5,7 @@ namespace OSS.EventTask.Interfaces
     public class IBaseTask
     {
         public InstanceType InstanceType { get; protected set; }
-        public RunType RunType { get; set; }
+
+        public FollowType RunType { get; set; }
     }
 }

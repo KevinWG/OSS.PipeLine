@@ -21,8 +21,7 @@ namespace OSS.EventTask.Mos
         /// </summary>
         public TReq req_data { get; set; }
     }
-
-
+    
     /// <summary>
     ///  任务上下文基类
     /// </summary>
@@ -36,13 +35,7 @@ namespace OSS.EventTask.Mos
         public TaskMeta  task_meta { get; set; }
 
         #endregion
-
-
-     
-
     }
-
-
 
     public class RunCondition
     {

@@ -52,6 +52,11 @@ namespace OSS.EventNode
         {
             return Task.CompletedTask;
         }
+        protected virtual Task ExcuteEnd(TTContext con,
+            ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> taskResults)
+        {
+            return Task.CompletedTask;
+        }
 
         #endregion
 
@@ -77,17 +82,7 @@ namespace OSS.EventNode
         }
 
         #endregion
-
-        #region 节点生命周期事件扩展方法
-
-        protected virtual Task ExcuteEnd(TTContext con,
-            ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> taskResults)
-        {
-            return Task.CompletedTask;
-        }
-
-        #endregion
-
+        
         #region 辅助方法 —— 节点内部任务执行
 
         private async Task<Dictionary<TaskMeta, ResultMo>> Excuting(TTContext con)
@@ -106,8 +101,7 @@ namespace OSS.EventNode
         #endregion
 
         #region 辅助方法 —— 节点内部任务执行 —— 分解
-
-
+        
         private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(TTContext con,
             IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
