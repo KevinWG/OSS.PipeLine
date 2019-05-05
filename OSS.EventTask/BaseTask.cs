@@ -40,9 +40,7 @@ namespace OSS.EventTask
         #endregion
 
         #region 生命周期扩展方法
-
-
-
+        
         /// <summary>
         /// 任务开始方法
         /// </summary>
@@ -70,13 +68,12 @@ namespace OSS.EventTask
         internal virtual ResultMo ProcessCheck(TTContext context, RunCondition runCondition)
         {
             if (string.IsNullOrEmpty(context.task_meta?.task_key))
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "task metainfo has error!");
+                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "Task metainfo has error!");
 
             if (runCondition == null)
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "运行数据不能为空！");
+                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "Task run condition data can't be null！");
 
             return new ResultMo();
-
         }
 
         #endregion
@@ -149,7 +146,7 @@ namespace OSS.EventTask
                     {
                         sys_ret = (int) SysResultTypes.InnerError,
                         ret = (int) ResultTypes.InnerError,
-                        msg = "Error occurred during task execution!"
+                        msg = "Error occurred during task [Process]!"
                     };
             }
 
@@ -229,10 +226,9 @@ namespace OSS.EventTask
                 {
                     sys_ret = (int) SysResultTypes.RunFailed,
                     ret = (int) ResultTypes.InnerError,
-                    msg = "Error occurred during task execution!"
+                    msg = "Error occurred during task [Do]!"
                 };
-                LogUtil.Error(
-                    $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{e}"
+                LogUtil.Error( $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{e}"
                     , context.task_meta.task_key, "Oss.TaskFlow");
                 return Task.FromResult(res);
             }
