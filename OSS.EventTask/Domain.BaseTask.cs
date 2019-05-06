@@ -14,15 +14,25 @@ namespace OSS.EventTask
     public abstract partial class BaseDomainTask<TDomain, TReq, TRes> : BaseTask<TaskContext<TDomain,TReq,TRes>, TRes>
         where TRes : ResultMo, new()
     {
+
+
+
+        #region 内部方法扩展
+
         internal override TRes RunCheck(TaskContext<TDomain, TReq, TRes> context, RunCondition runCondition)
         {
             if (context.req == null)
                 return new TRes().SetErrorResult(SysResultTypes.ApplicationError, "Task must Run with request info!");
-               
+
             if (context.req.domain_data == null)
                 return new TRes().SetErrorResult(SysResultTypes.ApplicationError, "Domain task must Run with domain_data!");
-       
+
             return base.RunCheck(context, runCondition);
         }
+
+        #endregion
+
+
+
     }
 }

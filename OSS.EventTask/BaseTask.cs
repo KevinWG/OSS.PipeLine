@@ -22,26 +22,75 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="context">任务的上下文数据信息</param>
         /// <returns></returns>
-        public Task<TTRes> Run(TTContext context)
+        //public Task<TTRes> Run(TTContext context)
+        //{
+        //    return Run(context);
+        //}
+
+        ///// <summary>
+        /////  执行任务
+        ///// </summary>
+        ///// <param name="context">任务的上下文数据信息</param>
+        ///// <param name="runCondition">运行情况信息(重试校验依据)</param>
+        ///// <returns></returns>
+        //public Task<TTRes> RunWithRetry(TTContext context)
+        //{
+        //    return Run(context);
+        //}
+
+
+        // 串联流程，以及框架内部异常处理
+        internal async Task<TTRes> Run(TTContext context, RunCondition runCondition)
         {
-            return Run(context, new RunCondition());
+            var res = default(TTRes);
+            string errorMsg;
+            try
+            {
+                var checkRes = RunCheck(context, runCondition);
+                if (!checkRes.IsSuccess())
+                    return checkRes;
+
+                // 【1】 执行起始方法
+                await RunStart(context);
+
+                // 【2】  执行核心方法
+                res = await Runing(context, runCondition);
+
+                // 【3】 执行结束方法
+                await RunEnd(res, context);
+                return res;
+            }
+            catch (ResultException e)
+            {
+                errorMsg = e.ToString();
+                if (res == null)
+                    res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
+            }
+            catch (Exception e)
+            {
+                errorMsg = e.ToString();
+                if (res == null)
+                    res = new TTRes()
+                    {
+                        sys_ret = (int)SysResultTypes.ApplicationError,
+                        ret = (int)ResultTypes.InnerError,
+                        msg = "Error occurred during task [Run]!"
+                    };
+            }
+
+            LogUtil.Error(
+                $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{errorMsg}"
+                , context.task_meta.task_key, ModuleName);
+
+            await TrySaveTaskContext(context);
+            return res;
         }
 
-        /// <summary>
-        ///  执行任务
-        /// </summary>
-        /// <param name="context">任务的上下文数据信息</param>
-        /// <param name="runCondition">运行情况信息(重试校验依据)</param>
-        /// <returns></returns>
-        public Task<TTRes> RunWithRetry(TTContext context, RunCondition runCondition)
-        {
-            return Run(context, runCondition);
-        }
 
         #endregion
 
         #region 生命周期扩展方法
-        
+
         /// <summary>
         /// 任务开始方法
         /// </summary>
@@ -112,53 +161,6 @@ namespace OSS.EventTask
         #endregion
 
         #region 辅助方法
-
-        // 串联流程，以及框架内部异常处理
-        private async Task<TTRes> Run(TTContext context, RunCondition runCondition)
-        {
-            var res = default(TTRes);
-            string errorMsg;
-            try
-            {
-                var checkRes = RunCheck(context, runCondition);
-                if (!checkRes.IsSuccess())
-                    return checkRes;
-
-                // 【1】 执行起始方法
-                await RunStart(context);
-
-                // 【2】  执行核心方法
-                res = await Runing(context, runCondition);
-
-                // 【3】 执行结束方法
-                await RunEnd(res, context);
-                return res;
-            }
-            catch (ResultException e)
-            {
-                errorMsg = e.ToString();
-                if (res == null)
-                    res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
-            }
-            catch (Exception e)
-            {
-                errorMsg = e.ToString();
-                if (res == null)
-                    res = new TTRes()
-                    {
-                        sys_ret = (int) SysResultTypes.ApplicationError,
-                        ret = (int) ResultTypes.InnerError,
-                        msg = "Error occurred during task [Run]!"
-                    };
-            }
-
-            LogUtil.Error(
-                $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{errorMsg}"
-                , context.task_meta.task_key, ModuleName);
-
-            await TrySaveTaskContext(context);
-            return res;
-        }
 
         /// <summary> 
         ///   任务的具体执行
