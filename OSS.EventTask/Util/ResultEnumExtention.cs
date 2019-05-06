@@ -9,12 +9,12 @@ namespace OSS.EventTask.Util
         /// <summary>
         ///  等待运行
         /// </summary>
-        [OSDescript("等待运行")] WaitRun = 0,
+        [OSDescript("等待运行")] WaitToRun = 0,
 
         /// <summary>
         ///  运行暂停
         /// </summary>
-        [OSDescript("运行暂停")] RunPause = 10,
+        [OSDescript("运行暂停")] RunPaused = 10,
         
         /// <summary>
         /// 运行回退
@@ -32,51 +32,76 @@ namespace OSS.EventTask.Util
         [OSDescript("运行成功")] RunCompoleted = 40
     }
 
-    public class TaskResultMo : ResultMo
-    {
-        //public 
-    }
-
 
    
-    public static class FlowResultExtention
+    public static class TaskRunStatusExtention
     {
         /// <summary>
         ///  是否任务执行失败
         /// </summary>
         /// <param name="res"></param>
         /// <returns></returns>
-        public static bool IsRunFailed(this ResultMo res)
+        public static bool IsFailed(this TaskRunStatus res)
         {
-            return res.sys_ret == (int) SysResultTypes.RunFailed;
+            return res == TaskRunStatus.RunFailed;
         }
 
-        /// <summary>
-        /// 是否等待任务重试
-        /// </summary>
-        /// <param name="res"></param>
-        /// <returns></returns>
-        public static bool IsRunPause(this ResultMo res)
+        public static bool IsCompleted(this TaskRunStatus res)
         {
-            return res.sys_ret == (int) SysResultTypes.RunPause;
+            return res == TaskRunStatus.RunCompoleted;
         }
 
-        public static TRes CheckConvertToResult<TRes>(this ResultMo res)
-            where TRes : ResultMo, new()
+        public static bool IsPaused(this TaskRunStatus res)
         {
-            if (res is TRes tres)
-                return tres;
-
-            if (!res.IsSuccess())
-                return res.ConvertToResultInherit<TRes>();
-
-            return new TRes()
-            {
-                sys_ret = (int) SysResultTypes.InnerError,
-                ret = (int) ResultTypes.InnerError,
-                msg = $"Return value error! Can't convert to {typeof(TRes)}"
-            };
+            return res == TaskRunStatus.RunPaused;
         }
+        public static bool IsReverted(this TaskRunStatus res)
+        {
+            return res == TaskRunStatus.RunReverted;
+        }
+
+        public static bool IsWaitToRun(this TaskRunStatus res)
+        {
+            return res == TaskRunStatus.WaitToRun;
+        }
+
+        public static TRes SetErrorResult<TRes>(this TRes res,SysResultTypes sysRet,ResultTypes ret,string eMsg)
+            where TRes : ResultMo
+        {
+            res.msg = eMsg;
+            res.ret = (int)ret;
+            res.sys_ret = (int) sysRet;
+            return res;
+        }
+
+        public static TRes SetErrorResult<TRes>(this TRes res, SysResultTypes sysRet,  string eMsg)
+            where TRes : ResultMo
+        {
+            return res.SetErrorResult(sysRet,ResultTypes.Success,eMsg);
+        }
+
+        public static TRes SetErrorResult<TRes>(this TRes res, ResultTypes ret, string eMsg)
+            where TRes : ResultMo
+        {
+            return res.SetErrorResult(SysResultTypes.Ok, ret, eMsg);
+        }
+
+        //public static TRes CheckConvertToResult<TRes>(this ResultMo res)
+        //    where TRes : ResultMo, new()
+        //{
+        //    if (res is TRes tres)
+        //        return tres;
+
+        //    if (!res.IsSuccess())
+        //        return res.ConvertToResultInherit<TRes>();
+
+        //    return new TRes()
+        //    {
+        //        sys_ret = (int) SysResultTypes.InnerError,
+        //        ret = (int) ResultTypes.InnerError,
+        //        msg = $"Return value error! Can't convert to {typeof(TRes)}"
+        //    };
+        //}
 
     }
 }

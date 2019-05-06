@@ -67,19 +67,19 @@ namespace OSS.EventNode
             RunCondition taskRunCondition);
 
         //  检查context内容
-        internal virtual ResultMo ProcessCheck(TTContext context)
+        internal virtual TTRes ProcessCheck(TTContext context)
         {
             //  todo  状态有效判断等
             if (string.IsNullOrEmpty(context.node_meta?.node_key))
             {
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError,
+                return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, ResultTypes.InnerError,
                     "node metainfo has error!");
             }
 
-            if (string.IsNullOrEmpty(context.exc_id))
-                context.exc_id = DateTime.Now.Ticks.ToString();
+            //if (string.IsNullOrEmpty(context..exc_id))
+            //    context.exc_id = DateTime.Now.Ticks.ToString();
 
-            return new ResultMo();
+            return new TTRes();
         }
 
         #endregion
@@ -129,10 +129,10 @@ namespace OSS.EventNode
             {
                 InitailTaskRunType(td.Value,RunType);
                 var retRes = await GetTaskItemResult(con, td.Value, td.Key, new RunCondition());
-                if (retRes.IsRunFailed())
-                {
+                //if (retRes.IsRunFailed())
+                //{
                     
-                }
+                //}
 
                 taskResults.Add(td.Key, retRes);
             }
@@ -206,9 +206,9 @@ namespace OSS.EventNode
 
 
         // 初始化task相关属性
-        private static void InitailTaskRunType(IBaseTask task,FollowType nodeRunType)
+        private static void InitailTaskRunType(IBaseTask task,ContainerType nodeRunType)
         {
-            task.RunType = nodeRunType!=FollowType.WithFlow ? FollowType.None : FollowType.WithFlow;
+            task.OwnerType = nodeRunType!=ContainerType.WithFlow ? ContainerType.None : ContainerType.WithFlow;
         }
 
         #endregion

@@ -6,7 +6,7 @@ namespace OSS.EventNode
     /// <summary>
     ///  节点运行时元数据信息
     /// </summary>
-    public abstract partial class BaseDomainNode<TReq, TDomain, TRes>
+    public abstract partial class BaseDomainNode<TDomain, TReq, TRes>
     {
         protected BaseDomainNode()
         {

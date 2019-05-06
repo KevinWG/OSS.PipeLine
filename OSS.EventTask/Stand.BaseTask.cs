@@ -3,7 +3,7 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<TaskContext<TReq>,TRes>
+    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<TaskContext<TReq,TRes>,TRes>
         where TRes : ResultMo, new()
     {
     }

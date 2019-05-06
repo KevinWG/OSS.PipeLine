@@ -13,12 +13,12 @@ namespace OSS.EventNode
     public abstract partial class BaseNode<TTContext, TTRes>
     {
         public InstanceType InstanceType { get; internal set; }
-        public FollowType RunType { get; internal set; }
+        public ContainerType RunType { get; internal set; }
 
         protected BaseNode()
         {
             InstanceType = InstanceType.Stand;
-            RunType = FollowType.WithNode;
+            RunType = ContainerType.WithNode;
         }
 
   

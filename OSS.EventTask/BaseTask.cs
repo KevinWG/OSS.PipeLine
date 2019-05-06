@@ -10,8 +10,9 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTContext, TTRes> : IBaseTask
-        where TTContext : TaskContext
+
+    public abstract partial class BaseTask<TTContext,TTRes> : BaseMetaTask<TTContext, TTRes>
+        where TTContext : TaskContext<TTRes>
         where TTRes : ResultMo, new()
     {
         #region 任务进入入口
@@ -54,10 +55,7 @@ namespace OSS.EventTask
         /// <summary>
         /// 任务结束方法
         /// </summary>
-        /// <param name="taskRes">任务结果 :
-        ///  sys_ret = (int)SysResultTypes.RunFailed 表明最终执行失败，
-        ///  sys_ret = (int)SysResultTypes.RunPause 表示符合间隔重试条件，会通过 contextKeeper 保存信息后续唤起
-        /// </param>
+        /// <param name="taskRes"></param>
         /// <param name="context">请求的上下文</param>
         /// <returns></returns>
         protected virtual Task RunEnd(TTRes taskRes, TTContext context)
@@ -65,16 +63,17 @@ namespace OSS.EventTask
             return Task.CompletedTask;
         }
 
-        internal virtual ResultMo RunCheck(TTContext context, RunCondition runCondition)
+        internal virtual TTRes RunCheck(TTContext context, RunCondition runCondition)
         {
             if (string.IsNullOrEmpty(context.task_meta?.task_key))
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "Task metainfo has error!");
-
+                return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
+               
             if (runCondition == null)
-                return new ResultMo(SysResultTypes.ConfigError, ResultTypes.InnerError, "Task run condition data can't be null！");
-
-            return new ResultMo();
+                return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, "Task run condition data can't be null！");
+         
+            return new TTRes();
         }
+
 
         #endregion
 
@@ -84,15 +83,18 @@ namespace OSS.EventTask
         ///     任务的具体执行
         /// </summary>
         /// <param name="context"></param>
-        /// <returns> sys_ret = (int)SysResultTypes.RunFailed 系统会字段判断是否满足重试条件执行重试    </returns>
-        protected abstract Task<TTRes> Do(TTContext context);
+        /// <returns> 
+        /// TaskRunStatus.RunFailed 系统会字段判断是否满足重试条件执行重试
+        /// 
+        /// </returns>
+        protected abstract Task<TaskRunStatus> Do(TTContext context);
 
         /// <summary>
         ///  执行失败回退操作
         ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="context"></param>
-        protected internal virtual Task Revert(TaskContext context)
+        protected internal virtual Task Revert(TTContext context)
         {
             return Task.CompletedTask;
         }
@@ -101,7 +103,7 @@ namespace OSS.EventTask
         ///  最终失败执行方法
         /// </summary>
         /// <param name="context"></param>
-        protected virtual Task Failed(TaskContext context)
+        protected virtual Task Failed(TTContext context)
         {
             return Task.CompletedTask;
         }
@@ -120,7 +122,7 @@ namespace OSS.EventTask
             {
                 var checkRes = RunCheck(context, runCondition);
                 if (!checkRes.IsSuccess())
-                    return checkRes.ConvertToResultInherit<TTRes>();
+                    return checkRes;
 
                 // 【1】 执行起始方法
                 await RunStart(context);
@@ -144,7 +146,7 @@ namespace OSS.EventTask
                 if (res == null)
                     res = new TTRes()
                     {
-                        sys_ret = (int) SysResultTypes.InnerError,
+                        sys_ret = (int) SysResultTypes.ApplicationError,
                         ret = (int) ResultTypes.InnerError,
                         msg = "Error occurred during task [Run]!"
                     };
@@ -152,9 +154,9 @@ namespace OSS.EventTask
 
             LogUtil.Error(
                 $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{errorMsg}"
-                , context.task_meta.task_key, "Oss.TaskFlow");
+                , context.task_meta.task_key, ModuleName);
 
-            await TrySaveTaskContext(context, runCondition);
+            await TrySaveTaskContext(context);
             return res;
         }
 
@@ -166,21 +168,27 @@ namespace OSS.EventTask
         /// <returns>  </returns>
         private async Task<TTRes> Runing(TTContext context, RunCondition runCondition)
         {
-            var res = await Recurs(context, runCondition);
+            context.run_status = await Recurs(context, runCondition);
             // 判断是否间隔执行,生成重试信息
-            if (res.IsRunFailed() && runCondition.interval_times < context.task_meta.interval_times)
+            if (context.run_status.IsFailed() && runCondition.interval_times < context.task_meta.interval_times)
             {
                 runCondition.interval_times++;
-                await TrySaveTaskContext(context, runCondition);
-                res.sys_ret = (int) SysResultTypes.RunPause; // TaskResultType.WatingActivation;
+                await TrySaveTaskContext(context);
+                context.run_status = TaskRunStatus.RunPaused; // TaskResultType.WatingActivation;
             }
 
-            if (res.IsRunFailed())
+            if (context.run_status.IsFailed())
             {
                 //  最终失败，执行失败方法
                 await Failed(context);
             }
-            return res;
+
+            return context.resp ?? (context.resp = new TTRes()
+            {
+                sys_ret = (int) SysResultTypes.NoResponse,
+                ret = (int) ResultTypes.InnerError,
+                msg = "Have no response during task [Do]!"
+            });
         }
 
         /// <summary>
@@ -189,33 +197,31 @@ namespace OSS.EventTask
         /// <param name="context"></param>
         /// <param name="runCondition"></param>
         /// <returns></returns>
-        private async Task<TTRes> Recurs(TTContext context, RunCondition runCondition)
+        private async Task<TaskRunStatus> Recurs(TTContext context, RunCondition runCondition)
         {
-            TTRes res;
+            TaskRunStatus status;
             var directProcessTimes = 0;
             do
             {
                 //  直接执行
-                res = await TryDo(context);
-                if (res == null)
-                    throw new ArgumentNullException($"{this.GetType().Name} return null！");
-
+                status = await TryDo(context);
+          
                 // 判断是否失败回退
-                if (res.IsRunFailed())
+                if (status.IsFailed())
                     await Revert(context);
 
                 directProcessTimes++;
                 runCondition.exced_times++;
             }
             // 判断是否执行直接重试 
-            while (res.IsRunFailed() && directProcessTimes < context.task_meta.continue_times);
+            while (status.IsFailed() && directProcessTimes < context.task_meta.continue_times);
 
-            return res;
+            return status;
         }
 
         //  保证外部异常不会对框架内部运转造成影响
         //  如果失败返回 RunFailed 保证系统后续重试处理
-        private Task<TTRes> TryDo(TTContext context)
+        private Task<TaskRunStatus> TryDo(TTContext context)
         {
             try
             {
@@ -223,15 +229,18 @@ namespace OSS.EventTask
             }
             catch (Exception e)
             {
-                var res = new TTRes()
+                var res= new TTRes()
                 {
-                    sys_ret = (int) SysResultTypes.RunFailed,
+                    sys_ret = (int) SysResultTypes.ApplicationError,
                     ret = (int) ResultTypes.InnerError,
                     msg = "Error occurred during task [Do]!"
                 };
+
+                context.resp = res;
                 LogUtil.Error( $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{e}"
-                    , context.task_meta.task_key, "Oss.TaskFlow");
-                return Task.FromResult(res);
+                    , context.task_meta.task_key, ModuleName);
+
+                return Task.FromResult(TaskRunStatus.RunFailed);
             }
         }
         

@@ -1,6 +1,6 @@
 ﻿namespace OSS.EventTask.Interfaces
 {
-    public interface IDomainTaskProvider<TReq,TDomain>: ITaskProvider
+    public interface IDomainTaskProvider<TDomain,TReq>: ITaskProvider
     {
     }
 }

@@ -1,48 +1,45 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTContext,TTRes> where TTContext : TaskContext
-        where TTRes : ResultMo, new()
+    public abstract partial class BaseTask<TTContext, TTRes>
     {
-        protected BaseTask()
+   
+        public BaseTask(TaskMeta meta) : base(meta)
         {
-            RunType = FollowType.None;
         }
 
         #region 注册存储接口
 
         internal ITaskProvider m_metaProvider;
 
-        internal void RegisteProvider_Internal(ITaskProvider taskPro)
-        {
-            m_metaProvider = taskPro;
-        }
-
+      
         #endregion
 
         #region 内部扩展方法
 
-        protected virtual Task SaveTaskContext(TTContext context, RunCondition runCondition)
-        {
-            return Task.CompletedTask;
-        }
+        // 领域数据需要保持独立源，且其状态会发生变化，不会保存
+        internal abstract Task SaveTaskCondition(TTContext context);
 
         #endregion
 
 
         #region 辅助方法
 
-        private Task TrySaveTaskContext(TTContext context,RunCondition runCondition)
+        private Task TrySaveTaskContext(TTContext context)
         {
             try
             {
-                return SaveTaskContext(context, runCondition);
+                // 仅task独立运行时通过这里保存
+                if (OwnerType==OwnerType.Task)
+                {
+                    return SaveTaskCondition(context);
+                }
             }
             catch (Exception e)
             {

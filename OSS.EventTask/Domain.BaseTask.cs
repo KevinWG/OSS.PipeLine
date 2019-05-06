@@ -1,6 +1,7 @@
 ﻿using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.EventTask.Mos;
+using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
@@ -10,20 +11,17 @@ namespace OSS.EventTask
     /// <typeparam name="TReq"></typeparam>
     /// <typeparam name="TDomain"></typeparam>
     /// <typeparam name="TRes"></typeparam>
-    public abstract partial class BaseDomainTask<TReq, TDomain, TRes> : BaseTask<TaskContext<TReq, TDomain>, TRes>
+    public abstract partial class BaseDomainTask<TDomain, TReq, TRes> : BaseTask<TaskContext<TDomain,TReq,TRes>, TRes>
         where TRes : ResultMo, new()
     {
-        //public virtual async Task<TTRes> Run(me)
-        //{
-            
-        //}
-       internal override ResultMo RunCheck(TaskContext<TReq, TDomain> context,RunCondition runCondition)
+        internal override TRes RunCheck(TaskContext<TDomain, TReq, TRes> context, RunCondition runCondition)
         {
-            if (context.domain_data == null)
-            {
-                return new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
-                    "Domain task must Run with domain_data!");
-            }
+            if (context.req == null)
+                return new TRes().SetErrorResult(SysResultTypes.ApplicationError, "Task must Run with request info!");
+               
+            if (context.req.domain_data == null)
+                return new TRes().SetErrorResult(SysResultTypes.ApplicationError, "Domain task must Run with domain_data!");
+       
             return base.RunCheck(context, runCondition);
         }
     }
