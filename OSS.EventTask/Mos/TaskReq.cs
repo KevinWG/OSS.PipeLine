@@ -32,7 +32,6 @@
 
     public class BaseTaskReq
     {
-        public RunCondition run_condition { get; set; }
         public string exc_id { get; set; }
     }
 

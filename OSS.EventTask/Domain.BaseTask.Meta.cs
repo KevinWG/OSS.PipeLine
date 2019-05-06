@@ -34,7 +34,7 @@ namespace OSS.EventTask
         // 领域数据需要保持独立源，且其状态会受其他并行节点发生变化，这里不会保存
         internal override Task SaveTaskCondition(TaskContext<TDomain, TReq, TRes> context)
         {
-            return SaveTaskCondition(context.req);
+            return SaveTaskCondition(context.req,context.task_condition);
         }
 
 
@@ -43,9 +43,10 @@ namespace OSS.EventTask
         ///     节点下的环境信息，由节点内部处理，重试的处理也有节点自行触发 
         ///     领域数据需要保持独立源，且其状态会受其他并行节点发生变化，这里不会保存
         /// </summary>
-        /// <param name="reqWithCondition"></param>
+        /// <param name="req"></param>
+        /// <param name="runCondition"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskCondition(TaskReq<TReq> reqWithCondition)
+        protected virtual Task SaveTaskCondition(TaskReq<TReq> req,RunCondition runCondition)
         {
             return Task.CompletedTask;
         }

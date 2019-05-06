@@ -30,10 +30,7 @@ namespace OSS.EventTask.Mos
     public class TaskContext<TRes>//:BaseTaskContext
      where TRes:ResultMo,new ()
     {
-        /// <summary>
-        ///  返回信息
-        /// </summary>
-        public TRes resp { get; set; }
+       
     //}
     //public class BaseTaskContext
     //{
@@ -45,10 +42,17 @@ namespace OSS.EventTask.Mos
         public TaskMeta task_meta { get; set; }
 
         #endregion
+        
+        public RunCondition task_condition { get; set; }
 
         /// <summary>
         ///  运行状态
         /// </summary>
         public TaskRunStatus run_status { get;internal set; }
+
+        /// <summary>
+        ///  返回信息
+        /// </summary>
+        public TRes resp { get; set; }
     }
 }

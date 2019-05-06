@@ -16,37 +16,15 @@ namespace OSS.EventTask
         where TTRes : ResultMo, new()
     {
         #region 任务进入入口
-
-        /// <summary>
-        ///  执行任务
-        /// </summary>
-        /// <param name="context">任务的上下文数据信息</param>
-        /// <returns></returns>
-        //public Task<TTRes> Run(TTContext context)
-        //{
-        //    return Run(context);
-        //}
-
-        ///// <summary>
-        /////  执行任务
-        ///// </summary>
-        ///// <param name="context">任务的上下文数据信息</param>
-        ///// <param name="runCondition">运行情况信息(重试校验依据)</param>
-        ///// <returns></returns>
-        //public Task<TTRes> RunWithRetry(TTContext context)
-        //{
-        //    return Run(context);
-        //}
-
-
+        
         // 串联流程，以及框架内部异常处理
-        internal async Task<TTRes> Run(TTContext context, RunCondition runCondition)
+        internal async Task<TTRes> Run(TTContext context)
         {
             var res = default(TTRes);
             string errorMsg;
             try
             {
-                var checkRes = RunCheck(context, runCondition);
+                var checkRes = RunCheck(context);
                 if (!checkRes.IsSuccess())
                     return checkRes;
 
@@ -54,7 +32,7 @@ namespace OSS.EventTask
                 await RunStart(context);
 
                 // 【2】  执行核心方法
-                res = await Runing(context, runCondition);
+                res = await Runing(context);
 
                 // 【3】 执行结束方法
                 await RunEnd(res, context);
@@ -112,12 +90,12 @@ namespace OSS.EventTask
             return Task.CompletedTask;
         }
 
-        internal virtual TTRes RunCheck(TTContext context, RunCondition runCondition)
+        internal virtual TTRes RunCheck(TTContext context)
         {
             if (string.IsNullOrEmpty(context.task_meta?.task_key))
                 return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
                
-            if (runCondition == null)
+            if (context.task_condition == null)
                 return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, "Task run condition data can't be null！");
          
             return new TTRes();
@@ -166,11 +144,11 @@ namespace OSS.EventTask
         ///   任务的具体执行
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="runCondition"></param>
         /// <returns>  </returns>
-        private async Task<TTRes> Runing(TTContext context, RunCondition runCondition)
+        private async Task<TTRes> Runing(TTContext context)
         {
-            context.run_status = await Recurs(context, runCondition);
+            var runCondition = context.task_condition;
+            context.run_status = await Recurs(context);
             // 判断是否间隔执行,生成重试信息
             if (context.run_status.IsFailed() && runCondition.interval_times < context.task_meta.interval_times)
             {
@@ -199,7 +177,7 @@ namespace OSS.EventTask
         /// <param name="context"></param>
         /// <param name="runCondition"></param>
         /// <returns></returns>
-        private async Task<TaskRunStatus> Recurs(TTContext context, RunCondition runCondition)
+        private async Task<TaskRunStatus> Recurs(TTContext context)
         {
             TaskRunStatus status;
             var directProcessTimes = 0;
@@ -213,7 +191,7 @@ namespace OSS.EventTask
                     await Revert(context);
 
                 directProcessTimes++;
-                runCondition.exced_times++;
+                context.task_condition.exced_times++;
             }
             // 判断是否执行直接重试 
             while (status.IsFailed() && directProcessTimes < context.task_meta.continue_times);
