@@ -74,17 +74,6 @@ namespace OSS.EventTask.Util
             return res;
         }
 
-        public static TRes SetErrorResult<TRes>(this TRes res, SysResultTypes sysRet,  string eMsg)
-            where TRes : ResultMo
-        {
-            return res.SetErrorResult(sysRet,ResultTypes.Success,eMsg);
-        }
-
-        public static TRes SetErrorResult<TRes>(this TRes res, ResultTypes ret, string eMsg)
-            where TRes : ResultMo
-        {
-            return res.SetErrorResult(SysResultTypes.Ok, ret, eMsg);
-        }
 
         //public static TRes CheckConvertToResult<TRes>(this ResultMo res)
         //    where TRes : ResultMo, new()

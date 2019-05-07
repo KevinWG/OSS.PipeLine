@@ -93,10 +93,10 @@ namespace OSS.EventTask
         internal virtual TTRes RunCheck(TTContext context)
         {
             if (string.IsNullOrEmpty(context.task_meta?.task_key))
-                return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
+                return new TTRes().WithResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
                
             if (context.task_condition == null)
-                return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, "Task run condition data can't be null！");
+                return new TTRes().WithResult(SysResultTypes.ApplicationError, "Task run condition data can't be null！");
          
             return new TTRes();
         }
@@ -175,7 +175,6 @@ namespace OSS.EventTask
         ///   具体递归执行
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="runCondition"></param>
         /// <returns></returns>
         private async Task<TaskRunStatus> Recurs(TTContext context)
         {
