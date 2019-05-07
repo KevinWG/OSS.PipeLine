@@ -22,14 +22,14 @@ namespace OSS.EventNode
         {
             if (task.InstanceType == InstanceType.Domain)
             {
-                throw new ResultException(SysResultTypes.InnerError, ResultTypes.InnerError,
+                throw new ResultException(SysResultTypes.ApplicationError, ResultTypes.InnerError,
                     "StandNode can't use DomainTask!");
             }
 
             var taskContext = con.ConvertToTaskContext(taskMeta);
 
             var standTask = (BaseStandTask<TReq, TRes>) task;
-            return await standTask.RunWithRetry(taskContext,taskRunCondition);
+            return await standTask.RunWithRetry(taskContext.req,taskRunCondition);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using OSS.EventNode.MetaMos;
+﻿using OSS.Common.ComModels;
+using OSS.EventNode.MetaMos;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
@@ -25,7 +26,7 @@ namespace OSS.EventNode.Mos
     }
 
 
-    public class NodeContext :BaseContext
+    public class NodeContext 
     {
         public string flow_key { get; set; }
 
@@ -37,34 +38,34 @@ namespace OSS.EventNode.Mos
 
     public static class NodeContextExtention
     {
-        public static TaskContext<TReq> ConvertToTaskContext<TReq>(this NodeContext<TReq> nodeContext,TaskMeta taskMeta)
+        public static TaskContext<TReq,ResultMo> ConvertToTaskContext<TReq>(this NodeContext<TReq> nodeContext,TaskMeta taskMeta)
         {
-            var taskContext = new TaskContext<TReq>
-            {
-                flow_key = nodeContext.flow_key,
-                node_key = nodeContext.node_meta.node_key,
-                exc_id = nodeContext.exc_id,
+            //var taskContext = new TaskContext<TReq>
+            //{
+            //    flow_key = nodeContext.flow_key,
+            //    node_key = nodeContext.node_meta.node_key,
+            //    exc_id = nodeContext.exc_id,
 
-                req_data = nodeContext.req_data,
-                task_meta = taskMeta
-            };
-            return taskContext;
+            //    req_data = nodeContext.req_data,
+            //    task_meta = taskMeta
+            //};
+            return new TaskContext<TReq,ResultMo>();
         }
 
 
-        public static TaskContext<TReq, TDomain> ConvertToTaskContext<TReq, TDomain>(this NodeContext<TReq, TDomain> nodeContext,
+        public static TaskContext<TReq, TDomain,ResultMo> ConvertToTaskContext<TReq, TDomain>(this NodeContext<TReq, TDomain> nodeContext,
             TaskMeta taskMeta)
         {
-            var taskContext = new TaskContext<TReq, TDomain>
-            {
-                flow_key = nodeContext.flow_key,
-                node_key = nodeContext.node_meta.node_key,
-                exc_id = nodeContext.exc_id,
-                req_data = nodeContext.req_data,
+            var taskContext = new TaskContext<TReq, TDomain, ResultMo>();
+            //{
+            //    flow_key = nodeContext.flow_key,
+            //    node_key = nodeContext.node_meta.node_key,
+            //    exc_id = nodeContext.exc_id,
+            //    req_data = nodeContext.req_data,
 
-                task_meta = taskMeta,
-                domain_data =  nodeContext.domain_data
-            };
+            //    task_meta = taskMeta,
+            //    domain_data =  nodeContext.domain_data
+            //};
             return taskContext;
 
         }

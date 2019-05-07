@@ -10,50 +10,50 @@ using OSS.EventTask.Mos;
 namespace OSS.EventNode
 {
     /// <inheritdoc />
-    public abstract partial class BaseDomainNode<TReq, TDomain, TRes> : BaseNode<NodeContext<TReq, TDomain>, TRes>
-        where TRes : ResultMo, new()
-    {
+    //public abstract partial class BaseDomainNode<TReq, TDomain, TRes> : BaseNode<NodeContext<TReq, TDomain>, TRes>
+    //    where TRes : ResultMo, new()
+    //{
 
-        #region 扩展方法
+    //    #region 扩展方法
 
    
 
-        #endregion
+    //    #endregion
 
 
-        #region 内部扩展方法重写
+    //    #region 内部扩展方法重写
 
-        internal override async Task<TRes> GetTaskItemResult(NodeContext<TReq, TDomain> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
-        {
-            var taskContext = con.ConvertToTaskContext(taskMeta);
+    //    internal override async Task<TRes> GetTaskItemResult(NodeContext<TReq, TDomain> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
+    //    {
+    //        var taskContext = con.ConvertToTaskContext(taskMeta);
 
-            if (task.InstanceType == InstanceType.Domain)
-            {
-                var domainTask = (BaseDomainTask<TReq, TDomain, TRes>)task;
-                return await domainTask.RunWithRetry(taskContext,taskRunCondition);
-            }
+    //        if (task.InstanceType == InstanceType.Domain)
+    //        {
+    //            var domainTask = (BaseDomainTask<TReq, TDomain, TRes>)task;
+    //            return await domainTask.RunWithRetry(taskContext,taskRunCondition);
+    //        }
 
-            var standTask = (BaseStandTask<TReq, TRes>)task;
-            return await standTask.RunWithRetry(taskContext, taskRunCondition);
-        }
+    //        var standTask = (BaseStandTask<TReq, TRes>)task;
+    //        return await standTask.RunWithRetry(taskContext, taskRunCondition);
+    //    }
         
-        internal override  ResultMo ProcessCheck(NodeContext<TReq, TDomain> context)
-        {
-            if (context.domain_data == null)
-            {
-                return  new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
-                    "Domain node must Process with domain_data!");
-            }
-            return base.ProcessCheck(context);
-        }
+    //    internal override  ResultMo ProcessCheck(NodeContext<TReq, TDomain> context)
+    //    {
+    //        if (context.domain_data == null)
+    //        {
+    //            return  new ResultMo(SysResultTypes.InnerError, ResultTypes.ObjectNull,
+    //                "Domain node must Process with domain_data!");
+    //        }
+    //        return base.ProcessCheck(context);
+    //    }
 
-        #endregion
+    //    #endregion
 
-        #region 辅助方法
+    //    #region 辅助方法
 
   
 
-        #endregion
+    //    #endregion
 
-    }
+    //}
 }

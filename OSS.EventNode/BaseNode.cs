@@ -14,12 +14,15 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventNode
 {
+
+
+
     /// <summary>
     ///  基础工作节点
     /// todo  重新激活处理
     /// todo  全部节点回退
     /// </summary>
-    public abstract partial class BaseNode<TTContext, TTRes>
+    public abstract partial class BaseNode<TTContext, TTRes> : BaseMetaNode<TTContext, TTRes>
         where TTContext : NodeContext
         where TTRes : ResultMo, new()
     {
@@ -91,7 +94,7 @@ namespace OSS.EventNode
             // 获取任务元数据列表
             var taskDirs = await GetTaskMetas(con);
             if (taskDirs == null || taskDirs.Count == 0)
-                throw new ResultException(SysResultTypes.ConfigError, ResultTypes.ObjectNull,
+                throw new ResultException(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
                     $"{this.GetType()} have no tasks can be Runed!");
 
             // 执行处理结果
@@ -127,7 +130,7 @@ namespace OSS.EventNode
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
             foreach (var td in taskDirs)
             {
-                InitailTaskRunType(td.Value,RunType);
+                InitailTaskOwnerType(td.Value,OwnerType);
                 var retRes = await GetTaskItemResult(con, td.Value, td.Key, new RunCondition());
                 //if (retRes.IsRunFailed())
                 //{
@@ -149,7 +152,7 @@ namespace OSS.EventNode
             {
                 var task = tr.Value;
 
-                InitailTaskRunType(task, RunType);
+                InitailTaskOwnerType(task, OwnerType);
                 return GetTaskItemResult(con, tr.Value, tr.Key, new RunCondition());
             });
 
@@ -166,7 +169,7 @@ namespace OSS.EventNode
             {
                 var t = p.Value;
                 return t.Status == TaskStatus.Faulted
-                    ? new ResultMo(SysResultTypes.InnerError, ResultTypes.InnerError
+                    ? new ResultMo(SysResultTypes.ApplicationError, ResultTypes.InnerError
                         , $"unexcept error with task {p.Key.task_name}({p.Key.task_key})")
                     : t.Result;
             });
@@ -206,9 +209,9 @@ namespace OSS.EventNode
 
 
         // 初始化task相关属性
-        private static void InitailTaskRunType(IBaseTask task,ContainerType nodeRunType)
+        private static void InitailTaskOwnerType(IBaseTask task,OwnerType nodeOwnerType)
         {
-            task.OwnerType = nodeRunType!=ContainerType.WithFlow ? ContainerType.None : ContainerType.WithFlow;
+            task.OwnerType = nodeOwnerType!= OwnerType.Flow ? nodeOwnerType : OwnerType.Flow;
         }
 
         #endregion

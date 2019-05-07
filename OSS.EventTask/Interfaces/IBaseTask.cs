@@ -23,12 +23,11 @@ namespace OSS.EventTask.Interfaces
             OwnerType = OwnerType.Task;
         }
 
-
         public InstanceType InstanceType { get; protected set; }
 
         public OwnerType OwnerType { get; set; }
 
-        public TaskMeta TaskMeta => GetDefaultConfig(); // todo 修改
+        public TaskMeta TaskMeta => GetConfig(); // todo 修改
 
     }
 

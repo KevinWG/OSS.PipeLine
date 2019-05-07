@@ -30,10 +30,6 @@ namespace OSS.EventTask.Mos
     public class TaskContext<TRes>//:BaseTaskContext
      where TRes:ResultMo,new ()
     {
-       
-    //}
-    //public class BaseTaskContext
-    //{
         #region 基础配置信息
 
         /// <summary>
