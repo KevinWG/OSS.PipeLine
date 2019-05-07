@@ -10,7 +10,6 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-
     public abstract partial class BaseTask<TTContext,TTRes> : BaseMetaTask<TTContext, TTRes>
         where TTContext : TaskContext<TTRes>
         where TTRes : ResultMo, new()

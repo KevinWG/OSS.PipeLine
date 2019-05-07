@@ -28,8 +28,6 @@ namespace OSS.EventNode.Mos
 
     public class NodeContext 
     {
-        public string flow_key { get; set; }
-
         /// <summary>
         ///  当前流-节点元信息
         /// </summary>

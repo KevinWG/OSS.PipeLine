@@ -3,14 +3,12 @@ using System.Threading.Tasks;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
-using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
     public abstract partial class BaseTask<TTContext, TTRes>
     {
-   
-        public BaseTask(TaskMeta meta) : base(meta)
+        protected BaseTask(TaskMeta meta) : base(meta)
         {
         }
 
@@ -18,7 +16,7 @@ namespace OSS.EventTask
 
         internal ITaskProvider m_metaProvider;
 
-      
+
         #endregion
 
         #region 内部扩展方法
@@ -35,17 +33,14 @@ namespace OSS.EventTask
         {
             try
             {
-                // 仅task独立运行时通过这里保存
-                if (OwnerType==OwnerType.Task)
-                {
-                    return SaveTaskCondition(context);
-                }
+                return SaveTaskCondition(context);
             }
             catch (Exception e)
             {
                 //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
                 LogUtil.Error(e, "Oss.TaskFlow.Task.SaveTaskContext", "Oss.TaskFlow");
             }
+
             return Task.CompletedTask;
         }
 

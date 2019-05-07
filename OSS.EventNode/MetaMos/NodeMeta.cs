@@ -2,6 +2,9 @@
 {
     public class NodeMeta
     {
+
+        public string flow_key { get; set; }
+
         public string node_key { get; set; }
 
         public string node_name { get; set; }

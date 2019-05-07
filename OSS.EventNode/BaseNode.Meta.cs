@@ -16,10 +16,6 @@ namespace OSS.EventNode
         private const string _moduleName = "OSS.EventTask";
         public InstanceType InstanceType { get; internal set; }
         public OwnerType OwnerType { get; internal set; }
-        
-        protected BaseMetaNode():this(null)
-        {
-        }
 
         protected BaseMetaNode(NodeMeta meta):base(meta)
         {
@@ -33,10 +29,7 @@ namespace OSS.EventNode
     /// </summary>
     public abstract partial class BaseNode<TTContext, TTRes>
     {
-        protected BaseNode() : this(null)
-        {
-        }
-
+      
         protected BaseNode(NodeMeta meta) : base(meta)
         {
         }

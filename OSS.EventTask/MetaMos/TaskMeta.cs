@@ -2,6 +2,10 @@
 {
     public class TaskMeta
     {
+        public string flow_key { get; set; }
+       
+        public string node_key { get; set; }
+
         /// <summary>
         ///  任务键
         /// </summary>

@@ -18,6 +18,7 @@ namespace OSS.EventNode
     ///  基础工作节点
     /// todo  重新激活处理
     /// todo  全部节点回退
+    /// todo  保存未激活信息和节点列表
     /// </summary>
     public abstract partial class BaseNode<TTContext, TTRes> : BaseMetaNode<TTContext, TTRes>
         where TTContext : NodeContext
