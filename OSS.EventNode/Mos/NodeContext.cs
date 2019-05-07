@@ -5,38 +5,52 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.Mos
 {
-    public class NodeContext<TReq, TDomain> : NodeContext<TReq>
+    public class NodeContext<TDomain,TReq,TRes> : NodeContext<TRes>
+        where TRes : ResultMo, new()
     {
         /// <summary>
-        ///   核心流数据
+        ///  请求信息
         /// </summary>
-        public TDomain domain_data { get; set; }
+        public BaseReq<TDomain, TReq> req { get; set; }
     }
 
     /// <summary>
     ///   请求数据
     /// </summary>
     /// <typeparam name="TReq"></typeparam>
-    public class NodeContext<TReq> : NodeContext
+    /// <typeparam name="TRes"></typeparam>
+    public class NodeContext<TReq,TRes> : NodeContext<TRes>
+        where TRes : ResultMo, new()
     {
         /// <summary>
-        ///   执行请求内容主体
+        ///  请求信息
         /// </summary>
-        public TReq req_data { get; set; }
+        public BaseReq<TReq> req { get; set; }
     }
 
-
-    public class NodeContext 
+    public abstract class NodeContext<TRes>
+        where TRes : ResultMo, new()
     {
         /// <summary>
         ///  当前流-节点元信息
         /// </summary>
         public NodeMeta node_meta { get; set; }
+
+        /// <summary>
+        ///  结果
+        /// </summary>
+        public TRes resp { get; set; }
+
+        /// <summary>
+        ///  节点状态
+        /// </summary>
+        public NodeStatus node_status { get; set; }
     }
 
     public static class NodeContextExtention
     {
-        public static TaskContext<TReq,ResultMo> ConvertToTaskContext<TReq>(this NodeContext<TReq> nodeContext,TaskMeta taskMeta)
+        public static TaskContext<TReq,ResultMo> ConvertToTaskContext<TReq,TRes>(this NodeContext<TReq, TRes> nodeContext,TaskMeta taskMeta)
+        where TRes:ResultMo,new ()
         {
             //var taskContext = new TaskContext<TReq>
             //{
@@ -51,10 +65,10 @@ namespace OSS.EventNode.Mos
         }
 
 
-        public static TaskContext<TReq, TDomain,ResultMo> ConvertToTaskContext<TReq, TDomain>(this NodeContext<TReq, TDomain> nodeContext,
-            TaskMeta taskMeta)
+        public static TaskContext<TDomain, TReq,ResultMo> ConvertToTaskContext<TDomain,TReq, TRes>(this NodeContext<TDomain,TReq, TRes> nodeContext,
+            TaskMeta taskMeta) where TRes : ResultMo, new()
         {
-            var taskContext = new TaskContext<TReq, TDomain, ResultMo>();
+            var taskContext = new TaskContext<TDomain, TReq,  ResultMo>();
             //{
             //    flow_key = nodeContext.flow_key,
             //    node_key = nodeContext.node_meta.node_key,

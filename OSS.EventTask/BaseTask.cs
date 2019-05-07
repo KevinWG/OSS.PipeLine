@@ -10,8 +10,8 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTContext,TTRes> : BaseMetaTask<TTContext, TTRes>
-        where TTContext : TaskContext<TTRes>
+    public abstract partial class BaseTask<TTReq,TTRes> : BaseMetaTask<TTReq, TTRes>
+        where TTReq : BaseReq
         where TTRes : ResultMo, new()
     {
         #region 任务进入入口
@@ -19,8 +19,10 @@ namespace OSS.EventTask
         // 串联流程，以及框架内部异常处理
         internal async Task<TTRes> Run(TTContext context)
         {
-            var res = default(TTRes);
+            
             string errorMsg;
+            //var res = default(TTRes);
+            context.run_status = TaskRunStatus.WaitToRun;
             try
             {
                 var checkRes = RunCheck(context);
@@ -31,36 +33,31 @@ namespace OSS.EventTask
                 await RunStart(context);
 
                 // 【2】  执行核心方法
-                res = await Runing(context);
+                context.resp = await Runing(context);
 
                 // 【3】 执行结束方法
-                await RunEnd(res, context);
-                return res;
+                await RunEnd(context.resp, context);
+                return context.resp;
             }
             catch (ResultException e)
             {
                 errorMsg = e.ToString();
-                if (res == null)
-                    res = e.ConvertToReult().ConvertToResultInherit<TTRes>();
+                if (context.resp == null)
+                    context.resp = e.ConvertToReultInherit<TTRes>(); //.ConvertToReult<TTRes>();
             }
             catch (Exception e)
             {
                 errorMsg = e.ToString();
-                if (res == null)
-                    res = new TTRes()
-                    {
-                        sys_ret = (int)SysResultTypes.ApplicationError,
-                        ret = (int)ResultTypes.InnerError,
-                        msg = "Error occurred during task [Run]!"
-                    };
+                if (context.resp == null)
+                    context.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, "Error occurred during task [Run]!");
             }
 
             LogUtil.Error(
-                $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{errorMsg}"
-                , context.task_meta.task_key, ModuleName);
+                $"sys_ret:{ context.resp.sys_ret}, ret:{ context.resp.ret},msg:{ context.resp.msg}, Detail:{errorMsg}"
+                , TaskMeta.task_key, ModuleName);
 
             await TrySaveTaskContext(context);
-            return res;
+            return context.resp;
         }
 
 
@@ -91,7 +88,7 @@ namespace OSS.EventTask
 
         internal virtual TTRes RunCheck(TTContext context)
         {
-            if (string.IsNullOrEmpty(context.task_meta?.task_key))
+            if (string.IsNullOrEmpty(TaskMeta?.task_key))
                 return new TTRes().WithResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
                
             if (context.task_condition == null)
@@ -109,11 +106,11 @@ namespace OSS.EventTask
         ///     任务的具体执行
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="runStatus"></param>
         /// <returns> 
-        /// TaskRunStatus.RunFailed 系统会字段判断是否满足重试条件执行重试
-        /// 
+        ///  runStatus = TaskRunStatus.RunFailed 系统会字段判断是否满足重试条件执行重试
         /// </returns>
-        protected abstract Task<TaskRunStatus> Do(TTContext context);
+        protected abstract Task<TTRes> Do(TTContext context,out TaskRunStatus runStatus);
 
         /// <summary>
         ///  执行失败回退操作
@@ -149,7 +146,7 @@ namespace OSS.EventTask
             var runCondition = context.task_condition;
             context.run_status = await Recurs(context);
             // 判断是否间隔执行,生成重试信息
-            if (context.run_status.IsFailed() && runCondition.interval_times < context.task_meta.interval_times)
+            if (context.run_status.IsFailed() && runCondition.interval_times < TaskMeta.interval_times)
             {
                 runCondition.interval_times++;
                 await TrySaveTaskContext(context);
@@ -175,50 +172,49 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private async Task<TaskRunStatus> Recurs(TTContext context)
+        private async Task<TTRes> Recurs(TTContext context)
         {
-            TaskRunStatus status;
+         
             var directProcessTimes = 0;
             do
             {
                 //  直接执行
-                status = await TryDo(context);
+                context.resp = await TryDo(context);
           
                 // 判断是否失败回退
-                if (status.IsFailed())
+                if (context.run_status.IsFailed())
                     await Revert(context);
 
                 directProcessTimes++;
                 context.task_condition.exced_times++;
             }
             // 判断是否执行直接重试 
-            while (status.IsFailed() && directProcessTimes < context.task_meta.continue_times);
+            while (context.run_status.IsFailed() && directProcessTimes < TaskMeta.continue_times);
 
-            return status;
+            return context.resp;
         }
 
         //  保证外部异常不会对框架内部运转造成影响
         //  如果失败返回 RunFailed 保证系统后续重试处理
-        private Task<TaskRunStatus> TryDo(TTContext context)
+        private async Task<TTRes> TryDo(TTContext context)
         {
             try
             {
-                return Do(context);
+                context.resp=await Do(context, out var runStatus);
+                context.run_status = runStatus;
+                return context.resp;
             }
             catch (Exception e)
             {
-                var res= new TTRes()
-                {
-                    sys_ret = (int) SysResultTypes.ApplicationError,
-                    ret = (int) ResultTypes.InnerError,
-                    msg = "Error occurred during task [Do]!"
-                };
+                context.run_status = TaskRunStatus.RunFailed;
+                context.resp =
+                    new TTRes().WithResult(SysResultTypes.ApplicationError, "Error occurred during task [Do]!");
 
-                context.resp = res;
-                LogUtil.Error( $"sys_ret:{res.sys_ret}, ret:{res.ret},msg:{res.msg}, Detail:{e}"
-                    , context.task_meta.task_key, ModuleName);
+                LogUtil.Error(
+                    $"sys_ret:{context.resp.sys_ret}, ret:{context.resp.ret},msg:{context.resp.msg}, Detail:{e}"
+                    , TaskMeta.task_key, ModuleName);
 
-                return Task.FromResult(TaskRunStatus.RunFailed);
+                return context.resp;
             }
         }
         

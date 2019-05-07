@@ -21,7 +21,7 @@ namespace OSS.EventNode
     /// todo  保存未激活信息和节点列表
     /// </summary>
     public abstract partial class BaseNode<TTContext, TTRes> : BaseMetaNode<TTContext, TTRes>
-        where TTContext : NodeContext
+        where TTContext : NodeContext<TTRes>
         where TTRes : ResultMo, new()
     {
         #region 节点执行入口
@@ -64,7 +64,7 @@ namespace OSS.EventNode
 
         #region 内部扩展方法重写
 
-        internal abstract Task<TTRes> GetTaskItemResult(TTContext con, IBaseTask task, TaskMeta taskMeta,
+        internal abstract Task<TaskContext<TTRes>> GetTaskItemResult(TTContext con, IBaseTask task, TaskMeta taskMeta,
             RunCondition taskRunCondition);
 
         //  检查context内容
@@ -122,7 +122,7 @@ namespace OSS.EventNode
         }
         
         ///  顺序执行
-        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting_Sequence(TTContext con,
+        private async Task<Dictionary<TaskMeta, TaskContext<TTRes>>> Excuting_Sequence(TTContext con,
             IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);

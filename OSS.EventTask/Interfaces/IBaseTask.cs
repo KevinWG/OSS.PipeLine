@@ -11,8 +11,8 @@ namespace OSS.EventTask.Interfaces
         OwnerType OwnerType { get; set; }
     }
 
-    public class BaseMetaTask<TTContext,TTRes> : BaseMetaProvider<TaskMeta, BaseMetaTask<TTContext, TTRes>>, IBaseTask
-        where TTContext : TaskContext<TTRes>
+    public class BaseMetaTask<TTReq, TTRes> : BaseMetaProvider<TaskMeta, BaseMetaTask<TTReq, TTRes>>, IBaseTask
+        where TTReq : BaseReq
         where TTRes : ResultMo, new()
     {
         private const string _moduleName = "OSS.EventTask";
@@ -27,7 +27,7 @@ namespace OSS.EventTask.Interfaces
 
         public OwnerType OwnerType { get; set; }
 
-        public TaskMeta TaskMeta => GetConfig(); // todo 修改
+        public TaskMeta TaskMeta => GetConfig(); 
 
     }
 

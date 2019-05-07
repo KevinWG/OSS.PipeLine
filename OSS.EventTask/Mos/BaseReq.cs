@@ -5,32 +5,27 @@
     /// </summary>
     /// <typeparam name="TReq"></typeparam>
     /// <typeparam name="TDomain"></typeparam>
-    public class ExcuteReq<TDomain,TReq> : ExcuteReq<TReq>
+    public class BaseReq<TDomain,TReq> : BaseReq<TReq>
     {
         /// <summary>
         ///   核心流数据
         /// </summary>
         public TDomain domain_data { get; set; }
     }
-
-
-
+    
     /// <summary>
     ///   请求数据
     /// </summary>
     /// <typeparam name="TReq"></typeparam>
-    public class ExcuteReq<TReq> : BaseExcuteReq
+    public class BaseReq<TReq> : BaseReq
     {
         /// <summary>
         ///   执行请求内容主体
         /// </summary>
         public TReq req_data { get; set; }
     }
-
-
-
-
-    public class BaseExcuteReq
+    
+    public class BaseReq
     {
         public string exc_id { get; set; }
     }

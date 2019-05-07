@@ -18,18 +18,19 @@ namespace OSS.EventNode
     {
         #region 内部扩展方法重写
 
-        internal override async Task<TRes> GetTaskItemResult(NodeContext<TReq> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
+        internal override async Task<TaskContext<TRes>> GetTaskItemResult(NodeContext<TReq, TRes> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
         {
             if (task.InstanceType == InstanceType.Domain)
             {
                 throw new ResultException(SysResultTypes.ApplicationError, ResultTypes.InnerError,
-                    "StandNode can't use DomainTask!");
+                    "StandNode can't use Domain Task!");
             }
 
             var taskContext = con.ConvertToTaskContext(taskMeta);
+            taskContext.task_condition =new RunCondition();
 
             var standTask = (BaseStandTask<TReq, TRes>) task;
-            return await standTask.RunWithRetry(taskContext.req,taskRunCondition);
+            return await standTask.Run(taskContext);
         }
 
         #endregion

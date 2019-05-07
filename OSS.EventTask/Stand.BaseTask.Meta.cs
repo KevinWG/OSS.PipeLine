@@ -35,14 +35,14 @@ namespace OSS.EventTask
         }
 
   
-        protected virtual Task SaveTaskCondition(ExcuteReq<TReq> reqWithCondition)
+        protected virtual Task SaveTaskCondition(BaseReq<TReq> reqWithCondition)
         {
             return Task.CompletedTask;
         }
 
-        protected virtual Task<ExcuteReq<TReq>> GetTaskCondition(string excId)
+        protected virtual Task<BaseReq<TReq>> GetTaskCondition(string excId)
         {
-            return Task.FromResult<ExcuteReq<TReq>>(null);
+            return Task.FromResult<BaseReq<TReq>>(null);
         }
     }
 }
