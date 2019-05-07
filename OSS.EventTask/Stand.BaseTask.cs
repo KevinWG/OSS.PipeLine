@@ -12,7 +12,7 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        public Task<TRes> Run(TaskReq<TReq> req)
+        public Task<TRes> Run(ExcuteReq<TReq> req)
         {
             var context = new TaskContext<TReq, TRes>
             {
@@ -30,7 +30,7 @@ namespace OSS.EventTask
         /// <param name="req"></param>
         /// <param name="taskCondition"></param>
         /// <returns></returns>
-        public Task<TRes> RunWithRetry(TaskReq<TReq> req, RunCondition taskCondition)
+        public Task<TRes> RunWithRetry(ExcuteReq<TReq> req, RunCondition taskCondition)
         {
             var context = new TaskContext<TReq, TRes>
             {

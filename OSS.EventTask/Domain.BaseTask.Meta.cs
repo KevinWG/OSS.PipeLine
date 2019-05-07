@@ -46,7 +46,7 @@ namespace OSS.EventTask
         /// <param name="req"></param>
         /// <param name="runCondition"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskCondition(TaskReq<TReq> req,RunCondition runCondition)
+        protected virtual Task SaveTaskCondition(ExcuteReq<TReq> req,RunCondition runCondition)
         {
             return Task.CompletedTask;
         }
@@ -56,9 +56,9 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="excId"></param>
         /// <returns></returns>
-        protected virtual Task<TaskReq<TReq>> GetTaskCondition(string excId)
+        protected virtual Task<ExcuteReq<TReq>> GetTaskCondition(string excId)
         {
-            return Task.FromResult<TaskReq<TReq>>(null);
+            return Task.FromResult<ExcuteReq<TReq>>(null);
         }
     }
 }

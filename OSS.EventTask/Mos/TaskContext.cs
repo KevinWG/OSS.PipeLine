@@ -10,7 +10,7 @@ namespace OSS.EventTask.Mos
         /// <summary>
         ///  请求信息
         /// </summary>
-        public TaskReq<TDomain,TReq> req { get; set; }
+        public ExcuteReq<TDomain,TReq> req { get; set; }
     }
 
     /// <summary>
@@ -21,7 +21,7 @@ namespace OSS.EventTask.Mos
     public class TaskContext<TReq, TRes> : TaskContext<TRes>
         where TRes : ResultMo, new()
     {
-        public TaskReq<TReq> req { get; set; }
+        public ExcuteReq<TReq> req { get; set; }
     }
     
     /// <summary>

@@ -14,9 +14,6 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventNode
 {
-
-
-
     /// <summary>
     ///  基础工作节点
     /// todo  重新激活处理
