@@ -64,7 +64,7 @@ namespace OSS.EventNode
 
         #region 内部扩展方法重写
 
-        internal abstract Task<TaskContext<TTRes>> GetTaskItemResult(TTContext con, IBaseTask task, TaskMeta taskMeta,
+        internal abstract Task<TaskResponse<TTRes>> GetTaskItemResult(TTContext con, IBaseTask task, TaskMeta taskMeta,
             RunCondition taskRunCondition);
 
         //  检查context内容
@@ -122,7 +122,7 @@ namespace OSS.EventNode
         }
         
         ///  顺序执行
-        private async Task<Dictionary<TaskMeta, TaskContext<TTRes>>> Excuting_Sequence(TTContext con,
+        private async Task<Dictionary<TaskMeta, TaskResponse<TTRes>>> Excuting_Sequence(TTContext con,
             IDictionary<TaskMeta, IBaseTask> taskDirs)
         {
             var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);

@@ -5,7 +5,7 @@
     /// </summary>
     /// <typeparam name="TReq"></typeparam>
     /// <typeparam name="TDomain"></typeparam>
-    public class BaseReq<TDomain,TReq> : BaseReq<TReq>
+    public class ExcuteReq<TDomain,TReq> : ExcuteReq<TReq>
     {
         /// <summary>
         ///   核心流数据
@@ -17,7 +17,7 @@
     ///   请求数据
     /// </summary>
     /// <typeparam name="TReq"></typeparam>
-    public class BaseReq<TReq> : BaseReq
+    public class ExcuteReq<TReq> : ExcuteReq
     {
         /// <summary>
         ///   执行请求内容主体
@@ -25,7 +25,7 @@
         public TReq req_data { get; set; }
     }
     
-    public class BaseReq
+    public class ExcuteReq
     {
         public string exc_id { get; set; }
     }

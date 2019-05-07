@@ -1,11 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using OSS.Common.ComModels;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseStandTask<TReq, TRes>
+    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<ExcuteReq<TReq>, TRes, TReq>
+        where TRes : ResultMo, new()
     {
         /// <inheritdoc />
         public BaseStandTask() : this(null)
@@ -28,21 +29,6 @@ namespace OSS.EventTask
 
         #endregion
 
-
-        internal override Task SaveTaskCondition(TaskContext< TReq, TRes> context)
-        {
-            return SaveTaskCondition(context.req);
-        }
-
-  
-        protected virtual Task SaveTaskCondition(BaseReq<TReq> reqWithCondition)
-        {
-            return Task.CompletedTask;
-        }
-
-        protected virtual Task<BaseReq<TReq>> GetTaskCondition(string excId)
-        {
-            return Task.FromResult<BaseReq<TReq>>(null);
-        }
+        
     }
 }

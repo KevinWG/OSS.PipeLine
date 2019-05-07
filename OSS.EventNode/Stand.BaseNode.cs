@@ -18,7 +18,7 @@ namespace OSS.EventNode
     {
         #region 内部扩展方法重写
 
-        internal override async Task<TaskContext<TRes>> GetTaskItemResult(NodeContext<TReq, TRes> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
+        internal override async Task<TaskResponse<TRes>> GetTaskItemResult(NodeContext<TReq, TRes> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
         {
             if (task.InstanceType == InstanceType.Domain)
             {

@@ -11,8 +11,8 @@ namespace OSS.EventTask.Interfaces
         OwnerType OwnerType { get; set; }
     }
 
-    public class BaseMetaTask<TTReq, TTRes> : BaseMetaProvider<TaskMeta, BaseMetaTask<TTReq, TTRes>>, IBaseTask
-        where TTReq : BaseReq
+    public class BaseMetaTask<TTReq, TTRes> : BaseMetaProvider<TaskMeta>, IBaseTask
+        where TTReq : ExcuteReq
         where TTRes : ResultMo, new()
     {
         private const string _moduleName = "OSS.EventTask";

@@ -11,7 +11,7 @@ namespace OSS.EventNode.Mos
         /// <summary>
         ///  请求信息
         /// </summary>
-        public BaseReq<TDomain, TReq> req { get; set; }
+        public ExcuteReq<TDomain, TReq> req { get; set; }
     }
 
     /// <summary>
@@ -25,7 +25,7 @@ namespace OSS.EventNode.Mos
         /// <summary>
         ///  请求信息
         /// </summary>
-        public BaseReq<TReq> req { get; set; }
+        public ExcuteReq<TReq> req { get; set; }
     }
 
     public abstract class NodeContext<TRes>
@@ -49,7 +49,7 @@ namespace OSS.EventNode.Mos
 
     public static class NodeContextExtention
     {
-        public static TaskContext<TReq,ResultMo> ConvertToTaskContext<TReq,TRes>(this NodeContext<TReq, TRes> nodeContext,TaskMeta taskMeta)
+        public static TaskResponse<TReq,ResultMo> ConvertToTaskContext<TReq,TRes>(this NodeContext<TReq, TRes> nodeContext,TaskMeta taskMeta)
         where TRes:ResultMo,new ()
         {
             //var taskContext = new TaskContext<TReq>
@@ -61,14 +61,14 @@ namespace OSS.EventNode.Mos
             //    req_data = nodeContext.req_data,
             //    task_meta = taskMeta
             //};
-            return new TaskContext<TReq,ResultMo>();
+            return new TaskResponse<TReq,ResultMo>();
         }
 
 
-        public static TaskContext<TDomain, TReq,ResultMo> ConvertToTaskContext<TDomain,TReq, TRes>(this NodeContext<TDomain,TReq, TRes> nodeContext,
+        public static TaskResponse<TDomain, TReq,ResultMo> ConvertToTaskContext<TDomain,TReq, TRes>(this NodeContext<TDomain,TReq, TRes> nodeContext,
             TaskMeta taskMeta) where TRes : ResultMo, new()
         {
-            var taskContext = new TaskContext<TDomain, TReq,  ResultMo>();
+            var taskContext = new TaskResponse<TDomain, TReq,  ResultMo>();
             //{
             //    flow_key = nodeContext.flow_key,
             //    node_key = nodeContext.node_meta.node_key,
