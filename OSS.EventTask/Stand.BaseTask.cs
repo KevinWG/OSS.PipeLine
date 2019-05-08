@@ -20,12 +20,12 @@ namespace OSS.EventTask
 
         #region 内部方法扩展
 
-        internal override TRes RunCheck(ExcuteReq<TReq> req, RunCondition runCondition)
+        internal override TRes RunCheckInternal(ExcuteReq<TReq> req, RunCondition runCondition)
         {
             if (req.req_data == null)
                 return new TRes().WithResult(SysResultTypes.ApplicationError, "Task must Run with request info!");
 
-           return base.RunCheck(req, runCondition);
+           return base.RunCheckInternal(req, runCondition);
         }
 
         #endregion

@@ -1,36 +1,23 @@
-﻿using OSS.Common.ComModels;
+﻿using System.Threading.Tasks;
+using OSS.Common.ComModels;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventTask.Interfaces
 {
-    public interface IBaseTask
+    public interface IBaseTask<in TTReq>
     {
-         InstanceType InstanceType { get;  }
-
-        OwnerType OwnerType { get; set; }
-    }
-
-    public class BaseMetaTask<TTReq, TTRes> : BaseMetaProvider<TaskMeta>, IBaseTask
-        where TTReq : ExcuteReq
-        where TTRes : ResultMo, new()
-    {
-        private const string _moduleName = "OSS.EventTask";
+        TaskMeta TaskMeta { get;  }
+        InstanceType InstanceTaskType { get; }
         
-        public BaseMetaTask(TaskMeta meta):base(meta)
-        {
-            ModuleName = _moduleName;
-            OwnerType = OwnerType.Task;
-        }
-
-        public InstanceType InstanceType { get; protected set; }
-
-        public OwnerType OwnerType { get; set; }
-
-        public TaskMeta TaskMeta => GetConfig(); 
-
+        Task<bool> Revert(TTReq req);
+        Task<TaskResponse<ResultMo>> Run(TTReq req, RunCondition runCondition);
     }
 
-
+    //public interface IBaseTask<TTReq,TTRes>: IBaseTask<TTReq>
+    //  where TTRes:ResultMo,new ()
+    //{
+    //    Task<TaskResponse<TTRes>> Run(TTReq req, RunCondition runCondition);
+    //}
 
 }

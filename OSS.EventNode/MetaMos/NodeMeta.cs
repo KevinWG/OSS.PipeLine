@@ -1,4 +1,6 @@
-﻿namespace OSS.EventNode.MetaMos
+﻿using OSS.EventTask.Mos;
+
+namespace OSS.EventNode.MetaMos
 {
     public class NodeMeta
     {
@@ -9,7 +11,11 @@
 
         public string node_name { get; set; }
 
+
+
         public NodeProcessType Process_type { get; set; }
+
+        public OwnerType owner_type { get; set; }
     }
 
 

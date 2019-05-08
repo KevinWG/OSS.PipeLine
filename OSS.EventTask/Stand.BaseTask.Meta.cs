@@ -15,7 +15,7 @@ namespace OSS.EventTask
 
         public BaseStandTask(TaskMeta meta) : base(meta)
         {
-            InstanceType = InstanceType.Stand;
+            InstanceTaskType = InstanceType.Stand;
         }
         
         #region 存储处理

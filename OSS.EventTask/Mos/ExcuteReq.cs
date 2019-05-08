@@ -8,6 +8,12 @@
     public class ExcuteReq<TDomain,TReq> : ExcuteReq<TReq>
     {
         /// <summary>
+        /// 
+        /// </summary>
+        public string domain_id { get; set; }
+
+
+        /// <summary>
         ///   核心流数据
         /// </summary>
         public TDomain domain_data { get; set; }
@@ -28,6 +34,8 @@
     public class ExcuteReq
     {
         public string exc_id { get; set; }
+
+
     }
 
     public class RunCondition

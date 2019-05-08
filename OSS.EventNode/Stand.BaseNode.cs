@@ -13,12 +13,12 @@ namespace OSS.EventNode
     /// <summary>
     ///  基础工作节点
     /// </summary>
-    public abstract partial class BaseStandNode<TReq, TRes> : BaseNode<NodeContext<TReq>, TRes>
+    public abstract partial class BaseStandNode<TReq, TRes> : BaseNode<NodeResponse<TRes>, TRes>
         where TRes : ResultMo, new()
     {
         #region 内部扩展方法重写
 
-        internal override async Task<TaskResponse<TRes>> GetTaskItemResult(NodeContext<TReq, TRes> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
+        internal override async Task<TaskResponse<TRes>> GetTaskItemResult(NodeResponse<TReq, TRes> con, IBaseTask task, TaskMeta taskMeta, RunCondition taskRunCondition)
         {
             if (task.InstanceType == InstanceType.Domain)
             {
@@ -34,8 +34,7 @@ namespace OSS.EventNode
         }
 
         #endregion
-
-
+        
         #region 辅助方法
 
         #endregion

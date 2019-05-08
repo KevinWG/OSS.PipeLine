@@ -1,6 +1,4 @@
-﻿using OSS.Common.ComModels;
-using OSS.Common.ComModels.Enums;
-using OSS.Common.Extention;
+﻿using OSS.Common.Extention;
 
 namespace OSS.EventTask.Util
 {
@@ -15,25 +13,24 @@ namespace OSS.EventTask.Util
         ///  运行暂停
         /// </summary>
         [OSDescript("运行暂停")] RunPaused = 10,
-        
-        /// <summary>
-        /// 运行回退
-        /// </summary>
-        [OSDescript("运行回退")] RunReverted = 20,
 
         /// <summary>
         /// 运行失败
         /// </summary>
-        [OSDescript("运行失败")] RunFailed = 30,
-        
+        [OSDescript("运行失败")] RunFailed = 20,
+
         /// <summary>
-        /// 运行失败
+        /// 运行成功
         /// </summary>
-        [OSDescript("运行成功")] RunCompoleted = 40
+        [OSDescript("运行成功")] RunCompoleted = 30,
+
+        /// <summary>
+        /// 回退
+        /// </summary>
+        [OSDescript("回退")] RunReverted = 50
+
     }
-
-
-   
+    
     public static class TaskRunStatusExtention
     {
         /// <summary>
@@ -55,6 +52,7 @@ namespace OSS.EventTask.Util
         {
             return res == TaskRunStatus.RunPaused;
         }
+
         public static bool IsReverted(this TaskRunStatus res)
         {
             return res == TaskRunStatus.RunReverted;
@@ -64,33 +62,6 @@ namespace OSS.EventTask.Util
         {
             return res == TaskRunStatus.WaitToRun;
         }
-
-        public static TRes SetErrorResult<TRes>(this TRes res,SysResultTypes sysRet,ResultTypes ret,string eMsg)
-            where TRes : ResultMo
-        {
-            res.msg = eMsg;
-            res.ret = (int)ret;
-            res.sys_ret = (int) sysRet;
-            return res;
-        }
-
-
-        //public static TRes CheckConvertToResult<TRes>(this ResultMo res)
-        //    where TRes : ResultMo, new()
-        //{
-        //    if (res is TRes tres)
-        //        return tres;
-
-        //    if (!res.IsSuccess())
-        //        return res.ConvertToResultInherit<TRes>();
-
-        //    return new TRes()
-        //    {
-        //        sys_ret = (int) SysResultTypes.InnerError,
-        //        ret = (int) ResultTypes.InnerError,
-        //        msg = $"Return value error! Can't convert to {typeof(TRes)}"
-        //    };
-        //}
-
+        
     }
 }

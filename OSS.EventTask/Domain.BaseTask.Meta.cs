@@ -17,7 +17,7 @@ namespace OSS.EventTask
 
         public BaseDomainTask(TaskMeta meta) : base(meta)
         {
-            InstanceType = InstanceType.Domain;
+            InstanceTaskType = InstanceType.Domain;
         }
 
    

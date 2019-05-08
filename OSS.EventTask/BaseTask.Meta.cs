@@ -8,23 +8,29 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTReq, TTRes, TReq> : BaseMetaTask<TTReq, TTRes>
+    public abstract partial class BaseTask<TTReq, TTRes, TReq> : BaseMetaProvider<TaskMeta>, IBaseTask<TTReq>
         where TTReq : ExcuteReq<TReq>
         where TTRes : ResultMo, new()
     {
+        public TaskMeta TaskMeta => GetConfig();
+        internal ITaskProvider m_metaProvider;
+
+        private const string _moduleName = "OSS.EventTask";
+        public InstanceType InstanceTaskType { get; protected set; }
+
         protected BaseTask(TaskMeta meta) : base(meta)
         {
+            ModuleName = _moduleName;
         }
 
-
-        internal ITaskProvider m_metaProvider;
-        
-
         #region 扩展方法
-        
+
+
+
         /// <summary>
-        ///  保存环境相关信息【仅在 OwnerType = OwnerType.Task 时发生】
-        ///     节点下的环境信息，由节点内部处理，重试的处理也有节点自行触发 
+        ///  保存环境相关信息【主要有两种情况，一种是 Pause，一种是 Failed】
+        ///    【仅在 OwnerType = OwnerType.Task 时发生】
+        ///     节点下的环境信息，由节点内部处理,防止节点其他耗时任务造成执行过程中发起重试操作 
         ///     领域数据需要保持独立源，且其状态会受其他并行节点发生变化，这里不会保存
         /// </summary>
         /// <param name="req"></param>
@@ -36,16 +42,14 @@ namespace OSS.EventTask
         }
 
         #endregion
-
-
+        
         #region 辅助方法
 
         private Task TrySaveTaskContext(TTReq req, TaskResponse<TTRes> taskResp)
         {
             try
             {
-                // 仅task独立运行时通过这里保存
-                if (OwnerType == OwnerType.Task)
+                if (TaskMeta.owner_type== OwnerType.Task)
                 {
                     return SaveTaskCondition(req, taskResp);
                 }
@@ -55,6 +59,7 @@ namespace OSS.EventTask
                 //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
                 LogUtil.Error(e, "Oss.TaskFlow.Task.SaveTaskContext", "Oss.TaskFlow");
             }
+
             return Task.CompletedTask;
         }
 

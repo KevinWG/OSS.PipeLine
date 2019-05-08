@@ -10,7 +10,7 @@ namespace OSS.EventNode
     {
         protected BaseStandNode()
         {
-            InstanceType = InstanceType.Stand;
+            InstanceNodeType = InstanceType.Stand;
         }
         
         #region 存储处理

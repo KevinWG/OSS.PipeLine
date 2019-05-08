@@ -26,7 +26,7 @@ namespace OSS.EventTask
      
         #region 内部方法扩展
 
-        internal override TRes RunCheck(ExcuteReq<TDomain, TReq> req, RunCondition runCondition)
+        internal override TRes RunCheckInternal(ExcuteReq<TDomain, TReq> req, RunCondition runCondition)
         {
             if (req.req_data == null)
                 return new TRes().WithResult(SysResultTypes.ApplicationError, "Task must Run with request info!");
@@ -34,7 +34,7 @@ namespace OSS.EventTask
             if (req.domain_data == null)
                 return new TRes().WithResult(SysResultTypes.ApplicationError, "Domain task must Run with domain_data!");
 
-            return base.RunCheck(req,runCondition);
+            return base.RunCheckInternal(req,runCondition);
         }
 
         #endregion

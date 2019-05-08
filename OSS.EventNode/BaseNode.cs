@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
+using OSS.Common.Plugs.LogPlug;
 using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
@@ -20,29 +22,30 @@ namespace OSS.EventNode
     /// todo  全部节点回退
     /// todo  保存未激活信息和节点列表
     /// </summary>
-    public abstract partial class BaseNode<TTContext, TTRes> : BaseMetaNode<TTContext, TTRes>
-        where TTContext : NodeContext<TTRes>
-        where TTRes : ResultMo, new()
+    public abstract partial class BaseNode<TTReq, TTRes>
     {
         #region 节点执行入口
 
         // 重写基类入口方法
-        public async Task<TTRes> Process(TTContext context)
+        public async Task<NodeResponse<TTRes>> Process(TTReq req)
         {
+            var nodeResp = new NodeResponse<TTRes> {node_status = NodeStatus.WaitProcess};
+            
             //  检查初始化
-            var res =  ProcessCheck(context);
-            if (!res.IsSuccess())
-                return res.ConvertToResultInherit<TTRes>();
-
-            // 【1】 扩展前置执行方法
-            await ProcessPre(context);
+           var checkRes=await  ProcessCheck(req, nodeResp);
+            if (!checkRes)
+                return nodeResp;
 
             // 【2】 任务处理执行方法
-            var taskResults = await Excuting(context);
-            var nodeRes = GetNodeResult(context, taskResults); // 任务结果加工处理
-
+            await Excuting(req,nodeResp);
+            if (nodeResp.resp == null)
+            {
+                throw new ArgumentNullException(
+                    $"can't find a task of return value match node({this.GetType()}) of return value!");
+            }
+        
             //  【3】 扩展后置执行方法
-            await ProcessEnd(context, nodeRes, taskResults);
+            await ProcessEnd(req, nodeRes, taskResults);
             return nodeRes;
         }
 
@@ -50,32 +53,50 @@ namespace OSS.EventNode
 
         #region 生命周期扩展方法
 
-        protected virtual Task ProcessPre(TTContext con)
+        protected virtual Task<ResultMo> ProcessPreCheck(TTReq req)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(new ResultMo());
         }
-        protected virtual Task ProcessEnd(TTContext con,
-            ResultMo nodeRes, Dictionary<TaskMeta, ResultMo> taskResults)
+        protected virtual Task ProcessEnd(TTReq req,NodeResponse<TTRes> resp, Dictionary<TaskMeta, ResultMo> taskResults)
         {
             return Task.CompletedTask;
         }
 
         #endregion
 
-        #region 内部扩展方法重写
+        #region 内部扩展方法
 
-        internal abstract Task<TaskResponse<TTRes>> GetTaskItemResult(TTContext con, IBaseTask task, TaskMeta taskMeta,
-            RunCondition taskRunCondition);
+
+        private async Task<bool> ProcessCheck(TTReq req, NodeResponse<TTRes> nodeResp)
+        {
+            var checkRes = ProcessCheckInternal(req);
+            if (!checkRes.IsSuccess())
+            {
+                nodeResp.node_status = NodeStatus.ProcessFailed;
+                nodeResp.resp = checkRes;
+                return false;
+            }
+
+            var res =await ProcessPreCheck(req);
+            if (!res.IsSuccess())
+            {
+                nodeResp.node_status = NodeStatus.ProcessFailed;
+                nodeResp.resp = checkRes;
+                return false;
+            }
+
+            return true;
+        }
 
         //  检查context内容
-        internal virtual TTRes ProcessCheck(TTContext context)
+        internal virtual TTRes ProcessCheckInternal(TTReq context)
         {
-            //  todo  状态有效判断等
-            if (string.IsNullOrEmpty(context.node_meta?.node_key))
+            if (string.IsNullOrEmpty(NodeMeta?.node_key))
             {
-                return new TTRes().SetErrorResult(SysResultTypes.ApplicationError, ResultTypes.InnerError,
+                return new TTRes().WithResult(SysResultTypes.ApplicationError, ResultTypes.InnerError,
                     "node metainfo has error!");
             }
+
 
             //if (string.IsNullOrEmpty(context..exc_id))
             //    context.exc_id = DateTime.Now.Ticks.ToString();
@@ -83,135 +104,196 @@ namespace OSS.EventNode
             return new TTRes();
         }
 
-        #endregion
-        
-        #region 辅助方法 —— 节点内部任务执行
 
-        private async Task<Dictionary<TaskMeta, ResultMo>> Excuting(TTContext con)
+
+        #endregion
+
+            #region 辅助方法 —— 节点内部任务执行
+
+        private async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp)
         {
             // 获取任务元数据列表
-            var taskDirs = await GetTaskMetas(con);
-            if (taskDirs == null || taskDirs.Count == 0)
+            var tasks = await GetTaskMetas();
+            if (tasks == null || !tasks.Any())
                 throw new ResultException(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
                     $"{this.GetType()} have no tasks can be Runed!");
 
             // 执行处理结果
-            var taskResults = await ExcutingWithTasks(con, taskDirs);
-            return new Dictionary<TaskMeta, ResultMo>(taskResults);
+            await ExcutingWithTasks(req, nodeResp, tasks);
         }
 
         #endregion
 
         #region 辅助方法 —— 节点内部任务执行 —— 分解
-        
-        private async Task<Dictionary<TaskMeta, ResultMo>> ExcutingWithTasks(TTContext con,
-            IDictionary<TaskMeta, IBaseTask> taskDirs)
-        {
-            Dictionary<TaskMeta, ResultMo> taskResults;
 
-            if (con.node_meta.Process_type == NodeProcessType.Parallel)
+        private async Task ExcutingWithTasks(TTReq req, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks)
+        {
+            if (NodeMeta.Process_type == NodeProcessType.Parallel)
             {
-                taskResults = Excuting_Parallel(con, taskDirs);
+                Excuting_Parallel(req, nodeResp, tasks);
             }
             else
             {
-                taskResults = await Excuting_Sequence(con, taskDirs);
+                await Excuting_Sequence(req, nodeResp, tasks);
             }
-
-            return taskResults;
         }
-        
+
+        #region 辅助方法 —— 节点内部任务执行 —— 顺序执行
+
         ///  顺序执行
-        private async Task<Dictionary<TaskMeta, TaskResponse<TTRes>>> Excuting_Sequence(TTContext con,
-            IDictionary<TaskMeta, IBaseTask> taskDirs)
+        private async Task Excuting_Sequence(TTReq req, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks)
         {
-            var taskResults = new Dictionary<TaskMeta, ResultMo>(taskDirs.Count);
-            foreach (var td in taskDirs)
-            {
-                InitailTaskOwnerType(td.Value,OwnerType);
-                var retRes = await GetTaskItemResult(con, td.Value, td.Key, new RunCondition());
-                //if (retRes.IsRunFailed())
-                //{
-                    
-                //}
+            nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResponse<ResultMo>>(tasks.Count);
 
-                taskResults.Add(td.Key, retRes);
+            var index = 0;
+            var haveError = false;
+            nodeResp.node_status = NodeStatus.ProcessCompoleted;// 给出最大值，循环内部处理
+            for (; index < tasks.Count; index++)
+            {
+                var tItem = tasks[index];
+                var taskResp = await TryGetTaskItemResult(req, tItem, new RunCondition());
+
+                var tMeta = tItem.TaskMeta;
+                nodeResp.TaskResults.Add(tMeta, taskResp);
+
+                haveError = FormatNodeErrorResp(nodeResp, taskResp, tMeta);
+                if (haveError)
+                    break;
             }
 
-            return taskResults;
+            if (haveError)
+                await Excuting_SequenceRevert(req, nodeResp, tasks, index);
+            else
+                nodeResp.node_status = NodeStatus.ProcessCompoleted;
         }
+
+        private static async Task Excuting_SequenceRevert(TTReq req, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks, int index)
+        {
+            if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
+            {
+                for (; index >= 0; --index)
+                {
+                    var tItem = tasks[index];
+                    var rRes = await tItem.Revert(req);
+                    if (rRes)
+                        nodeResp.TaskResults[tItem.TaskMeta].run_status = TaskRunStatus.RunReverted;
+                }
+            }
+        }
+
+
+        private static TTRes ConvertToNodeResp(ResultMo taskResp)
+        {
+            if (taskResp is TTRes nres)
+            {
+                return nres;
+            }
+
+            return taskResp.ConvertToResultInherit<TTRes>();
+        }
+
+        #endregion
 
 
         ///   并行执行
-        private Dictionary<TaskMeta, ResultMo> Excuting_Parallel(TTContext con,
-            IDictionary<TaskMeta, IBaseTask> taskDirs)
+        private void Excuting_Parallel(TTReq req, NodeResponse<TTRes> nodeResp,
+            IList<IBaseTask<TTReq>> tasks)
         {
-            var taskDirRes = taskDirs.ToDictionary(tr => tr.Key, tr =>
-            {
-                var task = tr.Value;
+            var taskResults =
+                tasks.ToDictionary(t => t, t => TryGetTaskItemResult(req, t, new RunCondition()));
 
-                InitailTaskOwnerType(task, OwnerType);
-                return GetTaskItemResult(con, tr.Value, tr.Key, new RunCondition());
-            });
-
-            var tAll = Task.WhenAll(taskDirRes.Select(kp => kp.Value));
             try
             {
-                tAll.Wait();
+                var tw = Task.WhenAll(taskResults.Select(tr => tr.Value));
+                tw.Wait();
             }
-            catch
+            catch (Exception ex)
             {
+                LogUtil.Error(ex, NodeMeta.node_key, NodeConfigProvider.ModuleName);
             }
 
-            var taskResults = taskDirRes.ToDictionary(p => p.Key, p =>
+            var taskResps = taskResults.ToDictionary(d => d.Key, d => d.Value.Status == TaskStatus.Faulted
+                ? new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition())
+                : d.Value.Result);
+
+            nodeResp.node_status = NodeStatus.ProcessCompoleted; // 循环里会处理结果，这里给出最大值
+            foreach (var tItemRes in taskResps)
             {
-                var t = p.Value;
-                return t.Status == TaskStatus.Faulted
-                    ? new ResultMo(SysResultTypes.ApplicationError, ResultTypes.InnerError
-                        , $"unexcept error with task {p.Key.task_name}({p.Key.task_key})")
-                    : t.Result;
-            });
-            return taskResults;
+                FormatNodeErrorResp(nodeResp, tItemRes.Value, tItemRes.Key.TaskMeta);
+            }
+
+            if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
+            {
+
+            }
+
         }
-
 
         #endregion
 
         #region 其他辅助方法
-
-        // 处理结果转换
-        internal TTRes GetNodeResult(TTContext con, Dictionary<TaskMeta, ResultMo> taskResDirs)
+        private static bool FormatNodeErrorResp(NodeResponse<TTRes> nodeResp, TaskResponse<ResultMo> taskResp, TaskMeta tMeta)
         {
-            var tRes = default(TTRes);
-            foreach (var tItemPair in taskResDirs)
+            var status = NodeStatus.ProcessCompoleted;
+            if (!taskResp.run_status.IsCompleted())
             {
-                var tItemRes = tItemPair.Value;
-                if (!tItemRes.IsSysOk())
+                var haveError = true;
+                switch (tMeta.node_action)
                 {
-                    tRes = tItemRes.ConvertToResultInherit<TTRes>();
-                    break;
+                    case NodeResultAction.PauseOnFailed:
+                        status = NodeStatus.ProcessPaused;
+                        break;
+                    case NodeResultAction.FailedOnFailed:
+                        status = taskResp.run_status == TaskRunStatus.RunFailed
+                            ? NodeStatus.ProcessFailed
+                            : NodeStatus.ProcessPaused;
+                        break;
+                    case NodeResultAction.FailedRevrtOnFailed:
+                        status = taskResp.run_status == TaskRunStatus.RunFailed
+                            ? NodeStatus.ProcessFailedRevert
+                            : NodeStatus.ProcessPaused;
+                        break;
+                    default:
+                        haveError = false;
+                        break;
                 }
-
-                if (tItemRes is TTRes res)
-                    tRes = res;
+                if (haveError)
+                {
+                    if (status < nodeResp.node_status)
+                    {
+                        nodeResp.node_status = status;
+                        nodeResp.resp = ConvertToNodeResp(taskResp.resp);
+                    }
+                    return true;
+                }
             }
-
-            if (tRes == null)
+            if (nodeResp.node_status==NodeStatus.ProcessCompoleted && taskResp.resp is TTRes nres)
             {
-                throw new ArgumentNullException(
-                    $"can't find a task of return value match node({this.GetType()}) of return value!");
+                nodeResp.resp = nres;
+            }
+            return false;
+        }
+       
+        private async Task<TaskResponse<ResultMo>> TryGetTaskItemResult(TTReq req, IBaseTask<TTReq> task,
+            RunCondition taskRunCondition)
+        {
+            if (InstanceNodeType == InstanceType.Stand && task.InstanceTaskType == InstanceType.Domain)
+            {
+                return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
+                    "StandNode can't use Domain Task!");
             }
 
-            return tRes;
+            try
+            {
+                return await task.Run(req, taskRunCondition);
+            }
+            catch (Exception ex)
+            {
+                LogUtil.Error(ex, NodeMeta.node_key, NodeConfigProvider.ModuleName);
+            }
+            return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
+                "Task of node run error!");
         }
-
-
-        // 初始化task相关属性
-        private static void InitailTaskOwnerType(IBaseTask task,OwnerType nodeOwnerType)
-        {
-            task.OwnerType = nodeOwnerType!= OwnerType.Flow ? nodeOwnerType : OwnerType.Flow;
-        }
-
         #endregion
 
     }

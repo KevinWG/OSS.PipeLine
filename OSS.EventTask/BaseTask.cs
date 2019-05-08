@@ -4,13 +4,13 @@ using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
 using OSS.Common.Plugs.LogPlug;
+using OSS.EventTask.Interfaces;
 using OSS.EventTask.Mos;
 using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
     public abstract partial class BaseTask<TTReq, TTRes, TReq>
-
     {
         #region 任务进入入口
 
@@ -27,27 +27,33 @@ namespace OSS.EventTask
             return taskResp;
         }
 
+        async Task<TaskResponse<ResultMo>> IBaseTask<TTReq>.Run(TTReq req, RunCondition runCondition)
+        {
+            var taskResp =await Run(req, runCondition);
+            return new TaskResponse<ResultMo>()
+            {
+                run_status = taskResp.run_status,
+                resp = taskResp.resp,
+                task_condition = taskResp.task_condition
+            };
+        }
+        // 运行
         private async Task TryRun(TTReq req, TaskResponse<TTRes> taskResp)
         {
             string errorMsg;
             try
             {
-                var checkRes = RunCheck(req, taskResp.task_condition);
-                if (!checkRes.IsSuccess())
-                {
-                    taskResp.resp = checkRes;
-                    return ;
-                }
-
-                // 【1】 执行起始方法
-                await RunStart(req, taskResp.task_condition);
+                // 【1】 执行起始方法 附加校验
+                var checkRes = await RunCheck(req, taskResp);
+                if (!checkRes)
+                    return;
 
                 // 【2】  执行核心方法
                 await Runing(req, taskResp);
 
                 // 【3】 执行结束方法
                 await RunEnd(req, taskResp);
-                return ;
+                return;
             }
             catch (ResultException e)
             {
@@ -63,8 +69,10 @@ namespace OSS.EventTask
                         "Error occurred during task [Run]!");
             }
 
+            taskResp.run_status = TaskRunStatus.RunFailed;
             var resp = taskResp.resp;
-            LogUtil.Error($"sys_ret:{resp.sys_ret}, ret:{resp.ret},msg:{resp.msg}, Detail:{errorMsg}", TaskMeta.task_key,
+            LogUtil.Error($"sys_ret:{resp.sys_ret}, ret:{resp.ret},msg:{resp.msg}, Detail:{errorMsg}",
+                TaskMeta.task_key,
                 ModuleName);
             await TrySaveTaskContext(req, taskResp);
         }
@@ -79,9 +87,9 @@ namespace OSS.EventTask
         /// <param name="req"></param>
         /// <param name="runCondition"></param>
         /// <returns></returns>
-        protected virtual Task RunStart(TTReq req, RunCondition runCondition)
+        protected virtual Task<ResultMo> RunStartCheck(TTReq req, RunCondition runCondition)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(new ResultMo());
         }
 
         /// <summary>
@@ -95,7 +103,29 @@ namespace OSS.EventTask
             return Task.CompletedTask;
         }
 
-        internal virtual TTRes RunCheck(TTReq context, RunCondition runCondition)
+
+        private  async Task<bool> RunCheck(TTReq req, TaskResponse<TTRes> taskResp)
+        {
+            var checkInRes = RunCheckInternal(req, taskResp.task_condition);
+            if (!checkInRes.IsSuccess())
+            {
+                taskResp.run_status = TaskRunStatus.RunFailed;
+                taskResp.resp = checkInRes;
+                return false;
+            }
+
+            var res = await RunStartCheck(req, taskResp.task_condition);
+            if (!res.IsSuccess())
+            {
+                taskResp.run_status = TaskRunStatus.RunFailed;
+                taskResp.resp = res.ConvertToResultInherit<TTRes>();
+                return false;
+            }
+
+            return true;
+        }
+
+        internal virtual TTRes RunCheckInternal(TTReq context, RunCondition runCondition)
         {
             if (string.IsNullOrEmpty(TaskMeta?.task_key))
                 return new TTRes().WithResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
@@ -106,7 +136,7 @@ namespace OSS.EventTask
 
             return new TTRes();
         }
-
+        
 
         #endregion
 
@@ -127,17 +157,17 @@ namespace OSS.EventTask
         ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="req"></param>
-        protected internal virtual Task Revert(TTReq req)
+        public virtual Task<bool> Revert(TTReq req)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
         /// <summary>
         ///  最终失败执行方法
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="req"></param>
         /// <param name="taskResp"></param>
-        protected virtual Task Failed(TTReq context,TaskResponse<TTRes> taskResp)
+        protected virtual Task Failed(TTReq req,TaskResponse<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }
