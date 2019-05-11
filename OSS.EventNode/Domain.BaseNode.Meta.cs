@@ -1,4 +1,5 @@
-﻿using OSS.EventNode.Interfaces;
+﻿using OSS.Common.ComModels;
+using OSS.EventNode.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
@@ -6,22 +7,20 @@ namespace OSS.EventNode
     /// <summary>
     ///  节点运行时元数据信息
     /// </summary>
-    //public abstract partial class BaseDomainNode<TDomain, TReq, TRes>
-    //{
-    //    protected BaseDomainNode()
-    //    {
-    //       InstanceType = InstanceType.Domain;
-    //    }
+    public abstract partial class BaseDomainNode<TDomain, TReq, TRes> : BaseNode<ExcuteReq<TDomain, TReq>, TRes>
+        where TRes : ResultMo, new()
+    {
+        #region 构造函数
 
-    //    #region 存储处理
+        protected BaseDomainNode() : this(null)
+        {
+        }
 
-    //    public IDomainNodeProvider<TReq, TDomain> MetaProvider => (IDomainNodeProvider<TReq, TDomain>) m_metaProvider;
+        protected BaseDomainNode(NodeMeta node) : base(node)
+        {
+            InstanceNodeType = InstanceType.Stand;
+        }
 
-    //    public void RegisteProvider(IDomainNodeProvider<TReq, TDomain> metaPro)
-    //    {
-    //        base.RegisteProvider_Internal(metaPro);
-    //    }
-        
-    //    #endregion
-    //}
+        #endregion
+    }
 }

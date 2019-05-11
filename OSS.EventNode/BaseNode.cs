@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,23 +29,27 @@ namespace OSS.EventNode
         public async Task<NodeResponse<TTRes>> Process(TTReq req)
         {
             var nodeResp = new NodeResponse<TTRes> {node_status = NodeStatus.WaitProcess};
-            
-            //  检查初始化
-           var checkRes=await  ProcessCheck(req, nodeResp);
-            if (!checkRes)
-                return nodeResp;
 
-            // 【2】 任务处理执行方法
-            await Excuting(req,nodeResp);
-            if (nodeResp.resp == null)
+            try
             {
-                throw new ArgumentNullException(
-                    $"can't find a task of return value match node({this.GetType()}) of return value!");
+                //  检查初始化
+                var checkRes = await ProcessCheck(req, nodeResp);
+                if (!checkRes)
+                    return nodeResp;
+
+                // 【2】 任务处理执行方法
+                await Excuting(req, nodeResp);
+
+                //  【3】 扩展后置执行方法
+                await ProcessEnd(req, nodeResp);
+                return nodeResp;
             }
-        
-            //  【3】 扩展后置执行方法
-            await ProcessEnd(req, nodeRes, taskResults);
-            return nodeRes;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+           
         }
 
         #endregion
@@ -57,7 +60,8 @@ namespace OSS.EventNode
         {
             return Task.FromResult(new ResultMo());
         }
-        protected virtual Task ProcessEnd(TTReq req,NodeResponse<TTRes> resp, Dictionary<TaskMeta, ResultMo> taskResults)
+
+        protected virtual Task ProcessEnd(TTReq req, NodeResponse<TTRes> resp)
         {
             return Task.CompletedTask;
         }
@@ -77,7 +81,7 @@ namespace OSS.EventNode
                 return false;
             }
 
-            var res =await ProcessPreCheck(req);
+            var res = await ProcessPreCheck(req);
             if (!res.IsSuccess())
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
@@ -108,7 +112,7 @@ namespace OSS.EventNode
 
         #endregion
 
-            #region 辅助方法 —— 节点内部任务执行
+        #region 辅助方法 —— 节点内部任务执行
 
         private async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp)
         {
@@ -147,7 +151,7 @@ namespace OSS.EventNode
 
             var index = 0;
             var haveError = false;
-            nodeResp.node_status = NodeStatus.ProcessCompoleted;// 给出最大值，循环内部处理
+            nodeResp.node_status = NodeStatus.ProcessCompoleted; // 给出最大值，循环内部处理
             for (; index < tasks.Count; index++)
             {
                 var tItem = tasks[index];
@@ -160,14 +164,14 @@ namespace OSS.EventNode
                 if (haveError)
                     break;
             }
-
             if (haveError)
                 await Excuting_SequenceRevert(req, nodeResp, tasks, index);
             else
                 nodeResp.node_status = NodeStatus.ProcessCompoleted;
         }
-
-        private static async Task Excuting_SequenceRevert(TTReq req, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks, int index)
+        //  顺序任务的回退处理
+        private static async Task Excuting_SequenceRevert(TTReq req, NodeResponse<TTRes> nodeResp,
+            IList<IBaseTask<TTReq>> tasks, int index)
         {
             if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
             {
@@ -224,15 +228,16 @@ namespace OSS.EventNode
 
             if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
             {
-
+                //  todo 执行回退
             }
-
         }
 
         #endregion
 
         #region 其他辅助方法
-        private static bool FormatNodeErrorResp(NodeResponse<TTRes> nodeResp, TaskResponse<ResultMo> taskResp, TaskMeta tMeta)
+
+        private static bool FormatNodeErrorResp(NodeResponse<TTRes> nodeResp, TaskResponse<ResultMo> taskResp,
+            TaskMeta tMeta)
         {
             var status = NodeStatus.ProcessCompoleted;
             if (!taskResp.run_status.IsCompleted())
@@ -257,6 +262,7 @@ namespace OSS.EventNode
                         haveError = false;
                         break;
                 }
+
                 if (haveError)
                 {
                     if (status < nodeResp.node_status)
@@ -264,16 +270,19 @@ namespace OSS.EventNode
                         nodeResp.node_status = status;
                         nodeResp.resp = ConvertToNodeResp(taskResp.resp);
                     }
+
                     return true;
                 }
             }
-            if (nodeResp.node_status==NodeStatus.ProcessCompoleted && taskResp.resp is TTRes nres)
+
+            if (nodeResp.node_status == NodeStatus.ProcessCompoleted && taskResp.resp is TTRes nres)
             {
                 nodeResp.resp = nres;
             }
+
             return false;
         }
-       
+
         private async Task<TaskResponse<ResultMo>> TryGetTaskItemResult(TTReq req, IBaseTask<TTReq> task,
             RunCondition taskRunCondition)
         {
@@ -291,9 +300,11 @@ namespace OSS.EventNode
             {
                 LogUtil.Error(ex, NodeMeta.node_key, NodeConfigProvider.ModuleName);
             }
+
             return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
                 "Task of node run error!");
         }
+
         #endregion
 
     }

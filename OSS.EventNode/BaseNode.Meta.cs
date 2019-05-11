@@ -16,35 +16,31 @@ namespace OSS.EventNode
         where TTReq : ExcuteReq
         where TTRes : ResultMo, new()
     {
+        // 内部成员
         private const string _moduleName = "OSS.EventTask";
+        //internal INodeProvider<TTReq> m_metaProvider;
 
+        /// <summary>
+        /// 节点mata 信息
+        /// </summary>
         public NodeMeta NodeMeta => GetConfig();
+        /// <summary>
+        /// 节点实例类型
+        /// </summary>
         public InstanceType InstanceNodeType { get; internal set; }
 
-     
+
         protected BaseNode(NodeMeta meta) : base(meta)
         {
             InstanceNodeType = InstanceType.Stand;
         }
         
-        #region 注册存储接口
-
-        internal INodeProvider<TTReq> m_metaProvider;
-
-        internal void RegisteProvider_Internal(INodeProvider<TTReq> metaPpro)
-        {
-            m_metaProvider = metaPpro;
-        }
-
-        #endregion
-        
         #region 内部基础方法
-        internal Task<IList<IBaseTask<TTReq>>> GetTaskMetas()
-        {
-            return m_metaProvider.GetTaskMetas();
-        }
+
+        protected abstract Task<IList<IBaseTask<TTReq>>> GetTaskMetas();
+
         #endregion
-        
+
     }
 
 
