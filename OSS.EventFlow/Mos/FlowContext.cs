@@ -4,9 +4,9 @@ namespace OSS.EventFlow.Mos
 {
     public class FlowContext
     {
-        public string exc_id { get; set; }
+        public string exe_id { get; set; }
 
-        public string link_exc_id { get; set; }
+        public string link_exe_id { get; set; }
 
         /// <summary>
         ///  当前流元信息

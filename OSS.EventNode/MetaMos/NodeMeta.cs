@@ -5,11 +5,11 @@ namespace OSS.EventNode.MetaMos
     public class NodeMeta
     {
 
-        public string flow_key { get; set; }
+        public string flow_id { get; set; }
 
-        public string node_key { get; set; }
+        public string node_id { get; set; }
 
-        public string node_name { get; set; }
+        public string node_alias { get; set; }
 
 
 

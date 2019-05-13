@@ -18,18 +18,18 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
     //    protected override Task<ResultListMo<TaskMeta>> GetTaskMetas(NodeContext req)
     //    {
     //        var addOrderTaskMeta=new TaskMeta();
-    //        addOrderTaskMeta.task_key = "AddOrder";
-    //        addOrderTaskMeta.task_name = "添加订单";
+    //        addOrderTaskMeta.task_id = "AddOrder";
+    //        addOrderTaskMeta.task_alias = "添加订单";
     //        addOrderTaskMeta.run_type = RunType.PauseOnFailed;
             
     //        var notifyTaskMeta = new TaskMeta();
-    //        notifyTaskMeta.task_key = "Notify";
-    //        notifyTaskMeta.task_name = "添加订单通知";
+    //        notifyTaskMeta.task_id = "Notify";
+    //        notifyTaskMeta.task_alias = "添加订单通知";
     //        notifyTaskMeta.run_type = RunType.PauseOnFailed;
             
     //        var notifyTaskMeta1 = new TaskMeta();
-    //        notifyTaskMeta1.task_key = "Exception";
-    //        notifyTaskMeta1.task_name = "异常";
+    //        notifyTaskMeta1.task_id = "Exception";
+    //        notifyTaskMeta1.task_alias = "异常";
     //        notifyTaskMeta1.run_type = RunType.PauseOnFailed;
 
     //        var list = new List<TaskMeta> {addOrderTaskMeta, notifyTaskMeta, notifyTaskMeta1 };
@@ -41,7 +41,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
 
     //    protected override BaseTask GetTaskByMeta(TaskMeta meta)
     //    {
-    //        switch (meta.task_key)
+    //        switch (meta.task_id)
     //        {
     //            case "AddOrder":
     //                return new AddOrderTask();
@@ -58,13 +58,13 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
     //    protected override Task<ResultListMo<TaskMeta>> GetTaskMetas(NodeContext req)
     //    {
     //        var addOrderTaskMeta = new TaskMeta();
-    //        addOrderTaskMeta.task_key = "CheckOrder";
-    //        addOrderTaskMeta.task_name = "校验订单";
+    //        addOrderTaskMeta.task_id = "CheckOrder";
+    //        addOrderTaskMeta.task_alias = "校验订单";
     //        addOrderTaskMeta.run_type = RunType.PauseOnFailed;
             
     //        var notifyTaskMeta = new TaskMeta();
-    //        notifyTaskMeta.task_key = "Notify";
-    //        notifyTaskMeta.task_name = "添加订单通知";
+    //        notifyTaskMeta.task_id = "Notify";
+    //        notifyTaskMeta.task_alias = "添加订单通知";
     //        notifyTaskMeta.run_type = RunType.PauseOnFailed;
 
     //        var list = new List<TaskMeta>();
@@ -76,7 +76,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
 
     //    protected override BaseTask GetTaskByMeta(TaskMeta meta)
     //    {
-    //        switch (meta.task_key)
+    //        switch (meta.task_id)
     //        {
     //            case "CheckOrder":
     //                return new OrderCheckTask();

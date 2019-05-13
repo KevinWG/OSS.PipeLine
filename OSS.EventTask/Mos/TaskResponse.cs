@@ -9,7 +9,7 @@ namespace OSS.EventTask.Mos
         /// <summary>
         ///  运行状态
         /// </summary>
-        public TaskRunStatus run_status { get; set; }
+        public TaskRunStatus run_status { get;internal set; }
 
 
         public RunCondition task_condition { get; set; }

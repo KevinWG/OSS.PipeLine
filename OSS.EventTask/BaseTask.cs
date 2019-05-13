@@ -72,7 +72,7 @@ namespace OSS.EventTask
             taskResp.run_status = TaskRunStatus.RunFailed;
             var resp = taskResp.resp;
             LogUtil.Error($"sys_ret:{resp.sys_ret}, ret:{resp.ret},msg:{resp.msg}, Detail:{errorMsg}",
-                TaskMeta.task_key,
+                TaskMeta.task_id,
                 ModuleName);
             await TrySaveTaskContext(req, taskResp);
         }
@@ -127,7 +127,7 @@ namespace OSS.EventTask
 
         internal virtual TTRes RunCheckInternal(TTReq context, RunCondition runCondition)
         {
-            if (string.IsNullOrEmpty(TaskMeta?.task_key))
+            if (string.IsNullOrEmpty(TaskMeta?.task_id))
                 return new TTRes().WithResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
 
             if (runCondition == null)
@@ -251,7 +251,7 @@ namespace OSS.EventTask
 
                 LogUtil.Error(
                     $"sys_ret:{taskResp.resp.sys_ret}, ret:{taskResp.resp.ret},msg:{taskResp.resp.msg}, Detail:{e}"
-                    , TaskMeta.task_key, ModuleName);
+                    , TaskMeta.task_id, ModuleName);
 
             }
         }

@@ -15,7 +15,7 @@ namespace OSS.TaskFlow.Tests
         {
             //var order = new OrderInfo()
             //{
-            //    order_name = "²âÊÔ¶©µ¥!",
+            //    order_alias = "²âÊÔ¶©µ¥!",
             //    id = 123456,
             //    price = 10.23M
             //};
@@ -25,8 +25,8 @@ namespace OSS.TaskFlow.Tests
 
             //req.body = order ;
 
-            //req.flow_key = "OrderFlow";
-            //req.node_key = "AddOrder";
+            //req.flow_id = "OrderFlow";
+            //req.node_id = "AddOrder";
 
             //try
             //{

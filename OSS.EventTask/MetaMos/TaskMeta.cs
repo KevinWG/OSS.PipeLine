@@ -4,14 +4,19 @@ namespace OSS.EventTask.MetaMos
 {
     public class TaskMeta
     {
-        public string flow_key { get; set; }
+        public string flow_id { get; set; }
        
-        public string node_key { get; set; }
+        public string node_id { get; set; }
 
         /// <summary>
         ///  任务键
         /// </summary>
-        public string task_key { get; set; }
+        public string task_id { get; set; }
+
+        /// <summary>
+        ///  任务名称
+        /// </summary>
+        public string task_alias { get; set; }
 
         /// <summary>
         ///   归属类型
@@ -26,11 +31,6 @@ namespace OSS.EventTask.MetaMos
         ///  结果动作
         /// </summary>
         public NodeResultAction node_action { get; set; }
-
-        /// <summary>
-        ///  任务名称
-        /// </summary>
-        public string task_name { get; set; }
         
         /// <summary>
         ///  直接重试次数，默认系统执行一次

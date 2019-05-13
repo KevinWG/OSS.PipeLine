@@ -33,9 +33,7 @@
     
     public class ExcuteReq
     {
-        public string exc_id { get; set; }
-
-
+        public string exe_id { get; set; }
     }
 
     public class RunCondition

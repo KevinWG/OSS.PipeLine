@@ -21,10 +21,9 @@ namespace OSS.EventFlow
 
         private static void CheckInitailContext(FlowContext context)
         {
-            if (string.IsNullOrEmpty(context.flow_meta?.flow_key))
+            if (string.IsNullOrEmpty(context.flow_meta?.flow_id))
             {
-                throw new ResultException(SysResultTypes.ConfigError, ResultTypes.InnerError,
-                    "flow metainfo has error!");
+                throw new ResultException(SysResultTypes.ApplicationError, "flow metainfo has error!");
             }
          
         }

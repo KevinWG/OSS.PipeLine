@@ -12,7 +12,7 @@ namespace OSS.TaskFlow.Tests
         {
             var order = new OrderInfo()
             {
-                order_name = "²âÊÔ¶©µ¥!",
+                order_alias = "²âÊÔ¶©µ¥!",
                 id = 123456,
                 price = 10.23M
             };

@@ -10,7 +10,7 @@
 
     public class OrderInfo
     {
-        public string order_name { get; set; }
+        public string order_alias { get; set; }
 
         public decimal price { get; set; }
 

@@ -2,10 +2,10 @@
 {
     public class FlowMeta
     {
-        public string flow_name { get; set; }
+        public string flow_alias { get; set; }
 
-        public string flow_key { get; set; }
+        public string flow_id { get; set; }
 
-        public string link_flow_key { get; set; }
+        public string link_flow_id { get; set; }
     }
 }
