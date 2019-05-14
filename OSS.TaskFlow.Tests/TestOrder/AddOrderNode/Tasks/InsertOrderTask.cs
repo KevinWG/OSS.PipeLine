@@ -8,37 +8,25 @@ using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
 namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
 {
-    public class InsertOrderTask : BaseAddOrderTask
+    public class InsertOrderTask : BaseTask<AddOrderReq, ResultIdMo>
     {
-        public InsertOrderTask()
+        protected override TaskMeta GetDefaultConfig()
         {
-            TaskMeta.continue_times = 3;
-            TaskMeta.task_id = "AddOrderTask";
-            TaskMeta.task_alias = "添加订单！";
+            return new TaskMeta
+            {
+                task_id = "InsertOrderTask",
+                task_alias = "添加订单！",
+                continue_times = 3,
+                node_action = NodeResultAction.FailedOnFailed
+            };
         }
 
         /// <inheritdoc />
-        protected override async Task<DoResponse<ResultIdMo>> Do( AddOrderReq req)
+        protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq req)
         {
             return new DoResponse<ResultIdMo>() {resp = new ResultIdMo(), run_status = TaskRunStatus.RunCompoleted};
         }
     }
 
-    public abstract class BaseAddOrderTask : BaseTask<AddOrderReq, ResultIdMo>
-    {
-        private static readonly TaskMeta taskMeta = new TaskMeta
-        {
-            node_id = "AddOrderNode",
-            node_action = NodeResultAction.FailedOnFailed,
-            owner_type = OwnerType.Flow,
 
-            continue_times = 3,
-            task_id = "AddOrderTask",
-            task_alias = "添加订单！"
-        };
-
-        public BaseAddOrderTask() : base(taskMeta)
-        {
-        }
-    }
 }

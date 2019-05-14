@@ -15,9 +15,10 @@ namespace OSS.EventNode.Executor
     public static class ParallelNodeExtention
     {
         //   并行执行任务扩展
-       internal static void Excuting_Parallel<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
+        internal static async Task Excuting_Parallel<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node, TTReq req,
+            NodeResponse<TTRes> nodeResp,
             IList<IBaseTask<TTReq>> tasks)
-            where TTReq : class 
+            where TTReq : class
             where TTRes : ResultMo, new()
         {
             var taskResults =
@@ -25,8 +26,7 @@ namespace OSS.EventNode.Executor
 
             try
             {
-                var tw = Task.WhenAll(taskResults.Select(tr => tr.Value));
-                tw.Wait();
+                await Task.WhenAll(taskResults.Select(tr => tr.Value));
             }
             catch (Exception ex)
             {
@@ -37,7 +37,7 @@ namespace OSS.EventNode.Executor
                 ? new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition())
                 : d.Value.Result);
 
-         
+
             nodeResp.node_status = NodeStatus.ProcessCompoleted; // 循环里会处理结果，这里给出最大值
 
             foreach (var tItemRes in taskResps)
@@ -45,7 +45,7 @@ namespace OSS.EventNode.Executor
                 ExecutorUtil.FormatNodeErrorResp(nodeResp, tItemRes.Value, tItemRes.Key.TaskMeta);
                 if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
                 {
-                    Excuting_ParallelRevert(node,req, nodeResp, tasks, tItemRes.Key.TaskMeta);
+                    await Excuting_ParallelRevert(node, req, nodeResp, tasks, tItemRes.Key.TaskMeta);
                     break;
                 }
             }
@@ -54,40 +54,37 @@ namespace OSS.EventNode.Executor
 
 
         // 并行任务回退处理
-        private static void Excuting_ParallelRevert<TTReq, TTRes>(BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
-            IList<IBaseTask<TTReq>> tasks,TaskMeta errorTask)
-            where TTReq : class 
+        private static async Task Excuting_ParallelRevert<TTReq, TTRes>(BaseNode<TTReq, TTRes> node, TTReq req,
+            NodeResponse<TTRes> nodeResp,
+            IList<IBaseTask<TTReq>> tasks, TaskMeta errorTask)
+            where TTReq : class
             where TTRes : ResultMo, new()
         {
-           var revResList =  tasks.Select(tItem =>
-           {
-               if (tItem.TaskMeta.Equals(errorTask))
-                   return Task.FromResult(true);
-               
-               return ExecutorUtil.TryRevertTask(tItem, req);
-           }).ToArray();
+            var revResList = tasks.Select(tItem => tItem.TaskMeta.Equals(errorTask)
+                    ? Task.FromResult(true)
+                    : ExecutorUtil.TryRevertTask(tItem, req))
+                .ToArray();
 
             try
             {
-                var tw = Task.WhenAll(revResList);
-                tw.Wait();
+                await Task.WhenAll(revResList);
             }
             catch (Exception ex)
             {
-                LogUtil.Error("An error occurred while the parallel node reverted all tasks. Detail:{ex}  ", 
+                LogUtil.Error($"An error occurred while the parallel node reverted all tasks. Detail:{ex}",
                     node.NodeMeta.node_id, node.ModuleName);
             }
 
-            for (int i = 0; i < tasks.Count; i++)
+            for (var i = 0; i < tasks.Count; i++)
             {
                 var res = false;
                 var resT = revResList[i];
-               
-                if (resT.Status==TaskStatus.RanToCompletion)
+
+                if (resT.Status == TaskStatus.RanToCompletion)
                     res = resT.Result;
 
                 if (res)
-                 nodeResp.RevrtTasks.Add(tasks[i].TaskMeta);
+                    nodeResp.RevrtTasks.Add(tasks[i].TaskMeta);
             }
         }
 

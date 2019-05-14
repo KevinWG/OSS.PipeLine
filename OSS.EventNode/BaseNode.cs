@@ -94,7 +94,7 @@ namespace OSS.EventNode
             if (string.IsNullOrEmpty(NodeMeta?.node_id))
             {
                 return new TTRes().WithResult(SysResultTypes.ApplicationError, ResultTypes.InnerError,
-                    "node metainfo has error!");
+                    "Node id can't be null!");
             }
 
             //if (string.IsNullOrEmpty(context..exe_id))
@@ -125,7 +125,7 @@ namespace OSS.EventNode
         {
             if (NodeMeta.Process_type == NodeProcessType.Parallel)
             {
-                this.Excuting_Parallel(req, nodeResp, tasks);
+                await this.Excuting_Parallel(req, nodeResp, tasks);
             }
             else
             {

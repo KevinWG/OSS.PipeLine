@@ -4,10 +4,11 @@ using OSS.Common.ComModels;
 using OSS.EventNode;
 using OSS.EventNode.MetaMos;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.Mos;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks;
 
-namespace OSS.TaskFlow.Tests.TestOrder.Nodes
+namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode
 {
     /// <summary>
     ///   添加订单节点
@@ -17,16 +18,16 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
         private static NodeMeta nodeMeta=new NodeMeta()
         {
             flow_id = "Order_Flow",
-            node_alias = ""
+            node_alias = "添加订单",
+            owner_type = OwnerType.Node,
+            Process_type = NodeProcessType.Sequence,
+
+            node_id = "AddOrderNode"
         };
-        public AddOrderNode()
+
+        public AddOrderNode():base(nodeMeta)
         {
-
         }
-
-
-
-
 
         // 获取所有执行任务
         private static List<IBaseTask<AddOrderReq>> list;

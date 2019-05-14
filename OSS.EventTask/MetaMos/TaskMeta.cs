@@ -42,6 +42,8 @@ namespace OSS.EventTask.MetaMos
         ///  间隔重试次数, 默认不会执行 
         /// </summary>
         public int interval_times { get; set; }
+
+     
     }
 
 
