@@ -8,16 +8,20 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTReq, TTRes, TReq> : BaseMetaProvider<TaskMeta>, IBaseReqTask<TTReq>
-        where TTReq : ExcuteReq<TReq>
+    public abstract partial class BaseTask<TTReq, TTRes> : BaseMetaProvider<TaskMeta>, IBaseTask<TTReq>
+        where TTReq : class 
         where TTRes : ResultMo, new()
     {
         public TaskMeta TaskMeta => GetConfig();
-        internal ITaskProvider m_metaProvider;
+        //internal ITaskProvider m_metaProvider;
 
         private const string _moduleName = "OSS.EventTask";
-        public InstanceType InstanceTaskType { get; protected set; }
+        //public InstanceType InstanceTaskType { get; protected set; }
 
+
+        protected BaseTask() : this(null)
+        {
+        }
         protected BaseTask(TaskMeta meta) : base(meta)
         {
             ModuleName = _moduleName;
@@ -36,7 +40,7 @@ namespace OSS.EventTask
         /// <param name="req"></param>
         /// <param name="taskResp"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskCondition(ExcuteReq<TReq> req, TaskResponse<TTRes> taskResp)
+        protected virtual Task SaveTaskCondition(TTReq req, TaskResponse<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }

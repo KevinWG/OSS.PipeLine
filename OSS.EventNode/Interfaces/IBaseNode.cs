@@ -7,7 +7,7 @@ namespace OSS.EventNode.Interfaces
     public interface IBaseNode<TTReq, TTRes>
     {
         NodeMeta NodeMeta { get; }
-        InstanceType InstanceNodeType { get; }
+        //InstanceType InstanceNodeType { get; }
     }
 
 }

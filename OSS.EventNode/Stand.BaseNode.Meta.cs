@@ -7,7 +7,7 @@ namespace OSS.EventNode
     /// <summary>
     ///  节点运行时元数据信息
     /// </summary>
-    public abstract partial class BaseStandNode<TReq, TRes> : BaseNode<ExcuteReq<TReq>, TRes>
+    public abstract partial class BaseStandNode<TReq, TRes> : BaseNode<ExecuteData<TReq>, TRes>
         where TRes : ResultMo, new()
     {
         #region 构造函数

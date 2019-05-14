@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Domain.BaseTask.cs" />
+    <Compile Remove="Domain.BaseTask.Meta.cs" />
+    <Compile Remove="Interfaces\IDomainTaskProvider.cs" />
+    <Compile Remove="Interfaces\IStandTaskProvider.cs" />
+    <Compile Remove="Interfaces\ITaskProvider.cs" />
+    <Compile Remove="Stand.BaseTask.cs" />
+    <Compile Remove="Stand.BaseTask.Meta.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="OSS.Common" Version="1.3.5.13" />
   </ItemGroup>
 

@@ -9,7 +9,7 @@ namespace OSS.EventTask.Interfaces
     {
         TaskMeta TaskMeta { get; }
         string ModuleName { get; set; }
-        InstanceType InstanceTaskType { get; }
+        //InstanceType InstanceTaskType { get; }
 
         Task<bool> Revert(TTReq req);
         Task<TaskResponse<ResultMo>> Run(TTReq req, RunCondition runCondition);

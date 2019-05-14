@@ -12,7 +12,7 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="req"></param>
         /// <returns></returns>
-        public Task<TaskResponse<TRes>> Run(ExcuteReq<TReq> req)
+        public Task<TaskResponse<TRes>> Run(ExecuteData<TReq> req)
         {
             return Run(req, new RunCondition());
         }
@@ -20,7 +20,7 @@ namespace OSS.EventTask
 
         #region 内部方法扩展
 
-        internal override TRes RunCheckInternal(ExcuteReq<TReq> req, RunCondition runCondition)
+        internal override TRes RunCheckInternal(ExecuteData<TReq> req, RunCondition runCondition)
         {
             if (req.req_data == null)
                 return new TRes().WithResult(SysResultTypes.ApplicationError, "Task must Run with request info!");

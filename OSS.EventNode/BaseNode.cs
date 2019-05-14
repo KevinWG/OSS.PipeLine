@@ -112,7 +112,7 @@ namespace OSS.EventNode
         private async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp)
         {
             // 获取任务元数据列表
-            var tasks = await GetTaskMetasInternal();
+            var tasks = await GetTasks();
             if (tasks == null || !tasks.Any())
                 throw new ResultException(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
                     $"{this.GetType()} have no tasks can be Runed!");

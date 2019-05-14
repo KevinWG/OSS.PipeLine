@@ -62,15 +62,14 @@ namespace OSS.EventNode.Executor
         }
         //  尝试获取任务执行结果
         internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTReq>(TTReq req, IBaseTask<TTReq> task,
-            RunCondition taskRunCondition, InstanceType nodeInsType)
-            where TTReq : ExcuteReq
+            RunCondition taskRunCondition)
+            where TTReq : class
         {
-            if (nodeInsType == InstanceType.Stand && task.InstanceTaskType == InstanceType.Domain)
-            {
-                return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
-                    "Stand Node can't use Domain Task!");
-            }
-
+            //if (nodeInsType == InstanceType.Stand && task.InstanceTaskType == InstanceType.Domain)
+            //{
+            //    return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
+            //        "Stand Node can't use Domain Task!");
+            //}
             try
             {
                 return await task.Run(req, taskRunCondition);

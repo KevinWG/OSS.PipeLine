@@ -12,7 +12,7 @@ namespace OSS.TaskFlow.Tests
         {
             var order = new OrderInfo()
             {
-                order_alias = "²âÊÔ¶©µ¥!",
+                title = "²âÊÔ¶©µ¥!",
                 id = 123456,
                 price = 10.23M
             };
@@ -20,9 +20,5 @@ namespace OSS.TaskFlow.Tests
             //var flow=new OrderFlow();
             //flow.Entry();
         }
-
-
-
-
     }
 }

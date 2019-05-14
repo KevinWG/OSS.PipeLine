@@ -10,7 +10,7 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTReq, TTRes, TReq>
+    public abstract partial class BaseTask<TTReq, TTRes>
     {
         #region 任务进入入口
 

@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Domain.BaseNode.cs" />
+    <Compile Remove="Domain.BaseNode.Meta.cs" />
+    <Compile Remove="NodeConfigProvider.cs" />
+    <Compile Remove="Stand.BaseNode.cs" />
+    <Compile Remove="Stand.BaseNode.Meta.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OSS.EventTask\OSS.EventTask.csproj" />
   </ItemGroup>
 

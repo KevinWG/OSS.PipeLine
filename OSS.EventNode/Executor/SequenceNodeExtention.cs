@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.Common.Plugs.LogPlug;
 using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
@@ -15,7 +13,7 @@ namespace OSS.EventNode.Executor
         ///  顺序执行
         internal static async Task Excuting_Sequence<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node, TTReq req,
             NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks)
-            where TTReq : ExcuteReq
+            where TTReq : class 
             where TTRes : ResultMo, new()
         {
             nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResponse<ResultMo>>(tasks.Count);
@@ -24,7 +22,7 @@ namespace OSS.EventNode.Executor
             TaskMeta errTaskMeta = null;
             foreach (var tItem in tasks)
             {
-                var taskResp = await ExecutorUtil.TryGetTaskItemResult(req, tItem, new RunCondition(),node.InstanceNodeType);
+                var taskResp = await ExecutorUtil.TryGetTaskItemResult(req, tItem, new RunCondition());
 
                 var tMeta = tItem.TaskMeta;
                 nodeResp.TaskResults.Add(tMeta, taskResp);
@@ -45,7 +43,7 @@ namespace OSS.EventNode.Executor
         //  顺序任务的回退处理
         private static async Task Excuting_SequenceRevert<TTReq, TTRes>(TTReq req, NodeResponse<TTRes> nodeResp,
             IList<IBaseTask<TTReq>> tasks, TaskMeta index)
-            where TTReq : ExcuteReq
+            where TTReq : class 
             where TTRes : ResultMo, new()
         {
             foreach (var tItem in tasks)

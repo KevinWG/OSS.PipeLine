@@ -17,11 +17,11 @@ namespace OSS.EventNode.Executor
         //   并行执行任务扩展
        internal static void Excuting_Parallel<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
             IList<IBaseTask<TTReq>> tasks)
-            where TTReq : ExcuteReq
+            where TTReq : class 
             where TTRes : ResultMo, new()
         {
             var taskResults =
-                tasks.ToDictionary(t => t, t => ExecutorUtil.TryGetTaskItemResult(req, t, new RunCondition(),node.InstanceNodeType));
+                tasks.ToDictionary(t => t, t => ExecutorUtil.TryGetTaskItemResult(req, t, new RunCondition()));
 
             try
             {
@@ -56,7 +56,7 @@ namespace OSS.EventNode.Executor
         // 并行任务回退处理
         private static void Excuting_ParallelRevert<TTReq, TTRes>(BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
             IList<IBaseTask<TTReq>> tasks,TaskMeta errorTask)
-            where TTReq : ExcuteReq
+            where TTReq : class 
             where TTRes : ResultMo, new()
         {
            var revResList =  tasks.Select(tItem =>

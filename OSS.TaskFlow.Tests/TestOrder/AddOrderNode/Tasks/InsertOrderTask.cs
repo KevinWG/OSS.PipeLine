@@ -18,14 +18,13 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
         }
 
         /// <inheritdoc />
-        protected override async Task<DoResponse<ResultIdMo>> Do(ExcuteReq<OrderInfo, AddOrderReq> req)
+        protected override async Task<DoResponse<ResultIdMo>> Do( AddOrderReq req)
         {
             return new DoResponse<ResultIdMo>() {resp = new ResultIdMo(), run_status = TaskRunStatus.RunCompoleted};
         }
     }
 
-
-    public abstract class BaseAddOrderTask : BaseDomainTask<OrderInfo, AddOrderReq, ResultIdMo>
+    public abstract class BaseAddOrderTask : BaseTask<AddOrderReq, ResultIdMo>
     {
         private static readonly TaskMeta taskMeta = new TaskMeta
         {

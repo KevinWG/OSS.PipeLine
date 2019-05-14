@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventNode;
 using OSS.EventTask.Interfaces;
-using OSS.EventTask.Mos;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks;
 
@@ -12,16 +11,25 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
     /// <summary>
     ///   添加订单节点
     /// </summary>
-    public class AddOrderNode : BaseStandNode<AddOrderReq, ResultIdMo>
+    public class AddOrderNode : BaseNode<AddOrderReq, ResultIdMo>
     {
-        private static List<IBaseTask<ExcuteReq<AddOrderReq>>>list; // = new List<IBaseTask<ExcuteReq<AddOrderReq>>>(){ new AddOrderTask() };
+        private static List<IBaseTask<AddOrderReq>> list; // = new List<IBaseTask<ExcuteReq<AddOrderReq>>>(){ new AddOrderTask() };
 
-        public AddOrderNode()
+
+        static AddOrderNode()
         {
-            list = new List<IBaseTask<ExcuteReq<AddOrderReq>>>() {new InsertOrderTask()};
+            list = new List<IBaseTask< AddOrderReq>> ()
+            {
+                new CouponUseTask(),
+                new PriceComputeTask(),
+                new StockUseTask(),
+                new InsertOrderTask()
+            };
         }
-        
-        protected override async Task<IList<IBaseTask<ExcuteReq<AddOrderReq>>>> GetTasks()
+
+
+        // 获取所有执行任务
+        protected override async Task<IList<IBaseTask<AddOrderReq>>> GetTasks()
         {
             return list;
         }

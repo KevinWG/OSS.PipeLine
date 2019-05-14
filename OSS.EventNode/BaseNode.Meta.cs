@@ -13,7 +13,7 @@ namespace OSS.EventNode
     ///  节点运行时元数据信息
     /// </summary>
     public abstract partial class BaseNode<TTReq, TTRes> : BaseMetaProvider<NodeMeta>, IBaseNode<TTReq, TTRes>
-        where TTReq : ExcuteReq
+        where TTReq : class 
         where TTRes : ResultMo, new()
     {
         // 内部成员
@@ -24,16 +24,18 @@ namespace OSS.EventNode
         /// 节点mata 信息
         /// </summary>
         public NodeMeta NodeMeta => GetConfig();
-        /// <summary>
-        /// 节点实例类型
-        /// </summary>
-        public InstanceType InstanceNodeType { get; internal set; }
 
+        //public InstanceType InstanceNodeType { get; internal set; }
+
+
+        protected BaseNode() : this(null)
+        {
+        }
 
         protected BaseNode(NodeMeta meta) : base(meta)
         {
             ModuleName = _moduleName;
-            InstanceNodeType = InstanceType.Stand;
+            //InstanceNodeType = InstanceType.Stand;
         }
         
         #region 内部基础方法

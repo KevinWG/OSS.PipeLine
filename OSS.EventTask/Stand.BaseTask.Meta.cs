@@ -5,7 +5,7 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<ExcuteReq<TReq>, TRes, TReq>, IBaseStandTask<TReq>
+    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<ExecuteData<TReq>, TRes, TReq>
         where TRes : ResultMo, new()
     {
         // <inheritdoc />
