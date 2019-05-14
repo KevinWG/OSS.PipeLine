@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventNode;
+using OSS.EventNode.MetaMos;
 using OSS.EventTask.Interfaces;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks;
@@ -13,25 +14,33 @@ namespace OSS.TaskFlow.Tests.TestOrder.Nodes
     /// </summary>
     public class AddOrderNode : BaseNode<AddOrderReq, ResultIdMo>
     {
-        private static List<IBaseTask<AddOrderReq>> list; // = new List<IBaseTask<ExcuteReq<AddOrderReq>>>(){ new AddOrderTask() };
+        private static NodeMeta nodeMeta=new NodeMeta()
+        {
+            flow_id = "Order_Flow",
+            node_alias = ""
+        };
+        public AddOrderNode()
+        {
 
+        }
+
+
+
+
+
+        // 获取所有执行任务
+        private static List<IBaseTask<AddOrderReq>> list;
+        protected override async Task<IList<IBaseTask<AddOrderReq>>> GetTasks() => list;
 
         static AddOrderNode()
         {
-            list = new List<IBaseTask< AddOrderReq>> ()
+            list = new List<IBaseTask<AddOrderReq>>()
             {
                 new CouponUseTask(),
                 new PriceComputeTask(),
                 new StockUseTask(),
                 new InsertOrderTask()
             };
-        }
-
-
-        // 获取所有执行任务
-        protected override async Task<IList<IBaseTask<AddOrderReq>>> GetTasks()
-        {
-            return list;
         }
     }
 }
