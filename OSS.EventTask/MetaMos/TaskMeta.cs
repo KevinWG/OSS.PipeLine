@@ -22,10 +22,11 @@ namespace OSS.EventTask.MetaMos
         ///   归属类型
         /// </summary>
         public OwnerType owner_type { get; set; }
-        /// <summary>
-        /// 当前状态
-        /// </summary>
-        public TaskMetaStatus status { get; set; }
+
+        ///// <summary>
+        ///// 当前状态
+        ///// </summary>
+        //public TaskMetaStatus status { get; set; }
 
         /// <summary>
         ///  结果动作
@@ -44,12 +45,12 @@ namespace OSS.EventTask.MetaMos
     }
 
 
-    public enum TaskMetaStatus
-    {
-        Delete=-1000,
-        Disable=-1,
-        Enable=0
-    }
+    //public enum TaskMetaStatus
+    //{
+    //    Delete=-1000,
+    //    Disable=-1,
+    //    Enable=0
+    //}
 
     public enum NodeResultAction
     {

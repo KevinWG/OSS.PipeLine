@@ -14,4 +14,8 @@ namespace OSS.EventTask.Interfaces
         Task<bool> Revert(TTReq req);
         Task<TaskResponse<ResultMo>> Run(TTReq req, RunCondition runCondition);
     }
+
+
+
+
 }

@@ -8,7 +8,7 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTReq, TTRes, TReq> : BaseMetaProvider<TaskMeta>, IBaseTask<TTReq>
+    public abstract partial class BaseTask<TTReq, TTRes, TReq> : BaseMetaProvider<TaskMeta>, IBaseReqTask<TTReq>
         where TTReq : ExcuteReq<TReq>
         where TTRes : ResultMo, new()
     {

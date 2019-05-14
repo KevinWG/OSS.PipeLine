@@ -11,11 +11,11 @@ namespace OSS.EventTask
         where TRes : ResultMo, new()
     {
         /// <inheritdoc />
-        public BaseDomainTask() : this(null)
+        protected BaseDomainTask() : this(null)
         {
         }
 
-        public BaseDomainTask(TaskMeta meta) : base(meta)
+        protected BaseDomainTask(TaskMeta meta) : base(meta)
         {
             InstanceTaskType = InstanceType.Domain;
         }

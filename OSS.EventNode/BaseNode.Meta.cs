@@ -17,7 +17,7 @@ namespace OSS.EventNode
         where TTRes : ResultMo, new()
     {
         // 内部成员
-        private const string _moduleName = "OSS.EventTask";
+        private const string _moduleName = "OSS.EventNode";
         //internal INodeProvider<TTReq> m_metaProvider;
 
         /// <summary>
@@ -32,12 +32,13 @@ namespace OSS.EventNode
 
         protected BaseNode(NodeMeta meta) : base(meta)
         {
+            ModuleName = _moduleName;
             InstanceNodeType = InstanceType.Stand;
         }
         
         #region 内部基础方法
 
-        protected abstract Task<IList<IBaseTask<TTReq>>> GetTaskMetas();
+        protected abstract Task<IList<IBaseTask<TTReq>>> GetTasks();
 
         #endregion
 

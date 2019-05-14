@@ -6,6 +6,7 @@ using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 using OSS.EventTask.Util;
 
@@ -44,7 +45,7 @@ namespace OSS.EventNode.Executor
                 ExecutorUtil.FormatNodeErrorResp(nodeResp, tItemRes.Value, tItemRes.Key.TaskMeta);
                 if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
                 {
-                    Excuting_ParallelRevert(node,req, nodeResp, tasks);
+                    Excuting_ParallelRevert(node,req, nodeResp, tasks, tItemRes.Key.TaskMeta);
                     break;
                 }
             }
@@ -54,11 +55,17 @@ namespace OSS.EventNode.Executor
 
         // 并行任务回退处理
         private static void Excuting_ParallelRevert<TTReq, TTRes>(BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
-            IList<IBaseTask<TTReq>> tasks)
+            IList<IBaseTask<TTReq>> tasks,TaskMeta errorTask)
             where TTReq : ExcuteReq
             where TTRes : ResultMo, new()
         {
-           var revResList =  tasks.Select(tItem => ExecutorUtil.TryRevertTask(tItem, req)).ToArray();
+           var revResList =  tasks.Select(tItem =>
+           {
+               if (tItem.TaskMeta.Equals(errorTask))
+                   return Task.FromResult(true);
+               
+               return ExecutorUtil.TryRevertTask(tItem, req);
+           }).ToArray();
 
             try
             {

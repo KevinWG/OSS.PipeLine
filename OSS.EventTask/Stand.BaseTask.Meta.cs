@@ -5,15 +5,15 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<ExcuteReq<TReq>, TRes, TReq>
+    public abstract partial class BaseStandTask<TReq, TRes> : BaseTask<ExcuteReq<TReq>, TRes, TReq>, IBaseStandTask<TReq>
         where TRes : ResultMo, new()
     {
-        /// <inheritdoc />
-        public BaseStandTask() : this(null)
+        // <inheritdoc />
+        protected BaseStandTask() : this(null)
         {
         }
 
-        public BaseStandTask(TaskMeta meta) : base(meta)
+        protected BaseStandTask(TaskMeta meta) : base(meta)
         {
             InstanceTaskType = InstanceType.Stand;
         }

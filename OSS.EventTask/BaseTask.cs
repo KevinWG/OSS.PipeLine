@@ -29,7 +29,7 @@ namespace OSS.EventTask
 
         async Task<TaskResponse<ResultMo>> IBaseTask<TTReq>.Run(TTReq req, RunCondition runCondition)
         {
-            var taskResp =await Run(req, runCondition);
+            var taskResp = await Run(req, runCondition);
             return new TaskResponse<ResultMo>()
             {
                 run_status = taskResp.run_status,
@@ -37,6 +37,7 @@ namespace OSS.EventTask
                 task_condition = taskResp.task_condition
             };
         }
+
         // 运行
         private async Task TryRun(TTReq req, TaskResponse<TTRes> taskResp)
         {
@@ -98,13 +99,13 @@ namespace OSS.EventTask
         /// <param name="req"></param>
         /// <param name="context">请求的上下文</param>
         /// <returns></returns>
-        protected virtual Task RunEnd(TTReq req,TaskResponse<TTRes> context)
+        protected virtual Task RunEnd(TTReq req, TaskResponse<TTRes> context)
         {
             return Task.CompletedTask;
         }
 
 
-        private  async Task<bool> RunCheck(TTReq req, TaskResponse<TTRes> taskResp)
+        private async Task<bool> RunCheck(TTReq req, TaskResponse<TTRes> taskResp)
         {
             var checkInRes = RunCheckInternal(req, taskResp.task_condition);
             if (!checkInRes.IsSuccess())
@@ -136,7 +137,6 @@ namespace OSS.EventTask
 
             return new TTRes();
         }
-        
 
         #endregion
 
@@ -146,11 +146,10 @@ namespace OSS.EventTask
         ///     任务的具体执行
         /// </summary>
         /// <param name="req"></param>
-        /// <param name="runStatus"></param>
         /// <returns> 
         ///  runStatus = TaskRunStatus.RunFailed 系统会字段判断是否满足重试条件执行重试
         /// </returns>
-        protected abstract Task<TTRes> Do(TTReq req, out TaskRunStatus runStatus);
+        protected abstract Task<DoResponse<TTRes>> Do(TTReq req);
 
         /// <summary>
         ///  执行失败回退操作
@@ -167,11 +166,10 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="req"></param>
         /// <param name="taskResp"></param>
-        protected virtual Task Failed(TTReq req,TaskResponse<TTRes> taskResp)
+        protected virtual Task Failed(TTReq req, TaskResponse<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }
-
 
         #endregion
 
@@ -186,7 +184,7 @@ namespace OSS.EventTask
         private async Task Runing(TTReq req, TaskResponse<TTRes> taskResp)
         {
             await Recurs(req, taskResp);
-            
+
             // 判断是否间隔执行,生成重试信息
             var runCondition = taskResp.task_condition;
 
@@ -201,7 +199,7 @@ namespace OSS.EventTask
             if (taskResp.run_status.IsFailed())
             {
                 //  最终失败，执行失败方法
-                await Failed(req,taskResp);
+                await Failed(req, taskResp);
             }
         }
 
@@ -229,7 +227,7 @@ namespace OSS.EventTask
             // 判断是否执行直接重试 
             while (taskResp.run_status.IsFailed() && directProcessTimes < TaskMeta.continue_times);
 
-    
+
         }
 
         //  保证外部异常不会对框架内部运转造成影响
@@ -238,10 +236,12 @@ namespace OSS.EventTask
         {
             try
             {
-                taskResp.resp = await Do(req, out var runStatus)
-                    ?? new TTRes().WithResult(SysResultTypes.NoResponse, "Have no response during task [Do]!"); 
+                var doRes = await Do(req);
 
-                taskResp.run_status = runStatus;
+                taskResp.run_status = doRes.run_status;
+                taskResp.resp = doRes.resp
+                                ?? new TTRes().WithResult(SysResultTypes.NoResponse,
+                                    "Have no response during task [Do]!");
             }
             catch (Exception e)
             {
