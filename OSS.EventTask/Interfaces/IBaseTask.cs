@@ -7,17 +7,11 @@ namespace OSS.EventTask.Interfaces
 {
     public interface IBaseTask<in TTReq>
     {
-        TaskMeta TaskMeta { get;  }
+        TaskMeta TaskMeta { get; }
+        string ModuleName { get; set; }
         InstanceType InstanceTaskType { get; }
-        
+
         Task<bool> Revert(TTReq req);
         Task<TaskResponse<ResultMo>> Run(TTReq req, RunCondition runCondition);
     }
-
-    //public interface IBaseTask<TTReq,TTRes>: IBaseTask<TTReq>
-    //  where TTRes:ResultMo,new ()
-    //{
-    //    Task<TaskResponse<TTRes>> Run(TTReq req, RunCondition runCondition);
-    //}
-
 }

@@ -4,8 +4,8 @@ using System.Text;
 
 namespace OSS.EventNode
 {
-    public class NodeConfigProvider
-    {
-        public static string ModuleName { get; set; }= "OSS.EventNode";
-    }
+    //public class NodeConfigProvider
+    //{
+    //    public static string ModuleName { get; set; }= "OSS.EventNode";
+    //}
 }

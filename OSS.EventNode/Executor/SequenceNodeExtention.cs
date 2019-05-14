@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
+using OSS.Common.Plugs.LogPlug;
 using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
@@ -22,8 +24,7 @@ namespace OSS.EventNode.Executor
             TaskMeta errTaskMeta = null;
             foreach (var tItem in tasks)
             {
-                var taskResp = await ExecutorUtil.TryGetTaskItemResult(req, tItem, new RunCondition(),
-                    node.InstanceNodeType, node.NodeMeta);
+                var taskResp = await ExecutorUtil.TryGetTaskItemResult(req, tItem, new RunCondition(),node.InstanceNodeType);
 
                 var tMeta = tItem.TaskMeta;
                 nodeResp.TaskResults.Add(tMeta, taskResp);
@@ -38,7 +39,6 @@ namespace OSS.EventNode.Executor
 
             if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
                 await Excuting_SequenceRevert(req, nodeResp, tasks, errTaskMeta);
-
         }
 
 
@@ -55,11 +55,15 @@ namespace OSS.EventNode.Executor
                     break;
                 }
 
-                var rRes = await tItem.Revert(req);
-
+                var rRes = await ExecutorUtil.TryRevertTask(tItem, req);// tItem.Revert(req);
                 if (rRes)
                     nodeResp.RevrtTasks.Add(tItem.TaskMeta);
             }
         }
+
+
+
+      
+
     }
 }

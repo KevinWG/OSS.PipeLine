@@ -62,13 +62,13 @@ namespace OSS.EventNode.Executor
         }
 
         internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTReq>(TTReq req, IBaseTask<TTReq> task,
-            RunCondition taskRunCondition, InstanceType nodeInsType, NodeMeta nodeMeta)
+            RunCondition taskRunCondition, InstanceType nodeInsType)
             where TTReq : ExcuteReq
         {
             if (nodeInsType == InstanceType.Stand && task.InstanceTaskType == InstanceType.Domain)
             {
                 return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
-                    "StandNode can't use Domain Task!");
+                    "Stand Node can't use Domain Task!");
             }
 
             try
@@ -77,7 +77,7 @@ namespace OSS.EventNode.Executor
             }
             catch (Exception ex)
             {
-                LogUtil.Error(ex, nodeMeta.node_id, NodeConfigProvider.ModuleName);
+                LogUtil.Error($"An error occurred while the task was running. Detail：{ex}", task.TaskMeta.node_id, task.ModuleName);
             }
 
             return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
@@ -94,6 +94,20 @@ namespace OSS.EventNode.Executor
             }
 
             return taskResp.ConvertToResultInherit<TTRes>();
+        }
+
+        internal static Task<bool> TryRevertTask<TTReq>(IBaseTask<TTReq> task, TTReq req)
+        {
+            try
+            {
+                return task.Revert(req);
+            }
+            catch (Exception e)
+            {
+                LogUtil.Error($"Task revert error！ detail:{e}", task.TaskMeta.task_id, task.ModuleName);
+            }
+
+            return Task.FromResult(false);
         }
 
     }
