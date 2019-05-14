@@ -1,5 +1,4 @@
 ﻿using OSS.Common.ComModels;
-using OSS.EventNode.Interfaces;
 using OSS.EventNode.MetaMos;
 using OSS.EventTask.Mos;
 

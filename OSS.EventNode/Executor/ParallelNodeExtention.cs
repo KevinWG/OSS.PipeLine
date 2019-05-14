@@ -13,7 +13,7 @@ namespace OSS.EventNode.Executor
 {
     public static class ParallelNodeExtention
     {
-        ///   并行执行
+        //   并行执行任务扩展
        internal static void Excuting_Parallel<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
             IList<IBaseTask<TTReq>> tasks)
             where TTReq : ExcuteReq
@@ -52,8 +52,8 @@ namespace OSS.EventNode.Executor
 
 
 
-        //  顺序任务的回退处理
-        private static async void Excuting_ParallelRevert<TTReq, TTRes>(BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
+        // 并行任务回退处理
+        private static void Excuting_ParallelRevert<TTReq, TTRes>(BaseNode<TTReq, TTRes> node, TTReq req, NodeResponse<TTRes> nodeResp,
             IList<IBaseTask<TTReq>> tasks)
             where TTReq : ExcuteReq
             where TTRes : ResultMo, new()
@@ -73,12 +73,11 @@ namespace OSS.EventNode.Executor
 
             for (int i = 0; i < tasks.Count; i++)
             {
-                bool res = false;
+                var res = false;
                 var resT = revResList[i];
                
                 if (resT.Status==TaskStatus.RanToCompletion)
                     res = resT.Result;
-
 
                 if (res)
                  nodeResp.RevrtTasks.Add(tasks[i].TaskMeta);

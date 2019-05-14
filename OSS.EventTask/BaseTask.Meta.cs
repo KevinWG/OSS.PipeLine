@@ -57,7 +57,7 @@ namespace OSS.EventTask
             catch (Exception e)
             {
                 //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
-                LogUtil.Error(e, "Oss.TaskFlow.Task.SaveTaskContext", "Oss.TaskFlow");
+                LogUtil.Error(e, TaskMeta.task_id, ModuleName);
             }
 
             return Task.CompletedTask;

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
-using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
@@ -13,6 +12,7 @@ namespace OSS.EventNode.Executor
 {
     internal class ExecutorUtil
     {
+        // 根据任务结果格式化当前节点结果， 外部循环使用
         internal static bool FormatNodeErrorResp<TTRes>(NodeResponse<TTRes> nodeResp, TaskResponse<ResultMo> taskResp,
             TaskMeta tMeta)
             where TTRes : ResultMo, new()
@@ -46,7 +46,7 @@ namespace OSS.EventNode.Executor
                     if (status < nodeResp.node_status)
                     {
                         nodeResp.node_status = status;
-                        nodeResp.resp = ConvertToNodeResp<TTRes>(taskResp.resp);
+                        nodeResp.resp = ConvertToNodeResult<TTRes>(taskResp.resp);
                     }
 
                     return true;
@@ -60,7 +60,7 @@ namespace OSS.EventNode.Executor
 
             return false;
         }
-
+        //  尝试获取任务执行结果
         internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTReq>(TTReq req, IBaseTask<TTReq> task,
             RunCondition taskRunCondition, InstanceType nodeInsType)
             where TTReq : ExcuteReq
@@ -84,18 +84,21 @@ namespace OSS.EventNode.Executor
                 "Task of node run error!");
         }
 
-
-        internal static TTRes ConvertToNodeResp<TTRes>(ResultMo taskResp)
+        //  任务结果转化到节点结果
+        internal static TTRes ConvertToNodeResult<TTRes>(ResultMo taskRes)
             where TTRes : ResultMo, new()
         {
-            if (taskResp is TTRes nres)
+            if (taskRes is TTRes nres)
             {
                 return nres;
             }
 
-            return taskResp.ConvertToResultInherit<TTRes>();
+            return taskRes.ConvertToResultInherit<TTRes>();
         }
 
+
+
+        //  尝试回退任务
         internal static Task<bool> TryRevertTask<TTReq>(IBaseTask<TTReq> task, TTReq req)
         {
             try
