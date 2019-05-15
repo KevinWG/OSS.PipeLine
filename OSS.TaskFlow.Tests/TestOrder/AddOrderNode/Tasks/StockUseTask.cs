@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventTask;
 using OSS.EventTask.MetaMos;
@@ -24,6 +25,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
 
         protected override async Task<DoResponse<ResultMo>> Do( AddOrderReq req)
         {
+            //throw new ArgumentNullException("sssss");
             return new DoResponse<ResultMo>()
             {
                 run_status = TaskRunStatus.RunCompoleted,

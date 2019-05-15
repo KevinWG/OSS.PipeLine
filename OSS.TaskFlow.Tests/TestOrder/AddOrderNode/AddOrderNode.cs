@@ -15,23 +15,13 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode
     /// </summary>
     public class AddOrderNode : BaseNode<AddOrderReq, ResultIdMo>
     {
-        private static NodeMeta nodeMeta=new NodeMeta()
-        {
-            flow_id = "Order_Flow",
-            node_alias = "添加订单",
-            owner_type = OwnerType.Node,
-            Process_type = NodeProcessType.Sequence,
-
-            node_id = "AddOrderNode"
-        };
-
-        public AddOrderNode():base(nodeMeta)
+        public AddOrderNode()
         {
         }
 
         // 获取所有执行任务
         private static List<IBaseTask<AddOrderReq>> list;
-        protected override async Task<IList<IBaseTask<AddOrderReq>>> GetTasks() => list;
+        protected override Task<List<IBaseTask<AddOrderReq>>> GetTasks() => Task.FromResult(list);
 
         static AddOrderNode()
         {
@@ -41,6 +31,20 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode
                 new PriceComputeTask(),
                 new StockUseTask(),
                 new InsertOrderTask()
+            };
+        }
+
+
+        protected override NodeMeta GetDefaultConfig()
+        {
+            return new NodeMeta()
+            {
+                flow_id = "Order_Flow",
+                node_alias = "添加订单",
+                owner_type = OwnerType.Node,
+                Process_type = NodeProcessType.Parallel,
+
+                node_id = "AddOrderNode"
             };
         }
     }

@@ -40,7 +40,7 @@ namespace OSS.EventNode
         
         #region 内部基础方法
 
-        protected abstract Task<IList<IBaseTask<TTReq>>> GetTasks();
+        protected abstract Task<List<IBaseTask<TTReq>>> GetTasks();
 
         #endregion
 

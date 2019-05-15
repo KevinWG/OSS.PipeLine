@@ -37,12 +37,14 @@ namespace OSS.EventNode.Executor
                 ? new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition())
                 : d.Value.Result);
 
-
+            nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResponse<ResultMo>>(tasks.Count);
             nodeResp.node_status = NodeStatus.ProcessCompoleted; // 循环里会处理结果，这里给出最大值
 
             foreach (var tItemRes in taskResps)
             {
+                nodeResp.TaskResults.Add(tItemRes.Key.TaskMeta, tItemRes.Value);
                 ExecutorUtil.FormatNodeErrorResp(nodeResp, tItemRes.Value, tItemRes.Key.TaskMeta);
+
                 if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
                 {
                     await Excuting_ParallelRevert(node, req, nodeResp, tasks, tItemRes.Key.TaskMeta);
