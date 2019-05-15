@@ -62,7 +62,7 @@ namespace OSS.EventNode.Executor
             where TTReq : class
             where TTRes : ResultMo, new()
         {
-            var revResList = tasks.Select(tItem => tItem.TaskMeta.Equals(errorTask)
+            var revResList = tasks.Select(tItem => tItem.TaskMeta.task_id== errorTask.task_id
                     ? Task.FromResult(true)
                     : ExecutorUtil.TryRevertTask(tItem, req))
                 .ToArray();

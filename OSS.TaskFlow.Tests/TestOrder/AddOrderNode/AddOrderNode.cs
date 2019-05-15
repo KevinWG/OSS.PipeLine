@@ -18,28 +18,25 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode
         // 获取所有执行任务
         private static List<IBaseTask<AddOrderReq>> list;
         protected override Task<List<IBaseTask<AddOrderReq>>> GetTasks() => Task.FromResult(list);
-
         public AddOrderNode()
         {
-            var couponTask = new CouponUseTask(){};
+            var couponTask = new CouponUseTask();
             couponTask.TaskMeta.WithNodeMeta(NodeMeta);
 
-            var priceTask = new PriceComputeTask() { };
+            var priceTask = new PriceComputeTask();
             priceTask.TaskMeta.WithNodeMeta(NodeMeta);
             
-            var stockTask = new StockUseTask() { };
+            var stockTask = new StockUseTask();
             stockTask.TaskMeta.WithNodeMeta(NodeMeta);
 
-            var insertTask = new InsertOrderTask() { };
+            var insertTask = new InsertOrderTask();
             insertTask.TaskMeta.WithNodeMeta(NodeMeta);
             
-            list = new List<IBaseTask<AddOrderReq>>()
-            {
+            list = new List<IBaseTask<AddOrderReq>>(){
                 couponTask,priceTask,stockTask,insertTask
             };
         }
-
-
+        
         protected override NodeMeta GetDefaultConfig()
         {
             return new NodeMeta()

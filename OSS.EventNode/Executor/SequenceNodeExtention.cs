@@ -42,13 +42,13 @@ namespace OSS.EventNode.Executor
 
         //  顺序任务的回退处理
         private static async Task Excuting_SequenceRevert<TTReq, TTRes>(TTReq req, NodeResponse<TTRes> nodeResp,
-            IList<IBaseTask<TTReq>> tasks, TaskMeta index)
+            IList<IBaseTask<TTReq>> tasks, TaskMeta errTask)
             where TTReq : class 
             where TTRes : ResultMo, new()
         {
             foreach (var tItem in tasks)
             {
-                if (tItem.TaskMeta.Equals(index))
+                if (tItem.TaskMeta.task_id==errTask.task_id)
                 {
                     break;
                 }

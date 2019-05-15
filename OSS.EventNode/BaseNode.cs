@@ -56,8 +56,7 @@ namespace OSS.EventNode
                 nodeResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError,
                     "Error occurred during Node [Process]!");
 
-                LogUtil.Error(
-                    $"sys_ret:{nodeResp.resp.sys_ret}, ret:{nodeResp.resp.ret},msg:{nodeResp.resp.msg}, Detail:{e}",
+                LogUtil.Error($"sys_ret:{nodeResp.resp.sys_ret}, ret:{nodeResp.resp.ret},msg:{nodeResp.resp.msg}, Detail:{e}",
                     NodeMeta.node_id, ModuleName);
             }
 
@@ -122,9 +121,7 @@ namespace OSS.EventNode
         #endregion
 
         #region 辅助方法 —— 节点内部任务执行
-
-
-
+        
         private async Task ExcutingWithTasks(TTReq req, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks)
         {
             if (NodeMeta.Process_type == NodeProcessType.Parallel)
