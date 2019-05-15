@@ -6,8 +6,7 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.Mos
 {
-
-    public class NodeResponse<TRes>
+    public class NodeBasicResponse<TRes>
         where TRes : ResultMo, new()
     {
         /// <summary>
@@ -19,7 +18,11 @@ namespace OSS.EventNode.Mos
         ///  节点状态
         /// </summary>
         public NodeStatus node_status { get; set; }
-
+    }
+    
+    public class NodeResponse<TRes> : NodeBasicResponse<TRes>
+        where TRes : ResultMo, new()
+    {
         /// <summary>
         ///   节点内回退节点信息
         /// </summary>
@@ -28,8 +31,8 @@ namespace OSS.EventNode.Mos
         /// <summary>
         ///  节点任务处理结果
         /// </summary>
-        public IDictionary<TaskMeta, TaskResponse<ResultMo>> TaskResults { get;internal set; }
-        
+        public IDictionary<TaskMeta, TaskResponse<ResultMo>> TaskResults { get; internal set; }
+
         /// <summary>
         ///  获取对应TaskKey对应的任务结果
         /// </summary>

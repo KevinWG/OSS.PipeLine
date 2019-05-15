@@ -29,8 +29,6 @@ namespace OSS.EventTask
 
         #region 扩展方法
 
-
-
         /// <summary>
         ///  保存环境相关信息【主要有两种情况，一种是 Pause，一种是 Failed】
         ///    【仅在 OwnerType = OwnerType.Task 时发生】
@@ -40,7 +38,7 @@ namespace OSS.EventTask
         /// <param name="req"></param>
         /// <param name="taskResp"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskCondition(TTReq req, TaskResponse<TTRes> taskResp)
+        protected virtual Task SaveTaskContext(TTReq req, TaskResponse<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }
@@ -55,15 +53,14 @@ namespace OSS.EventTask
             {
                 if (TaskMeta.owner_type== OwnerType.Task)
                 {
-                    return SaveTaskCondition(req, taskResp);
+                    return SaveTaskContext(req, taskResp);
                 }
             }
             catch (Exception e)
             {
                 //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
-                LogUtil.Error(e, TaskMeta.task_id, ModuleName);
+                LogUtil.Error($"Errors occurred during [Task context] saving. Detail:{e}", TaskMeta.task_id, ModuleName);
             }
-
             return Task.CompletedTask;
         }
 

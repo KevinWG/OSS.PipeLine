@@ -1,9 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
+using OSS.Common.Plugs.LogPlug;
 using OSS.EventNode.Interfaces;
 using OSS.EventNode.MetaMos;
+using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
@@ -13,7 +17,7 @@ namespace OSS.EventNode
     ///  节点运行时元数据信息
     /// </summary>
     public abstract partial class BaseNode<TTReq, TTRes> : BaseMetaProvider<NodeMeta>, IBaseNode<TTReq, TTRes>
-        where TTReq : class 
+        where TTReq : class
         where TTRes : ResultMo, new()
     {
         // 内部成员
@@ -37,13 +41,17 @@ namespace OSS.EventNode
             ModuleName = _moduleName;
             //InstanceNodeType = InstanceType.Stand;
         }
-        
+
         #region 内部基础方法
 
         protected abstract Task<List<IBaseTask<TTReq>>> GetTasks();
 
         #endregion
 
+        protected virtual Task TrySaveNodeContext(TTReq req, NodeResponse<TTRes> taskResp)
+        {
+            return Task.CompletedTask;
+        }
     }
 
 

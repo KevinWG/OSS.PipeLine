@@ -54,6 +54,11 @@ namespace OSS.EventTask
 
                 // 【3】 执行结束方法
                 await RunEnd(req, taskResp);
+
+                //  结束 如果是中断处理，保存请求相关信息
+                if (taskResp.run_status==TaskRunStatus.RunPaused)
+                    await TrySaveTaskContext(req, taskResp);
+                
                 return;
             }
             catch (ResultException e)
@@ -66,15 +71,13 @@ namespace OSS.EventTask
             {
                 errorMsg = e.ToString();
                 if (taskResp.resp == null)
-                    taskResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError,
-                        "Error occurred during task [Run]!");
+                    taskResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError,"Error occurred during task [Run]!");
             }
 
             taskResp.run_status = TaskRunStatus.RunFailed;
             var resp = taskResp.resp;
             LogUtil.Error($"sys_ret:{resp.sys_ret}, ret:{resp.ret},msg:{resp.msg}, Detail:{errorMsg}",
-                TaskMeta.task_id,
-                ModuleName);
+                TaskMeta.task_id,ModuleName);
             await TrySaveTaskContext(req, taskResp);
         }
 
@@ -192,8 +195,6 @@ namespace OSS.EventTask
             {
                 runCondition.interval_times++;
                 taskResp.run_status = TaskRunStatus.RunPaused; // TaskResultType.WatingActivation;
-
-                await TrySaveTaskContext(req, taskResp);
             }
 
             if (taskResp.run_status.IsFailed())

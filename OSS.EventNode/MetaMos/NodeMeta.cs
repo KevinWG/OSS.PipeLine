@@ -1,4 +1,5 @@
-﻿using OSS.EventTask.Mos;
+﻿using OSS.EventTask.MetaMos;
+using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.MetaMos
 {
@@ -26,6 +27,16 @@ namespace OSS.EventNode.MetaMos
     }
 
 
+
+    public static class NodeMetaExtention
+    {
+        public static void WithNodeMeta(this TaskMeta taskMeta,NodeMeta nodeMeta)
+        {
+            taskMeta.owner_type = nodeMeta.owner_type;
+            taskMeta.flow_id = nodeMeta.flow_id;
+            taskMeta.node_id = nodeMeta.node_id;
+        }
+    }
 
 
 }
