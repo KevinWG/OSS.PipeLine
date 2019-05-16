@@ -5,7 +5,7 @@
         /// <summary>
         ///  单词执行内部循环错误
         /// </summary>
-        public int loop_times { get; set; }
+        public int loop_times { get; set; } = 1;
 
         /// <summary>
         ///  间隔执行次数

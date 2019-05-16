@@ -44,7 +44,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode
                 flow_id = "Order_Flow",
                 node_alias = "添加订单",
                 owner_type = OwnerType.Node,
-                Process_type = NodeProcessType.Parallel,
+                Process_type = NodeProcessType.Sequence,
 
                 node_id = "AddOrderNode"
             };

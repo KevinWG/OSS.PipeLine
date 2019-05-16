@@ -43,6 +43,13 @@ namespace OSS.EventTask.Mos
             res.resp =new TRes().WithResult(SysResultTypes.ApplicationError, msg??"Task Error！");
             return res;
         }
+
+        public static void SetToTaskResp<TRes>(this DoResponse<TRes> res, TaskResponse<TRes> taskResp)
+            where TRes : ResultMo, new()
+        {
+            taskResp.run_status = res.run_status;
+            taskResp.resp = res.resp;
+        }
     }
 
 

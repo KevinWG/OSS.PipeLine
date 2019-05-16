@@ -20,7 +20,6 @@ namespace OSS.EventTask
         {
             var taskResp = new TaskResponse<TTRes>
             {
-                run_status = TaskRunStatus.WaitToRun,
                 task_cond = new RunCondition(){tried_times = triedTimes}
             };
 
@@ -111,7 +110,6 @@ namespace OSS.EventTask
             try
             {
                 await Recurs(req, taskResp);
-
                 return;
             }
             catch (ResultException e)
@@ -146,18 +144,19 @@ namespace OSS.EventTask
             var runCondition = taskResp.task_cond;
             do
             {
+                taskResp.run_status = TaskRunStatus.WaitToRun;
+
                 await RunLife(req, taskResp);
                 runCondition.loop_times++;
             }
-            while (taskResp.run_status.IsFailed()
-                   && runCondition.loop_times < TaskMeta.loop_times);
+            while (taskResp.run_status.IsFailed() && runCondition.loop_times <= TaskMeta.loop_times);
+            runCondition.run_timestamp = DateTime.Now.ToUtcSeconds();
 
             // 判断是否间隔执行,生成重试信息
             if (taskResp.run_status.IsFailed()
                 && runCondition.tried_times < TaskMeta.retry_times)
             {
                 runCondition.tried_times++;
-                runCondition.run_timestamp = DateTime.Now.ToUtcSeconds();
                 runCondition.next_timestamp = runCondition.run_timestamp + TaskMeta.retry_seconds;
 
                 taskResp.run_status = TaskRunStatus.RunPaused;  
@@ -180,11 +179,12 @@ namespace OSS.EventTask
             //  直接执行
             var condition = taskResp.task_cond;
             var doResp = await TryDo(req, condition.loop_times, condition.tried_times);
+            doResp.SetToTaskResp(taskResp);
 
             // 判断是否失败回退
             if (doResp.run_status.IsFailed())
                 await Revert(req, condition.tried_times);
-
+           
             // 【3】 执行结束方法
             await RunEnd(req, taskResp);
         }
