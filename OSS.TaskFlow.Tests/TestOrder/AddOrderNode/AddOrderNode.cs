@@ -33,7 +33,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode
             insertTask.TaskMeta.WithNodeMeta(NodeMeta);
             
             list = new List<IBaseTask<AddOrderReq>>(){
-                couponTask,priceTask,stockTask,insertTask
+                couponTask,priceTask,insertTask,stockTask
             };
         }
         

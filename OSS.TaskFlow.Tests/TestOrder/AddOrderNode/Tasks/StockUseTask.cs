@@ -29,7 +29,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
             return new DoResponse<ResultMo>()
             {
                 run_status = TaskRunStatus.RunCompoleted,
-                resp = new ResultIdMo()
+                resp = new ResultMo()
             };
         }
     }

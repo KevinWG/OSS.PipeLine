@@ -24,7 +24,11 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
         /// <inheritdoc />
         protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
         {
-            return new DoResponse<ResultIdMo>() {resp = new ResultIdMo(), run_status = TaskRunStatus.RunCompoleted};
+            return new DoResponse<ResultIdMo>()
+            {
+                resp = new ResultIdMo("1000"),
+                run_status = TaskRunStatus.RunCompoleted
+            };
         }
     }
 
