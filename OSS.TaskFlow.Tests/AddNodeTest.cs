@@ -19,9 +19,8 @@ namespace OSS.TaskFlow.Tests
                 source_ids = "s_1"
             };
 
-
             var addNode = new AddOrderNode();
-            var idRes = await addNode.Process(addReq);
+            var idRes = await addNode.Process(addReq,0);
         }
     }
 }

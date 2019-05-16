@@ -17,13 +17,13 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
             {
                 task_id = "StockUseTask",
                 task_alias = "扣减库存！",
-                continue_times = 3,
+                loop_times = 3,
                 node_action = NodeResultAction.FailedOnFailed
             };
         }
 
 
-        protected override async Task<DoResponse<ResultMo>> Do( AddOrderReq req)
+        protected override async Task<DoResponse<ResultMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
         {
             //throw new ArgumentNullException("sssss");
             return new DoResponse<ResultMo>()

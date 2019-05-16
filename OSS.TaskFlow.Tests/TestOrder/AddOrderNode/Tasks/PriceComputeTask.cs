@@ -16,11 +16,13 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
             {
                 task_id = "PriceComputeTask",
                 task_alias = "价格计算！",
-                continue_times = 3,
+                loop_times = 3,
                 node_action = NodeResultAction.FailedOnFailed
             };
         }
-        protected override async Task<DoResponse<ResultMo>> Do(AddOrderReq req)
+
+
+        protected override async Task<DoResponse<ResultMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
         {
             return new DoResponse<ResultMo>()
             {

@@ -14,71 +14,27 @@ namespace OSS.EventTask
     {
         #region 任务进入入口
 
-        // 串联流程，以及框架内部异常处理
-        public async Task<TaskResponse<TTRes>> Run(TTReq req, RunCondition runCondition)
+        public Task<TaskResponse<TTRes>> Run(TTReq req)=> Run(req, 0);
+        
+        public async Task<TaskResponse<TTRes>> Run(TTReq req, int triedTimes)
         {
             var taskResp = new TaskResponse<TTRes>
             {
                 run_status = TaskRunStatus.WaitToRun,
-                task_condition = runCondition
+                task_cond = new RunCondition(){tried_times = triedTimes}
             };
 
             await TryRun(req, taskResp);
             return taskResp;
         }
 
-        async Task<TaskResponse<ResultMo>> IBaseTask<TTReq>.Run(TTReq req, RunCondition runCondition)
+        async Task<TaskResponse<ResultMo>> IBaseTask<TTReq>.Run(TTReq req, int triedTimes)
         {
-            var taskResp = await Run(req, runCondition);
+            var taskResp = await Run(req, triedTimes);
             return new TaskResponse<ResultMo>()
             {
-                run_status = taskResp.run_status,
-                resp = taskResp.resp,
-                task_condition = taskResp.task_condition
+                run_status = taskResp.run_status,resp = taskResp.resp,task_cond = taskResp.task_cond
             };
-        }
-
-        // 运行
-        private async Task TryRun(TTReq req, TaskResponse<TTRes> taskResp)
-        {
-            string errorMsg;
-            try
-            {
-                // 【1】 执行起始方法 附加校验
-                var checkRes = await RunCheck(req, taskResp);
-                if (!checkRes)
-                    return;
-
-                // 【2】  执行核心方法
-                await Runing(req, taskResp);
-
-                // 【3】 执行结束方法
-                await RunEnd(req, taskResp);
-
-                //  结束 如果是中断处理，保存请求相关信息
-                if (taskResp.run_status==TaskRunStatus.RunPaused)
-                    await TrySaveTaskContext(req, taskResp);
-                
-                return;
-            }
-            catch (ResultException e)
-            {
-                errorMsg = e.ToString();
-                if (taskResp.resp == null)
-                    taskResp.resp = e.ConvertToReultInherit<TTRes>(); //.ConvertToReult<TTRes>();
-            }
-            catch (Exception e)
-            {
-                errorMsg = e.ToString();
-                if (taskResp.resp == null)
-                    taskResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError,"Error occurred during task [Run]!");
-            }
-
-            taskResp.run_status = TaskRunStatus.RunFailed;
-            var resp = taskResp.resp;
-            LogUtil.Error($"sys_ret:{resp.sys_ret}, ret:{resp.ret},msg:{resp.msg}, Detail:{errorMsg}",
-                TaskMeta.task_id,ModuleName);
-            await TrySaveTaskContext(req, taskResp);
         }
 
         #endregion
@@ -89,9 +45,10 @@ namespace OSS.EventTask
         /// 任务开始方法
         /// </summary>
         /// <param name="req"></param>
-        /// <param name="runCondition"></param>
+        /// <param name="loopTimes">循环执行次数，当次运行过程中的循环执行次数，默认是1</param>
+        /// <param name="triedTimes">重新重试次数，默认是0</param>
         /// <returns></returns>
-        protected virtual Task<ResultMo> RunStartCheck(TTReq req, RunCondition runCondition)
+        protected virtual Task<ResultMo> RunStartCheck(TTReq req, int loopTimes, int triedTimes)
         {
             return Task.FromResult(new ResultMo());
         }
@@ -106,41 +63,7 @@ namespace OSS.EventTask
         {
             return Task.CompletedTask;
         }
-
-
-        private async Task<bool> RunCheck(TTReq req, TaskResponse<TTRes> taskResp)
-        {
-            var checkInRes = RunCheckInternal(req, taskResp.task_condition);
-            if (!checkInRes.IsSuccess())
-            {
-                taskResp.run_status = TaskRunStatus.RunFailed;
-                taskResp.resp = checkInRes;
-                return false;
-            }
-
-            var res = await RunStartCheck(req, taskResp.task_condition);
-            if (!res.IsSuccess())
-            {
-                taskResp.run_status = TaskRunStatus.RunFailed;
-                taskResp.resp = res.ConvertToResultInherit<TTRes>();
-                return false;
-            }
-
-            return true;
-        }
-
-        internal virtual TTRes RunCheckInternal(TTReq context, RunCondition runCondition)
-        {
-            if (string.IsNullOrEmpty(TaskMeta?.task_id))
-                return new TTRes().WithResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
-
-            if (runCondition == null)
-                return new TTRes().WithResult(SysResultTypes.ApplicationError,
-                    "Task run condition data can't be null！");
-
-            return new TTRes();
-        }
-
+        
         #endregion
 
         #region 扩展方法（实现，回退，失败）  扩展方法
@@ -149,17 +72,20 @@ namespace OSS.EventTask
         ///     任务的具体执行
         /// </summary>
         /// <param name="req"></param>
+        /// <param name="loopTimes">内部循环执行次数</param>
+        /// <param name="triedTimes">重试运行次数</param>
         /// <returns> 
         ///  runStatus = TaskRunStatus.RunFailed 系统会字段判断是否满足重试条件执行重试
         /// </returns>
-        protected abstract Task<DoResponse<TTRes>> Do(TTReq req);
+        protected abstract Task<DoResponse<TTRes>> Do(TTReq req, int loopTimes, int triedTimes);
 
         /// <summary>
         ///  执行失败回退操作
         ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="req"></param>
-        public virtual Task<bool> Revert(TTReq req)
+        /// <param name="triedTimes">重试运行次数</param>
+        public virtual Task<bool> Revert(TTReq req, int triedTimes)
         {
             return Task.FromResult(true);
         }
@@ -169,7 +95,7 @@ namespace OSS.EventTask
         /// </summary>
         /// <param name="req"></param>
         /// <param name="taskResp"></param>
-        protected virtual Task Failed(TTReq req, TaskResponse<TTRes> taskResp)
+        protected virtual Task FinallyFailed(TTReq req, TaskResponse<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }
@@ -178,83 +104,143 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
+        // 运行
+        private async Task TryRun(TTReq req, TaskResponse<TTRes> taskResp)
+        {
+            string errorMsg;
+            try
+            {
+                await Recurs(req, taskResp);
+
+                return;
+            }
+            catch (ResultException e)
+            {
+                errorMsg = e.ToString();
+                if (taskResp.resp == null)
+                    taskResp.resp = e.ConvertToReultInherit<TTRes>(); //.ConvertToReult<TTRes>();
+            }
+            catch (Exception e)
+            {
+                errorMsg = e.ToString();
+                if (taskResp.resp == null)
+                    taskResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError,
+                        "Error occurred during task [Run]!");
+            }
+
+            taskResp.run_status = TaskRunStatus.RunFailed;
+            var resp = taskResp.resp;
+            LogUtil.Error($"sys_ret:{resp.sys_ret}, ret:{resp.ret},msg:{resp.msg}, Detail:{errorMsg}",
+                TaskMeta.task_id, ModuleName);
+            await TrySaveTaskContext(req, taskResp);
+        }
+
         /// <summary> 
         ///   任务的具体执行
         /// </summary>
         /// <param name="req"></param>
         /// <param name="taskResp"></param>
         /// <returns>  </returns>
-        private async Task Runing(TTReq req, TaskResponse<TTRes> taskResp)
-        {
-            await Recurs(req, taskResp);
-
-            // 判断是否间隔执行,生成重试信息
-            var runCondition = taskResp.task_condition;
-
-            if (taskResp.run_status.IsFailed() && runCondition.interval_times < TaskMeta.interval_times)
-            {
-                runCondition.interval_times++;
-                taskResp.run_status = TaskRunStatus.RunPaused; // TaskResultType.WatingActivation;
-            }
-
-            if (taskResp.run_status.IsFailed())
-            {
-                //  最终失败，执行失败方法
-                await Failed(req, taskResp);
-            }
-        }
-
-        /// <summary>
-        ///   具体递归执行
-        /// </summary>
-        /// <param name="req"></param>
-        /// <param name="taskResp"></param>
-        /// <returns></returns>
         private async Task Recurs(TTReq req, TaskResponse<TTRes> taskResp)
         {
-            var directProcessTimes = 0;
+            var runCondition = taskResp.task_cond;
             do
             {
-                //  直接执行
-                await TryDo(req, taskResp);
-
-                // 判断是否失败回退
-                if (taskResp.run_status.IsFailed())
-                    await Revert(req);
-
-                directProcessTimes++;
-                taskResp.task_condition.exced_times++;
+                await RunLife(req, taskResp);
+                runCondition.loop_times++;
             }
-            // 判断是否执行直接重试 
-            while (taskResp.run_status.IsFailed() && directProcessTimes < TaskMeta.continue_times);
+            while (taskResp.run_status.IsFailed()
+                   && runCondition.loop_times < TaskMeta.loop_times);
 
+            // 判断是否间隔执行,生成重试信息
+            if (taskResp.run_status.IsFailed()
+                && runCondition.tried_times < TaskMeta.retry_times)
+            {
+                runCondition.tried_times++;
+                runCondition.run_timestamp = DateTime.Now.ToUtcSeconds();
+                runCondition.next_timestamp = runCondition.run_timestamp + TaskMeta.retry_seconds;
 
+                taskResp.run_status = TaskRunStatus.RunPaused;  
+                await TrySaveTaskContext(req, taskResp);
+            }
+
+            //  最终失败，执行失败方法
+            if (taskResp.run_status.IsFailed())
+                await FinallyFailed(req, taskResp);
         }
 
+        //  一个完整执行经历的方法
+        private async Task RunLife(TTReq req, TaskResponse<TTRes> taskResp)
+        {
+            // 【1】 执行起始方法 附加校验
+            var checkRes = await RunCheck(req, taskResp);
+            if (!checkRes)
+                return;
+
+            //  直接执行
+            var condition = taskResp.task_cond;
+            var doResp = await TryDo(req, condition.loop_times, condition.tried_times);
+
+            // 判断是否失败回退
+            if (doResp.run_status.IsFailed())
+                await Revert(req, condition.tried_times);
+
+            // 【3】 执行结束方法
+            await RunEnd(req, taskResp);
+        }
+
+
+        private async Task<bool> RunCheck(TTReq req, TaskResponse<TTRes> taskResp)
+        {
+            if (string.IsNullOrEmpty(TaskMeta?.task_id))
+            {
+                taskResp.run_status = TaskRunStatus.RunFailed;
+                taskResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
+                return false;
+            }
+
+            var condition = taskResp.task_cond;
+            var res = await RunStartCheck(req, condition.loop_times, condition.tried_times);
+
+            if (!res.IsSuccess())
+            {
+                taskResp.run_status = TaskRunStatus.RunFailed;
+                taskResp.resp = res.ConvertToResultInherit<TTRes>();
+                return false;
+            }
+
+            return true;
+        }
+        
         //  保证外部异常不会对框架内部运转造成影响
         //  如果失败返回 RunFailed 保证系统后续重试处理
-        private async Task TryDo(TTReq req, TaskResponse<TTRes> taskResp)
+        private async Task<DoResponse<TTRes>> TryDo(TTReq req, int loopTimes, int triedTimes)
         {
+            var doRes = default(DoResponse<TTRes>);
             try
             {
-                var doRes = await Do(req);
-
-                taskResp.run_status = doRes.run_status;
-                taskResp.resp = doRes.resp
-                                ?? new TTRes().WithResult(SysResultTypes.NoResponse,
-                                    "Have no response during task [Do]!");
+                doRes = await Do(req, loopTimes, triedTimes);
+                if (doRes.resp == null)
+                {
+                    doRes.resp = new TTRes().WithResult(SysResultTypes.NoResponse,"Have no response during task [Do]!");
+                }
             }
             catch (Exception e)
             {
-                taskResp.run_status = TaskRunStatus.RunFailed;
-                taskResp.resp =
+                if (doRes == null)
+                    doRes = new DoResponse<TTRes>();
+
+                doRes.run_status = TaskRunStatus.RunFailed;
+                doRes.resp =
                     new TTRes().WithResult(SysResultTypes.ApplicationError, "Error occurred during task [Do]!");
 
                 LogUtil.Error(
-                    $"sys_ret:{taskResp.resp.sys_ret}, ret:{taskResp.resp.ret},msg:{taskResp.resp.msg}, Detail:{e}"
+                    $"sys_ret:{doRes.resp.sys_ret}, ret:{doRes.resp.ret},msg:{doRes.resp.msg}, Detail:{e}"
                     , TaskMeta.task_id, ModuleName);
 
             }
+
+            return doRes;
         }
 
         #endregion

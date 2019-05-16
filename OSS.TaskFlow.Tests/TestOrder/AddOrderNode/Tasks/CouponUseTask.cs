@@ -14,14 +14,14 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
         {
             return new TaskMeta
             {
-                continue_times = 3,
+                loop_times = 3,
                 task_id = "CouponUseTask",
                 task_alias = "使用优惠券" ,
                 node_action = NodeResultAction.FailedOnFailed
             };
         }
 
-        protected override Task<DoResponse<ResultMo>> Do(AddOrderReq req)
+        protected override Task<DoResponse<ResultMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
         {
             var resp = new DoResponse<ResultMo>
             {

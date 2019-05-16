@@ -16,13 +16,13 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
             {
                 task_id = "InsertOrderTask",
                 task_alias = "添加订单！",
-                continue_times = 3,
+                loop_times = 3,
                 node_action = NodeResultAction.FailedOnFailed
             };
         }
 
         /// <inheritdoc />
-        protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq req)
+        protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
         {
             return new DoResponse<ResultIdMo>() {resp = new ResultIdMo(), run_status = TaskRunStatus.RunCompoleted};
         }

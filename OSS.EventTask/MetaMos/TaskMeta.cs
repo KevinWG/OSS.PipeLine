@@ -32,27 +32,22 @@ namespace OSS.EventTask.MetaMos
         ///  结果动作
         /// </summary>
         public NodeResultAction node_action { get; set; }
-        
-        /// <summary>
-        ///  直接重试次数，默认系统执行一次
-        /// </summary>
-        public int continue_times { get; set; }
 
         /// <summary>
-        ///  间隔重试次数, 默认不会执行 
+        ///  直接循环次数
         /// </summary>
-        public int interval_times { get; set; }
+        public int loop_times { get; set; } = 1;
 
-     
+        /// <summary>
+        ///   重试运行次数,默认不重试运行
+        /// </summary>
+        public int retry_times { get; set; } = 0;
+
+        /// <summary>
+        ///  重试的间隔时长（秒）
+        /// </summary>
+        public int retry_seconds { get; set; } = 0;
     }
-
-
-    //public enum TaskMetaStatus
-    //{
-    //    Delete=-1000,
-    //    Disable=-1,
-    //    Enable=0
-    //}
 
     public enum NodeResultAction
     {

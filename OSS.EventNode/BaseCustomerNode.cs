@@ -22,14 +22,14 @@ namespace OSS.EventNode
         {
         }
 
-        protected virtual Task<NodeBasicResponse<TTRes>> Proessing(TTReq req)
+        protected virtual Task<NodeBasicResponse<TTRes>> Proessing(TTReq req, int triedTimes)
         {
             return Task.FromResult<NodeBasicResponse<TTRes>>(null);
         }
 
-        internal override async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp)
+        internal override async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes)
         {
-            var cusRes =await Proessing(req);
+            var cusRes =await Proessing(req,triedTimes);
             if (cusRes == null)
             {
                 nodeResp.resp = new TTRes().WithResult(SysResultTypes.NoResponse,ResultTypes.ObjectNull,$"Customer Node({GetType()}) have no response!");

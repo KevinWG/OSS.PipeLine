@@ -11,7 +11,7 @@ namespace OSS.EventTask.Mos
         /// </summary>
         public TaskRunStatus run_status { get;internal set; }
 
-        public RunCondition task_condition { get;internal set; }
+        public RunCondition task_cond { get;internal set; }
 
         /// <summary>
         ///  返回信息
@@ -39,7 +39,7 @@ namespace OSS.EventTask.Mos
             where TRes : ResultMo, new()
         {
             res.run_status = status;
-            res.task_condition = condition;
+            res.task_cond = condition;
             res.resp =new TRes().WithResult(SysResultTypes.ApplicationError, msg??"Task Error！");
             return res;
         }

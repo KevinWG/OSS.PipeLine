@@ -48,10 +48,53 @@ namespace OSS.EventNode
 
         #endregion
 
-        protected virtual Task TrySaveNodeContext(TTReq req, NodeResponse<TTRes> taskResp)
+        #region 扩展方法
+
+        /// <summary>
+        ///  保存对应运行请求和重试相关信息
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Task SaveNodekContext(TTReq req, TTRes resp, 
+            RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
         {
             return Task.CompletedTask;
         }
+
+        /// <summary>
+        ///  保存对应运行请求和重试相关信息
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Task SaveErrorNodeContext(TTReq req, TTRes resp,
+            RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
+        {
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
+        #region 辅助方法
+
+        private Task TrySaveNodeContext(TTReq req, NodeResponse<TTRes> nodeResp)
+        {
+            try
+            {
+                var blockTaskResp = nodeResp[nodeResp.block_taskid];
+
+                return nodeResp.node_status == NodeStatus.ProcessPaused
+                    ? SaveNodekContext(req, nodeResp.resp, blockTaskResp.task_cond, nodeResp.TaskResults)
+                    : SaveErrorNodeContext(req, nodeResp.resp, blockTaskResp.task_cond, nodeResp.TaskResults);
+            }
+            catch (Exception e)
+            {
+                //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
+                LogUtil.Error($"Errors occurred during [Task context] saving. Detail:{e}", NodeMeta.node_id,
+                    ModuleName);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        #endregion
     }
 
 

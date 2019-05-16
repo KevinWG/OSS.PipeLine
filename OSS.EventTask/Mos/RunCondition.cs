@@ -3,18 +3,23 @@
     public class RunCondition
     {
         /// <summary>
-        ///  执行总次数
+        ///  单词执行内部循环错误
         /// </summary>
-        public int exced_times { get; internal set; }
+        public int loop_times { get; set; }
 
         /// <summary>
         ///  间隔执行次数
         /// </summary>
-        public int interval_times { get; internal set; }
+        public int tried_times { get; internal set; }
 
         /// <summary>
-        ///  上次执行时间
+        ///  当前执行时间戳
         /// </summary>
-        public long last_Processdate { get; set; }
+        public long run_timestamp { get; set; }
+
+        /// <summary>
+        ///  下次时间戳
+        /// </summary>
+        public long next_timestamp { get; set; }
     }
 }

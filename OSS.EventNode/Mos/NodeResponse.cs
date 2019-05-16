@@ -29,6 +29,11 @@ namespace OSS.EventNode.Mos
         public IList<TaskMeta> RevrtTasks { get; internal set; }
 
         /// <summary>
+        ///  当前阻断执行的任务Id
+        /// </summary>
+        public string block_taskid{ get; set; }
+
+        /// <summary>
         ///  节点任务处理结果
         /// </summary>
         public IDictionary<TaskMeta, TaskResponse<ResultMo>> TaskResults { get; internal set; }

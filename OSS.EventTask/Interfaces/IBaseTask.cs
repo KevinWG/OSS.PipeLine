@@ -11,8 +11,8 @@ namespace OSS.EventTask.Interfaces
         string ModuleName { get; set; }
         //InstanceType InstanceTaskType { get; }
 
-        Task<bool> Revert(TTReq req);
-        Task<TaskResponse<ResultMo>> Run(TTReq req, RunCondition runCondition);
+        Task<bool> Revert(TTReq req,  int triedTimes);
+        Task<TaskResponse<ResultMo>> Run(TTReq req, int triedTimes);
     }
 
 
