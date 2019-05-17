@@ -11,9 +11,9 @@ namespace OSS.EventNode.Executor
     public static class SequenceNodeExtention
     {
         ///  顺序执行
-        internal static async Task Excuting_Sequence<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node,
-            TTReq req,NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks,int triedTimes)
-            where TTReq : class where TTRes : ResultMo, new()
+        internal static async Task Excuting_Sequence<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
+            TTData req,NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,int triedTimes)
+            where TTData : class where TTRes : ResultMo, new()
         {
             nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResponse<ResultMo>>(tasks.Count);
             nodeResp.node_status = NodeStatus.ProcessCompoleted; // 默认成功，给出最大值，循环内部处理
@@ -36,9 +36,9 @@ namespace OSS.EventNode.Executor
 
 
         //  顺序任务 回退当前任务之前所有任务
-        internal static async Task Excuting_SequenceRevert<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node,TTReq req, NodeResponse<TTRes> nodeResp,
-            IList<IBaseTask<TTReq>> tasks,string blockTaskId,int triedTimes)
-            where TTReq : class where TTRes : ResultMo, new()
+        internal static async Task Excuting_SequenceRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData req, NodeResponse<TTRes> nodeResp,
+            IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
+            where TTData : class where TTRes : ResultMo, new()
         {
             if (nodeResp.RevrtTasks==null)
                 nodeResp.RevrtTasks=new List<TaskMeta>(tasks.Count);

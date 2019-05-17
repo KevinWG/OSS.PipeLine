@@ -15,9 +15,9 @@ namespace OSS.EventNode.Executor
     public static class ParallelNodeExtention
     {
         //   并行执行任务扩展
-        internal static async Task Excuting_Parallel<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node,TTReq req,
-            NodeResponse<TTRes> nodeResp,IList<IBaseTask<TTReq>> tasks,int triedTimes)
-            where TTReq : class
+        internal static async Task Excuting_Parallel<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData req,
+            NodeResponse<TTRes> nodeResp,IList<IBaseTask<TTData>> tasks,int triedTimes)
+            where TTData : class
             where TTRes : ResultMo, new()
         {
             var taskResults =
@@ -52,9 +52,9 @@ namespace OSS.EventNode.Executor
         }
         
         // 并行任务回退处理（回退当前其他所有任务）
-        internal static async Task Excuting_ParallelRevert<TTReq, TTRes>(this BaseNode<TTReq, TTRes> node,
-            TTReq req,NodeResponse<TTRes> nodeResp,IList<IBaseTask<TTReq>> tasks,string blockTaskId,int triedTimes)
-            where TTReq : class where TTRes : ResultMo, new()
+        internal static async Task Excuting_ParallelRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
+            TTData req,NodeResponse<TTRes> nodeResp,IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
+            where TTData : class where TTRes : ResultMo, new()
         {
             var revResList = tasks.Select(tItem => tItem.TaskMeta.task_id== blockTaskId
                     ? Task.FromResult(true)

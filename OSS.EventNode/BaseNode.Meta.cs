@@ -16,13 +16,13 @@ namespace OSS.EventNode
     /// <summary>
     ///  节点运行时元数据信息
     /// </summary>
-    public abstract partial class BaseNode<TTReq, TTRes> : BaseMetaProvider<NodeMeta>, IBaseNode<TTReq, TTRes>
-        where TTReq : class
+    public abstract partial class BaseNode<TTData, TTRes> : BaseMetaProvider<NodeMeta>, IBaseNode<TTData, TTRes>
+        where TTData : class
         where TTRes : ResultMo, new()
     {
         // 内部成员
         private const string _moduleName = "OSS.EventNode";
-        //internal INodeProvider<TTReq> m_metaProvider;
+        //internal INodeProvider<TTData> m_metaProvider;
 
         /// <summary>
         /// 节点mata 信息
@@ -44,7 +44,7 @@ namespace OSS.EventNode
 
         #region 内部基础方法
 
-        protected abstract Task<List<IBaseTask<TTReq>>> GetTasks();
+        protected abstract Task<List<IBaseTask<TTData>>> GetTasks();
 
         #endregion
 
@@ -54,7 +54,7 @@ namespace OSS.EventNode
         ///  保存对应运行请求和重试相关信息
         /// </summary>
         /// <returns></returns>
-        protected virtual Task SaveNodekContext(TTReq req, TTRes resp, 
+        protected virtual Task SaveNodekContext(TTData req, TTRes resp, 
             RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
         {
             return Task.CompletedTask;
@@ -64,7 +64,7 @@ namespace OSS.EventNode
         ///  保存对应运行请求和重试相关信息
         /// </summary>
         /// <returns></returns>
-        protected virtual Task SaveErrorNodeContext(TTReq req, TTRes resp,
+        protected virtual Task SaveErrorNodeContext(TTData req, TTRes resp,
             RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
         {
             return Task.CompletedTask;
@@ -74,7 +74,7 @@ namespace OSS.EventNode
 
         #region 辅助方法
 
-        private Task TrySaveNodeContext(TTReq req, NodeResponse<TTRes> nodeResp)
+        private Task TrySaveNodeContext(TTData req, NodeResponse<TTRes> nodeResp)
         {
             try
             {

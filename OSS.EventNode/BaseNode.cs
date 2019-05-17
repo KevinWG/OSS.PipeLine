@@ -14,19 +14,17 @@ namespace OSS.EventNode
 {
     /// <summary>
     ///  基础工作节点
-    /// todo  重新激活处理
     /// </summary>
-    public abstract partial class BaseNode<TTReq, TTRes>
+    public abstract partial class BaseNode<TTData, TTRes>
     {
         #region 节点执行入口
 
         // 基类入口方法
-        public Task<NodeResponse<TTRes>> Process(TTReq req)
+        public Task<NodeResponse<TTRes>> Process(TTData req)
         {
             var nodeResp = new NodeResponse<TTRes> { node_status = NodeStatus.WaitProcess };
             return TryProcess(req, nodeResp, 0,null);
         }
-
 
         /// <summary>
         ///  处理入口
@@ -35,14 +33,13 @@ namespace OSS.EventNode
         /// <param name="triedTimes">已经处理过的次数，重试时需要传入</param>
         /// <param name="taskIds">重试的任务Id</param>
         /// <returns></returns>
-        public Task<NodeResponse<TTRes>> Process(TTReq req, int triedTimes, params string[] taskIds)
+        public Task<NodeResponse<TTRes>> Process(TTData req, int triedTimes, params string[] taskIds)
         {
             var nodeResp = new NodeResponse<TTRes> {node_status = NodeStatus.WaitProcess};
             return TryProcess(req, nodeResp, triedTimes, taskIds);
         }
 
-
-        private async Task<NodeResponse<TTRes>> TryProcess(TTReq req,NodeResponse<TTRes> nodeResp,int triedTimes,params string[] taskIds)
+        private async Task<NodeResponse<TTRes>> TryProcess(TTData req,NodeResponse<TTRes> nodeResp,int triedTimes,params string[] taskIds)
         {
             try
             {
@@ -82,12 +79,12 @@ namespace OSS.EventNode
 
         #region 生命周期扩展方法
 
-        protected virtual Task<TTRes> ProcessPreCheck(TTReq req, int triedTimes)
+        protected virtual Task<TTRes> ProcessPreCheck(TTData req, int triedTimes)
         {
             return Task.FromResult(new TTRes());
         }
 
-        protected virtual Task ProcessEnd(TTReq req, NodeResponse<TTRes> resp, int triedTimes)
+        protected virtual Task ProcessEnd(TTData req, NodeResponse<TTRes> resp, int triedTimes)
         {
             return Task.CompletedTask;
         }
@@ -96,7 +93,7 @@ namespace OSS.EventNode
 
         #region 内部扩展方法
 
-        private async Task<bool> ProcessCheck(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes,params  string[] taskIds)
+        private async Task<bool> ProcessCheck(TTData req, NodeResponse<TTRes> nodeResp, int triedTimes,params  string[] taskIds)
         {
             if (triedTimes > 0 && (taskIds == null || taskIds.Length == 0))
             {
@@ -120,10 +117,15 @@ namespace OSS.EventNode
         }
 
 
-        internal virtual async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes,params string[] taskIds)
+        internal virtual async Task Excuting(TTData req, NodeResponse<TTRes> nodeResp, int triedTimes,
+            params string[] taskIds)
         {
             // 获取任务元数据列表
             var tasks = await GetTasks();
+
+            if (tasks != null && triedTimes > 0)
+                tasks = tasks.Where(t => taskIds.Contains(t.TaskMeta.task_id)).ToList();
+
             if (tasks == null || !tasks.Any())
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
@@ -132,11 +134,9 @@ namespace OSS.EventNode
                 return;
             }
 
-            if (triedTimes>0)
-            {
+            if (triedTimes > 0)
                 tasks = tasks.Where(t => taskIds.Contains(t.TaskMeta.task_id)).ToList();
-            }
-            
+
             // 执行处理结果
             await ExcutingWithTasks(req, nodeResp, tasks, triedTimes);
         }
@@ -144,29 +144,26 @@ namespace OSS.EventNode
         #endregion
 
         #region 辅助方法 —— 节点内部任务执行
-        
-        private async Task ExcutingWithTasks(TTReq req, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTReq>> tasks,int triedTimes)
+
+        private async Task ExcutingWithTasks(TTData req, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,
+            int triedTimes)
         {
             if (NodeMeta.Process_type == NodeProcessType.Parallel)
-            {
                 await this.Excuting_Parallel(req, nodeResp, tasks, triedTimes);
-                if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
-                {
-                    var revertTasks = triedTimes > 0 ? (await GetTasks()) : tasks;
-                    await this.Excuting_ParallelRevert(req, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
-                }
-            }
             else
-            {
                 await this.Excuting_Sequence(req, nodeResp, tasks, triedTimes);
-                if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
-                {
-                    var revertTasks = triedTimes > 0 ? (await GetTasks()) : tasks;
+
+            //  处理回退其他任务
+            if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
+            {
+                var revertTasks = triedTimes > 0 ? (await GetTasks()) : tasks;
+
+                if (NodeMeta.Process_type == NodeProcessType.Parallel)
+                    await this.Excuting_ParallelRevert(req, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
+                else
                     await this.Excuting_SequenceRevert(req, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
-                }
             }
         }
-
         #endregion
     }
 }

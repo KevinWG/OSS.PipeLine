@@ -61,9 +61,9 @@ namespace OSS.EventNode.Executor
             return false;
         }
         //  尝试获取任务执行结果
-        internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTReq>(TTReq req, IBaseTask<TTReq> task,
+        internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTData>(TTData req, IBaseTask<TTData> task,
             int triedTimes)
-            where TTReq : class
+            where TTData : class
         {
             //if (nodeInsType == InstanceType.Stand && task.InstanceTaskType == InstanceType.Domain)
             //{
@@ -98,7 +98,7 @@ namespace OSS.EventNode.Executor
 
 
         //  尝试回退任务
-        internal static Task<bool> TryRevertTask<TTReq>(IBaseTask<TTReq> task, TTReq req,  int triedTimes)
+        internal static Task<bool> TryRevertTask<TTData>(IBaseTask<TTData> task, TTData req,  int triedTimes)
         {
             try
             {

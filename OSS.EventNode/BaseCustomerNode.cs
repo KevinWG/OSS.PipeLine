@@ -9,9 +9,9 @@ namespace OSS.EventNode
     /// <summary>
     ///  自定义节点实现
     /// </summary>
-    /// <typeparam name="TTReq"></typeparam>
+    /// <typeparam name="TTData"></typeparam>
     /// <typeparam name="TTRes"></typeparam>
-    public abstract class BaseCustomerNode<TTReq, TTRes> : BaseNode<TTReq, TTRes> where TTReq : class
+    public abstract class BaseCustomerNode<TTData, TTRes> : BaseNode<TTData, TTRes> where TTData : class
         where TTRes : ResultMo, new()
     {
         protected BaseCustomerNode():this(null)
@@ -22,14 +22,12 @@ namespace OSS.EventNode
         {
         }
 
-        protected virtual Task<NodeBasicResponse<TTRes>> Proessing(TTReq req, int triedTimes)
+        protected virtual Task<NodeBasicResponse<TTRes>> Proessing(TTData req, int triedTimes)
         {
             return Task.FromResult<NodeBasicResponse<TTRes>>(null);
         }
-
-
-
-        internal override async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes, params string[] taskIds)
+        
+        internal override async Task Excuting(TTData req, NodeResponse<TTRes> nodeResp, int triedTimes, params string[] taskIds)
         {
             var cusRes = await Proessing(req, triedTimes);
             if (cusRes == null)

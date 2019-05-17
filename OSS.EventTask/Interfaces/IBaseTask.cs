@@ -5,14 +5,14 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask.Interfaces
 {
-    public interface IBaseTask<in TTReq>
+    public interface IBaseTask<in TTData>
     {
         TaskMeta TaskMeta { get; }
         string ModuleName { get; set; }
         //InstanceType InstanceTaskType { get; }
 
-        Task<bool> Revert(TTReq req,  int triedTimes);
-        Task<TaskResponse<ResultMo>> Run(TTReq req, int triedTimes);
+        Task<bool> Revert(TTData req,  int triedTimes);
+        Task<TaskResponse<ResultMo>> Run(TTData req, int triedTimes);
     }
 
 

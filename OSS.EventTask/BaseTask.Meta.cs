@@ -9,8 +9,8 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTReq, TTRes> : BaseMetaProvider<TaskMeta>, IBaseTask<TTReq>
-        where TTReq : class 
+    public abstract partial class BaseTask<TTData, TTRes> : BaseMetaProvider<TaskMeta>, IBaseTask<TTData>
+        where TTData : class 
         where TTRes : ResultMo, new()
     {
         public TaskMeta TaskMeta => GetConfig();
@@ -39,7 +39,7 @@ namespace OSS.EventTask
         /// <param name="resp"></param>
         /// <param name="cond"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskContext(TTReq req,TTRes resp,RunCondition cond)
+        protected virtual Task SaveTaskContext(TTData req,TTRes resp,RunCondition cond)
         {
             return Task.CompletedTask;
         }
@@ -53,7 +53,7 @@ namespace OSS.EventTask
         /// <param name="resp"></param>
         /// <param name="cond"></param>
         /// <returns></returns>
-        protected virtual Task SaveErrorTaskContext(TTReq req, TTRes resp, RunCondition cond)
+        protected virtual Task SaveErrorTaskContext(TTData req, TTRes resp, RunCondition cond)
         {
             return Task.CompletedTask;
         }
@@ -62,7 +62,7 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
-        private Task TrySaveTaskContext(TTReq req, TaskResponse<TTRes> taskResp)
+        private Task TrySaveTaskContext(TTData req, TaskResponse<TTRes> taskResp)
         {
             try
             {
