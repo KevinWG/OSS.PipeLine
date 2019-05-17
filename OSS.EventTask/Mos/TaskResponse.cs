@@ -4,7 +4,7 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask.Mos
 {
-    public class TaskResponse<TRes>
+    public class TaskResp<TRes>
     {
         /// <summary>
         ///  运行状态
@@ -19,7 +19,7 @@ namespace OSS.EventTask.Mos
         public TRes resp { get; internal set; }
     }
     
-    public class DoResponse<TRes>
+    public class DoResp<TRes>
     {
         /// <summary>
         ///  运行状态
@@ -35,7 +35,7 @@ namespace OSS.EventTask.Mos
 
     public static class TaskResponseExtention
     {
-        public static TaskResponse<TRes> WithError<TRes>(this TaskResponse<TRes> res,TaskRunStatus status, RunCondition condition,string msg=null)
+        public static TaskResp<TRes> WithError<TRes>(this TaskResp<TRes> res,TaskRunStatus status, RunCondition condition,string msg=null)
             where TRes : ResultMo, new()
         {
             res.run_status = status;
@@ -44,7 +44,7 @@ namespace OSS.EventTask.Mos
             return res;
         }
 
-        public static void SetToTaskResp<TRes>(this DoResponse<TRes> res, TaskResponse<TRes> taskResp)
+        public static void SetToTaskResp<TRes>(this DoResp<TRes> res, TaskResp<TRes> taskResp)
             where TRes : ResultMo, new()
         {
             taskResp.run_status = res.run_status;

@@ -23,10 +23,10 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
         }
 
         /// <inheritdoc />
-        protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
+        protected override async Task<DoResp<ResultIdMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
             throw new ArgumentNullException("sssssss");
-            return new DoResponse<ResultIdMo>()
+            return new DoResp<ResultIdMo>()
             {
                 resp = new ResultIdMo("1000"),
                 run_status = TaskRunStatus.RunCompoleted

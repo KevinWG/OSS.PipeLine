@@ -9,6 +9,8 @@ using OSS.EventNode.Executor;
 using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
+using OSS.EventTask.Mos;
 
 namespace OSS.EventNode
 {
@@ -20,26 +22,26 @@ namespace OSS.EventNode
         #region 节点执行入口
 
         // 基类入口方法
-        public Task<NodeResponse<TTRes>> Process(TTData data)
+        public Task<NodeResp<TTRes>> Process(TTData data)
         {
-            var nodeResp = new NodeResponse<TTRes> { node_status = NodeStatus.WaitProcess };
+            var nodeResp = new NodeResp<TTRes> { node_status = NodeStatus.WaitProcess };
             return TryProcess(data, nodeResp, 0,null);
         }
 
         /// <summary>
         ///  处理入口
         /// </summary>
-        /// <param name="req">请求数据</param>
+        /// <param name="data">请求数据</param>
         /// <param name="triedTimes">已经处理过的次数，重试时需要传入</param>
         /// <param name="taskIds">重试的任务Id</param>
         /// <returns></returns>
-        public Task<NodeResponse<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
+        public Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
-            var nodeResp = new NodeResponse<TTRes> {node_status = NodeStatus.WaitProcess};
+            var nodeResp = new NodeResp<TTRes> {node_status = NodeStatus.WaitProcess};
             return TryProcess(data, nodeResp, triedTimes, taskIds);
         }
 
-        private async Task<NodeResponse<TTRes>> TryProcess(TTData data,NodeResponse<TTRes> nodeResp,int triedTimes,params string[] taskIds)
+        private async Task<NodeResp<TTRes>> TryProcess(TTData data,NodeResp<TTRes> nodeResp,int triedTimes,params string[] taskIds)
         {
             try
             {
@@ -50,6 +52,13 @@ namespace OSS.EventNode
 
                 // 【2】 任务处理执行方法
                 await Excuting(data, nodeResp, triedTimes,taskIds);
+
+                var pResp = await Processed(data, nodeResp.node_status, nodeResp.TaskResults, triedTimes);
+                if (pResp!=null)
+                {
+                    nodeResp.node_status = pResp.node_status;
+                    nodeResp.resp = pResp.resp;
+                }
 
                 //  【3】 扩展后置执行方法
                 await ProcessEnd(data, nodeResp,triedTimes);
@@ -79,12 +88,38 @@ namespace OSS.EventNode
 
         #region 生命周期扩展方法
 
-        protected virtual Task<TTRes> ProcessPreCheck(TTData data, int triedTimes)
+        /// <summary>
+        /// 处理前初始化检查等处理
+        /// </summary>
+        /// <param name="data">处理数据</param>
+        /// <param name="triedTimes">已经处理过的次数</param>
+        /// <returns></returns>
+        protected virtual Task<ResultMo> ProcessInitial(TTData data, int triedTimes)
         {
-            return Task.FromResult(new TTRes());
+            return Task.FromResult<ResultMo>(null);
         }
 
-        protected virtual Task ProcessEnd(TTData data, NodeResponse<TTRes> resp, int triedTimes)
+        /// <summary>
+        ///   关联任务执行后的结果再处理
+        /// </summary>
+        /// <param name="data">处理数据</param>
+        /// <param name="nodeStatus">根据任务结果列表获取的节点状态</param>
+        /// <param name="results">任务对应的结果列表</param>
+        /// <param name="triedTimes">已经处理过的次数</param>
+        /// <returns> 如果返回空，系统返回结果将根据对应任务状态和返回类型取值 </returns>
+        protected virtual Task<ProcessResp<TTRes>> Processed(TTData data, NodeStatus nodeStatus, IDictionary<TaskMeta, TaskResp<ResultMo>> results, int triedTimes)
+        {
+            return Task.FromResult<ProcessResp<TTRes>>(null);
+        }
+
+        /// <summary>
+        /// 节点处理结束
+        /// </summary>
+        /// <param name="data">处理数据</param>
+        /// <param name="resp">节点处理返回值</param>
+        /// <param name="triedTimes">已经处理过的次数</param>
+        /// <returns></returns>
+        protected virtual Task ProcessEnd(TTData data, NodeResp<TTRes> resp, int triedTimes)
         {
             return Task.CompletedTask;
         }
@@ -93,7 +128,7 @@ namespace OSS.EventNode
 
         #region 内部扩展方法
 
-        private async Task<bool> ProcessCheck(TTData data, NodeResponse<TTRes> nodeResp, int triedTimes,params  string[] taskIds)
+        private async Task<bool> ProcessCheck(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,params  string[] taskIds)
         {
             if (triedTimes > 0 && (taskIds == null || taskIds.Length == 0))
             {
@@ -106,18 +141,19 @@ namespace OSS.EventNode
                 return false;
             }
             
-            var res = await ProcessPreCheck(data, triedTimes);
-            if (!res.IsSuccess())
+            var res = await ProcessInitial(data, triedTimes);
+            if (res!=null&&!res.IsSuccess())
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp = res;
+                nodeResp.resp = res.ConvertToResultInherit<TTRes>();
                 return false;
             }
             return true;
         }
 
 
-        internal virtual async Task Excuting(TTData data, NodeResponse<TTRes> nodeResp, int triedTimes,
+
+        internal virtual async Task Excuting(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,
             params string[] taskIds)
         {
             // 获取任务元数据列表
@@ -128,14 +164,11 @@ namespace OSS.EventNode
 
             if (tasks == null || !tasks.Any())
             {
-                nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
-                    $"{this.GetType()} have no tasks can be Runed!");
+                //nodeResp.node_status = NodeStatus.ProcessFailed;
+                //nodeResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
+                //    $"{this.GetType()} have no tasks can be Runed!");
                 return;
             }
-
-            if (triedTimes > 0)
-                tasks = tasks.Where(t => taskIds.Contains(t.TaskMeta.task_id)).ToList();
 
             // 执行处理结果
             await ExcutingWithTasks(data, nodeResp, tasks, triedTimes);
@@ -145,7 +178,7 @@ namespace OSS.EventNode
 
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task ExcutingWithTasks(TTData data, NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,
+        private async Task ExcutingWithTasks(TTData data, NodeResp<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,
             int triedTimes)
         {
             if (NodeMeta.Process_type == NodeProcessType.Parallel)

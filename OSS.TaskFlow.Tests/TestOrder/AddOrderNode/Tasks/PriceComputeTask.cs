@@ -20,17 +20,13 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
                 node_action = NodeResultAction.FailedOnFailed
             };
         }
-
-
-        protected override async Task<DoResponse<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
+        protected override async Task<DoResp<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
-            return new DoResponse<ResultMo>()
+            return new DoResp<ResultMo>()
             {
                 run_status = TaskRunStatus.RunCompoleted,
                 resp = new ResultMo()
             };
         }
-
-      
     }
 }

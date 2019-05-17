@@ -1,4 +1,4 @@
-﻿namespace OSS.EventTask.Mos
+﻿namespace OSS.EventNode.Interfaces
 {
     public interface IExecuteData
     {

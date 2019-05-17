@@ -16,6 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.EventNode", "OSS.EventN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.EventFlow", "OSS.EventFlow\OSS.EventFlow.csproj", "{E97EDEB8-274B-4777-819B-D265F7C04455}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AsyncLink", "AsyncLink", "{F87FBC0C-9A76-4E97-83A8-B9B3E15432CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSS.AsyncLink", "OSS.AsyncLink\OSS.AsyncLink\OSS.AsyncLink.csproj", "{D40E8883-7E29-4767-86D2-C09FDE001625}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,9 +42,16 @@ Global
 		{E97EDEB8-274B-4777-819B-D265F7C04455}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E97EDEB8-274B-4777-819B-D265F7C04455}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E97EDEB8-274B-4777-819B-D265F7C04455}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D40E8883-7E29-4767-86D2-C09FDE001625}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D40E8883-7E29-4767-86D2-C09FDE001625}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D40E8883-7E29-4767-86D2-C09FDE001625}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D40E8883-7E29-4767-86D2-C09FDE001625}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D40E8883-7E29-4767-86D2-C09FDE001625} = {F87FBC0C-9A76-4E97-83A8-B9B3E15432CE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5D7627E-6294-458A-88F8-15FBBEF5D080}

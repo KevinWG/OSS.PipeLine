@@ -12,10 +12,10 @@ namespace OSS.EventNode.Executor
     {
         ///  顺序执行
         internal static async Task Excuting_Sequence<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
-            TTData data,NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,int triedTimes)
+            TTData data,NodeResp<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {
-            nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResponse<ResultMo>>(tasks.Count);
+            nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResp<ResultMo>>(tasks.Count);
             nodeResp.node_status = NodeStatus.ProcessCompoleted; // 默认成功，给出最大值，循环内部处理
             
             foreach (var tItem in tasks)
@@ -36,7 +36,7 @@ namespace OSS.EventNode.Executor
 
 
         //  顺序任务 回退当前任务之前所有任务
-        internal static async Task Excuting_SequenceRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data, NodeResponse<TTRes> nodeResp,
+        internal static async Task Excuting_SequenceRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data, NodeResp<TTRes> nodeResp,
             IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {

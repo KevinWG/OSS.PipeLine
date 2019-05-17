@@ -13,7 +13,7 @@ namespace OSS.EventNode.Executor
     internal class ExecutorUtil
     {
         // 根据任务结果格式化当前节点结果， 外部循环使用
-        internal static bool FormatNodeErrorResp<TTRes>(NodeResponse<TTRes> nodeResp, TaskResponse<ResultMo> taskResp,
+        internal static bool FormatNodeErrorResp<TTRes>(NodeResp<TTRes> nodeResp, TaskResp<ResultMo> taskResp,
             TaskMeta tMeta)
             where TTRes : ResultMo, new()
         {
@@ -61,7 +61,7 @@ namespace OSS.EventNode.Executor
             return false;
         }
         //  尝试获取任务执行结果
-        internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTData>(TTData data, IBaseTask<TTData> task,
+        internal static async Task<TaskResp<ResultMo>> TryGetTaskItemResult<TTData>(TTData data, IBaseTask<TTData> task,
             int triedTimes)
             where TTData : class
         {
@@ -79,7 +79,7 @@ namespace OSS.EventNode.Executor
                 LogUtil.Error($"An error occurred while the task was running. Detail：{ex}", task.TaskMeta.node_id, task.ModuleName);
             }
 
-            return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
+            return new TaskResp<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
                 "Task of node run error!");
         }
 

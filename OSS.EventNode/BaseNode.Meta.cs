@@ -55,7 +55,7 @@ namespace OSS.EventNode
         /// </summary>
         /// <returns></returns>
         protected virtual Task SaveNodekContext(TTData data, TTRes resp, 
-            RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
+            RunCondition cond, IDictionary<TaskMeta, TaskResp<ResultMo>> taskResults)
         {
             return Task.CompletedTask;
         }
@@ -65,7 +65,7 @@ namespace OSS.EventNode
         /// </summary>
         /// <returns></returns>
         protected virtual Task SaveErrorNodeContext(TTData data, TTRes resp,
-            RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
+            RunCondition cond, IDictionary<TaskMeta, TaskResp<ResultMo>> taskResults)
         {
             return Task.CompletedTask;
         }
@@ -74,7 +74,7 @@ namespace OSS.EventNode
 
         #region 辅助方法
 
-        private Task TrySaveNodeContext(TTData data, NodeResponse<TTRes> nodeResp)
+        private Task TrySaveNodeContext(TTData data, NodeResp<TTRes> nodeResp)
         {
             try
             {

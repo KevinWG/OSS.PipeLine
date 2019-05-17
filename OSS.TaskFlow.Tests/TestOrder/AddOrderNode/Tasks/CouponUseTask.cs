@@ -21,9 +21,9 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
             };
         }
 
-        protected override Task<DoResponse<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
+        protected override Task<DoResp<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
-            var resp = new DoResponse<ResultMo>
+            var resp = new DoResp<ResultMo>
             {
                 run_status = TaskRunStatus.RunCompoleted,
                 resp = new ResultMo()

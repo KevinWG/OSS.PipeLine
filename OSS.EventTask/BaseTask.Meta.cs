@@ -35,7 +35,7 @@ namespace OSS.EventTask
         ///    【仅在 OwnerType = OwnerType.Task 时发生】
         ///     节点下的环境信息，由节点内部处理,防止节点其他耗时任务造成执行过程中发起重试操作 
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="resp"></param>
         /// <param name="cond"></param>
         /// <returns></returns>
@@ -49,7 +49,7 @@ namespace OSS.EventTask
         ///    【仅在 OwnerType = OwnerType.Task 时发生】
         ///     节点下的环境信息，由节点内部处理,防止节点其他耗时任务造成执行过程中发起重试操作 
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="resp"></param>
         /// <param name="cond"></param>
         /// <returns></returns>
@@ -62,7 +62,7 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
-        private Task TrySaveTaskContext(TTData data, TaskResponse<TTRes> taskResp)
+        private Task TrySaveTaskContext(TTData data, TaskResp<TTRes> taskResp)
         {
             try
             {

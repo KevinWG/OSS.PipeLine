@@ -1,5 +1,4 @@
 ﻿using OSS.EventNode.MetaMos;
-using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.Interfaces
 {

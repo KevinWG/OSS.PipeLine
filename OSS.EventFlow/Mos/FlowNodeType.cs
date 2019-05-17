@@ -1,4 +1,0 @@
-﻿namespace OSS.EventFlow.Mos
-{
-
-}

@@ -14,11 +14,11 @@ namespace OSS.EventTask
     {
         #region 任务进入入口
 
-        public Task<TaskResponse<TTRes>> Run(TTData data)=> Run(data, 0);
+        public Task<TaskResp<TTRes>> Run(TTData data)=> Run(data, 0);
         
-        public async Task<TaskResponse<TTRes>> Run(TTData data, int triedTimes)
+        public async Task<TaskResp<TTRes>> Run(TTData data, int triedTimes)
         {
-            var taskResp = new TaskResponse<TTRes>
+            var taskResp = new TaskResp<TTRes>
             {
                 task_cond = new RunCondition(){tried_times = triedTimes}
             };
@@ -27,10 +27,10 @@ namespace OSS.EventTask
             return taskResp;
         }
 
-        async Task<TaskResponse<ResultMo>> IBaseTask<TTData>.Run(TTData data, int triedTimes)
+        async Task<TaskResp<ResultMo>> IBaseTask<TTData>.Run(TTData data, int triedTimes)
         {
             var taskResp = await Run(data, triedTimes);
-            return new TaskResponse<ResultMo>()
+            return new TaskResp<ResultMo>()
             {
                 run_status = taskResp.run_status,resp = taskResp.resp,task_cond = taskResp.task_cond
             };
@@ -43,7 +43,7 @@ namespace OSS.EventTask
         /// <summary>
         /// 任务开始方法
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="loopTimes">循环执行次数，当次运行过程中的循环执行次数，默认是1</param>
         /// <param name="triedTimes">重新重试次数，默认是0</param>
         /// <returns></returns>
@@ -55,10 +55,10 @@ namespace OSS.EventTask
         /// <summary>
         /// 任务结束方法
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="context">请求的上下文</param>
         /// <returns></returns>
-        protected virtual Task RunEnd(TTData data, TaskResponse<TTRes> context)
+        protected virtual Task RunEnd(TTData data, TaskResp<TTRes> context)
         {
             return Task.CompletedTask;
         }
@@ -70,19 +70,19 @@ namespace OSS.EventTask
         /// <summary>
         ///     任务的具体执行
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="loopTimes">内部循环执行次数</param>
         /// <param name="triedTimes">重试运行次数</param>
         /// <returns> 
         ///  runStatus = TaskRunStatus.RunFailed 系统会字段判断是否满足重试条件执行重试
         /// </returns>
-        protected abstract Task<DoResponse<TTRes>> Do(TTData data, int loopTimes, int triedTimes);
+        protected abstract Task<DoResp<TTRes>> Do(TTData data, int loopTimes, int triedTimes);
 
         /// <summary>
         ///  执行失败回退操作
         ///   如果设置了重试配置，调用后重试
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="triedTimes">重试运行次数</param>
         public virtual Task<bool> Revert(TTData data, int triedTimes)
         {
@@ -92,9 +92,9 @@ namespace OSS.EventTask
         /// <summary>
         ///  最终失败执行方法
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="taskResp"></param>
-        protected virtual Task FinallyFailed(TTData data, TaskResponse<TTRes> taskResp)
+        protected virtual Task FinallyFailed(TTData data, TaskResp<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }
@@ -104,7 +104,7 @@ namespace OSS.EventTask
         #region 辅助方法
 
         // 运行
-        private async Task TryRun(TTData data, TaskResponse<TTRes> taskResp)
+        private async Task TryRun(TTData data, TaskResp<TTRes> taskResp)
         {
             string errorMsg;
             try
@@ -136,10 +136,10 @@ namespace OSS.EventTask
         /// <summary> 
         ///   任务的具体执行
         /// </summary>
-        /// <param name="req"></param>
+        /// <param name="data"></param>
         /// <param name="taskResp"></param>
         /// <returns>  </returns>
-        private async Task Recurs(TTData data, TaskResponse<TTRes> taskResp)
+        private async Task Recurs(TTData data, TaskResp<TTRes> taskResp)
         {
             var runCondition = taskResp.task_cond;
             do
@@ -169,7 +169,7 @@ namespace OSS.EventTask
         }
 
         //  一个完整执行经历的方法
-        private async Task RunLife(TTData data, TaskResponse<TTRes> taskResp)
+        private async Task RunLife(TTData data, TaskResp<TTRes> taskResp)
         {
             // 【1】 执行起始方法 附加校验
             var checkRes = await RunCheck(data, taskResp);
@@ -190,7 +190,7 @@ namespace OSS.EventTask
         }
 
 
-        private async Task<bool> RunCheck(TTData data, TaskResponse<TTRes> taskResp)
+        private async Task<bool> RunCheck(TTData data, TaskResp<TTRes> taskResp)
         {
             if (string.IsNullOrEmpty(TaskMeta?.task_id))
             {
@@ -214,9 +214,9 @@ namespace OSS.EventTask
         
         //  保证外部异常不会对框架内部运转造成影响
         //  如果失败返回 RunFailed 保证系统后续重试处理
-        private async Task<DoResponse<TTRes>> TryDo(TTData data, int loopTimes, int triedTimes)
+        private async Task<DoResp<TTRes>> TryDo(TTData data, int loopTimes, int triedTimes)
         {
-            var doRes = default(DoResponse<TTRes>);
+            var doRes = default(DoResp<TTRes>);
             try
             {
                 doRes = await Do(data, loopTimes, triedTimes);
@@ -228,7 +228,7 @@ namespace OSS.EventTask
             catch (Exception e)
             {
                 if (doRes == null)
-                    doRes = new DoResponse<TTRes>();
+                    doRes = new DoResp<TTRes>();
 
                 doRes.run_status = TaskRunStatus.RunFailed;
                 doRes.resp =

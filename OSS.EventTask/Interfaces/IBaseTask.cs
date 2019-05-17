@@ -12,7 +12,7 @@ namespace OSS.EventTask.Interfaces
         //InstanceType InstanceTaskType { get; }
 
         Task<bool> Revert(TTData data,  int triedTimes);
-        Task<TaskResponse<ResultMo>> Run(TTData data, int triedTimes);
+        Task<TaskResp<ResultMo>> Run(TTData data, int triedTimes);
     }
 
 
