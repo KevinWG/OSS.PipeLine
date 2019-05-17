@@ -120,7 +120,7 @@ namespace OSS.EventNode
         }
 
 
-        internal virtual async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes,IList<string> taskIds)
+        internal virtual async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes,params string[] taskIds)
         {
             // 获取任务元数据列表
             var tasks = await GetTasks();

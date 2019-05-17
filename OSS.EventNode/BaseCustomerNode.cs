@@ -27,12 +27,14 @@ namespace OSS.EventNode
             return Task.FromResult<NodeBasicResponse<TTRes>>(null);
         }
 
-        internal override async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes)
+
+
+        internal override async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes, params string[] taskIds)
         {
-            var cusRes =await Proessing(req,triedTimes);
+            var cusRes = await Proessing(req, triedTimes);
             if (cusRes == null)
             {
-                nodeResp.resp = new TTRes().WithResult(SysResultTypes.NoResponse,ResultTypes.ObjectNull,$"Customer Node({GetType()}) have no response!");
+                nodeResp.resp = new TTRes().WithResult(SysResultTypes.NoResponse, ResultTypes.ObjectNull, $"Customer Node({GetType()}) have no response!");
                 nodeResp.node_status = NodeStatus.ProcessFailed;
             }
             else
@@ -41,5 +43,8 @@ namespace OSS.EventNode
                 nodeResp.node_status = cusRes.node_status;
             }
         }
+
+
+      
     }
 }
