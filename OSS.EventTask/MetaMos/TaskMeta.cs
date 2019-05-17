@@ -69,7 +69,7 @@ namespace OSS.EventTask.MetaMos
         /// <summary>
         ///   失败后回退所有已执行任务
         /// </summary>
-        FailedRevrtOnFailed = 30,
+        RevrtAllOnFailed = 30,
     }
 
 }

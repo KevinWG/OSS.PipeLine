@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
-using OSS.Common.Extention;
 using OSS.Common.Plugs.LogPlug;
 using OSS.EventNode.Executor;
 using OSS.EventNode.MetaMos;
@@ -22,25 +21,38 @@ namespace OSS.EventNode
         #region 节点执行入口
 
         // 基类入口方法
-        public Task<NodeResponse<TTRes>> Process(TTReq req, int triedTimes)
+        public Task<NodeResponse<TTRes>> Process(TTReq req)
         {
             var nodeResp = new NodeResponse<TTRes> { node_status = NodeStatus.WaitProcess };
-
-            return  TryProcess(req, nodeResp,triedTimes);
+            return TryProcess(req, nodeResp, 0,null);
         }
 
 
-        private async Task<NodeResponse<TTRes>> TryProcess(TTReq req,NodeResponse<TTRes> nodeResp,int triedTimes)
+        /// <summary>
+        ///  处理入口
+        /// </summary>
+        /// <param name="req">请求数据</param>
+        /// <param name="triedTimes">已经处理过的次数，重试时需要传入</param>
+        /// <param name="taskIds">重试的任务Id</param>
+        /// <returns></returns>
+        public Task<NodeResponse<TTRes>> Process(TTReq req, int triedTimes, params string[] taskIds)
+        {
+            var nodeResp = new NodeResponse<TTRes> {node_status = NodeStatus.WaitProcess};
+            return TryProcess(req, nodeResp, triedTimes, taskIds);
+        }
+
+
+        private async Task<NodeResponse<TTRes>> TryProcess(TTReq req,NodeResponse<TTRes> nodeResp,int triedTimes,params string[] taskIds)
         {
             try
             {
                 //  检查初始化
-                var checkRes = await ProcessCheck(req, nodeResp,triedTimes);
+                var checkRes = await ProcessCheck(req, nodeResp,triedTimes,taskIds);
                 if (!checkRes)
                     return nodeResp;
 
                 // 【2】 任务处理执行方法
-                await Excuting(req, nodeResp, triedTimes);
+                await Excuting(req, nodeResp, triedTimes,taskIds);
 
                 //  【3】 扩展后置执行方法
                 await ProcessEnd(req, nodeResp,triedTimes);
@@ -84,16 +96,19 @@ namespace OSS.EventNode
 
         #region 内部扩展方法
 
-        private async Task<bool> ProcessCheck(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes)
+        private async Task<bool> ProcessCheck(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes,params  string[] taskIds)
         {
-            if (string.IsNullOrEmpty(NodeMeta?.node_id))
+            if (triedTimes > 0 && (taskIds == null || taskIds.Length == 0))
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, ResultTypes.InnerError,
-                    "Node id can't be null!");
+                nodeResp.resp = new TTRes()
+                {
+                    sys_ret = (int)SysResultTypes.ApplicationError,
+                    msg = "Have no tasks to run"
+                };
                 return false;
             }
-
+            
             var res = await ProcessPreCheck(req, triedTimes);
             if (!res.IsSuccess())
             {
@@ -101,19 +116,27 @@ namespace OSS.EventNode
                 nodeResp.resp = res;
                 return false;
             }
-
             return true;
         }
 
 
-        internal virtual async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes)
+        internal virtual async Task Excuting(TTReq req, NodeResponse<TTRes> nodeResp, int triedTimes,IList<string> taskIds)
         {
             // 获取任务元数据列表
             var tasks = await GetTasks();
             if (tasks == null || !tasks.Any())
-                throw new ResultException(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
+            {
+                nodeResp.node_status = NodeStatus.ProcessFailed;
+                nodeResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
                     $"{this.GetType()} have no tasks can be Runed!");
+                return;
+            }
 
+            if (triedTimes>0)
+            {
+                tasks = tasks.Where(t => taskIds.Contains(t.TaskMeta.task_id)).ToList();
+            }
+            
             // 执行处理结果
             await ExcutingWithTasks(req, nodeResp, tasks, triedTimes);
         }

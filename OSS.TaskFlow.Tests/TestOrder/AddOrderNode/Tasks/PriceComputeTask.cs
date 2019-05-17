@@ -30,5 +30,10 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
                 resp = new ResultMo()
             };
         }
+
+        public override Task<bool> Revert(AddOrderReq req, int triedTimes)
+        {
+            return base.Revert(req, triedTimes);
+        }
     }
 }

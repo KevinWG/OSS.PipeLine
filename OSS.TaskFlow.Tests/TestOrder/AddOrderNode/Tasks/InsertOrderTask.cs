@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventTask;
 using OSS.EventTask.MetaMos;
@@ -17,13 +18,14 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
                 task_id = "InsertOrderTask",
                 task_alias = "添加订单！",
                 loop_times = 3,
-                node_action = NodeResultAction.FailedOnFailed
+                node_action = NodeResultAction.RevrtAllOnFailed
             };
         }
 
         /// <inheritdoc />
         protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
         {
+            throw new ArgumentNullException("sssssss");
             return new DoResponse<ResultIdMo>()
             {
                 resp = new ResultIdMo("1000"),

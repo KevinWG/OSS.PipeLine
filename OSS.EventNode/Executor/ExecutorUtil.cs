@@ -31,7 +31,7 @@ namespace OSS.EventNode.Executor
                             ? NodeStatus.ProcessFailed
                             : NodeStatus.ProcessPaused;
                         break;
-                    case NodeResultAction.FailedRevrtOnFailed:
+                    case NodeResultAction.RevrtAllOnFailed:
                         status = taskResp.run_status == TaskRunStatus.RunFailed
                             ? NodeStatus.ProcessFailedRevert
                             : NodeStatus.ProcessPaused;
