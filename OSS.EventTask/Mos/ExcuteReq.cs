@@ -18,10 +18,10 @@
     //    {
     //    }
 
-    //    public ExecuteData(TDomain doaminData, TReq reqData)
+    //    public ExecuteData(TDomain doaminData, TReq dataData)
     //    {
     //        domain_data = doaminData;
-    //        req_data = reqData;
+    //        data_data = dataData;
     //    }
 
     //    /// <summary>
@@ -45,15 +45,15 @@
     //    {
     //    }
 
-    //    public ExecuteData(TReq reqData)
+    //    public ExecuteData(TReq dataData)
     //    {
-    //        req_data = reqData;
+    //        data_data = dataData;
     //    }
 
     //    /// <summary>
     //    ///   执行请求内容主体
     //    /// </summary>
-    //    public TReq req_data { get; set; }
+    //    public TReq data_data { get; set; }
     //}
 
     //public class ExecuteData

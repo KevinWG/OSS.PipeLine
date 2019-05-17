@@ -22,7 +22,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
         }
 
 
-        protected override async Task<DoResponse<ResultMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
+        protected override async Task<DoResponse<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
             return new DoResponse<ResultMo>()
             {

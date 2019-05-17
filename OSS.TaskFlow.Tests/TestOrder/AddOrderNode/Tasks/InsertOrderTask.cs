@@ -23,7 +23,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
         }
 
         /// <inheritdoc />
-        protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
+        protected override async Task<DoResponse<ResultIdMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
             throw new ArgumentNullException("sssssss");
             return new DoResponse<ResultIdMo>()

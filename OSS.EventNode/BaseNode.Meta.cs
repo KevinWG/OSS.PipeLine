@@ -54,7 +54,7 @@ namespace OSS.EventNode
         ///  保存对应运行请求和重试相关信息
         /// </summary>
         /// <returns></returns>
-        protected virtual Task SaveNodekContext(TTData req, TTRes resp, 
+        protected virtual Task SaveNodekContext(TTData data, TTRes resp, 
             RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
         {
             return Task.CompletedTask;
@@ -64,7 +64,7 @@ namespace OSS.EventNode
         ///  保存对应运行请求和重试相关信息
         /// </summary>
         /// <returns></returns>
-        protected virtual Task SaveErrorNodeContext(TTData req, TTRes resp,
+        protected virtual Task SaveErrorNodeContext(TTData data, TTRes resp,
             RunCondition cond, IDictionary<TaskMeta, TaskResponse<ResultMo>> taskResults)
         {
             return Task.CompletedTask;
@@ -74,15 +74,15 @@ namespace OSS.EventNode
 
         #region 辅助方法
 
-        private Task TrySaveNodeContext(TTData req, NodeResponse<TTRes> nodeResp)
+        private Task TrySaveNodeContext(TTData data, NodeResponse<TTRes> nodeResp)
         {
             try
             {
                 var blockTaskResp = nodeResp[nodeResp.block_taskid];
 
                 return nodeResp.node_status == NodeStatus.ProcessPaused
-                    ? SaveNodekContext(req, nodeResp.resp, blockTaskResp.task_cond, nodeResp.TaskResults)
-                    : SaveErrorNodeContext(req, nodeResp.resp, blockTaskResp.task_cond, nodeResp.TaskResults);
+                    ? SaveNodekContext(data, nodeResp.resp, blockTaskResp.task_cond, nodeResp.TaskResults)
+                    : SaveErrorNodeContext(data, nodeResp.resp, blockTaskResp.task_cond, nodeResp.TaskResults);
             }
             catch (Exception e)
             {

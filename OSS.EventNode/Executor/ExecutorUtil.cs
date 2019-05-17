@@ -61,7 +61,7 @@ namespace OSS.EventNode.Executor
             return false;
         }
         //  尝试获取任务执行结果
-        internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTData>(TTData req, IBaseTask<TTData> task,
+        internal static async Task<TaskResponse<ResultMo>> TryGetTaskItemResult<TTData>(TTData data, IBaseTask<TTData> task,
             int triedTimes)
             where TTData : class
         {
@@ -72,7 +72,7 @@ namespace OSS.EventNode.Executor
             //}
             try
             {
-                return await task.Run(req, triedTimes);
+                return await task.Run(data, triedTimes);
             }
             catch (Exception ex)
             {
@@ -98,11 +98,11 @@ namespace OSS.EventNode.Executor
 
 
         //  尝试回退任务
-        internal static Task<bool> TryRevertTask<TTData>(IBaseTask<TTData> task, TTData req,  int triedTimes)
+        internal static Task<bool> TryRevertTask<TTData>(IBaseTask<TTData> task, TTData data,  int triedTimes)
         {
             try
             {
-                return task.Revert(req,triedTimes);
+                return task.Revert(data,triedTimes);
             }
             catch (Exception e)
             {

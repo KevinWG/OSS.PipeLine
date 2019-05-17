@@ -39,7 +39,7 @@ namespace OSS.EventTask
         /// <param name="resp"></param>
         /// <param name="cond"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskContext(TTData req,TTRes resp,RunCondition cond)
+        protected virtual Task SaveTaskContext(TTData data,TTRes resp,RunCondition cond)
         {
             return Task.CompletedTask;
         }
@@ -53,7 +53,7 @@ namespace OSS.EventTask
         /// <param name="resp"></param>
         /// <param name="cond"></param>
         /// <returns></returns>
-        protected virtual Task SaveErrorTaskContext(TTData req, TTRes resp, RunCondition cond)
+        protected virtual Task SaveErrorTaskContext(TTData data, TTRes resp, RunCondition cond)
         {
             return Task.CompletedTask;
         }
@@ -62,15 +62,15 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
-        private Task TrySaveTaskContext(TTData req, TaskResponse<TTRes> taskResp)
+        private Task TrySaveTaskContext(TTData data, TaskResponse<TTRes> taskResp)
         {
             try
             {
                 if (TaskMeta.owner_type== OwnerType.Task)
                 {
                     return  taskResp.run_status==TaskRunStatus.RunPaused
-                        ?SaveTaskContext(req, taskResp.resp, taskResp.task_cond)
-                        :SaveErrorTaskContext(req,taskResp.resp,taskResp.task_cond);
+                        ?SaveTaskContext(data, taskResp.resp, taskResp.task_cond)
+                        :SaveErrorTaskContext(data,taskResp.resp,taskResp.task_cond);
                 }
             }
             catch (Exception e)

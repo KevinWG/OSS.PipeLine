@@ -8,7 +8,7 @@ namespace OSS.EventFlow
 {
     public abstract partial class BaseFlow<TDomain>
     {
-        public async Task<ResultMo> Enter(FlowReq req)
+        public async Task<ResultMo> Enter(FlowReq data)
         {
             //  todo 获取领域信息
             var context = new FlowContext();

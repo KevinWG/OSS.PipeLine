@@ -21,7 +21,7 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
             };
         }
 
-        protected override Task<DoResponse<ResultMo>> Do(AddOrderReq req, int loopTimes, int triedTimes)
+        protected override Task<DoResponse<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
             var resp = new DoResponse<ResultMo>
             {

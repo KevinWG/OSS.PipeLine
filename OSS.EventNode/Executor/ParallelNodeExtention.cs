@@ -15,13 +15,13 @@ namespace OSS.EventNode.Executor
     public static class ParallelNodeExtention
     {
         //   并行执行任务扩展
-        internal static async Task Excuting_Parallel<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData req,
+        internal static async Task Excuting_Parallel<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data,
             NodeResponse<TTRes> nodeResp,IList<IBaseTask<TTData>> tasks,int triedTimes)
             where TTData : class
             where TTRes : ResultMo, new()
         {
             var taskResults =
-                tasks.ToDictionary(t => t, t => ExecutorUtil.TryGetTaskItemResult(req, t, triedTimes));
+                tasks.ToDictionary(t => t, t => ExecutorUtil.TryGetTaskItemResult(data, t, triedTimes));
 
             try
             {
@@ -53,12 +53,12 @@ namespace OSS.EventNode.Executor
         
         // 并行任务回退处理（回退当前其他所有任务）
         internal static async Task Excuting_ParallelRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
-            TTData req,NodeResponse<TTRes> nodeResp,IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
+            TTData data,NodeResponse<TTRes> nodeResp,IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {
             var revResList = tasks.Select(tItem => tItem.TaskMeta.task_id== blockTaskId
                     ? Task.FromResult(true)
-                    : ExecutorUtil.TryRevertTask(tItem, req, triedTimes))
+                    : ExecutorUtil.TryRevertTask(tItem, data, triedTimes))
                 .ToArray();
             try
             {

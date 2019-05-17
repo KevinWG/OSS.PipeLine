@@ -12,7 +12,7 @@ namespace OSS.EventNode.Executor
     {
         ///  顺序执行
         internal static async Task Excuting_Sequence<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
-            TTData req,NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,int triedTimes)
+            TTData data,NodeResponse<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {
             nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResponse<ResultMo>>(tasks.Count);
@@ -20,7 +20,7 @@ namespace OSS.EventNode.Executor
             
             foreach (var tItem in tasks)
             {
-                var taskResp = await ExecutorUtil.TryGetTaskItemResult(req, tItem, triedTimes);
+                var taskResp = await ExecutorUtil.TryGetTaskItemResult(data, tItem, triedTimes);
 
                 var tMeta = tItem.TaskMeta;
                 nodeResp.TaskResults.Add(tMeta, taskResp);
@@ -36,7 +36,7 @@ namespace OSS.EventNode.Executor
 
 
         //  顺序任务 回退当前任务之前所有任务
-        internal static async Task Excuting_SequenceRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData req, NodeResponse<TTRes> nodeResp,
+        internal static async Task Excuting_SequenceRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data, NodeResponse<TTRes> nodeResp,
             IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {
@@ -51,7 +51,7 @@ namespace OSS.EventNode.Executor
                     break;
                 }
 
-                var rRes = await ExecutorUtil.TryRevertTask(tItem, req, triedTimes);// tItem.Revert(req);
+                var rRes = await ExecutorUtil.TryRevertTask(tItem, data, triedTimes);// tItem.Revert(data);
                 if (rRes)
                     nodeResp.RevrtTasks.Add(tItem.TaskMeta);
             }
