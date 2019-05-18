@@ -2,11 +2,14 @@
 
 namespace OSS.EventNode.Interfaces
 {
-
-    public interface IBaseNode<TTData, TTRes>
+    public interface IBaseNode
     {
         NodeMeta NodeMeta { get; }
-        //InstanceType InstanceNodeType { get; }
+    }
+
+    public interface IBaseNode<TTData, TTRes>: IBaseNode
+    {
+     
     }
 
 }

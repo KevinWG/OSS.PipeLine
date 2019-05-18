@@ -8,10 +8,10 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.Executor
 {
-    public static class SequenceNodeExtention
+    public static class SerialNodeExtention
     {
         ///  顺序执行
-        internal static async Task Excuting_Sequence<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
+        internal static async Task Excuting_Serial<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
             TTData data,NodeResp<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {
@@ -36,7 +36,7 @@ namespace OSS.EventNode.Executor
 
 
         //  顺序任务 回退当前任务之前所有任务
-        internal static async Task Excuting_SequenceRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data, NodeResp<TTRes> nodeResp,
+        internal static async Task Excuting_SerialRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data, NodeResp<TTRes> nodeResp,
             IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {

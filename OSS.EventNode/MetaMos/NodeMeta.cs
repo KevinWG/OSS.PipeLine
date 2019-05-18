@@ -22,7 +22,7 @@ namespace OSS.EventNode.MetaMos
 
     public enum NodeProcessType
     {
-        Sequence,
+        Serial,
         Parallel
     }
 

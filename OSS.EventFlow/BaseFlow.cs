@@ -1,20 +1,15 @@
-﻿using System.Threading.Tasks;
-using OSS.Common.ComModels;
+﻿using OSS.EventFlow.Router;
+using OSS.EventNode.Interfaces;
 
 namespace OSS.EventFlow
 {
     public abstract partial class BaseFlow<TDomain>
     {
-        public void Link()
+        public void AddRouter(IBaseNode ndoe,BaseRouter router)
         {
+
         }
 
-        public async Task<ResultMo> Enter(string nodeId, string  data)
-        {
-            return new ResultMo();
-        }
-
-        public abstract Task End();
     }
 
 }
