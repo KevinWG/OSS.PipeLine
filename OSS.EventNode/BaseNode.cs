@@ -184,7 +184,7 @@ namespace OSS.EventNode
             if (NodeMeta.Process_type == NodeProcessType.Parallel)
                 await this.Excuting_Parallel(data, nodeResp, tasks, triedTimes);
             else
-                await this.Excuting_Sequence(data, nodeResp, tasks, triedTimes);
+                await this.Excuting_Serial(data, nodeResp, tasks, triedTimes);
 
             //  处理回退其他任务
             if (nodeResp.node_status == NodeStatus.ProcessFailedRevert)
@@ -194,7 +194,7 @@ namespace OSS.EventNode
                 if (NodeMeta.Process_type == NodeProcessType.Parallel)
                     await this.Excuting_ParallelRevert(data, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
                 else
-                    await this.Excuting_SequenceRevert(data, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
+                    await this.Excuting_SerialRevert(data, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
             }
         }
         #endregion
