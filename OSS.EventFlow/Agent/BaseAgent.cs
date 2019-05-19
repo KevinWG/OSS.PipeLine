@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventFlow.Mos;
 using OSS.EventNode;
@@ -18,6 +19,12 @@ namespace OSS.EventFlow.Agent
             return Task.CompletedTask;
         }
 
+        public BaseAgent[] NextAgentMaps { get; set; }
+
+        //internal BaseAgent[] Next { get; set; }
+        internal Func<IExecuteData, Task<BaseAgent[]>> NextController { get; set; }
+        internal Func<IExecuteData, Task<bool>> CycleControler { get; set; }
+
 
 
         internal abstract Task MoveNext(IExecuteData preData);
@@ -32,7 +39,7 @@ namespace OSS.EventFlow.Agent
 
         protected BaseAgent(IEventNode<TTData, TTRes> node)
         {
-            RouterType = RouterType.Serial;
+            RouterType = RouterType.Single;
         }
 
 

@@ -1,52 +1,86 @@
 ﻿using System;
 using System.Threading.Tasks;
+using OSS.Common.ComModels.Enums;
+using OSS.Common.Extention;
 using OSS.EventFlow.Mos;
 using OSS.EventNode.Interfaces;
 
 namespace OSS.EventFlow.Agent
 {
-    
     public static class EventAgentExtention
     {
         /// <summary>
         ///  设置顺序节点
         /// </summary>
-        /// <param name="flowRouter"></param>
-        /// <param name="node"></param>
-        public static void WithSerial(this BaseAgent flowRouter, IEventNode node)
+        /// <param name="agent"></param>
+        /// <param name="nextAgents"></param>
+        public static void WithNext(this BaseAgent agent,params BaseAgent[] nextAgents)
         {
-            flowRouter.RouterType = RouterType.Serial;
+            if (nextAgents==null||nextAgents.Length==0)
+            {
+                throw new ResultException(SysResultTypes.AppConfigError,ResultTypes.ParaError,"Next agent can't be null!");
+            }
+
+            agent.RouterType = nextAgents.Length == 1 ? RouterType.Serial : RouterType.Branch;
+
+            agent.NextController = d => Task.FromResult(nextAgents);
+            agent.NextAgentMaps = nextAgents;
+            //agent.RouterType = RouterType.Branch;
         }
 
-        /// <summary>
-        ///  设置循环节点
-        /// </summary>
-        /// <param name="flowRouter"></param>
-        /// <param name="condition"></param>
-        /// <param name="next"></param>
-        public static void WithCircle(this BaseAgent flowRouter, Func<IExecuteData, Task<bool>> condition,
-            params IEventNode[] next)
+        public static void WithNext(this BaseAgent agent, 
+            Func<IExecuteData, Task<BaseAgent>> serialController,
+            BaseAgent[] nextMaps = null)
         {
-            flowRouter.RouterType = RouterType.Cycle;
+            //agent.RouterType = RouterType.Branch;
+            //if (nextAgents == null || nextAgents.Length == 0)
+            //{
+            //    throw new ResultException(SysResultTypes.AppConfigError, ResultTypes.ParaError, "Next agent can't be null!");
+            //}
+
+            //agent.RouterType = nextAgents.Length == 1 ? RouterType.Serial : RouterType.Branch;
+
+            //agent.NextController = d => Task.FromResult(nextAgents);
         }
 
-        public static void WithCircle(this BaseAgent flowRouter, Func<IExecuteData, Task<bool>> condition,
-            Func<IExecuteData, Task<IEventNode[]>> next)
+     
+
+
+        public static void WithNext(this BaseAgent agent,
+            Func<IExecuteData, Task<BaseAgent[]>> branchController,
+            BaseAgent[] nextMaps = null)
         {
-            flowRouter.RouterType = RouterType.Cycle;
+            agent.RouterType = RouterType.Branch;
         }
 
-        public static void WithBranch(this BaseAgent flowRouter, IEventNode[] next)
-        {
-            flowRouter.RouterType = RouterType.Branch;
 
+
+
+
+        public static void WithNext(this BaseAgent agent, 
+            Func<IExecuteData, Task<bool>> cycleController,
+            params BaseAgent[] nextAgents)
+        {
+            //agent.RouterType = RouterType.Cycle;
         }
 
-        public static void WithBranch(this BaseAgent flowRouter, Func<IExecuteData, Task<IEventNode[]>> next)
+        public static void WithNext(this BaseAgent agent, 
+            Func<IExecuteData, Task<bool>> cycleController,
+            Func<IExecuteData, Task<BaseAgent>> next,
+            BaseAgent[] nextMaps = null)
         {
-            flowRouter.RouterType = RouterType.Branch;
-
+            //agent.RouterType = RouterType.Cycle;
         }
+
+        public static void WithNext(this BaseAgent agent, 
+            Func<IExecuteData, Task<bool>> condition,
+            Func<IExecuteData, Task<BaseAgent[]>> branchController,
+            BaseAgent[] nextMaps = null)
+        {
+            //agent.RouterType = RouterType.Cycle;
+        }
+
+
     }
 
 }
