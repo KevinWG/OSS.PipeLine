@@ -27,7 +27,7 @@ namespace OSS.EventTask
             return taskResp;
         }
 
-        async Task<TaskResp<ResultMo>> IBaseTask<TTData>.Run(TTData data, int triedTimes)
+        async Task<TaskResp<ResultMo>> IEventTask<TTData>.Run(TTData data, int triedTimes)
         {
             var taskResp = await Run(data, triedTimes);
             return new TaskResp<ResultMo>()

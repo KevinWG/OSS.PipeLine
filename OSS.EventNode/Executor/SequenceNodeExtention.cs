@@ -12,7 +12,7 @@ namespace OSS.EventNode.Executor
     {
         ///  顺序执行
         internal static async Task Excuting_Serial<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
-            TTData data,NodeResp<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,int triedTimes)
+            TTData data,NodeResp<TTRes> nodeResp, IList<IEventTask<TTData>> tasks,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {
             nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResp<ResultMo>>(tasks.Count);
@@ -37,7 +37,7 @@ namespace OSS.EventNode.Executor
 
         //  顺序任务 回退当前任务之前所有任务
         internal static async Task Excuting_SerialRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data, NodeResp<TTRes> nodeResp,
-            IList<IBaseTask<TTData>> tasks,string blockTaskId,int triedTimes)
+            IList<IEventTask<TTData>> tasks,string blockTaskId,int triedTimes)
             where TTData : class where TTRes : ResultMo, new()
         {
             if (nodeResp.RevrtTasks==null)

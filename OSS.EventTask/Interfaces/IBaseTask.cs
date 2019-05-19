@@ -5,7 +5,7 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask.Interfaces
 {
-    public interface IBaseTask<in TTData>
+    public interface IEventTask<in TTData>
     {
         TaskMeta TaskMeta { get; }
         string ModuleName { get; set; }

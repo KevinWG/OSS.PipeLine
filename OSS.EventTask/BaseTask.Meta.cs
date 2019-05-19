@@ -9,7 +9,7 @@ using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTData, TTRes> : BaseMetaProvider<TaskMeta>, IBaseTask<TTData>
+    public abstract partial class BaseTask<TTData, TTRes> : BaseMetaProvider<TaskMeta>, IEventTask<TTData>
         where TTData : class 
         where TTRes : ResultMo, new()
     {

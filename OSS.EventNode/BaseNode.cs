@@ -178,7 +178,7 @@ namespace OSS.EventNode
 
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task ExcutingWithTasks(TTData data, NodeResp<TTRes> nodeResp, IList<IBaseTask<TTData>> tasks,
+        private async Task ExcutingWithTasks(TTData data, NodeResp<TTRes> nodeResp, IList<IEventTask<TTData>> tasks,
             int triedTimes)
         {
             if (NodeMeta.Process_type == NodeProcessType.Parallel)

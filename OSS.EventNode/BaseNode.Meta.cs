@@ -16,8 +16,9 @@ namespace OSS.EventNode
     /// <summary>
     ///  节点运行时元数据信息
     /// </summary>
-    public abstract partial class BaseNode<TTData, TTRes> : BaseMetaProvider<NodeMeta>, IBaseNode<TTData, TTRes>
-        where TTData : class
+    public abstract partial class BaseNode<TTData, TTRes> 
+        : BaseMetaProvider<NodeMeta>, IEventNode<TTData, TTRes>
+        where TTData : class 
         where TTRes : ResultMo, new()
     {
         // 内部成员
@@ -44,7 +45,7 @@ namespace OSS.EventNode
 
         #region 内部基础方法
 
-        protected abstract Task<List<IBaseTask<TTData>>> GetTasks();
+        protected abstract Task<List<IEventTask<TTData>>> GetTasks();
 
         #endregion
 
