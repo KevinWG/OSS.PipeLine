@@ -16,8 +16,6 @@ namespace OSS.EventFlow.Agent
         }
 
         public BaseGateway Gateway { get; set; }
-        
-        //public 
     }
 
     
@@ -29,7 +27,6 @@ namespace OSS.EventFlow.Agent
 
         protected BaseAgent(IEventNode<TTData, TTRes> node)
         {
-            //RouterType = GatewayType.Serial;
         }
 
 
@@ -41,7 +38,9 @@ namespace OSS.EventFlow.Agent
         public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
             var nodeRes= await WorkNode.Process(data,triedTimes,taskIds);
-            await Gateway.MoveNext(data, WorkNode.NodeMeta)
+            await Gateway.MoveNext(data);
+
+            return nodeRes;
         }
     }
 

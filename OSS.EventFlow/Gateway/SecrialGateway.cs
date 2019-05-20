@@ -15,9 +15,9 @@ namespace OSS.EventFlow.Gateway
         }
 
 
-        internal override Task<BaseAgent> GetAgnet(IExecuteData preData)
+        internal override async Task MoveNext(IExecuteData preData)
         {
-            return Task.FromResult(_nextAgent);
+            await MoveSingleAgents(preData, _nextAgent);
         }
     }
 }

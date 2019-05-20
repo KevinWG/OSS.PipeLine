@@ -10,6 +10,10 @@ namespace OSS.EventFlow.Gateway
     {
         private Func<IExecuteData, Task<BaseAgent[]>> _inclusiveFunc { get; set; }
 
+        public InclusiveGateway():this(null)
+        {
+        }
+
         public InclusiveGateway(Func<IExecuteData, Task<BaseAgent[]>> inclusiveFunc)
         {
             _inclusiveFunc = inclusiveFunc;
@@ -22,9 +26,11 @@ namespace OSS.EventFlow.Gateway
             return Task.FromResult<BaseAgent[]>(null);
         }
 
-        internal override Task<BaseAgent[]> GetAgnets(IExecuteData preData)
+   
+        internal override async Task MoveNext(IExecuteData preData)
         {
-            return _inclusiveFunc?.Invoke(preData) ?? GetAgnets(preData);
+            var agents = await (_inclusiveFunc?.Invoke(preData) ?? GetAgents(preData));
+            await MoveMulitAgents(preData,agents);
         }
     }
 }

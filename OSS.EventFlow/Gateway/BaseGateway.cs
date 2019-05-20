@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
 using OSS.EventFlow.Agent;
@@ -35,60 +34,36 @@ namespace OSS.EventFlow.Gateway
         }
 
 
-        internal virtual Task<BaseAgent> GetAgnet(IExecuteData preData)
-        {
-            return Task.FromResult<BaseAgent>(null);
-        }
+        internal abstract Task MoveNext(IExecuteData preData);
+ 
 
-        internal virtual Task<BaseAgent[]> GetAgnets(IExecuteData preData)
+        internal async Task MoveMulitAgents(IExecuteData preData, BaseAgent[] agents)
         {
-            return Task.FromResult<BaseAgent[]>(null);
-        }
-
-        internal async Task MoveNext(IExecuteData preData)
-        {
-            var check = await AggregateCheck(preData);
-            if (!check)
+            if (agents == null || agents.Length < 1)
             {
-                var release = await AggregateRelease(preData);
-                if (release)
-                {
-                    await MoveUnusual(preData);
-                    return;
-                }
-            }
-            if (GatewayType==GatewayType.ExclusiveSerial
-                || GatewayType == GatewayType.Serial)
-            {
-                var agent =await GetAgnet(preData);
-                if (agent==null)
-                {
-                    await MoveUnusual(preData);
-                    return;
-                }
-
-                await agent.MoveIn(preData);
+                await MoveUnusualAgent(preData);
                 return;
             }
-            var agents = await GetAgnets(preData);
-            if (agents == null||agents.Length<1)
-            {
-                await MoveUnusual(preData);
-                return;
-            }
-
-            if (GatewayType==GatewayType.Branch&& agents.Length==1)
-            {
-                await MoveUnusual(preData);
-                return;
-            }
+          
             foreach (var ag in agents)
             {
                 await ag.MoveIn(preData);
             }
         }
 
-        private async Task MoveUnusual(IExecuteData preData)
+        internal async Task MoveSingleAgents(IExecuteData preData, BaseAgent agent)
+        {
+            if (agent == null)
+            {
+                await MoveUnusualAgent(preData);
+                return;
+            }
+
+            await agent.MoveIn(preData);
+
+        }
+
+        internal async Task MoveUnusualAgent(IExecuteData preData)
         {
             if (UnusualAgent == null)
                 throw new ResultException(SysResultTypes.ApplicationError, "UnusualAgent is null!");

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.Common.ComModels.Enums;
-using OSS.Common.Extention;
 using OSS.EventFlow.Agent;
 using OSS.EventFlow.Mos;
 using OSS.EventNode.Interfaces;
@@ -28,14 +26,15 @@ namespace OSS.EventFlow.Gateway
             return Task.FromResult<BaseAgent>(null);
         }
         
-        internal override Task<BaseAgent> GetAgnet(IExecuteData preData)
-        {
-            return _exclusiveFunc?.Invoke(preData) ?? GetExclusiveAgent(preData);
-        }
-        
+     
         //internal override BaseAgent[] GetNextAgentMaps()
         //{
         //    return new[] {_nextAgent};
         //}
+        internal override async Task MoveNext(IExecuteData preData)
+        {
+            var agent=await (_exclusiveFunc?.Invoke(preData) ?? GetExclusiveAgent(preData));
+            await MoveSingleAgents(preData, agent);
+        }
     }
 }

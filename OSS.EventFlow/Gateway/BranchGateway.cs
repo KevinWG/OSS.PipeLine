@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.ComModels.Enums;
-using OSS.Common.Extention;
 using OSS.EventFlow.Agent;
 using OSS.EventFlow.Mos;
 using OSS.EventNode.Interfaces;
@@ -17,9 +15,15 @@ namespace OSS.EventFlow.Gateway
             GatewayType = GatewayType.Branch;
         }
 
-        internal override Task<BaseAgent[]> GetAgnets(IExecuteData preData)
+  
+        internal override async Task MoveNext(IExecuteData preData)
         {
-            return Task.FromResult(_nextAgents);
+            if (_nextAgents == null||(GatewayType == GatewayType.Branch && _nextAgents.Length == 1))
+            {
+                await MoveUnusualAgent(preData);
+                return;
+            }
+            await MoveMulitAgents(preData, _nextAgents);
         }
     }
 }
