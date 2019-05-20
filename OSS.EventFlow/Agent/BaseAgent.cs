@@ -1,10 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.EventFlow.Mos;
+using OSS.EventFlow.Gateway;
 using OSS.EventNode;
 using OSS.EventNode.Interfaces;
-using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
 
 namespace OSS.EventFlow.Agent
@@ -12,45 +10,38 @@ namespace OSS.EventFlow.Agent
 
     public abstract class BaseAgent
     {
-        public RouterType RouterType { get; internal set; }
-
-        protected virtual Task MoveIn(IExecuteData preData, NodeMeta preNode)
+        public virtual Task MoveIn(IExecuteData preData)
         {
             return Task.CompletedTask;
         }
 
-        public BaseAgent[] NextAgentMaps { get; set; }
-
-        //internal BaseAgent[] Next { get; set; }
-        internal Func<IExecuteData, Task<BaseAgent[]>> NextController { get; set; }
-        internal Func<IExecuteData, Task<bool>> CycleControler { get; set; }
-
-
-
-        internal abstract Task MoveNext(IExecuteData preData);
+        public BaseGateway Gateway { get; set; }
+        
+        //public 
     }
 
+    
     public abstract class BaseAgent<TTData, TTRes> : BaseAgent
         where TTData :class ,IExecuteData
         where TTRes : ResultMo, new()
     {
-
         public BaseNode<TTData, TTRes> WorkNode { get; internal set; }
 
         protected BaseAgent(IEventNode<TTData, TTRes> node)
         {
-            RouterType = RouterType.Single;
+            //RouterType = GatewayType.Serial;
         }
 
 
         public  Task<NodeResp<TTRes>> Process(TTData data)
         {
-            return WorkNode.Process(data);
+            return Process(data,0);
         }
 
-        public Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
+        public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
-            return WorkNode.Process(data,triedTimes,taskIds);
+            var nodeRes= await WorkNode.Process(data,triedTimes,taskIds);
+            await Gateway.MoveNext(data, WorkNode.NodeMeta)
         }
     }
 
