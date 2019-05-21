@@ -15,7 +15,7 @@ namespace OSS.EventFlow.Gateway
         }
 
 
-        internal override async Task MoveNext(IExecuteData preData)
+        internal override async Task MoveSubNext(IExecuteData preData)
         {
             await MoveSingleAgents(preData, _nextAgent);
         }

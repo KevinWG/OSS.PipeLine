@@ -38,7 +38,7 @@ namespace OSS.EventFlow.Agent
         public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
             var nodeRes= await WorkNode.Process(data,triedTimes,taskIds);
-            await Gateway.MoveNext(data);
+            await Gateway.MoveSubNext(data);
 
             return nodeRes;
         }

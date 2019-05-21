@@ -33,10 +33,31 @@ namespace OSS.EventFlow.Gateway
             return Task.FromResult(true);
         }
 
+        internal async Task MoveNext(IExecuteData preData)
+        {
+            var aCheck = await AggregateCheck(preData);
+            if (!aCheck)
+            {
+                var release = await AggregateRelease(preData);
+                if (release)
+                {
+                    await MoveUnusualAgent(preData);
+                    return;
+                }
+            }
 
-        internal abstract Task MoveNext(IExecuteData preData);
+            await MoveSubNext(preData);
+        }
+
+        internal abstract Task MoveSubNext(IExecuteData preData);
  
 
+        /// <summary>
+        ///   多agent前进 
+        /// </summary>
+        /// <param name="preData"></param>
+        /// <param name="agents"></param>
+        /// <returns></returns>
         internal async Task MoveMulitAgents(IExecuteData preData, BaseAgent[] agents)
         {
             if (agents == null || agents.Length < 1)
@@ -51,6 +72,12 @@ namespace OSS.EventFlow.Gateway
             }
         }
 
+        /// <summary>
+        /// 单一agent前进
+        /// </summary>
+        /// <param name="preData"></param>
+        /// <param name="agent"></param>
+        /// <returns></returns>
         internal async Task MoveSingleAgents(IExecuteData preData, BaseAgent agent)
         {
             if (agent == null)
@@ -58,11 +85,14 @@ namespace OSS.EventFlow.Gateway
                 await MoveUnusualAgent(preData);
                 return;
             }
-
             await agent.MoveIn(preData);
-
         }
 
+        /// <summary>
+        /// 进入非正常agent
+        /// </summary>
+        /// <param name="preData"></param>
+        /// <returns></returns>
         internal async Task MoveUnusualAgent(IExecuteData preData)
         {
             if (UnusualAgent == null)

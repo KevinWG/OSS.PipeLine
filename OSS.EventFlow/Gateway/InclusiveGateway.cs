@@ -27,7 +27,7 @@ namespace OSS.EventFlow.Gateway
         }
 
    
-        internal override async Task MoveNext(IExecuteData preData)
+        internal override async Task MoveSubNext(IExecuteData preData)
         {
             var agents = await (_inclusiveFunc?.Invoke(preData) ?? GetAgents(preData));
             await MoveMulitAgents(preData,agents);

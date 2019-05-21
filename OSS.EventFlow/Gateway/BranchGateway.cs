@@ -16,7 +16,7 @@ namespace OSS.EventFlow.Gateway
         }
 
   
-        internal override async Task MoveNext(IExecuteData preData)
+        internal override async Task MoveSubNext(IExecuteData preData)
         {
             if (_nextAgents == null||(GatewayType == GatewayType.Branch && _nextAgents.Length == 1))
             {

@@ -31,7 +31,7 @@ namespace OSS.EventFlow.Gateway
         //{
         //    return new[] {_nextAgent};
         //}
-        internal override async Task MoveNext(IExecuteData preData)
+        internal override async Task MoveSubNext(IExecuteData preData)
         {
             var agent=await (_exclusiveFunc?.Invoke(preData) ?? GetExclusiveAgent(preData));
             await MoveSingleAgents(preData, agent);
