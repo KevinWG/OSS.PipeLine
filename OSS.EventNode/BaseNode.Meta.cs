@@ -23,16 +23,12 @@ namespace OSS.EventNode
     {
         // 内部成员
         private const string _moduleName = "OSS.EventNode";
-        //internal INodeProvider<TTData> m_metaProvider;
 
         /// <summary>
         /// 节点mata 信息
         /// </summary>
         public NodeMeta NodeMeta => GetConfig();
-
-        //public InstanceType InstanceNodeType { get; internal set; }
-
-
+        
         protected BaseNode() : this(null)
         {
         }
@@ -40,7 +36,6 @@ namespace OSS.EventNode
         protected BaseNode(NodeMeta meta) : base(meta)
         {
             ModuleName = _moduleName;
-            //InstanceNodeType = InstanceType.Stand;
         }
 
         #region 内部基础方法

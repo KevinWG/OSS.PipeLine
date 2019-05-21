@@ -1,9 +1,26 @@
-﻿namespace OSS.EventFlow
+﻿using OSS.EventFlow.Agent;
+
+namespace OSS.EventFlow
 {
     //  todo  设置启动和结束默认agent，  异常agent
     //  todo  递归执行获取路径地图
-    public abstract class BaseFlow
+    public  abstract partial class BaseFlow
     {
+        /// <summary>
+        ///  流程起始代理
+        /// </summary>
+        public BaseAgent Start { get; set; }
+        
+        /// <summary>
+        /// 流程结束代理
+        /// </summary>
+        public BaseAgent Stop { get; set; }
+
+
+        protected void AddAgent(BaseAgent agent)
+        {
+
+        }
 
     }
 }
