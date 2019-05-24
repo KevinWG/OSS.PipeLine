@@ -14,6 +14,12 @@ namespace OSS.EventFlow.Agent
         {
             return Task.CompletedTask;
         }
+
+        public virtual Task MoveOut(IExecuteData preData)
+        {
+            return Task.CompletedTask;
+        }
+
         public BaseGateway Gateway { get; set; }
     }
 
@@ -37,6 +43,17 @@ namespace OSS.EventFlow.Agent
         public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
             var nodeRes= await WorkNode.Process(data,triedTimes,taskIds);
+
+            var aCheck = await Gateway.AggregateCheck(preData);
+            if (!aCheck)
+            {
+                var release = await Gateway.AggregateRelease(preData);
+                if (release)
+                {
+                    await Gateway.MoveUnusualAgent(preData);
+                    return;
+                }
+            }
             await Gateway.MoveSubNext(data);
 
             return nodeRes;

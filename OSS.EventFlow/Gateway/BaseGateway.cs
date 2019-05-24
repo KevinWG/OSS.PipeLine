@@ -18,7 +18,7 @@ namespace OSS.EventFlow.Gateway
         /// </summary>
         /// <param name="preData"></param>
         /// <returns>true - 满足条件，false- 不能满足条件</returns>
-        protected virtual Task<bool> AggregateCheck(IExecuteData preData)
+        protected internal virtual Task<bool> AggregateCheck(IExecuteData preData)
         {
             return Task.FromResult(true);
         }
@@ -28,23 +28,14 @@ namespace OSS.EventFlow.Gateway
         /// </summary>
         /// <param name="preData"></param>
         /// <returns></returns>
-        protected virtual Task<bool> AggregateRelease(IExecuteData preData)
+        protected internal virtual Task<bool> AggregateRelease(IExecuteData preData)
         {
             return Task.FromResult(true);
         }
 
         internal async Task MoveNext(IExecuteData preData)
         {
-            var aCheck = await AggregateCheck(preData);
-            if (!aCheck)
-            {
-                var release = await AggregateRelease(preData);
-                if (release)
-                {
-                    await MoveUnusualAgent(preData);
-                    return;
-                }
-            }
+           
 
             await MoveSubNext(preData);
         }
