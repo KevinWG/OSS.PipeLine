@@ -8,7 +8,7 @@ namespace OSS.EventFlow.Gateway
 {
     public class InclusiveGateway : BaseGateway
     {
-        private Func<IExecuteData, Task<BaseAgent[]>> _inclusiveFunc { get; set; }
+        private Func<IExecuteData, Task<BaseAgent[]>> _inclusiveFunc { get; }
 
         public InclusiveGateway():this(null)
         {

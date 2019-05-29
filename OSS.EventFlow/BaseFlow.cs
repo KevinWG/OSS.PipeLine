@@ -1,4 +1,5 @@
 ﻿using OSS.EventFlow.Agent;
+using OSS.EventFlow.Gateway;
 
 namespace OSS.EventFlow
 {
@@ -7,17 +8,20 @@ namespace OSS.EventFlow
     public  abstract partial class BaseFlow
     {
         /// <summary>
-        ///  流程起始代理
+        ///  流程起始
         /// </summary>
-        public BaseAgent Start { get; set; }
+        public BaseGateway Start { get; set; }
         
         /// <summary>
         /// 流程结束代理
         /// </summary>
-        public BaseAgent Stop { get; set; }
+        public BaseGateway Stop { get; set; }
 
 
-        protected void AddAgent(BaseAgent agent)
+
+
+
+        protected void AddAgent(BaseAgent agent, BaseGateway gateway)
         {
 
         }

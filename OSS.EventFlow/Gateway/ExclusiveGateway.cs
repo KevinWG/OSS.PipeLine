@@ -8,7 +8,7 @@ namespace OSS.EventFlow.Gateway
 {
     public class ExclusiveGateway : BaseGateway
     {
-        private Func<IExecuteData, Task<BaseAgent>> _exclusiveFunc;
+        private readonly Func<IExecuteData, Task<BaseAgent>> _exclusiveFunc;
 
         public ExclusiveGateway():this(null)
         {

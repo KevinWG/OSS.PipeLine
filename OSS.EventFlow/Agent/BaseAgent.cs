@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.EventFlow.Gateway;
-using OSS.EventNode;
 using OSS.EventNode.Interfaces;
 using OSS.EventNode.Mos;
 
@@ -20,7 +19,7 @@ namespace OSS.EventFlow.Agent
             return Task.CompletedTask;
         }
 
-        public BaseGateway Gateway { get; set; }
+        public BaseGateway Gateway { get;internal set; }
     }
 
     public abstract class BaseAgent<TTData, TTRes> : BaseAgent
@@ -43,19 +42,7 @@ namespace OSS.EventFlow.Agent
         public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
             var nodeRes= await WorkNode.Process(data,triedTimes,taskIds);
-
-            var aCheck = await Gateway.AggregateCheck(preData);
-            if (!aCheck)
-            {
-                var release = await Gateway.AggregateRelease(preData);
-                if (release)
-                {
-                    await Gateway.MoveUnusualAgent(preData);
-                    return;
-                }
-            }
-            await Gateway.MoveSubNext(data);
-
+            await Gateway.MoveNext(data);
             return nodeRes;
         }
     }
