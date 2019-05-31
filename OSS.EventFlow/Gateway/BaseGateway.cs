@@ -11,8 +11,7 @@ namespace OSS.EventFlow.Gateway
     {
         public GatewayType GatewayType { get; internal set; }
         public BaseAgent UnusualAgent { get;internal set; }
-
-
+        
         /// <summary>
         ///  聚合控制检查是否满足条件
         /// </summary>
@@ -33,10 +32,19 @@ namespace OSS.EventFlow.Gateway
             return Task.FromResult(true);
         }
 
+        
         internal async Task MoveNext(IExecuteData preData)
         {
-           
-
+            var aCheck = await AggregateCheck(preData);
+            if (!aCheck)
+            {
+                var release = await AggregateRelease(preData);
+                if (release)
+                {
+                    await MoveUnusualAgent(preData);
+                    return ;
+                }
+            }
             await MoveSubNext(preData);
         }
 

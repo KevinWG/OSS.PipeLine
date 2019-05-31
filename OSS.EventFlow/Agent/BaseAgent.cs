@@ -18,7 +18,7 @@ namespace OSS.EventFlow.Agent
         //    return Task.CompletedTask;
         //}
 
-        public BaseGateway Gateway { get; set; }
+        public BaseGateway Gateway { get;internal set; }
     }
 
     public abstract class BaseAgent<TTData, TTRes> : BaseAgent
@@ -40,8 +40,7 @@ namespace OSS.EventFlow.Agent
 
         public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
-            var nodeRes = await WorkNode.Process(data, triedTimes, taskIds);
-            //await MoveOut(data);
+            var nodeRes= await WorkNode.Process(data,triedTimes,taskIds);
             await Gateway.MoveNext(data);
             return nodeRes;
         }

@@ -7,7 +7,7 @@ using OSS.EventTask.Mos;
 namespace OSS.EventNode.Mos
 {
     public class ProcessResp<TRes>
-        where TRes : ResultMo, new()
+           where TRes : ResultMo, new()
     {
         /// <summary>
         ///  最终结果
@@ -21,7 +21,7 @@ namespace OSS.EventNode.Mos
     }
     
     public class NodeResp<TRes> 
-        where TRes : ResultMo, new()
+           where TRes : ResultMo, new()
     {
         /// <summary>
         ///  最终结果

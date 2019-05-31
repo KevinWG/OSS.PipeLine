@@ -36,7 +36,7 @@ namespace OSS.EventTask.Mos
     public static class TaskResponseExtention
     {
         public static TaskResp<TRes> WithError<TRes>(this TaskResp<TRes> res,TaskRunStatus status, RunCondition condition,string msg=null)
-            where TRes : ResultMo, new()
+               where TRes : ResultMo, new()
         {
             res.run_status = status;
             res.task_cond = condition;
@@ -45,7 +45,7 @@ namespace OSS.EventTask.Mos
         }
 
         public static void SetToTaskResp<TRes>(this DoResp<TRes> res, TaskResp<TRes> taskResp)
-            where TRes : ResultMo, new()
+               where TRes : ResultMo, new()
         {
             taskResp.run_status = res.run_status;
             taskResp.resp = res.resp;
