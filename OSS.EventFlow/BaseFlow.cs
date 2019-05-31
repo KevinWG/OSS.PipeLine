@@ -1,4 +1,5 @@
 ﻿using OSS.EventFlow.Agent;
+using OSS.EventFlow.Gateway;
 
 namespace OSS.EventFlow
 {
@@ -15,10 +16,19 @@ namespace OSS.EventFlow
         /// 流程结束代理
         /// </summary>
         public BaseAgent Stop { get; set; }
+        
+        /// <summary>
+        ///  异常代理
+        /// </summary>
+        public BaseAgent UnusualAgent { get; set; }
 
 
-        protected void AddAgent(BaseAgent agent)
+
+
+
+        protected void AddAgent(BaseAgent agent,BaseGateway gate)
         {
+            gate.UnusualAgent = UnusualAgent;
 
         }
 

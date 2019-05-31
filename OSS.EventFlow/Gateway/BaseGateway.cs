@@ -10,7 +10,7 @@ namespace OSS.EventFlow.Gateway
     public abstract class BaseGateway
     {
         public GatewayType GatewayType { get; internal set; }
-        public BaseAgent UnusualAgent { get; set; }
+        public BaseAgent UnusualAgent { get;internal set; }
 
 
         /// <summary>
