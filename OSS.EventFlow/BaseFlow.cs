@@ -20,11 +20,7 @@ namespace OSS.EventFlow
         ///  异常代理
         /// </summary>
         public BaseAgent UnusualAgent { get; set; }
-
-
-
-
-
+        
         protected void AddAgent(BaseAgent agent, BaseGateway gateway)
         {
 

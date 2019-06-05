@@ -19,7 +19,6 @@ namespace OSS.EventFlow.Gateway
         /// <returns>true - 满足条件，false- 不能满足条件</returns>
         protected internal virtual Task<bool> AggregateCheck(IExecuteData preData)
         {
-
             return Task.FromResult(true);
         }
 
