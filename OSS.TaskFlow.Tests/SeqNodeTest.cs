@@ -6,7 +6,7 @@ using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 namespace OSS.TaskFlow.Tests
 {
     [TestClass]
-    public class AddNodeTest
+    public class SeqNodeTest
     {
         [TestMethod]
         public async Task AddTest()

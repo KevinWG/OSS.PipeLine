@@ -1,4 +1,5 @@
-﻿using OSS.EventTask.MetaMos;
+﻿using OSS.Common.Extention;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.MetaMos
@@ -12,8 +13,7 @@ namespace OSS.EventNode.MetaMos
 
         public string node_alias { get; set; }
 
-
-
+        
         public NodeProcessType Process_type { get; set; }
 
         public OwnerType owner_type { get; set; }
@@ -22,8 +22,15 @@ namespace OSS.EventNode.MetaMos
 
     public enum NodeProcessType
     {
-        Serial,
-        Parallel
+        /// <summary>
+        ///  串行
+        /// </summary>
+        [OSDescript("串行")] Serial,
+
+        /// <summary>
+        /// 并行
+        /// </summary>
+        [OSDescript("并行")] Parallel
     }
 
 

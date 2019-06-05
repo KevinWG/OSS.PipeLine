@@ -8,17 +8,17 @@ using OSS.EventTask.Mos;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks;
 
-namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode
+namespace OSS.TaskFlow.Tests.TestNodes.AddNode
 {
     /// <summary>
     ///   添加订单节点
     /// </summary>
-    public class AddOrderNode : BaseNode<AddOrderReq, ResultIdMo>
+    public class AddNode : BaseNode<AddOrderReq, ResultIdMo>
     {
         // 获取所有执行任务
         private static List<IEventTask<AddOrderReq>> list;
         protected override Task<List<IEventTask<AddOrderReq>>> GetTasks() => Task.FromResult(list);
-        public AddOrderNode()
+        public AddNode()
         {
             var couponTask = new CouponUseTask();
             couponTask.TaskMeta.WithNodeMeta(NodeMeta);
