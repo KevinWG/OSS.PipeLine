@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.ComModels.Enums;
-using OSS.Common.Extention;
+using OSS.Common.Resp;
 using OSS.EventFlow.Agent;
 using OSS.EventFlow.Mos;
 using OSS.EventNode.Interfaces;
@@ -95,7 +94,7 @@ namespace OSS.EventFlow.Gateway
         internal async Task MoveUnusualAgent(IExecuteData preData)
         {
             if (UnusualAgent == null)
-                throw new ResultException(SysResultTypes.ApplicationError, "UnusualAgent is null!");
+                throw new RespException(SysRespTypes.ApplicationError, "UnusualAgent is null!");
             await UnusualAgent.MoveIn(preData);
         }
 

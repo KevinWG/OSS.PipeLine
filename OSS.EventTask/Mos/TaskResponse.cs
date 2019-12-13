@@ -1,6 +1,5 @@
-﻿using OSS.Common.ComModels;
-using OSS.Common.ComModels.Enums;
-using OSS.EventTask.Util;
+﻿using OSS.Common.Resp;
+using OSS.EventTask.Extention;
 
 namespace OSS.EventTask.Mos
 {
@@ -36,16 +35,16 @@ namespace OSS.EventTask.Mos
     public static class TaskResponseExtention
     {
         public static TaskResp<TRes> WithError<TRes>(this TaskResp<TRes> res,TaskRunStatus status, RunCondition condition,string msg=null)
-               where TRes : ResultMo, new()
+               where TRes : Resp, new()
         {
             res.run_status = status;
             res.task_cond = condition;
-            res.resp =new TRes().WithResult(SysResultTypes.ApplicationError, msg??"Task Error！");
+            res.resp =new TRes().WithResp(SysRespTypes.ApplicationError, msg??"Task Error！");
             return res;
         }
 
         public static void SetToTaskResp<TRes>(this DoResp<TRes> res, TaskResp<TRes> taskResp)
-               where TRes : ResultMo, new()
+               where TRes : Resp, new()
         {
             taskResp.run_status = res.run_status;
             taskResp.resp = res.resp;

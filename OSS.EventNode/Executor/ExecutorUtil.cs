@@ -2,20 +2,22 @@
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
+using OSS.Common.Resp;
 using OSS.EventNode.Mos;
+using OSS.EventTask;
+using OSS.EventTask.Extention;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
-using OSS.EventTask.Util;
 
 namespace OSS.EventNode.Executor
 {
     internal class ExecutorUtil
     {
         // 根据任务结果格式化当前节点结果， 外部循环使用
-        internal static bool FormatNodeErrorResp<TTRes>(NodeResp<TTRes> nodeResp, TaskResp<ResultMo> taskResp,
+        internal static bool FormatNodeErrorResp<TTRes>(NodeResp<TTRes> nodeResp, TaskResp<Resp> taskResp,
             TaskMeta tMeta)
-            where TTRes : ResultMo, new()
+            where TTRes : Resp, new()
         {
             var status = NodeStatus.ProcessCompoleted;
             if (!taskResp.run_status.IsCompleted())
@@ -61,13 +63,13 @@ namespace OSS.EventNode.Executor
             return false;
         }
         //  尝试获取任务执行结果
-        internal static async Task<TaskResp<ResultMo>> TryGetTaskItemResult<TTData>(TTData data, IEventTask<TTData> task,
+        internal static async Task<TaskResp<Resp>> TryGetTaskItemResult<TTData>(TTData data, IEventTask<TTData> task,
             int triedTimes)
             where TTData : class
         {
             //if (nodeInsType == InstanceType.Stand && task.InstanceTaskType == InstanceType.Domain)
             //{
-            //    return new TaskResponse<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
+            //    return new TaskResponse<Resp>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
             //        "Stand Node can't use Domain Task!");
             //}
             try
@@ -76,23 +78,23 @@ namespace OSS.EventNode.Executor
             }
             catch (Exception ex)
             {
-                LogUtil.Error($"An error occurred while the task was running. Detail：{ex}", task.TaskMeta.node_id, task.ModuleName);
+                LogUtil.Error($"An error occurred while the task was running. Detail：{ex}", task.TaskMeta.node_id, EventTaskProvider.ModuleName);
             }
 
-            return new TaskResp<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
+            return new TaskResp<Resp>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
                 "Task of node run error!");
         }
 
         //  任务结果转化到节点结果
-        internal static TTRes ConvertToNodeResult<TTRes>(ResultMo taskRes)
-            where TTRes : ResultMo, new()
+        internal static TTRes ConvertToNodeResult<TTRes>(Resp taskRes)
+            where TTRes : Resp, new()
         {
             if (taskRes is TTRes nres)
             {
                 return nres;
             }
 
-            return taskRes.ConvertToResultInherit<TTRes>();
+            return new TTRes().WithResp(taskRes);// taskRes.ConvertToResultInherit<TTRes>();
         }
 
 
@@ -106,7 +108,7 @@ namespace OSS.EventNode.Executor
             }
             catch (Exception e)
             {
-                LogUtil.Error($"Task revert error！ detail:{e}", task.TaskMeta.task_id, task.ModuleName);
+                LogUtil.Error($"Task revert error！ detail:{e}", task.TaskMeta.task_id, EventTaskProvider.ModuleName);
             }
 
             return Task.FromResult(false);

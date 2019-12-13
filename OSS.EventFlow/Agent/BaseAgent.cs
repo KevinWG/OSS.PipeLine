@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.ComModels;
+using OSS.Common.Resp;
 using OSS.EventFlow.Gateway;
 using OSS.EventNode.Interfaces;
 using OSS.EventNode.Mos;
@@ -23,7 +23,7 @@ namespace OSS.EventFlow.Agent
 
     public abstract class BaseAgent<TTData, TTRes> : BaseAgent
         where TTData :class ,IExecuteData
-        where TTRes : ResultMo, new()
+        where TTRes : Resp, new()
     {
         public IEventNode<TTData, TTRes> WorkNode { get; internal set; }
 

@@ -2,21 +2,21 @@
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
+using OSS.Common.Resp;
+using OSS.EventTask.Extention;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
-using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
     public abstract partial class BaseTask<TTData, TTRes> : BaseMetaProvider<TaskMeta>, IEventTask<TTData>
         where TTData : class 
-        where TTRes : ResultMo, new()
+        where TTRes : Resp, new()
     {
         public TaskMeta TaskMeta => GetConfig();
         //internal ITaskProvider m_metaProvider;
 
-        private const string _moduleName = "OSS.EventTask";
         //public InstanceType InstanceTaskType { get; protected set; }
 
 
@@ -25,7 +25,6 @@ namespace OSS.EventTask
         }
         protected BaseTask(TaskMeta meta) : base(meta)
         {
-            ModuleName = _moduleName;
         }
 
         #region 扩展方法
@@ -76,7 +75,7 @@ namespace OSS.EventTask
             catch (Exception e)
             {
                 //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
-                LogUtil.Error($"Errors occurred during [Task context] saving. Detail:{e}", TaskMeta.task_id, ModuleName);
+                LogUtil.Error($"Errors occurred during [Task context] saving. Detail:{e}", TaskMeta.task_id, EventTaskProvider.ModuleName);
             }
             return Task.CompletedTask;
         }

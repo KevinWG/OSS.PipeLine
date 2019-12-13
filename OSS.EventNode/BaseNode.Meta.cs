@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
+using OSS.Common.Resp;
 using OSS.EventNode.Interfaces;
 using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
+using OSS.EventTask;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
+using OSS.Tools.Log;
 
 namespace OSS.EventNode
 {
@@ -19,7 +22,7 @@ namespace OSS.EventNode
     public abstract partial class BaseNode<TTData, TTRes> 
         : BaseMetaProvider<NodeMeta>, IEventNode<TTData, TTRes>
         where TTData : class 
-        where TTRes : ResultMo, new()
+        where TTRes : Resp, new()
     {
         // 内部成员
         private const string _moduleName = "OSS.EventNode";
@@ -35,7 +38,6 @@ namespace OSS.EventNode
 
         protected BaseNode(NodeMeta meta) : base(meta)
         {
-            ModuleName = _moduleName;
         }
 
         #region 内部基础方法
@@ -51,7 +53,7 @@ namespace OSS.EventNode
         /// </summary>
         /// <returns></returns>
         protected virtual Task SaveNodekContext(TTData data, TTRes resp, 
-            RunCondition cond, IDictionary<TaskMeta, TaskResp<ResultMo>> taskResults)
+            RunCondition cond, IDictionary<TaskMeta, TaskResp<Resp>> taskResults)
         {
             return Task.CompletedTask;
         }
@@ -61,7 +63,7 @@ namespace OSS.EventNode
         /// </summary>
         /// <returns></returns>
         protected virtual Task SaveErrorNodeContext(TTData data, TTRes resp,
-            RunCondition cond, IDictionary<TaskMeta, TaskResp<ResultMo>> taskResults)
+            RunCondition cond, IDictionary<TaskMeta, TaskResp<Resp>> taskResults)
         {
             return Task.CompletedTask;
         }
@@ -83,8 +85,8 @@ namespace OSS.EventNode
             catch (Exception e)
             {
                 //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
-                LogUtil.Error($"Errors occurred during [Task context] saving. Detail:{e}", NodeMeta.node_id,
-                    ModuleName);
+                LogHelper.Error($"Errors occurred during [Task context] saving. Detail:{e}", NodeMeta.node_id,
+                    EventTaskProvider.ModuleName);
             }
 
             return Task.CompletedTask;

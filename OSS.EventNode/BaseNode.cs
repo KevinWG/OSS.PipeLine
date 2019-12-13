@@ -5,12 +5,15 @@ using System.Threading.Tasks;
 using OSS.Common.ComModels;
 using OSS.Common.ComModels.Enums;
 using OSS.Common.Plugs.LogPlug;
+using OSS.Common.Resp;
 using OSS.EventNode.Executor;
 using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
+using OSS.EventTask;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
+using OSS.Tools.Log;
 
 namespace OSS.EventNode
 {
@@ -71,11 +74,11 @@ namespace OSS.EventNode
             catch (Exception e)
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError,
+                nodeResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError,
                     "Error occurred during Node [Process]!");
 
-                LogUtil.Error($"sys_ret:{nodeResp.resp.sys_ret}, ret:{nodeResp.resp.ret},msg:{nodeResp.resp.msg}, Detail:{e}",
-                    NodeMeta.node_id, ModuleName);
+                LogHelper.Error($"sys_ret:{nodeResp.resp.sys_ret}, ret:{nodeResp.resp.ret},msg:{nodeResp.resp.msg}, Detail:{e}",
+                    NodeMeta.node_id, EventTaskProvider.ModuleName);
             }
 
             await TrySaveNodeContext(data, nodeResp);
@@ -94,9 +97,9 @@ namespace OSS.EventNode
         /// <param name="data">处理数据</param>
         /// <param name="triedTimes">已经处理过的次数</param>
         /// <returns></returns>
-        protected virtual Task<ResultMo> ProcessInitial(TTData data, int triedTimes)
+        protected virtual Task<Resp> ProcessInitial(TTData data, int triedTimes)
         {
-            return Task.FromResult<ResultMo>(null);
+            return Task.FromResult<Resp>(null);
         }
 
         /// <summary>
@@ -107,7 +110,7 @@ namespace OSS.EventNode
         /// <param name="results">任务对应的结果列表</param>
         /// <param name="triedTimes">已经处理过的次数</param>
         /// <returns> 如果返回空，系统返回结果将根据对应任务状态和返回类型取值 </returns>
-        protected virtual Task<ProcessResp<TTRes>> Processed(TTData data, NodeStatus nodeStatus, IDictionary<TaskMeta, TaskResp<ResultMo>> results, int triedTimes)
+        protected virtual Task<ProcessResp<TTRes>> Processed(TTData data, NodeStatus nodeStatus, IDictionary<TaskMeta, TaskResp<Resp>> results, int triedTimes)
         {
             return Task.FromResult<ProcessResp<TTRes>>(null);
         }
@@ -135,7 +138,7 @@ namespace OSS.EventNode
                 nodeResp.node_status = NodeStatus.ProcessFailed;
                 nodeResp.resp = new TTRes()
                 {
-                    sys_ret = (int)SysResultTypes.ApplicationError,
+                    sys_ret = (int)SysRespTypes.ApplicationError,
                     msg = "Have no tasks to run"
                 };
                 return false;
@@ -145,7 +148,7 @@ namespace OSS.EventNode
             if (res!=null&&!res.IsSuccess())
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp = res.ConvertToResultInherit<TTRes>();
+                nodeResp.resp =new TTRes().WithResp(res);// res.ConvertToResultInherit<TTRes>();
                 return false;
             }
             return true;
@@ -165,7 +168,7 @@ namespace OSS.EventNode
             if (tasks == null || !tasks.Any())
             {
                 //nodeResp.node_status = NodeStatus.ProcessFailed;
-                //nodeResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, ResultTypes.ObjectNull,
+                //nodeResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError, ResultTypes.ObjectNull,
                 //    $"{this.GetType()} have no tasks can be Runed!");
                 return;
             }

@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.ComModels;
+using OSS.Common.Resp;
 using OSS.EventTask;
+using OSS.EventTask.Extention;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
-using OSS.EventTask.Util;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
-namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
+namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
-    public class PriceComputeTask:BaseTask<AddOrderReq,ResultMo>
+    public class PriceComputeTask:BaseTask<AddOrderReq,Resp>
     {
         protected override TaskMeta GetDefaultConfig()
         {
@@ -20,12 +20,12 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
                 node_action = NodeResultAction.FailedOnFailed
             };
         }
-        protected override async Task<DoResp<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
+        protected override async Task<DoResp<Resp>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
-            return new DoResp<ResultMo>()
+            return new DoResp<Resp>()
             {
                 run_status = TaskRunStatus.RunCompoleted,
-                resp = new ResultMo()
+                resp = new Resp()
             };
         }
     }

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
 using OSS.Common.Plugs.LogPlug;
+using OSS.Common.Resp;
 using OSS.EventNode.Mos;
+using OSS.EventTask;
+using OSS.EventTask.Extention;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
-using OSS.EventTask.Util;
 
 namespace OSS.EventNode.Executor
 {
@@ -18,7 +19,7 @@ namespace OSS.EventNode.Executor
         internal static async Task Excuting_Parallel<TTData, TTRes>(this BaseNode<TTData, TTRes> node,TTData data,
             NodeResp<TTRes> nodeResp,IList<IEventTask<TTData>> tasks,int triedTimes)
             where TTData : class
-            where TTRes : ResultMo, new()
+            where TTRes : Resp, new()
         {
             var taskResults =
                 tasks.ToDictionary(t => t, t => ExecutorUtil.TryGetTaskItemResult(data, t, triedTimes));
@@ -29,11 +30,11 @@ namespace OSS.EventNode.Executor
             }
             catch (Exception ex)
             {
-                LogUtil.Error(ex, node.NodeMeta.node_id, node.ModuleName);
+                LogUtil.Error(ex, node.NodeMeta.node_id, EventTaskProvider.ModuleName);
             }
 
             var taskResps = taskResults.ToDictionary(d => d.Key, d => d.Value.Status == TaskStatus.Faulted
-                ? new TaskResp<ResultMo>().WithError(TaskRunStatus.RunFailed, new RunCondition())
+                ? new TaskResp<Resp>().WithError(TaskRunStatus.RunFailed, new RunCondition())
                 : d.Value.Result);
 
             nodeResp.TaskResults = taskResps.ToDictionary(tk => tk.Key.TaskMeta, tk => tk.Value);
@@ -54,7 +55,7 @@ namespace OSS.EventNode.Executor
         // 并行任务回退处理（回退当前其他所有任务）
         internal static async Task Excuting_ParallelRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
             TTData data,NodeResp<TTRes> nodeResp,IList<IEventTask<TTData>> tasks,string blockTaskId,int triedTimes)
-            where TTData : class where TTRes : ResultMo, new()
+            where TTData : class where TTRes : Resp, new()
         {
             var revResList = tasks.Select(tItem => tItem.TaskMeta.task_id== blockTaskId
                     ? Task.FromResult(true)
@@ -67,7 +68,7 @@ namespace OSS.EventNode.Executor
             catch (Exception ex)
             {
                 LogUtil.Error($"An error occurred while the parallel node reverted all tasks. Detail:{ex}",
-                    node.NodeMeta.node_id, node.ModuleName);
+                    node.NodeMeta.node_id, EventTaskProvider.ModuleName);
             }
 
             if (nodeResp.RevrtTasks == null)

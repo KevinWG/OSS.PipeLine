@@ -1,14 +1,14 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.ComModels;
+using OSS.Common.Resp;
 using OSS.EventTask;
+using OSS.EventTask.Extention;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
-using OSS.EventTask.Util;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
-namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
+namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
-    public class CouponUseTask:BaseTask<AddOrderReq,ResultMo>
+    public class CouponUseTask:BaseTask<AddOrderReq,Resp>
     {
         protected override TaskMeta GetDefaultConfig()
         {
@@ -21,12 +21,12 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
             };
         }
 
-        protected override Task<DoResp<ResultMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
+        protected override Task<DoResp<Resp>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
-            var resp = new DoResp<ResultMo>
+            var resp = new DoResp<Resp>
             {
                 run_status = TaskRunStatus.RunCompoleted,
-                resp = new ResultMo()
+                resp = new Resp()
             };
             return Task.FromResult(resp);
         }

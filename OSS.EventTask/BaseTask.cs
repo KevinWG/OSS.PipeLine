@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
-using OSS.Common.ComModels.Enums;
 using OSS.Common.Extention;
 using OSS.Common.Plugs.LogPlug;
+using OSS.Common.Resp;
+using OSS.EventTask.Extention;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.Mos;
-using OSS.EventTask.Util;
 
 namespace OSS.EventTask
 {
@@ -27,10 +26,10 @@ namespace OSS.EventTask
             return taskResp;
         }
 
-        async Task<TaskResp<ResultMo>> IEventTask<TTData>.Run(TTData data, int triedTimes)
+        async Task<TaskResp<Resp>> IEventTask<TTData>.Run(TTData data, int triedTimes)
         {
             var taskResp = await Run(data, triedTimes);
-            return new TaskResp<ResultMo>()
+            return new TaskResp<Resp>()
             {
                 run_status = taskResp.run_status,resp = taskResp.resp,task_cond = taskResp.task_cond
             };
@@ -47,9 +46,9 @@ namespace OSS.EventTask
         /// <param name="loopTimes">循环执行次数，当次运行过程中的循环执行次数，默认是1</param>
         /// <param name="triedTimes">重新重试次数，默认是0</param>
         /// <returns></returns>
-        protected virtual Task<ResultMo> RunStartCheck(TTData data, int loopTimes, int triedTimes)
+        protected virtual Task<Resp> RunStartCheck(TTData data, int loopTimes, int triedTimes)
         {
-            return Task.FromResult(new ResultMo());
+            return Task.FromResult(new Resp());
         }
 
         /// <summary>
@@ -112,24 +111,24 @@ namespace OSS.EventTask
                 await Recurs(data, taskResp);
                 return;
             }
-            catch (ResultException e)
+            catch (RespException e)
             {
                 errorMsg = e.ToString();
                 if (taskResp.resp == null)
-                    taskResp.resp = e.ConvertToReultInherit<TTRes>(); //.ConvertToReult<TTRes>();
+                    taskResp.resp = new TTRes().WithExeption(e);//  e.ConvertToReultInherit<TTRes>(); //.ConvertToReult<TTRes>();
             }
             catch (Exception e)
             {
                 errorMsg = e.ToString();
                 if (taskResp.resp == null)
-                    taskResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError,
+                    taskResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError,
                         "Error occurred during task [Run]!");
             }
 
             taskResp.run_status = TaskRunStatus.RunFailed;
             var resp = taskResp.resp;
             LogUtil.Error($"sys_ret:{resp.sys_ret}, ret:{resp.ret},msg:{resp.msg}, Detail:{errorMsg}",
-                TaskMeta.task_id, ModuleName);
+                TaskMeta.task_id, EventTaskProvider.ModuleName);
             await TrySaveTaskContext(data, taskResp);
         }
 
@@ -195,7 +194,7 @@ namespace OSS.EventTask
             if (string.IsNullOrEmpty(TaskMeta?.task_id))
             {
                 taskResp.run_status = TaskRunStatus.RunFailed;
-                taskResp.resp = new TTRes().WithResult(SysResultTypes.ApplicationError, "Task metainfo is null!");
+                taskResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError, "Task metainfo is null!");
                 return false;
             }
 
@@ -205,7 +204,7 @@ namespace OSS.EventTask
             if (!res.IsSuccess())
             {
                 taskResp.run_status = TaskRunStatus.RunFailed;
-                taskResp.resp = res.ConvertToResultInherit<TTRes>();
+                taskResp.resp = new TTRes().WithResp(res);// res.ConvertToResultInherit<TTRes>();
                 return false;
             }
 
@@ -222,7 +221,7 @@ namespace OSS.EventTask
                 doRes = await Do(data, loopTimes, triedTimes);
                 if (doRes.resp == null)
                 {
-                    doRes.resp = new TTRes().WithResult(SysResultTypes.NoResponse,"Have no response during task [Do]!");
+                    doRes.resp = new TTRes().WithResp(SysRespTypes.NoResponse,"Have no response during task [Do]!");
                 }
             }
             catch (Exception e)
@@ -232,11 +231,11 @@ namespace OSS.EventTask
 
                 doRes.run_status = TaskRunStatus.RunFailed;
                 doRes.resp =
-                    new TTRes().WithResult(SysResultTypes.ApplicationError, "Error occurred during task [Do]!");
+                    new TTRes().WithResp(SysRespTypes.ApplicationError, "Error occurred during task [Do]!");
 
                 LogUtil.Error(
                     $"sys_ret:{doRes.resp.sys_ret}, ret:{doRes.resp.ret},msg:{doRes.resp.msg}, Detail:{e}"
-                    , TaskMeta.task_id, ModuleName);
+                    , TaskMeta.task_id, EventTaskProvider.ModuleName);
 
             }
 

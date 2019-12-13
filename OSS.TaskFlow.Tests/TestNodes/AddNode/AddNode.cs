@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
+using OSS.Common.Resp;
 using OSS.EventNode;
 using OSS.EventNode.MetaMos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.Mos;
+using OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
-using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks;
 
 namespace OSS.TaskFlow.Tests.TestNodes.AddNode
 {
     /// <summary>
     ///   添加订单节点
     /// </summary>
-    public class AddNode : BaseNode<AddOrderReq, ResultIdMo>
+    public class AddNode : BaseNode<AddOrderReq, IdResp>
     {
         // 获取所有执行任务
         private static List<IEventTask<AddOrderReq>> list;

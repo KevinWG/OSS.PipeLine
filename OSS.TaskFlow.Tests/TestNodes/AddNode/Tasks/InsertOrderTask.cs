@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
+using OSS.Common.Resp;
 using OSS.EventTask;
+using OSS.EventTask.Extention;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
-using OSS.EventTask.Util;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
-namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
+namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
-    public class InsertOrderTask : BaseTask<AddOrderReq, ResultIdMo>
+    public class InsertOrderTask : BaseTask<AddOrderReq, IdResp>
     {
         protected override TaskMeta GetDefaultConfig()
         {
@@ -23,12 +23,12 @@ namespace OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Tasks
         }
 
         /// <inheritdoc />
-        protected override async Task<DoResp<ResultIdMo>> Do(AddOrderReq data, int loopTimes, int triedTimes)
+        protected override async Task<DoResp<IdResp>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
             throw new ArgumentNullException("sssssss");
-            return new DoResp<ResultIdMo>()
+            return new DoResp<IdResp>()
             {
-                resp = new ResultIdMo("1000"),
+                resp = new IdResp("1000"),
                 run_status = TaskRunStatus.RunCompoleted
             };
         }
