@@ -10,15 +10,9 @@ namespace OSS.EventFlow.Gateway
     {
         private readonly Func<IExecuteData, Task<BaseAgent>> _exclusiveFunc;
 
-        public ExclusiveGateway():this(null)
-        {
-        }
-        
-
-        public ExclusiveGateway(Func<IExecuteData, Task<BaseAgent>> exclusiveFunc,BaseAgent[] nextMaps=null)
+        public ExclusiveGateway(Func<IExecuteData, Task<BaseAgent>> exclusiveFunc):base(GatewayType.ExclusiveSerial)
         {
             _exclusiveFunc = exclusiveFunc;
-            GatewayType = GatewayType.ExclusiveSerial;
         }
 
         protected virtual Task<BaseAgent> GetExclusiveAgent(IExecuteData data)

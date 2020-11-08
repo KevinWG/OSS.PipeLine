@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿
+
+using System.Threading.Tasks;
 using OSS.Common.Resp;
 using OSS.EventFlow.Gateway;
 using OSS.EventNode.Interfaces;
@@ -12,24 +14,19 @@ namespace OSS.EventFlow.Agent
         {
             return Task.CompletedTask;
         }
-
-        //public virtual Task MoveOut(IExecuteData preData)
-        //{
-        //    return Task.CompletedTask;
-        //}
-
-        public BaseGateway Gateway { get;internal set; }
     }
 
     public abstract class BaseAgent<TTData, TTRes> : BaseAgent
         where TTData :class ,IExecuteData
         where TTRes : Resp, new()
     {
-        public IEventNode<TTData, TTRes> WorkNode { get; internal set; }
+        private readonly IEventNode<TTData, TTRes> _workNode;
+        private readonly BaseGateway _gateway;
 
-        protected BaseAgent(IEventNode<TTData, TTRes> node)
+        protected BaseAgent(IEventNode<TTData, TTRes> node, BaseGateway gateway)
         {
-            WorkNode = node;
+            _workNode = node;
+            _gateway = gateway;
         }
 
 
@@ -40,8 +37,8 @@ namespace OSS.EventFlow.Agent
 
         public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
-            var nodeRes= await WorkNode.Process(data,triedTimes,taskIds);
-            await Gateway.MoveNext(data);
+            var nodeRes= await _workNode.Process(data,triedTimes,taskIds);
+            await _gateway.MoveNext(data);
             return nodeRes;
         }
     }

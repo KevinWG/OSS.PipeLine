@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Common.ComModels;
-using OSS.Common.Plugs.LogPlug;
 using OSS.Common.Resp;
 using OSS.EventNode.Interfaces;
 using OSS.EventNode.MetaMos;

@@ -10,14 +10,10 @@ namespace OSS.EventFlow.Gateway
     {
         private Func<IExecuteData, Task<BaseAgent[]>> _inclusiveFunc { get; }
 
-        public InclusiveGateway():this(null)
-        {
-        }
-
-        public InclusiveGateway(Func<IExecuteData, Task<BaseAgent[]>> inclusiveFunc)
+     
+        public InclusiveGateway(Func<IExecuteData, Task<BaseAgent[]>> inclusiveFunc):base(GatewayType.InclusiveBranch)
         {
             _inclusiveFunc = inclusiveFunc;
-            GatewayType = GatewayType.InclusiveBranch;
         }
 
         

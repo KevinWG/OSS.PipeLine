@@ -9,20 +9,13 @@ namespace OSS.EventFlow.Gateway
     {
         private readonly BaseAgent[] _nextAgents;
 
-        public BranchGateway(BaseAgent[] nextAgents)
+        public BranchGateway(BaseAgent[] nextAgents):base(GatewayType.Branch)
         {
             _nextAgents = nextAgents;
-            GatewayType = GatewayType.Branch;
         }
 
-  
         internal override async Task MoveSubNext(IExecuteData preData)
         {
-            if (_nextAgents == null||(GatewayType == GatewayType.Branch && _nextAgents.Length == 1))
-            {
-                await MoveUnusualAgent(preData);
-                return;
-            }
             await MoveMulitAgents(preData, _nextAgents);
         }
     }

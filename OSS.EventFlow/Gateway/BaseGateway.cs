@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.Resp;
 using OSS.EventFlow.Agent;
 using OSS.EventFlow.Mos;
 using OSS.EventNode.Interfaces;
@@ -9,8 +8,12 @@ namespace OSS.EventFlow.Gateway
     public abstract class BaseGateway
     {
         public GatewayType GatewayType { get; internal set; }
-        public BaseAgent UnusualAgent { get;internal set; }
-        
+
+        protected BaseGateway(GatewayType gatewayType)
+        {
+            GatewayType = gatewayType;
+        }
+
         /// <summary>
         ///  聚合控制检查是否满足条件
         /// </summary>
@@ -30,7 +33,6 @@ namespace OSS.EventFlow.Gateway
         {
             return Task.FromResult(true);
         }
-
         
         internal async Task MoveNext(IExecuteData preData)
         {
@@ -40,7 +42,6 @@ namespace OSS.EventFlow.Gateway
                 var release = await AggregateRelease(preData);
                 if (release)
                 {
-                    await MoveUnusualAgent(preData);
                     return ;
                 }
             }
@@ -48,22 +49,15 @@ namespace OSS.EventFlow.Gateway
         }
 
         internal abstract Task MoveSubNext(IExecuteData preData);
- 
+
 
         /// <summary>
         ///   多agent前进 
         /// </summary>
         /// <param name="preData"></param>
-        /// <param name="agents"></param>
         /// <returns></returns>
-        internal async Task MoveMulitAgents(IExecuteData preData, BaseAgent[] agents)
+        internal static async Task MoveMulitAgents(IExecuteData preData ,BaseAgent[] agents)
         {
-            if (agents == null || agents.Length < 1)
-            {
-                await MoveUnusualAgent(preData);
-                return;
-            }
-          
             foreach (var ag in agents)
             {
                 await ag.MoveIn(preData);
@@ -74,30 +68,11 @@ namespace OSS.EventFlow.Gateway
         /// 单一agent前进
         /// </summary>
         /// <param name="preData"></param>
-        /// <param name="agent"></param>
         /// <returns></returns>
-        internal async Task MoveSingleAgents(IExecuteData preData, BaseAgent agent)
+        internal static  Task MoveSingleAgents(IExecuteData preData , BaseAgent agent)
         {
-            if (agent == null)
-            {
-                await MoveUnusualAgent(preData);
-                return;
-            }
-            await agent.MoveIn(preData);
+            return agent.MoveIn(preData);
         }
 
-        /// <summary>
-        /// 进入非正常agent
-        /// </summary>
-        /// <param name="preData"></param>
-        /// <returns></returns>
-        internal async Task MoveUnusualAgent(IExecuteData preData)
-        {
-            if (UnusualAgent == null)
-                throw new RespException(SysRespTypes.ApplicationError, "UnusualAgent is null!");
-            await UnusualAgent.MoveIn(preData);
-        }
-
-        //internal abstract BaseAgent[]  GetNextAgentMaps();
     }
 }
