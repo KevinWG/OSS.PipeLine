@@ -1,14 +1,12 @@
-﻿using OSS.Common.ComModels;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using OSS.Common.Resp;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.Mos
 {
     public class ProcessResp<TRes>
-           where TRes : Resp, new()
+           where TRes : class, new()
     {
         /// <summary>
         ///  最终结果
@@ -22,7 +20,7 @@ namespace OSS.EventNode.Mos
     }
     
     public class NodeResp<TRes> 
-           where TRes : Resp, new()
+           where TRes : class, new()
     {
         /// <summary>
         ///  最终结果
@@ -47,14 +45,14 @@ namespace OSS.EventNode.Mos
         /// <summary>
         ///  节点任务处理结果
         /// </summary>
-        public IDictionary<TaskMeta, TaskResp<Resp>> TaskResults { get; internal set; }
+        public IDictionary<TaskMeta, TaskResp<TRes>> TaskResults { get; internal set; }
 
         /// <summary>
         ///  获取对应TaskKey对应的任务结果
         /// </summary>
         /// <param name="taskId"></param>
         /// <returns></returns>
-        public TaskResp<Resp> this[string taskId] =>
+        public TaskResp<TRes> this[string taskId] =>
             (from taskRes in TaskResults where taskRes.Key.task_id == taskId select taskRes.Value).FirstOrDefault();
     }
 }

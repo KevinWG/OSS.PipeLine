@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.Resp;
+using OSS.Common.BasicMos.Resp;
 using OSS.EventTask;
 using OSS.EventTask.Extention;
 using OSS.EventTask.MetaMos;
@@ -10,15 +10,14 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
     public class CouponUseTask:BaseTask<AddOrderReq,Resp>
     {
-        protected override TaskMeta GetDefaultConfig()
+        public CouponUseTask() : base(new TaskMeta()
         {
-            return new TaskMeta
-            {
-                loop_times = 3,
-                task_id = "CouponUseTask",
-                task_alias = "使用优惠券" ,
-                node_action = NodeResultAction.FailedOnFailed
-            };
+            loop_times = 3,
+            task_id = "CouponUseTask",
+            task_alias = "使用优惠券",
+            node_action = NodeResultAction.FailedOnFailed
+        })
+        {
         }
 
         protected override Task<DoResp<Resp>> Do(AddOrderReq data, int loopTimes, int triedTimes)

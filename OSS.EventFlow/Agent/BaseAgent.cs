@@ -1,7 +1,6 @@
 ﻿
 
 using System.Threading.Tasks;
-using OSS.Common.Resp;
 using OSS.EventFlow.Gateway;
 using OSS.EventNode.Interfaces;
 using OSS.EventNode.Mos;
@@ -18,7 +17,7 @@ namespace OSS.EventFlow.Agent
 
     public abstract class BaseAgent<TTData, TTRes> : BaseAgent
         where TTData :class ,IExecuteData
-        where TTRes : Resp, new()
+        where TTRes : class, new()
     {
         private readonly IEventNode<TTData, TTRes> _workNode;
         private readonly BaseGateway _gateway;

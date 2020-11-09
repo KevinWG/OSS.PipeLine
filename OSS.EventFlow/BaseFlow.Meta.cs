@@ -1,19 +1,22 @@
-﻿using OSS.Common.ComModels;
-using OSS.EventFlow.MetaMos;
+﻿using OSS.EventFlow.MetaMos;
+using OSS.EventTask.MetaMos;
 
 namespace OSS.EventFlow
 {
     /// <summary>
     /// 流运行时元数据信息
     /// </summary>
-    public abstract partial class BaseFlow:BaseMetaProvider<FlowMeta>
+    public abstract partial class BaseFlow:BaseMeta<FlowMeta>
     {
-        private const string _moduleName = "OSS.EventFlow";
-    
-        /// <summary>
-        ///  流节点信息
-        /// </summary>
-        public FlowMeta FlowMeta => GetConfig();
+        public BaseFlow()
+        {
+
+        }
+
+        public BaseFlow(FlowMeta meta) : base(meta)
+        {
+
+        }
 
     }
 }

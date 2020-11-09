@@ -1,8 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using OSS.Common.ComModels;
-using OSS.Common.Plugs.LogPlug;
-using OSS.Common.Resp;
+﻿using System.Threading.Tasks;
 using OSS.EventTask.Extention;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
@@ -10,22 +6,21 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class BaseTask<TTData, TTRes> : BaseMetaProvider<TaskMeta>, IEventTask<TTData>
-        where TTData : class 
-        where TTRes : Resp, new()
+    public abstract partial class BaseTask<TTData,TTRes> : BaseMeta<TaskMeta>, IEventTask<TTData,TTRes>
+        where TTData : class
+        where TTRes : class,new()
     {
-        public TaskMeta TaskMeta => GetConfig();
-        //internal ITaskProvider m_metaProvider;
-
-        //public InstanceType InstanceTaskType { get; protected set; }
-
-
-        protected BaseTask() : this(null)
+  
+        protected BaseTask()
         {
         }
-        protected BaseTask(TaskMeta meta) : base(meta)
+
+        protected BaseTask(TaskMeta meta) :base(meta)
         {
         }
+
+
+
 
         #region 扩展方法
 
@@ -38,7 +33,7 @@ namespace OSS.EventTask
         /// <param name="resp"></param>
         /// <param name="cond"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskContext(TTData data,TTRes resp,RunCondition cond)
+        protected virtual Task SaveTaskContext(TTData data, TTRes resp, RunCondition cond)
         {
             return Task.CompletedTask;
         }
@@ -61,22 +56,23 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
-        private Task TrySaveTaskContext(TTData data, TaskResp<TTRes> taskResp)
+        private Task TrySaveTaskContext(TaskMeta taskMeta,TTData data, TaskResp<TTRes> taskResp)
         {
-            try
+         
+            //try
+            //{
+            if (taskMeta.owner_type == OwnerType.Task)
             {
-                if (TaskMeta.owner_type== OwnerType.Task)
-                {
-                    return  taskResp.run_status==TaskRunStatus.RunPaused
-                        ?SaveTaskContext(data, taskResp.resp, taskResp.task_cond)
-                        :SaveErrorTaskContext(data,taskResp.resp,taskResp.task_cond);
-                }
+                return taskResp.run_status == TaskRunStatus.RunPaused
+                    ? SaveTaskContext(data, taskResp.resp, taskResp.task_cond)
+                    : SaveErrorTaskContext(data, taskResp.resp, taskResp.task_cond);
             }
-            catch (Exception e)
-            {
-                //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
-                LogUtil.Error($"Errors occurred during [Task context] saving. Detail:{e}", TaskMeta.task_id, EventTaskProvider.ModuleName);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    //  防止Provider中SaveTaskContext内部使用Task实现时，级联异常死循环
+            //    LogUtil.Error($"Errors occurred during [Task context] saving. Detail:{e}", TaskMeta.task_id, EventTaskProvider.ModuleName);
+            //}
             return Task.CompletedTask;
         }
 

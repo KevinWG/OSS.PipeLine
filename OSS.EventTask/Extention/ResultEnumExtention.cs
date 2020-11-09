@@ -1,4 +1,4 @@
-﻿using OSS.Common.Extention;
+﻿using System;
 
 namespace OSS.EventTask.Extention
 {
@@ -7,30 +7,24 @@ namespace OSS.EventTask.Extention
         /// <summary>
         ///  等待运行
         /// </summary>
-        [OSDescript("等待运行")] WaitToRun = 0,
+        WaitToRun = 0,
 
         /// <summary>
-        ///  运行暂停
+        ///  中断等待
         /// </summary>
-        [OSDescript("运行暂停")] RunPaused = 10,
+        RunPaused = 10,
 
         /// <summary>
         /// 运行失败
         /// </summary>
-        [OSDescript("运行失败")] RunFailed = 20,
+        RunFailed = 20,
 
         /// <summary>
         /// 运行成功
         /// </summary>
-        [OSDescript("运行成功")] RunCompoleted = 30,
-
-        /// <summary>
-        /// 回退
-        /// </summary>
-        [OSDescript("回退")] RunReverted = 50
-
+        RunCompoleted = 30
     }
-    
+
     public static class TaskRunStatusExtention
     {
         /// <summary>
@@ -53,15 +47,29 @@ namespace OSS.EventTask.Extention
             return res == TaskRunStatus.RunPaused;
         }
 
-        public static bool IsReverted(this TaskRunStatus res)
-        {
-            return res == TaskRunStatus.RunReverted;
-        }
+        //public static bool IsReverted(this TaskRunStatus res)
+        //{
+        //    return res == TaskRunStatus.RunReverted;
+        //}
 
         public static bool IsWaitToRun(this TaskRunStatus res)
         {
             return res == TaskRunStatus.WaitToRun;
         }
-        
+
+
+        private static readonly long startTicks = new DateTime(1970, 1, 1).Ticks;
+
+
+        /// <summary>
+        /// 获取距离 1970-01-01（格林威治时间）的秒数
+        /// </summary>
+        /// <param name="localTime"></param>
+        /// <returns></returns>
+        public static long ToUtcSeconds(this DateTime localTime)
+        {
+            return (localTime.ToUniversalTime().Ticks - startTicks) / 10000000;
+        }
+
     }
 }

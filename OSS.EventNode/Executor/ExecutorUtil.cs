@@ -1,10 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using OSS.Common.ComModels;
-using OSS.Common.Plugs.LogPlug;
-using OSS.Common.Resp;
+﻿using System.Threading.Tasks;
 using OSS.EventNode.Mos;
-using OSS.EventTask;
 using OSS.EventTask.Extention;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
@@ -15,9 +10,9 @@ namespace OSS.EventNode.Executor
     internal class ExecutorUtil
     {
         // 根据任务结果格式化当前节点结果， 外部循环使用
-        internal static bool FormatNodeErrorResp<TTRes>(NodeResp<TTRes> nodeResp, TaskResp<Resp> taskResp,
+        internal static bool FormatNodeErrorResp<TTRes>(NodeResp<TTRes> nodeResp, TaskResp<TTRes> taskResp,
             TaskMeta tMeta)
-            where TTRes : Resp, new()
+            where TTRes : class, new()
         {
             var status = NodeStatus.ProcessCompoleted;
             if (!taskResp.run_status.IsCompleted())
@@ -63,55 +58,51 @@ namespace OSS.EventNode.Executor
             return false;
         }
         //  尝试获取任务执行结果
-        internal static async Task<TaskResp<Resp>> TryGetTaskItemResult<TTData>(TTData data, IEventTask<TTData> task,
+        internal static Task<TaskResp<TTRes>> TryGetTaskItemResult<TTData,TTRes>(TTData data, IEventTask<TTData, TTRes> task,
             int triedTimes)
             where TTData : class
+            where TTRes : class, new()
         {
-            //if (nodeInsType == InstanceType.Stand && task.InstanceTaskType == InstanceType.Domain)
+            //try
             //{
-            //    return new TaskResponse<Resp>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
-            //        "Stand Node can't use Domain Task!");
+                return  task.Run(data, triedTimes);
             //}
-            try
-            {
-                return await task.Run(data, triedTimes);
-            }
-            catch (Exception ex)
-            {
-                LogUtil.Error($"An error occurred while the task was running. Detail：{ex}", task.TaskMeta.node_id, EventTaskProvider.ModuleName);
-            }
+            //catch (Exception ex)
+            //{
+            //    LogUtil.Error($"An error occurred while the task was running. Detail：{ex}", task.TaskMeta.node_id, EventTaskProvider.ModuleName);
+            //}
 
-            return new TaskResp<Resp>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
-                "Task of node run error!");
+            //return new TaskResp<Resp>().WithError(TaskRunStatus.RunFailed, new RunCondition(),
+            //    "Task of node run error!");
         }
 
         //  任务结果转化到节点结果
-        internal static TTRes ConvertToNodeResult<TTRes>(Resp taskRes)
-            where TTRes : Resp, new()
+        internal static TTRes ConvertToNodeResult<TTRes>(TTRes taskRes)
+            where TTRes : class, new()
         {
             if (taskRes is TTRes nres)
             {
                 return nres;
             }
-
-            return new TTRes().WithResp(taskRes);// taskRes.ConvertToResultInherit<TTRes>();
+            return null;
+            //return new TTRes().WithResp(taskRes);// taskRes.ConvertToResultInherit<TTRes>();
         }
 
 
 
         //  尝试回退任务
-        internal static Task<bool> TryRevertTask<TTData>(IEventTask<TTData> task, TTData data,  int triedTimes)
+        internal static Task<bool> TryRevertTask<TTData>(IEventTask<TTData> task, TTData data)
         {
-            try
-            {
-                return task.Revert(data,triedTimes);
-            }
-            catch (Exception e)
-            {
-                LogUtil.Error($"Task revert error！ detail:{e}", task.TaskMeta.task_id, EventTaskProvider.ModuleName);
-            }
+            //try
+            //{
+                return task.Revert(data);
+            //}
+            //catch (Exception e)
+            //{
+            //    LogUtil.Error($"Task revert error！ detail:{e}", task.TaskMeta.task_id, EventTaskProvider.ModuleName);
+            //}
 
-            return Task.FromResult(false);
+            //return Task.FromResult(false);
         }
 
     }

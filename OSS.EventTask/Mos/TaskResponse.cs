@@ -1,14 +1,14 @@
-﻿using OSS.Common.Resp;
-using OSS.EventTask.Extention;
+﻿using OSS.EventTask.Extention;
 
 namespace OSS.EventTask.Mos
 {
-    public class TaskResp<TRes>
+
+    public class TaskResp<TRes> //: ITaskResp<TRes>
     {
         /// <summary>
         ///  运行状态
         /// </summary>
-        public TaskRunStatus run_status { get;internal set; }
+        public TaskRunStatus run_status { get; internal set; }
 
         public RunCondition task_cond { get;internal set; }
 
@@ -18,7 +18,7 @@ namespace OSS.EventTask.Mos
         public TRes resp { get; internal set; }
     }
     
-    public class DoResp<TRes>
+    public class DoResp< TRes>
     {
         /// <summary>
         ///  运行状态
@@ -34,17 +34,17 @@ namespace OSS.EventTask.Mos
 
     public static class TaskResponseExtention
     {
-        public static TaskResp<TRes> WithError<TRes>(this TaskResp<TRes> res,TaskRunStatus status, RunCondition condition,string msg=null)
-               where TRes : Resp, new()
-        {
-            res.run_status = status;
-            res.task_cond = condition;
-            res.resp =new TRes().WithResp(SysRespTypes.ApplicationError, msg??"Task Error！");
-            return res;
-        }
+        //public static TaskResp<TRes> WithError<TRes>(this TaskResp<TRes> res,TaskRunStatus status, RunCondition condition,string msg=null)
+        //       where TRes : Resp, new()
+        //{
+        //    res.run_status = status;
+        //    res.task_cond = condition;
+        //    res.resp =new TRes().WithResp(SysRespTypes.ApplicationError, msg??"Task Error！");
+        //    return res;
+        //}
 
         public static void SetToTaskResp<TRes>(this DoResp<TRes> res, TaskResp<TRes> taskResp)
-               where TRes : Resp, new()
+               where TRes :new()
         {
             taskResp.run_status = res.run_status;
             taskResp.resp = res.resp;

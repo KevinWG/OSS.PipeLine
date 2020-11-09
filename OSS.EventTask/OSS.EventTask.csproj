@@ -16,9 +16,4 @@
     <Compile Remove="Stand.BaseTask.Meta.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="OSS.Common" Version="2.1.3" />
-    <PackageReference Include="OSS.Tools.Log" Version="1.1.0" />
-  </ItemGroup>
-
 </Project>

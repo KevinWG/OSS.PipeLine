@@ -1,16 +1,20 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.Resp;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventTask.Interfaces
 {
-    public interface IEventTask<in TTData>
+    public interface IEventTask<in TTData>: IMeta<TaskMeta>
     {
-        TaskMeta TaskMeta { get; }
-   
-        Task<bool> Revert(TTData data,  int triedTimes);
-        Task<TaskResp<Resp>> Run(TTData data, int triedTimes);
+
+        Task<bool> Revert(TTData data);
+    }
+
+    public interface IEventTask<in TTData, TTRes>: IEventTask<TTData>
+        where TTRes :class, new()
+    {
+      
+        Task<TaskResp<TTRes>> Run(TTData data, int triedTimes);
     }
 
 

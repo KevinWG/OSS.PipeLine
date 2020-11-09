@@ -9,19 +9,19 @@ namespace OSS.TaskFlow.Tests
     [TestClass]
     public class SeqNodeTest
     {
-        [TestMethod]
-        public async Task AddTest()
-        {
-            //var orderInfo = new OrderInfo();
-            var addReq = new AddOrderReq
-            {
-                coupon_id = "coupon100",
-                title = "²âÊÔ¶©µ¥",
-                source_ids = "s_1"
-            };
+        //[TestMethod]
+        //public async Task AddTest()
+        //{
+        //    //var orderInfo = new OrderInfo();
+        //    var addReq = new AddOrderReq
+        //    {
+        //        coupon_id = "coupon100",
+        //        title = "²âÊÔ¶©µ¥",
+        //        source_ids = "s_1"
+        //    };
 
-            var addNode = new AddNode();
-            var idRes = await addNode.Process(addReq,0);
-        }
+        //    var addNode = new AddNode();
+        //    var idRes = await addNode.Process(addReq,0);
+        //}
     }
 }

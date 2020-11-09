@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OSS.Common.ComModels;
-using OSS.Common.ComModels.Enums;
-using OSS.Common.Plugs.LogPlug;
-using OSS.Common.Resp;
 using OSS.EventNode.Executor;
 using OSS.EventNode.MetaMos;
 using OSS.EventNode.Mos;
-using OSS.EventTask;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
-using OSS.Tools.Log;
 
 namespace OSS.EventNode
 {
@@ -46,8 +39,8 @@ namespace OSS.EventNode
 
         private async Task<NodeResp<TTRes>> TryProcess(TTData data,NodeResp<TTRes> nodeResp,int triedTimes,params string[] taskIds)
         {
-            try
-            {
+            //try
+            //{
                 //  检查初始化
                 var checkRes = await ProcessCheck(data, nodeResp,triedTimes,taskIds);
                 if (!checkRes)
@@ -70,37 +63,35 @@ namespace OSS.EventNode
                 if (nodeResp.node_status == NodeStatus.ProcessPaused)
                     await TrySaveNodeContext(data, nodeResp);
                 return nodeResp;
-            }
-            catch (Exception e)
-            {
-                nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError,
-                    "Error occurred during Node [Process]!");
+            //}
+            //catch (Exception e)
+            //{
+            //    nodeResp.node_status = NodeStatus.ProcessFailed;
+            //    nodeResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError,
+            //        "Error occurred during Node [Process]!");
 
-                LogHelper.Error($"sys_ret:{nodeResp.resp.sys_ret}, ret:{nodeResp.resp.ret},msg:{nodeResp.resp.msg}, Detail:{e}",
-                    NodeMeta.node_id, EventTaskProvider.ModuleName);
-            }
+            //    LogHelper.Error($"sys_ret:{nodeResp.resp.sys_ret}, ret:{nodeResp.resp.ret},msg:{nodeResp.resp.msg}, Detail:{e}",
+            //        NodeMeta.node_id, EventTaskProvider.ModuleName);
+            //}
 
-            await TrySaveNodeContext(data, nodeResp);
-            return nodeResp;
+            //await TrySaveNodeContext(data, nodeResp);
+            //return nodeResp;
         }
-
-
 
         #endregion
 
         #region 生命周期扩展方法
 
-        /// <summary>
-        /// 处理前初始化检查等处理
-        /// </summary>
-        /// <param name="data">处理数据</param>
-        /// <param name="triedTimes">已经处理过的次数</param>
-        /// <returns></returns>
-        protected virtual Task<Resp> ProcessInitial(TTData data, int triedTimes)
-        {
-            return Task.FromResult<Resp>(null);
-        }
+        ///// <summary>
+        ///// 处理前初始化检查等处理
+        ///// </summary>
+        ///// <param name="data">处理数据</param>
+        ///// <param name="triedTimes">已经处理过的次数</param>
+        ///// <returns></returns>
+        //protected virtual Task<TTRes> ProcessInitial(TTData data, int triedTimes)
+        //{
+        //    return Task.FromResult<TTRes>(null);
+        //}
 
         /// <summary>
         ///   关联任务执行后的结果再处理
@@ -110,7 +101,7 @@ namespace OSS.EventNode
         /// <param name="results">任务对应的结果列表</param>
         /// <param name="triedTimes">已经处理过的次数</param>
         /// <returns> 如果返回空，系统返回结果将根据对应任务状态和返回类型取值 </returns>
-        protected virtual Task<ProcessResp<TTRes>> Processed(TTData data, NodeStatus nodeStatus, IDictionary<TaskMeta, TaskResp<Resp>> results, int triedTimes)
+        protected virtual Task<ProcessResp<TTRes>> Processed(TTData data, NodeStatus nodeStatus, IDictionary<TaskMeta, TaskResp<TTRes>> results, int triedTimes)
         {
             return Task.FromResult<ProcessResp<TTRes>>(null);
         }
@@ -131,26 +122,27 @@ namespace OSS.EventNode
 
         #region 内部扩展方法
 
-        private async Task<bool> ProcessCheck(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,params  string[] taskIds)
+        private async Task<bool> ProcessCheck(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,
+            params string[] taskIds)
         {
             if (triedTimes > 0 && (taskIds == null || taskIds.Length == 0))
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp = new TTRes()
-                {
-                    sys_ret = (int)SysRespTypes.ApplicationError,
-                    msg = "Have no tasks to run"
-                };
+                //nodeResp.resp = new TTRes()
+                //{
+                //    sys_ret = (int)SysRespTypes.ApplicationError,
+                //    msg = "Have no tasks to run"
+                //};
                 return false;
             }
             
-            var res = await ProcessInitial(data, triedTimes);
-            if (res!=null&&!res.IsSuccess())
-            {
-                nodeResp.node_status = NodeStatus.ProcessFailed;
-                nodeResp.resp =new TTRes().WithResp(res);// res.ConvertToResultInherit<TTRes>();
-                return false;
-            }
+            //var res = await ProcessInitial(data, triedTimes);
+            //if (res!=null&&!res.IsSuccess())
+            //{
+            //    nodeResp.node_status = NodeStatus.ProcessFailed;
+            //    //nodeResp.resp =new TTRes().WithResp(res);// res.ConvertToResultInherit<TTRes>();
+            //    return false;
+            //}
             return true;
         }
 
@@ -162,8 +154,10 @@ namespace OSS.EventNode
             // 获取任务元数据列表
             var tasks = await GetTasks();
 
-            if (tasks != null && triedTimes > 0)
-                tasks = tasks.Where(t => taskIds.Contains(t.TaskMeta.task_id)).ToList();
+            //if (tasks != null && triedTimes > 0)
+            //    tasks = tasks.Where(t => 
+            //        taskIds.Contains(t.TaskMeta.task_id)
+            //        ).ToList();
 
             if (tasks == null || !tasks.Any())
             {
@@ -181,10 +175,10 @@ namespace OSS.EventNode
 
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task ExcutingWithTasks(TTData data, NodeResp<TTRes> nodeResp, IList<IEventTask<TTData>> tasks,
+        private async Task ExcutingWithTasks(TTData data, NodeResp<TTRes> nodeResp, IList<IEventTask<TTData,TTRes>> tasks,
             int triedTimes)
         {
-            if (NodeMeta.Process_type == NodeProcessType.Parallel)
+            if (Meta.Process_type == NodeProcessType.Parallel)
                 await this.Excuting_Parallel(data, nodeResp, tasks, triedTimes);
             else
                 await this.Excuting_Serial(data, nodeResp, tasks, triedTimes);
@@ -194,10 +188,10 @@ namespace OSS.EventNode
             {
                 var revertTasks = triedTimes > 0 ? (await GetTasks()) : tasks;
 
-                if (NodeMeta.Process_type == NodeProcessType.Parallel)
-                    await this.Excuting_ParallelRevert(data, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
+                if (Meta.Process_type == NodeProcessType.Parallel)
+                    await this.Excuting_ParallelRevert(data, nodeResp, revertTasks, nodeResp.block_taskid);
                 else
-                    await this.Excuting_SerialRevert(data, nodeResp, revertTasks, nodeResp.block_taskid, triedTimes);
+                    await this.Excuting_SerialRevert(data, nodeResp, revertTasks, nodeResp.block_taskid);
             }
         }
         #endregion

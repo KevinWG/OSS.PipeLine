@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using OSS.Common.Resp;
+using OSS.Common.BasicMos.Resp;
 using OSS.EventTask;
 using OSS.EventTask.Extention;
 using OSS.EventTask.MetaMos;
@@ -10,16 +10,18 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
     public class PriceComputeTask:BaseTask<AddOrderReq,Resp>
     {
-        protected override TaskMeta GetDefaultConfig()
+       
+        public PriceComputeTask() : base(new TaskMeta
         {
-            return new TaskMeta
-            {
-                task_id = "PriceComputeTask",
-                task_alias = "价格计算！",
-                loop_times = 3,
-                node_action = NodeResultAction.FailedOnFailed
-            };
+            task_id = "PriceComputeTask",
+            task_alias = "价格计算！",
+            loop_times = 3,
+            node_action = NodeResultAction.FailedOnFailed
+        })
+        {
+
         }
+
         protected override async Task<DoResp<Resp>> Do(AddOrderReq data, int loopTimes, int triedTimes)
         {
             return new DoResp<Resp>()
