@@ -8,7 +8,7 @@ using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
 namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
-    public class CouponUseTask:BaseTask<AddOrderReq,Resp>
+    public class CouponUseTask : EventTask<AddOrderReq, Resp>
     {
         public CouponUseTask() : base(new TaskMeta()
         {

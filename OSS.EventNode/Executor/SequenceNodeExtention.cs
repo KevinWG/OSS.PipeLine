@@ -7,7 +7,7 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventNode.Executor
 {
-    public static class SerialNodeExtention
+    public static class SerialNodeExtension
     {
         ///  顺序执行
         internal static async Task Excuting_Serial<TTData, TTRes>(this BaseNode<TTData, TTRes> node,

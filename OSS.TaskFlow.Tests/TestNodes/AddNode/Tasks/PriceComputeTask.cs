@@ -8,7 +8,7 @@ using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
 namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
-    public class PriceComputeTask:BaseTask<AddOrderReq,Resp>
+    public class PriceComputeTask:EventTask<AddOrderReq,Resp>
     {
        
         public PriceComputeTask() : base(new TaskMeta

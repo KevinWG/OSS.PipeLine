@@ -9,7 +9,7 @@ using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
 namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
-    public class InsertOrderTask : BaseTask<AddOrderReq, Resp>
+    public class InsertOrderTask : EventTask<AddOrderReq, Resp>
     {
         public InsertOrderTask() : base(new TaskMeta
         {

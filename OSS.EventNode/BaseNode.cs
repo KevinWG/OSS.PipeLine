@@ -37,61 +37,37 @@ namespace OSS.EventNode
             return TryProcess(data, nodeResp, triedTimes, taskIds);
         }
 
-        private async Task<NodeResp<TTRes>> TryProcess(TTData data,NodeResp<TTRes> nodeResp,int triedTimes,params string[] taskIds)
+        private async Task<NodeResp<TTRes>> TryProcess(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,
+            params string[] taskIds)
         {
-            //try
-            //{
-                //  检查初始化
-                var checkRes = await ProcessCheck(data, nodeResp,triedTimes,taskIds);
-                if (!checkRes)
-                    return nodeResp;
-
-                // 【2】 任务处理执行方法
-                await Excuting(data, nodeResp, triedTimes,taskIds);
-
-                var pResp = await Processed(data, nodeResp.node_status, nodeResp.TaskResults, triedTimes);
-                if (pResp!=null)
-                {
-                    nodeResp.node_status = pResp.node_status;
-                    nodeResp.resp = pResp.resp;
-                }
-
-                //  【3】 扩展后置执行方法
-                await ProcessEnd(data, nodeResp,triedTimes);
-
-                //  结束， 如果节点是暂停状态，需要保存上下文请求信息
-                if (nodeResp.node_status == NodeStatus.ProcessPaused)
-                    await TrySaveNodeContext(data, nodeResp);
+            //  检查初始化
+            var checkRes = ProcessCheck(data, nodeResp, triedTimes, taskIds);
+            if (!checkRes)
                 return nodeResp;
-            //}
-            //catch (Exception e)
-            //{
-            //    nodeResp.node_status = NodeStatus.ProcessFailed;
-            //    nodeResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError,
-            //        "Error occurred during Node [Process]!");
 
-            //    LogHelper.Error($"sys_ret:{nodeResp.resp.sys_ret}, ret:{nodeResp.resp.ret},msg:{nodeResp.resp.msg}, Detail:{e}",
-            //        NodeMeta.node_id, EventTaskProvider.ModuleName);
-            //}
+            // 【2】 任务处理执行方法
+            await Excuting(data, nodeResp, triedTimes, taskIds);
 
-            //await TrySaveNodeContext(data, nodeResp);
-            //return nodeResp;
+            var pResp = await Processed(data, nodeResp.node_status, nodeResp.TaskResults, triedTimes);
+            if (pResp != null)
+            {
+                nodeResp.node_status = pResp.node_status;
+                nodeResp.resp = pResp.resp;
+            }
+
+            //  【3】 扩展后置执行方法
+            await ProcessEnd(data, nodeResp, triedTimes);
+
+            //  结束， 如果节点是暂停状态，需要保存上下文请求信息
+            if (nodeResp.node_status == NodeStatus.ProcessPaused)
+                await TrySaveNodeContext(data, nodeResp);
+            return nodeResp;
         }
 
         #endregion
 
         #region 生命周期扩展方法
 
-        ///// <summary>
-        ///// 处理前初始化检查等处理
-        ///// </summary>
-        ///// <param name="data">处理数据</param>
-        ///// <param name="triedTimes">已经处理过的次数</param>
-        ///// <returns></returns>
-        //protected virtual Task<TTRes> ProcessInitial(TTData data, int triedTimes)
-        //{
-        //    return Task.FromResult<TTRes>(null);
-        //}
 
         /// <summary>
         ///   关联任务执行后的结果再处理
@@ -122,30 +98,17 @@ namespace OSS.EventNode
 
         #region 内部扩展方法
 
-        private async Task<bool> ProcessCheck(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,
+        private bool ProcessCheck(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,
             params string[] taskIds)
         {
             if (triedTimes > 0 && (taskIds == null || taskIds.Length == 0))
             {
                 nodeResp.node_status = NodeStatus.ProcessFailed;
-                //nodeResp.resp = new TTRes()
-                //{
-                //    sys_ret = (int)SysRespTypes.ApplicationError,
-                //    msg = "Have no tasks to run"
-                //};
+             
                 return false;
             }
-            
-            //var res = await ProcessInitial(data, triedTimes);
-            //if (res!=null&&!res.IsSuccess())
-            //{
-            //    nodeResp.node_status = NodeStatus.ProcessFailed;
-            //    //nodeResp.resp =new TTRes().WithResp(res);// res.ConvertToResultInherit<TTRes>();
-            //    return false;
-            //}
             return true;
         }
-
 
 
         internal virtual async Task Excuting(TTData data, NodeResp<TTRes> nodeResp, int triedTimes,
@@ -153,20 +116,10 @@ namespace OSS.EventNode
         {
             // 获取任务元数据列表
             var tasks = await GetTasks();
-
-            //if (tasks != null && triedTimes > 0)
-            //    tasks = tasks.Where(t => 
-            //        taskIds.Contains(t.TaskMeta.task_id)
-            //        ).ToList();
-
             if (tasks == null || !tasks.Any())
             {
-                //nodeResp.node_status = NodeStatus.ProcessFailed;
-                //nodeResp.resp = new TTRes().WithResp(SysRespTypes.ApplicationError, ResultTypes.ObjectNull,
-                //    $"{this.GetType()} have no tasks can be Runed!");
                 return;
             }
-
             // 执行处理结果
             await ExcutingWithTasks(data, nodeResp, tasks, triedTimes);
         }

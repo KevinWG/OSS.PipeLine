@@ -5,6 +5,11 @@ namespace OSS.EventTask.Extention
     public enum TaskRunStatus
     {
         /// <summary>
+        /// 运行失败
+        /// </summary>
+        RunFailed = -30,
+
+        /// <summary>
         ///  等待运行
         /// </summary>
         WaitToRun = 0,
@@ -14,10 +19,6 @@ namespace OSS.EventTask.Extention
         /// </summary>
         RunPaused = 10,
 
-        /// <summary>
-        /// 运行失败
-        /// </summary>
-        RunFailed = 20,
 
         /// <summary>
         /// 运行成功

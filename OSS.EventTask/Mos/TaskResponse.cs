@@ -2,20 +2,42 @@
 
 namespace OSS.EventTask.Mos
 {
-
-    public class TaskResp<TRes> //: ITaskResp<TRes>
+    public abstract class BaseTaskResp
     {
         /// <summary>
         ///  运行状态
         /// </summary>
         public TaskRunStatus run_status { get; internal set; }
 
-        public RunCondition task_cond { get;internal set; }
 
+        /// <summary>
+        ///  间隔执行次数
+        /// </summary>
+        public int tried_times { get; internal set; }
+
+        /// <summary>
+        ///  当前执行时间戳
+        /// </summary>
+        public long executed_time { get; set; }
+
+        /// <summary>
+        ///  下次时间戳
+        /// </summary>
+        public long next_time { get; set; }
+    }
+
+
+    public class TaskResp<TRes> : BaseTaskResp
+    {
         /// <summary>
         ///  返回信息
         /// </summary>
         public TRes resp { get; internal set; }
+
+        /// <summary>
+        ///  单词执行内部循环错误
+        /// </summary>
+        public int loop_times { get; set; } = 1;
     }
     
     public class DoResp< TRes>
