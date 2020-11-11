@@ -9,56 +9,55 @@ namespace OSS.EventTask.Extension
     public static class SerialGroupExtension
     {
         ///  顺序执行
-        internal static async Task<GroupExecuteStatus> Executing_Serial<TTData, TTRes>(this EventTask.GroupEventTask<TTData, TTRes> node,
-            TTData data,GroupEventTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks)
-            where TTData : class where TTRes : class, new()
+        internal static async Task<GroupExecuteResp<TTData, TTRes>> Executing_Serial<TTData, TTRes>(this IList<IEventTask<TTData, TTRes>> tasks, TTData data)
+            where TTData : class 
+            //where TTRes : class, new()
         {
-            nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResp<TTRes>>(tasks.Count);
-      
+            var exeResp = new GroupExecuteResp<TTData, TTRes>
+            {
+                TaskResults = new Dictionary<IEventTask<TTData, TTRes>, EventTaskResp<TTRes>>(tasks.Count)
+            };
+
             foreach (var tItem in tasks)
             {
                 var taskResp = await GroupExecutorUtil.TryGetTaskItemResult(data, tItem);
 
-                var tMeta = tItem.Meta;
-                nodeResp.TaskResults.Add(tMeta, taskResp);
+                exeResp.TaskResults.Add(tItem, taskResp);
+                exeResp.status |= GroupExecutorUtil.FormatEffectStatus(taskResp);
 
-                var exeStatus = GroupExecutorUtil.FormatNodeErrorResp(taskResp, tMeta);
-                if ((exeStatus&GroupExecuteStatus.Failed)==GroupExecuteStatus.Failed)
+                if ((exeResp.status & GroupExecuteStatus.Failed) == GroupExecuteStatus.Failed)
                 {
-                    nodeResp.block_taskid = tMeta.task_id;
-                    return exeStatus;
+                    return exeResp;
                 }
             }
 
-            return GroupExecuteStatus.Complete;
+            return exeResp;
         }
 
 
         //  顺序任务 回退当前任务之前所有任务
-        internal static async Task Executing_SerialRevert<TTData, TTRes>(this EventTask.GroupEventTask<TTData, TTRes> node,TTData data, GroupEventTaskResp<TTRes> nodeResp,
-            IList<IEventTask<TTData, TTRes>> tasks,string blockTaskId)
-            where TTData : class where TTRes : class, new()
+        internal static async Task Executing_SerialRevert<TTData, TTRes>(this IDictionary<IEventTask<TTData, TTRes>, EventTaskResp<TTRes>> taskResults, TTData data)
+            where TTData : class
+            //where TTRes : class, new()
         {
-            if (nodeResp.RevrtTasks==null)
-                nodeResp.RevrtTasks=new List<TaskMeta>(tasks.Count);
-            
-            foreach (var tItem in tasks)
+            var revertTaskHandlers = new List<IEventTask<TTData, TTRes>>();
+            foreach (var taskPair in taskResults)
             {
-                if (tItem.Meta.task_id== blockTaskId)
-                {
-                    nodeResp.RevrtTasks.Add(tItem.Meta);
-                    break;
-                }
+                var res = taskPair.Value;
 
-                var rRes = await GroupExecutorUtil.TryRevertTask(tItem, data);// tItem.Revert(data);
-                if (rRes)
-                    nodeResp.RevrtTasks.Add(tItem.Meta);
+                if (res.run_status == TaskRunStatus.RunCompleted
+                    && res.meta.revert_effect == RevertEffect.RevertGroup && !res.has_reverted)
+                {
+                    revertTaskHandlers.Add(taskPair.Key);
+                }
+            }
+
+            // 倒序回退
+            for (var i = revertTaskHandlers.Count - 1; i >= 0; i--)
+            {
+                var task = revertTaskHandlers[i];
+                await task.Revert(data);
             }
         }
-
-
-
-      
-
     }
 }

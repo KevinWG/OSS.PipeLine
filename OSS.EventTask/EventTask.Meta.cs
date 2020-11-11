@@ -5,7 +5,8 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract partial class EventTask<TTData, TTRes> : BaseEventTask<TaskMeta,TTData,TaskResp<TTRes>>, IEventTask<TTData, TTRes>
+    public abstract partial class EventTask<TTData, TTRes> 
+        : BaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>,TTRes>//, IEventTask<TTData, TTRes>
         where TTData : class
         where TTRes : class, new()
     {
@@ -14,7 +15,7 @@ namespace OSS.EventTask
         {
         }
 
-        protected EventTask(TaskMeta meta) : base(meta)
+        protected EventTask(EventTaskMeta meta) : base(meta)
         {
         }
 
@@ -28,7 +29,7 @@ namespace OSS.EventTask
         /// <param name="data"></param>
         /// <param name="taskResp"></param>
         /// <returns></returns>
-        protected virtual Task SaveTaskContext(TTData data, TaskResp<TTRes> taskResp)
+        protected virtual Task SaveTaskContext(TTData data, EventTaskResp<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }

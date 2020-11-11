@@ -10,7 +10,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
     public class CouponUseTask : EventTask<AddOrderReq, Resp>
     {
-        public CouponUseTask() : base(new TaskMeta()
+        public CouponUseTask() : base(new EventTaskMeta()
         {
             loop_times = 3,
             task_id = "CouponUseTask",

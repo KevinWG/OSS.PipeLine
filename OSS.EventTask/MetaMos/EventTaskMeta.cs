@@ -13,12 +13,7 @@ namespace OSS.EventTask.MetaMos
         ///  分组ID
         /// </summary>
         public string group_id { get; set; }
-
-        /// <summary>
-        ///  任务键
-        /// </summary>
-        public string task_id { get; set; }
-
+        
         /// <summary>
         ///   重试运行次数,默认不重试运行
         /// </summary>
@@ -30,8 +25,12 @@ namespace OSS.EventTask.MetaMos
         public int retry_seconds { get; set; } = 0;
     }
 
-    public class TaskMeta : BaseTaskMeta
-    {
+    public class EventTaskMeta : BaseTaskMeta
+    {   
+        /// <summary>
+        ///  任务键
+        /// </summary>
+        public string task_id { get; set; }
         /// <summary>
         ///  任务名称
         /// </summary>
@@ -44,12 +43,12 @@ namespace OSS.EventTask.MetaMos
         public OwnerType owner_type { get; set; }
 
         /// <summary>
-        ///  回退处理
+        ///  回退处理影响
         /// </summary>
         public RevertEffect revert_effect { get; set; }
 
         /// <summary>
-        ///  失败处理
+        ///  失败处理影响
         /// </summary>
         public FailedEffect failed_effect { get; set; }
 
@@ -74,12 +73,12 @@ namespace OSS.EventTask.MetaMos
         /// <summary>
         ///  除了回退自身同时回退所有所在群组其他可回退任务
         /// </summary>
-        RevertAll = 4,
+        RevertGroup = 4,
     }
 
     public enum FailedEffect
     {
         FailedSelf = 2,
-        FailedAll = 4,
+        FailedGroup = 4
     }
 }

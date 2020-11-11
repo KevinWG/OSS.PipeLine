@@ -11,12 +11,12 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
     public class InsertOrderTask : EventTask<AddOrderReq, Resp>
     {
-        public InsertOrderTask() : base(new TaskMeta
+        public InsertOrderTask() : base(new EventTaskMeta
         {
             task_id = "InsertOrderTask",
             task_alias = "添加订单！",
             loop_times = 3,
-            revert_effect = RevertEffect.RevertAll
+            revert_effect = RevertEffect.RevertGroup
         })
         {
 

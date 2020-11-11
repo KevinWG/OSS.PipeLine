@@ -11,7 +11,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
     public class StockUseTask : EventTask<AddOrderReq, Resp>
     {
 
-        public StockUseTask() : base(new TaskMeta
+        public StockUseTask() : base(new EventTaskMeta
         {
             task_id = "StockUseTask",
             task_alias = "扣减库存！",

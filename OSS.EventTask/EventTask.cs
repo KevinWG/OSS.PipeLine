@@ -36,7 +36,7 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
-        internal override async Task Processing(TTData data, TaskResp<TTRes> taskResp)
+        internal override async Task Processing(TTData data, EventTaskResp<TTRes> taskResp)
         {
             // 【1】 执行起始方法 附加校验
             var checkRes = RunCheck(Meta, data);
@@ -63,7 +63,7 @@ namespace OSS.EventTask
             } while (taskResp.run_status.IsFailed() && taskResp.loop_times <= Meta.loop_times);
         }
 
-        private static bool RunCheck(TaskMeta taskMeta, TTData data)
+        private static bool RunCheck(EventTaskMeta taskMeta, TTData data)
         {
             if (string.IsNullOrEmpty(taskMeta?.task_id))
             {

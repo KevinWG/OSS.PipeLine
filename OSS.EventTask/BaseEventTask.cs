@@ -6,10 +6,10 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>
+    public abstract class BaseEventTask<TMetaType, TTData, TResp, TTResp> : BaseMeta<TMetaType>
         where TMetaType : BaseTaskMeta
         where TTData : class
-        where TResp : BaseTaskResp, new()
+        where TResp : BaseTaskResp<TMetaType, TTResp>, new()
     {
         protected BaseEventTask()
         {
@@ -40,7 +40,11 @@ namespace OSS.EventTask
 
         public async Task<TResp> Process(TTData data, int triedTimes)
         {
-            var taskResp = new TResp {tried_times = triedTimes, run_status = TaskRunStatus.WaitToRun};
+            var taskResp = new TResp {
+                tried_times = triedTimes, 
+                run_status = TaskRunStatus.WaitToRun,
+                meta = Meta
+            };
 
             await Processing(data, taskResp);
 
@@ -48,10 +52,10 @@ namespace OSS.EventTask
 
             // 判断是否间隔执行,生成重试信息
             if (taskResp.run_status.IsFailed()
-                && taskResp.tried_times < Meta.retry_times)
+                && taskResp.tried_times < taskResp.meta.retry_times)
             {
                 taskResp.tried_times++;
-                taskResp.next_time = taskResp.executed_time + Meta.retry_seconds;
+                taskResp.next_time = taskResp.executed_time + taskResp.meta.retry_seconds;
 
                 taskResp.run_status = TaskRunStatus.RunPaused;
                 await SaveContext(data, taskResp);

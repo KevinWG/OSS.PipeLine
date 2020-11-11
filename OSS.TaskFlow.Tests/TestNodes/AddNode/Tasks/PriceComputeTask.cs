@@ -11,7 +11,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
     public class PriceComputeTask:EventTask<AddOrderReq,Resp>
     {
        
-        public PriceComputeTask() : base(new TaskMeta
+        public PriceComputeTask() : base(new EventTaskMeta
         {
             task_id = "PriceComputeTask",
             task_alias = "价格计算！",

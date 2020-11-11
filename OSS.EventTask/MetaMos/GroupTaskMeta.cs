@@ -2,7 +2,7 @@
 
 namespace OSS.EventTask.MetaMos
 {
-    public class GroupEventTaskMeta: BaseTaskMeta
+    public class GroupEventTaskMeta:BaseTaskMeta 
     {
         public string group_alias { get; set; }
 
@@ -10,7 +10,6 @@ namespace OSS.EventTask.MetaMos
 
         public OwnerType owner_type { get; set; }
     }
-
 
     public enum GroupProcessType
     {
@@ -29,7 +28,7 @@ namespace OSS.EventTask.MetaMos
 
     public static class GroupMetaExtension
     {
-        public static void WithGroupMeta(this TaskMeta taskMeta, GroupEventTaskMeta nodeMeta)
+        public static void WithGroupMeta(this EventTaskMeta taskMeta, GroupEventTaskMeta nodeMeta)
         {
             taskMeta.owner_type = nodeMeta.owner_type;
             taskMeta.flow_id = nodeMeta.flow_id;

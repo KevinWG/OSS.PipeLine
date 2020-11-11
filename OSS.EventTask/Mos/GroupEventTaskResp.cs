@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 
 namespace OSS.EventTask.Mos
@@ -13,31 +14,15 @@ namespace OSS.EventTask.Mos
         Revert = 4
     }
 
-    public class GroupEventTaskResp<TRes> :BaseTaskResp<TRes>
-           where TRes : class, new()
+    internal class GroupExecuteResp<TData,TTRes>
+        //where TTRes : class, new()
     {
+        internal GroupExecuteStatus status { get; set; }
+        internal IDictionary<IEventTask<TData, TTRes>, EventTaskResp<TTRes>> TaskResults { get; set; }
+    }
 
-        /// <summary>
-        ///   节点内回退节点信息
-        /// </summary>
-        public IList<TaskMeta> RevrtTasks { get; internal set; }
-
-        /// <summary>
-        ///  当前阻断执行的任务Id
-        /// </summary>
-        public string block_taskid{ get; set; }
-
-        /// <summary>
-        ///  节点任务处理结果
-        /// </summary>
-        public IDictionary<TaskMeta, TaskResp<TRes>> TaskResults { get; internal set; }
-
-        /// <summary>
-        ///  获取对应TaskKey对应的任务结果
-        /// </summary>
-        /// <param name="taskId"></param>
-        /// <returns></returns>
-        public TaskResp<TRes> this[string taskId] =>
-            (from taskRes in TaskResults where taskRes.Key.task_id == taskId select taskRes.Value).FirstOrDefault();
+    public class GroupEventTaskResp<TTRes> :BaseTaskResp<GroupEventTaskMeta,TTRes>
+    {
+      
     }
 }

@@ -16,7 +16,7 @@ namespace OSS.EventTask
         internal override async Task Processing(TTData data, GroupEventTaskResp<TTRes> res)
         {
             // 获取任务元数据列表
-            var tasks = await GetTasks();
+            var tasks = await GetTasks(res.tried_times);
             if (tasks == null || !tasks.Any())
             {
                 return;
@@ -29,25 +29,25 @@ namespace OSS.EventTask
 
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task ExcutingWithTasks(TTData data, GroupEventTaskResp<TTRes> nodeResp, IList<IEventTask<TTData,TTRes>> tasks)
+        private async Task ExcutingWithTasks(TTData data, GroupEventTaskResp<TTRes> nodeResp,
+            IList<IEventTask<TTData, TTRes>> tasks)
         {
-            GroupExecuteStatus exeStatus;
+            GroupExecuteResp<TTData, TTRes> exeResp;
             if (Meta.Process_type == GroupProcessType.Parallel)
-                exeStatus = await this.Executing_Parallel(data, nodeResp, tasks);
+                exeResp = await tasks.Executing_Parallel(data);
             else
-                exeStatus= await this.Executing_Serial(data, nodeResp, tasks);
+                exeResp = await tasks.Executing_Serial(data);
 
             //  处理回退其他任务
-            if ((exeStatus&GroupExecuteStatus.Revert)==GroupExecuteStatus.Revert)
+            if ((exeResp.status & GroupExecuteStatus.Revert) == GroupExecuteStatus.Revert)
             {
-                var revertTasks = tasks;
-
                 if (Meta.Process_type == GroupProcessType.Parallel)
-                    await this.Executing_ParallelRevert(data, nodeResp, revertTasks, nodeResp.block_taskid);
+                    await exeResp.TaskResults.Executing_ParallelRevert(data);
                 else
-                    await this.Executing_SerialRevert(data, nodeResp, revertTasks, nodeResp.block_taskid);
+                    await exeResp.TaskResults.Executing_SerialRevert(data);
             }
         }
+
         #endregion
     }
 }
