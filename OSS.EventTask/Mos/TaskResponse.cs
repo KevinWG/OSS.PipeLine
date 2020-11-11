@@ -1,4 +1,4 @@
-﻿using OSS.EventTask.Extention;
+﻿using OSS.EventTask.Extension;
 
 namespace OSS.EventTask.Mos
 {

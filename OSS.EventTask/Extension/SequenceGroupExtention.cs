@@ -1,18 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using OSS.EventNode;
-using OSS.EventTask.Group.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
-namespace OSS.EventTask.Group.Executor
+namespace OSS.EventTask.Extension
 {
-    public static class SerialNodeExtension
+    public static class SerialGroupExtension
     {
         ///  顺序执行
-        internal static async Task<GroupExecuteStatus> Executing_Serial<TTData, TTRes>(this GroupEventTask<TTData, TTRes> node,
-            TTData data,GroupTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks)
+        internal static async Task<GroupExecuteStatus> Executing_Serial<TTData, TTRes>(this EventTask.GroupEventTask<TTData, TTRes> node,
+            TTData data,GroupEventTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks)
             where TTData : class where TTRes : class, new()
         {
             nodeResp.TaskResults = new Dictionary<TaskMeta, TaskResp<TTRes>>(tasks.Count);
@@ -37,7 +35,7 @@ namespace OSS.EventTask.Group.Executor
 
 
         //  顺序任务 回退当前任务之前所有任务
-        internal static async Task Executing_SerialRevert<TTData, TTRes>(this GroupEventTask<TTData, TTRes> node,TTData data, GroupTaskResp<TTRes> nodeResp,
+        internal static async Task Executing_SerialRevert<TTData, TTRes>(this EventTask.GroupEventTask<TTData, TTRes> node,TTData data, GroupEventTaskResp<TTRes> nodeResp,
             IList<IEventTask<TTData, TTRes>> tasks,string blockTaskId)
             where TTData : class where TTRes : class, new()
         {

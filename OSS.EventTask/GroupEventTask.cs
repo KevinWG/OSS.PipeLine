@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OSS.EventTask.Group.Executor;
-using OSS.EventTask.Group.MetaMos;
-using OSS.EventTask.Group.Mos;
+using OSS.EventTask.Extension;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
+using OSS.EventTask.Mos;
 
-namespace OSS.EventTask.Group
+namespace OSS.EventTask
 {
     /// <summary>
     ///  基础工作节点
     /// </summary>
     public abstract partial class GroupEventTask<TTData, TTRes>
     {
-        internal override async Task Processing(TTData data, GroupTaskResp<TTRes> res)
+        internal override async Task Processing(TTData data, GroupEventTaskResp<TTRes> res)
         {
             // 获取任务元数据列表
             var tasks = await GetTasks();
@@ -29,7 +29,7 @@ namespace OSS.EventTask.Group
 
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task ExcutingWithTasks(TTData data, GroupTaskResp<TTRes> nodeResp, IList<IEventTask<TTData,TTRes>> tasks)
+        private async Task ExcutingWithTasks(TTData data, GroupEventTaskResp<TTRes> nodeResp, IList<IEventTask<TTData,TTRes>> tasks)
         {
             GroupExecuteStatus exeStatus;
             if (Meta.Process_type == GroupProcessType.Parallel)

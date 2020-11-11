@@ -1,7 +1,6 @@
-﻿using OSS.EventTask.MetaMos;
-using OSS.EventTask.Mos;
+﻿using OSS.EventTask.Mos;
 
-namespace OSS.EventTask.Group.MetaMos
+namespace OSS.EventTask.MetaMos
 {
     public class GroupEventTaskMeta: BaseTaskMeta
     {
@@ -28,7 +27,7 @@ namespace OSS.EventTask.Group.MetaMos
 
 
 
-    public static class NodeMetaExtension
+    public static class GroupMetaExtension
     {
         public static void WithGroupMeta(this TaskMeta taskMeta, GroupEventTaskMeta nodeMeta)
         {

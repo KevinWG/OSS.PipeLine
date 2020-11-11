@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using OSS.EventTask.Group.MetaMos;
-using OSS.EventTask.Group.Mos;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
+using OSS.EventTask.Mos;
 
-namespace OSS.EventTask.Group
+namespace OSS.EventTask
 {
     /// <summary>
     ///  节点运行时元数据信息
     /// </summary>
     public abstract partial class GroupEventTask<TTData, TTRes>
-        : BaseEventTask<GroupEventTaskMeta, TTData, GroupTaskResp<TTRes>>
+        : BaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>>
         where TTData : class 
         where TTRes : class, new()
     {

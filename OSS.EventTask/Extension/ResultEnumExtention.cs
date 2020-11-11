@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OSS.EventTask.Extention
+namespace OSS.EventTask.Extension
 {
     public enum TaskRunStatus
     {

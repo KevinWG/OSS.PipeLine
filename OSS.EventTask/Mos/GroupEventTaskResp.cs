@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using OSS.EventTask.MetaMos;
-using OSS.EventTask.Mos;
 
-namespace OSS.EventTask.Group.Mos
+namespace OSS.EventTask.Mos
 {
     [Flags]
     public enum GroupExecuteStatus
@@ -14,7 +13,7 @@ namespace OSS.EventTask.Group.Mos
         Revert = 4
     }
 
-    public class GroupTaskResp<TRes> :BaseTaskResp<TRes>
+    public class GroupEventTaskResp<TRes> :BaseTaskResp<TRes>
            where TRes : class, new()
     {
 

@@ -1,11 +1,9 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventTask.Extention;
-using OSS.EventTask.Group.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
-namespace OSS.EventTask.Group.Executor
+namespace OSS.EventTask.Extension
 {
     internal class GroupExecutorUtil
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.EventTask.Extention;
+using OSS.EventTask.Extension;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Common.BasicMos.Resp;
-using OSS.EventTask.Group.MetaMos;
+using OSS.EventTask;
 using OSS.EventTask.Interfaces;
+using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 using OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks;
 using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
@@ -12,7 +13,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode
     /// <summary>
     ///   添加订单节点
     /// </summary>
-    public class AddNode : EventTask.Group.GroupEventTask<AddOrderReq, Resp>
+    public class AddNode : GroupEventTask<AddOrderReq, Resp>
     {
         // 获取所有执行任务
         private static List<IEventTask<AddOrderReq, Resp>> list;

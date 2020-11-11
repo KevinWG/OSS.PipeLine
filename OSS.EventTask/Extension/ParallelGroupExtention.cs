@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OSS.EventTask.Group.Mos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
+using OSS.EventTask.Mos;
 
-namespace OSS.EventTask.Group.Executor
+namespace OSS.EventTask.Extension
 {
     public static class ParallelGroupExtension
     {
         //   并行执行任务扩展
         internal static async Task<GroupExecuteStatus> Executing_Parallel<TTData, TTRes>(
-            this GroupEventTask<TTData, TTRes> groupEvent, TTData data,
-            GroupTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks)
+            this EventTask.GroupEventTask<TTData, TTRes> groupEvent, TTData data,
+            GroupEventTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks)
             where TTData : class
             where TTRes : class, new()
         {
@@ -32,8 +32,8 @@ namespace OSS.EventTask.Group.Executor
         }
 
         // 并行任务回退处理（回退当前其他所有任务）
-        internal static async Task Executing_ParallelRevert<TTData, TTRes>(this GroupEventTask<TTData, TTRes> node,
-            TTData data, GroupTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks, string blockTaskId)
+        internal static async Task Executing_ParallelRevert<TTData, TTRes>(this EventTask.GroupEventTask<TTData, TTRes> node,
+            TTData data, GroupEventTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks, string blockTaskId)
             where TTData : class where TTRes : class, new()
         {
             var revResList = tasks.Select(tItem => tItem.Meta.task_id == blockTaskId
