@@ -10,8 +10,8 @@ namespace OSS.EventNode.Executor
     public static class ParallelNodeExtention
     {
         //   并行执行任务扩展
-        internal static async Task Excuting_Parallel<TTData, TTRes>(this BaseNode<TTData, TTRes> node, TTData data,
-            NodeResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks, int triedTimes)
+        internal static async Task Excuting_Parallel<TTData, TTRes>(this GroupEventTask<TTData, TTRes> node, TTData data,
+            GroupTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks, int triedTimes)
             where TTData : class
             where TTRes : class, new()
         {
@@ -45,8 +45,8 @@ namespace OSS.EventNode.Executor
         }
 
         // 并行任务回退处理（回退当前其他所有任务）
-        internal static async Task Excuting_ParallelRevert<TTData, TTRes>(this BaseNode<TTData, TTRes> node,
-            TTData data, NodeResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks, string blockTaskId)
+        internal static async Task Excuting_ParallelRevert<TTData, TTRes>(this GroupEventTask<TTData, TTRes> node,
+            TTData data, GroupTaskResp<TTRes> nodeResp, IList<IEventTask<TTData, TTRes>> tasks, string blockTaskId)
             where TTData : class where TTRes : class, new()
         {
             var revResList = tasks.Select(tItem => tItem.Meta.task_id == blockTaskId

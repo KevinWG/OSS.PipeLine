@@ -2,25 +2,22 @@
 
 namespace OSS.EventTask.MetaMos
 {
-
     public class BaseTaskMeta
     {
+        /// <summary>
+        ///  流程Id
+        /// </summary>
         public string flow_id { get; set; }
 
+        /// <summary>
+        ///  分组ID
+        /// </summary>
         public string group_id { get; set; }
 
         /// <summary>
         ///  任务键
         /// </summary>
         public string task_id { get; set; }
-
-
-        /// <summary>
-        ///  结果动作（如果当前任务在群组任务中对其他任务的影响
-        /// </summary>
-        public NodeResultAction node_action { get; set; }
-
-
 
         /// <summary>
         ///   重试运行次数,默认不重试运行
@@ -33,7 +30,7 @@ namespace OSS.EventTask.MetaMos
         public int retry_seconds { get; set; } = 0;
     }
 
-    public class TaskMeta: BaseTaskMeta
+    public class TaskMeta : BaseTaskMeta
     {
         /// <summary>
         ///  任务名称
@@ -46,36 +43,43 @@ namespace OSS.EventTask.MetaMos
         /// </summary>
         public OwnerType owner_type { get; set; }
 
+        /// <summary>
+        ///  回退处理
+        /// </summary>
+        public RevertEffect revert_effect { get; set; }
+
+        /// <summary>
+        ///  失败处理
+        /// </summary>
+        public FailedEffect failed_effect { get; set; }
 
         /// <summary>
         ///  直接循环次数
         /// </summary>
         public int loop_times { get; set; } = 1;
-        
-   
     }
 
-    public enum NodeResultAction
+
+
+    public enum RevertEffect
     {
         /// <summary>
-        /// 失败后继续
+        ///  不需要处理
         /// </summary>
-        ContinueAnyway=0,
-
+        None = 1,
         /// <summary>
-        ///   当前任务失败后节点暂停
+        ///  失败后执行回退操作
         /// </summary>
-        PauseOnFailed = 10,
-
+        RevertSelf = 2,
         /// <summary>
-        ///   当前任务失败后整个节点执行失败
+        ///  除了回退自身同时回退所有所在群组其他可回退任务
         /// </summary>
-        FailedOnFailed = 20,
-
-        /// <summary>
-        ///   失败后回退所有已执行任务
-        /// </summary>
-        RevrtAllOnFailed = 30,
+        RevertAll = 4,
     }
 
+    public enum FailedEffect
+    {
+        FailedSelf = 2,
+        FailedAll = 4,
+    }
 }

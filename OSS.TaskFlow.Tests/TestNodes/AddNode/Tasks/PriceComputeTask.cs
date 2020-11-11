@@ -16,7 +16,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
             task_id = "PriceComputeTask",
             task_alias = "价格计算！",
             loop_times = 3,
-            node_action = NodeResultAction.FailedOnFailed
+            failed_effect = FailedEffect.FailedSelf
         })
         {
 
@@ -26,7 +26,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
         {
             return new DoResp<Resp>()
             {
-                run_status = TaskRunStatus.RunCompoleted,
+                run_status = TaskRunStatus.RunCompleted,
                 resp = new Resp()
             };
         }

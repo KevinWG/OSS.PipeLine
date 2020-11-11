@@ -13,7 +13,7 @@ namespace OSS.EventTask.Interfaces
         where TTRes :class, new()
     {
       
-        Task<TaskResp<TTRes>> Process(TTData data, int triedTimes);
+        Task<TaskResp<TTRes>> Process(TTData data);
     }
 
 

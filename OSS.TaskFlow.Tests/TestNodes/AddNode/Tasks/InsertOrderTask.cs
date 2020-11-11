@@ -16,7 +16,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
             task_id = "InsertOrderTask",
             task_alias = "添加订单！",
             loop_times = 3,
-            node_action = NodeResultAction.RevrtAllOnFailed
+            revert_effect = RevertEffect.RevertAll
         })
         {
 
@@ -29,7 +29,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
             return new DoResp<Resp>()
             {
                 resp = new IdResp("1000"),
-                run_status = TaskRunStatus.RunCompoleted
+                run_status = TaskRunStatus.RunCompleted
             };
         }
     }

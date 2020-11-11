@@ -18,12 +18,11 @@ namespace OSS.EventTask.Extention
         ///  中断等待
         /// </summary>
         RunPaused = 10,
-
-
+        
         /// <summary>
         /// 运行成功
         /// </summary>
-        RunCompoleted = 30
+        RunCompleted = 30
     }
 
     public static class TaskRunStatusExtention
@@ -40,7 +39,7 @@ namespace OSS.EventTask.Extention
 
         public static bool IsCompleted(this TaskRunStatus res)
         {
-            return res == TaskRunStatus.RunCompoleted;
+            return res == TaskRunStatus.RunCompleted;
         }
 
         public static bool IsPaused(this TaskRunStatus res)

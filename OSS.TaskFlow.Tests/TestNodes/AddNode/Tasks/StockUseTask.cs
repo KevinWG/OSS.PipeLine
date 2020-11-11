@@ -8,15 +8,15 @@ using OSS.TaskFlow.Tests.TestOrder.AddOrderNode.Reqs;
 
 namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
 {
-    public class StockUseTask:EventTask<AddOrderReq,Resp>
+    public class StockUseTask : EventTask<AddOrderReq, Resp>
     {
-    
+
         public StockUseTask() : base(new TaskMeta
         {
             task_id = "StockUseTask",
             task_alias = "扣减库存！",
             loop_times = 3,
-            node_action = NodeResultAction.FailedOnFailed
+            failed_effect = FailedEffect.FailedSelf
         })
         {
 
@@ -27,7 +27,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
             //throw new ArgumentNullException("sssss");
             return new DoResp<Resp>()
             {
-                run_status = TaskRunStatus.RunCompoleted,
+                run_status = TaskRunStatus.RunCompleted,
                 resp = new Resp()
             };
         }

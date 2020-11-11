@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Common.BasicMos.Resp;
-using OSS.EventNode;
-using OSS.EventNode.MetaMos;
+using OSS.EventTask.Group.MetaMos;
 using OSS.EventTask.Interfaces;
 using OSS.EventTask.Mos;
 using OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks;
@@ -13,34 +12,34 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode
     /// <summary>
     ///   添加订单节点
     /// </summary>
-    public class AddNode : BaseNode<AddOrderReq, Resp>
+    public class AddNode : EventTask.Group.GroupEventTask<AddOrderReq, Resp>
     {
         // 获取所有执行任务
         private static List<IEventTask<AddOrderReq, Resp>> list;
         protected override Task<List<IEventTask<AddOrderReq, Resp>>> GetTasks() => Task.FromResult(list);
         public AddNode()
         {
-            Meta = new NodeMeta()
+            Meta = new GroupEventTaskMeta()
             {
                 flow_id = "Order_Flow",
-                node_alias = "添加订单",
+                group_alias = "添加订单",
                 owner_type = OwnerType.Node,
-                Process_type = NodeProcessType.Serial,
+                Process_type = GroupProcessType.Serial,
 
-                node_id = "AddOrderNode"
+                group_id = "AddOrderNode"
             };
 
             var couponTask = new CouponUseTask();
-            couponTask.Meta.WithNodeMeta(Meta);
+            couponTask.Meta.WithGroupMeta(Meta);
 
             var priceTask = new PriceComputeTask();
-            priceTask.Meta.WithNodeMeta(Meta);
+            priceTask.Meta.WithGroupMeta(Meta);
 
             var stockTask = new StockUseTask();
-            stockTask.Meta.WithNodeMeta(Meta);
+            stockTask.Meta.WithGroupMeta(Meta);
 
             var insertTask = new InsertOrderTask();
-            insertTask.Meta.WithNodeMeta(Meta);
+            insertTask.Meta.WithGroupMeta(Meta);
 
             list = new List<IEventTask<AddOrderReq, Resp>>(){
                 couponTask,priceTask,insertTask,stockTask

@@ -29,12 +29,12 @@ namespace OSS.EventFlow.Agent
         }
 
 
-        public  Task<NodeResp<TTRes>> Process(TTData data)
+        public  Task<GroupTaskResp<TTRes>> Process(TTData data)
         {
             return Process(data,0);
         }
 
-        public async Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
+        public async Task<GroupTaskResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds)
         {
             var nodeRes= await _workNode.Process(data,triedTimes,taskIds);
             await _gateway.MoveNext(data);

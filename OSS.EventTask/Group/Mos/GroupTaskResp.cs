@@ -1,13 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
-namespace OSS.EventNode.Mos
+namespace OSS.EventTask.Group.Mos
 {
+    [Flags]
+    public enum GroupExecuteStatus
+    {
+        Complete = 1,
+        Failed = 2,
+        Revert = 4
+    }
+
     public class GroupTaskResp<TRes> :BaseTaskResp<TRes>
            where TRes : class, new()
     {
+
         /// <summary>
         ///   节点内回退节点信息
         /// </summary>

@@ -8,8 +8,6 @@ namespace OSS.EventTask
 {
     public abstract partial class EventTask<TTData, TTRes>
     {
-    
-
         #region 扩展方法（实现，回退，失败）  扩展方法
 
         /// <summary>
@@ -38,8 +36,6 @@ namespace OSS.EventTask
 
         #region 辅助方法
 
-  
-
         internal override async Task Processing(TTData data, TaskResp<TTRes> taskResp)
         {
             // 【1】 执行起始方法 附加校验
@@ -53,23 +49,27 @@ namespace OSS.EventTask
                 doResp.SetToTaskResp(taskResp);
 
                 // 判断是否失败回退
-                if (doResp.run_status.IsFailed())
+                if (doResp.run_status.IsFailed()
+                    && (Meta.revert_effect == RevertEffect.RevertSelf
+                        || Meta.revert_effect == RevertEffect.RevertSelf))
+                {
                     await Revert(data);
-
+                    taskResp.has_reverted = true;
+                }
                 // 【3】 执行结束方法
                 await ProcessEnd(data, taskResp);
 
                 taskResp.loop_times++;
-            }
-            while (taskResp.run_status.IsFailed() && taskResp.loop_times <= Meta.loop_times);
+            } while (taskResp.run_status.IsFailed() && taskResp.loop_times <= Meta.loop_times);
         }
 
-        private static bool RunCheck(TaskMeta taskMeta,TTData data)
+        private static bool RunCheck(TaskMeta taskMeta, TTData data)
         {
             if (string.IsNullOrEmpty(taskMeta?.task_id))
             {
                 throw new ArgumentNullException("Task metainfo is null!");
             }
+
             return true;
         }
 

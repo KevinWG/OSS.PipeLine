@@ -5,7 +5,7 @@ using OSS.EventTask.MetaMos;
 
 namespace OSS.EventNode.Interfaces
 {
-    public interface IEventNode:IMeta<NodeMeta>
+    public interface IEventNode:IMeta<GroupEventTaskMeta>
     {
     }
 
@@ -13,9 +13,9 @@ namespace OSS.EventNode.Interfaces
         where TTData : class
         where TTRes : class, new()
     {
-        Task<NodeResp<TTRes>> Process(TTData data);
+        Task<GroupTaskResp<TTRes>> Process(TTData data);
 
-        Task<NodeResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds);
+        Task<GroupTaskResp<TTRes>> Process(TTData data, int triedTimes, params string[] taskIds);
     }
 
 }

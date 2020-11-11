@@ -14,8 +14,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
         {
             loop_times = 3,
             task_id = "CouponUseTask",
-            task_alias = "使用优惠券",
-            node_action = NodeResultAction.FailedOnFailed
+            task_alias = "使用优惠券"
         })
         {
         }
@@ -24,7 +23,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode.Tasks
         {
             var resp = new DoResp<Resp>
             {
-                run_status = TaskRunStatus.RunCompoleted,
+                run_status = TaskRunStatus.RunCompleted,
                 resp = new Resp()
             };
             return Task.FromResult(resp);

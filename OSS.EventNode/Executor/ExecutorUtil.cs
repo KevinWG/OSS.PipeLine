@@ -10,7 +10,7 @@ namespace OSS.EventNode.Executor
     internal class ExecutorUtil
     {
         // 根据任务结果格式化当前节点结果， 外部循环使用
-        internal static bool FormatNodeErrorResp<TTRes>(NodeResp<TTRes> nodeResp, TaskResp<TTRes> taskResp,
+        internal static bool FormatNodeErrorResp<TTRes>(GroupTaskResp<TTRes> nodeResp, TaskResp<TTRes> taskResp,
             TaskMeta tMeta)
             where TTRes : class, new()
         {
@@ -28,7 +28,7 @@ namespace OSS.EventNode.Executor
                             ? NodeStatus.ProcessFailed
                             : NodeStatus.ProcessPaused;
                         break;
-                    case NodeResultAction.RevrtAllOnFailed:
+                    case NodeResultAction.RevertAllOnFailed:
                         status = taskResp.run_status == TaskRunStatus.RunFailed
                             ? NodeStatus.ProcessFailedRevert
                             : NodeStatus.ProcessPaused;

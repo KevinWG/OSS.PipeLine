@@ -1,12 +1,11 @@
 ﻿using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
-namespace OSS.EventNode.MetaMos
+namespace OSS.EventTask.Group.MetaMos
 {
     public class GroupEventTaskMeta: BaseTaskMeta
     {
         public string group_alias { get; set; }
-
 
         public GroupProcessType Process_type { get; set; }
 
@@ -29,9 +28,9 @@ namespace OSS.EventNode.MetaMos
 
 
 
-    public static class NodeMetaExtention
+    public static class NodeMetaExtension
     {
-        public static void WithNodeMeta(this TaskMeta taskMeta, GroupEventTaskMeta nodeMeta)
+        public static void WithGroupMeta(this TaskMeta taskMeta, GroupEventTaskMeta nodeMeta)
         {
             taskMeta.owner_type = nodeMeta.owner_type;
             taskMeta.flow_id = nodeMeta.flow_id;

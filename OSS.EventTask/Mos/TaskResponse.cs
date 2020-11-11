@@ -9,6 +9,10 @@ namespace OSS.EventTask.Mos
         /// </summary>
         public TaskRunStatus run_status { get; internal set; }
 
+        /// <summary>
+        ///   回退处理过
+        /// </summary>
+        public bool has_reverted { get; set; }
 
         /// <summary>
         ///  间隔执行次数
@@ -26,13 +30,16 @@ namespace OSS.EventTask.Mos
         public long next_time { get; set; }
     }
 
-
-    public class TaskResp<TRes> : BaseTaskResp
+    public abstract class BaseTaskResp<TRes> : BaseTaskResp
     {
         /// <summary>
         ///  返回信息
         /// </summary>
         public TRes resp { get; internal set; }
+    }
+
+    public class TaskResp<TRes> : BaseTaskResp<TRes>
+    {
 
         /// <summary>
         ///  单词执行内部循环错误
@@ -56,14 +63,7 @@ namespace OSS.EventTask.Mos
 
     public static class TaskResponseExtention
     {
-        //public static TaskResp<TRes> WithError<TRes>(this TaskResp<TRes> res,TaskRunStatus status, RunCondition condition,string msg=null)
-        //       where TRes : Resp, new()
-        //{
-        //    res.run_status = status;
-        //    res.task_cond = condition;
-        //    res.resp =new TRes().WithResp(SysRespTypes.ApplicationError, msg??"Task Error！");
-        //    return res;
-        //}
+        
 
         public static void SetToTaskResp<TRes>(this DoResp<TRes> res, TaskResp<TRes> taskResp)
                where TRes :new()
