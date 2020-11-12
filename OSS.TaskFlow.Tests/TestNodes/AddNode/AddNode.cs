@@ -17,30 +17,26 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode
     {
         // 获取所有执行任务
         private static List<IEventTask<AddOrderReq, Resp>> list;
-        protected override Task<List<IEventTask<AddOrderReq, Resp>>> GetTasks() => Task.FromResult(list);
-        public AddNode()
+ 
+
+        protected override Task<List<IEventTask<AddOrderReq, Resp>>> GetTasks(int triedTimes) => Task.FromResult(list);
+
+        private static GroupEventTaskMeta meta = new GroupEventTaskMeta()
         {
-            Meta = new GroupEventTaskMeta()
-            {
-                flow_id = "Order_Flow",
-                group_alias = "添加订单",
-                owner_type = OwnerType.Node,
-                Process_type = GroupProcessType.Serial,
+            flow_id = "Order_Flow",
+            group_alias = "添加订单",
+            owner_type = OwnerType.Group,
+            Process_type = GroupProcessType.Serial,
 
-                group_id = "AddOrderNode"
-            };
-
+            group_id = "AddOrderNode"
+        };
+        public AddNode():base(meta)
+        {
             var couponTask = new CouponUseTask();
-            couponTask.Meta.WithGroupMeta(Meta);
-
             var priceTask = new PriceComputeTask();
-            priceTask.Meta.WithGroupMeta(Meta);
-
             var stockTask = new StockUseTask();
-            stockTask.Meta.WithGroupMeta(Meta);
-
             var insertTask = new InsertOrderTask();
-            insertTask.Meta.WithGroupMeta(Meta);
+
 
             list = new List<IEventTask<AddOrderReq, Resp>>(){
                 couponTask,priceTask,insertTask,stockTask

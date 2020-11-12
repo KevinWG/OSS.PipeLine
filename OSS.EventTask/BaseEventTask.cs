@@ -14,6 +14,7 @@
 using System;
 using System.Threading.Tasks;
 using OSS.EventTask.Extension;
+using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 

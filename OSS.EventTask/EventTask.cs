@@ -15,13 +15,14 @@
 using System;
 using System.Threading.Tasks;
 using OSS.EventTask.Extension;
+using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
     public abstract  class EventTask<TTData, TTRes> 
-        : BaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>>//, IEventTask<TTData, TTRes>
+        : BaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>>, IEventTask<TTData, TTRes>
         where TTData : class
         where TTRes : class, new()
     {

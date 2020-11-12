@@ -26,7 +26,7 @@ namespace OSS.EventTask
     /// </summary>
     public abstract class GroupEventTask<TTData,TTRes>
         : BaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>>
-        where TTData : class
+          where TTData : class
     {
         protected GroupEventTask()
         {
