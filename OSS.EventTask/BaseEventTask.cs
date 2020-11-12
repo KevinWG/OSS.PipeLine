@@ -1,4 +1,17 @@
-﻿using System;
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：OSSCore
+
+/***************************************************************************
+*　　	文件功能描述：OSS.EventTask - 事件任务基类
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       创建时间： 2019-04-07
+*       
+*****************************************************************************/
+
+#endregion
+
+using System;
 using System.Threading.Tasks;
 using OSS.EventTask.Extension;
 using OSS.EventTask.MetaMos;
@@ -40,10 +53,11 @@ namespace OSS.EventTask
 
         public async Task<TResp> Process(TTData data, int triedTimes)
         {
+            var meta =await GetMeta();
             var taskResp = new TResp {
                 tried_times = triedTimes, 
                 run_status = TaskRunStatus.WaitToRun,
-                meta = Meta
+                meta = meta
             };
 
             await Processing(data, taskResp);

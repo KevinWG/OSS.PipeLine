@@ -1,4 +1,17 @@
-﻿using System.Collections.Generic;
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：OSSCore
+
+/***************************************************************************
+*　　	文件功能描述：OSS.EventTask - 群组事件平行执行扩展
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       创建时间： 2019-04-07
+*       
+*****************************************************************************/
+
+#endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.EventTask.Interfaces;

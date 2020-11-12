@@ -1,4 +1,17 @@
-﻿using OSS.EventTask.Mos;
+﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：OSSCore
+
+/***************************************************************************
+*　　	文件功能描述：OSS.EventTask - 事件任务配置元数据
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       创建时间： 2019-04-07
+*       
+*****************************************************************************/
+
+#endregion
+
+using OSS.EventTask.Mos;
 
 namespace OSS.EventTask.MetaMos
 {
