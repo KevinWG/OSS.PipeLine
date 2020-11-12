@@ -37,18 +37,4 @@ namespace OSS.EventTask.MetaMos
         /// </summary>
         Parallel
     }
-
-
-
-    public static class GroupMetaExtension
-    {
-        public static void WithGroupMeta(this EventTaskMeta taskMeta, GroupEventTaskMeta nodeMeta)
-        {
-            taskMeta.owner_type = nodeMeta.owner_type;
-            taskMeta.flow_id = nodeMeta.flow_id;
-            taskMeta.group_id = nodeMeta.group_id;
-        }
-    }
-
-
 }

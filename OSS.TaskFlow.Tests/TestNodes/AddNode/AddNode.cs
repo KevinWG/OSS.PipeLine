@@ -16,10 +16,10 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode
     public class AddNode : GroupEventTask<AddOrderReq, Resp>
     {
         // 获取所有执行任务
-        private static List<IEventTask<AddOrderReq, Resp>> list;
+        private static IList<EventTask<AddOrderReq, Resp>> list;
  
 
-        protected override Task<List<IEventTask<AddOrderReq, Resp>>> GetTasks(int triedTimes) => Task.FromResult(list);
+        protected override Task<IList<EventTask<AddOrderReq, Resp>>> GetTasks(int triedTimes) => Task.FromResult(list);
 
         private static GroupEventTaskMeta meta = new GroupEventTaskMeta()
         {
@@ -38,7 +38,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode
             var insertTask = new InsertOrderTask();
 
 
-            list = new List<IEventTask<AddOrderReq, Resp>>(){
+            list = new List<EventTask<AddOrderReq, Resp>>(){
                 couponTask,priceTask,insertTask,stockTask
             };
         }

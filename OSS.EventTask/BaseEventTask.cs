@@ -22,9 +22,15 @@ namespace OSS.EventTask
 {
     public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>
         where TMetaType : BaseTaskMeta
-        where TTData : class
+        //where TTData : class
         where TResp : BaseTaskResp<TMetaType>, new()
     {
+
+        /// <summary>
+        ///   归属类型
+        /// </summary>
+        public OwnerType OwnerType { get; internal set; } = OwnerType.Task;
+
         protected BaseEventTask()
         {
         }

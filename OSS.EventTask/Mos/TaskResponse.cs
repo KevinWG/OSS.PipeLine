@@ -87,7 +87,7 @@ namespace OSS.EventTask.Mos
     public static class TaskResponseExtension
     {
         public static void SetToTaskResp<TRes>(this DoResp<TRes> res, EventTaskResp<TRes> taskResp)
-               where TRes :new()
+               //where TRes :new()
         {
             taskResp.run_status = res.run_status;
             taskResp.resp = res.resp;

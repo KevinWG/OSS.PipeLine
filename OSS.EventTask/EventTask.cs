@@ -23,8 +23,8 @@ namespace OSS.EventTask
 {
     public abstract  class EventTask<TTData, TTRes> 
         : BaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>>, IEventTask<TTData, TTRes>
-        where TTData : class
-        where TTRes : class, new()
+        //where TTData : class
+        //where TTRes : class, new()
     {
         protected EventTask()
         {
@@ -87,7 +87,6 @@ namespace OSS.EventTask
             var checkRes = RunCheck(taskResp.meta);
             if (!checkRes)
                 return;
-
             do
             {
                 var doResp = await Do(data, taskResp.loop_times, taskResp.tried_times);
@@ -119,5 +118,7 @@ namespace OSS.EventTask
         }
 
         #endregion
+
+  
     }
 }

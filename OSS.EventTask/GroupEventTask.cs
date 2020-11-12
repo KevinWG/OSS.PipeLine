@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.EventTask.Extension;
-using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
@@ -38,7 +37,7 @@ namespace OSS.EventTask
 
         #region 内部基础方法
 
-        protected abstract Task<List<IEventTask<TTData, TTRes>>> GetTasks(int triedTimes);
+        protected abstract Task<IList<EventTask<TTData, TTRes>>> GetTasks(int triedTimes);
 
         #endregion
 
@@ -47,20 +46,26 @@ namespace OSS.EventTask
         {
             // 获取任务元数据列表
             var tasks = await GetTasks(res.tried_times);
+
             if (tasks == null || !tasks.Any())
             {
                 return;
             }
 
+            foreach (var task in tasks)
+            {
+                task.OwnerType = OwnerType;
+            }
+
             // 执行处理结果
-            await ExcutingWithTasks(data, res, tasks);
+            await ExecutingWithTasks(data, res, tasks);
         }
 
 
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task ExcutingWithTasks(TTData data, GroupEventTaskResp<TTRes> groupResp,
-            IList<IEventTask<TTData, TTRes>> tasks)
+        private async Task ExecutingWithTasks(TTData data, GroupEventTaskResp<TTRes> groupResp,
+            IList<EventTask<TTData, TTRes>> tasks)
         {
             GroupExecuteResp<TTData, TTRes> exeResp;
             if (groupResp.meta.Process_type == GroupProcessType.Parallel)

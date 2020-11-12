@@ -50,12 +50,6 @@ namespace OSS.EventTask.MetaMos
         public string task_alias { get; set; }
 
         /// <summary>
-        ///   归属类型
-        ///   todo 转移到实现类下
-        /// </summary>
-        public OwnerType owner_type { get; set; }
-
-        /// <summary>
         ///  回退处理影响
         /// </summary>
         public RevertEffect revert_effect { get; set; }
