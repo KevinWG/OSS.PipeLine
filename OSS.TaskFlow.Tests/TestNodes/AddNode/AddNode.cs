@@ -25,7 +25,7 @@ namespace OSS.TaskFlow.Tests.TestNodes.AddNode
         {
             flow_id = "Order_Flow",
             group_alias = "添加订单",
-            owner_type = OwnerType.Group,
+            owner_type = EventElementType.Group,
             Process_type = GroupProcessType.Serial,
 
             group_id = "AddOrderNode"

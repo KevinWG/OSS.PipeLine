@@ -14,7 +14,6 @@
 using System;
 using System.Threading.Tasks;
 using OSS.EventTask.Extension;
-using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
@@ -29,7 +28,8 @@ namespace OSS.EventTask
         /// <summary>
         ///   归属类型
         /// </summary>
-        public OwnerType OwnerType { get; internal set; } = OwnerType.Task;
+        public EventElementType OwnerType { get; internal set; } = EventElementType.Task;
+        internal EventElementType OriginType { get;  set; } = EventElementType.Task;
 
         protected BaseEventTask()
         {
@@ -60,9 +60,10 @@ namespace OSS.EventTask
 
         public async Task<TResp> Process(TTData data, int triedTimes)
         {
-            var meta =await GetMeta();
-            var taskResp = new TResp {
-                tried_times = triedTimes, 
+            var meta = await GetMeta();
+            var taskResp = new TResp
+            {
+                tried_times = triedTimes,
                 run_status = TaskRunStatus.WaitToRun,
                 meta = meta
             };
@@ -72,13 +73,15 @@ namespace OSS.EventTask
             taskResp.executed_time = DateTime.Now.ToUtcSeconds();
 
             // 判断是否间隔执行,生成重试信息
+            // 任务被加入群组之后，间歇重试功能由群组承接
             if (taskResp.run_status.IsFailed()
-                && taskResp.tried_times < taskResp.meta.retry_times)
+                && taskResp.tried_times < taskResp.meta.retry_times && OwnerType == OriginType)
             {
                 taskResp.tried_times++;
                 taskResp.next_time = taskResp.executed_time + taskResp.meta.retry_seconds;
 
                 taskResp.run_status = TaskRunStatus.RunPaused;
+
                 await SaveContext(data, taskResp);
             }
 

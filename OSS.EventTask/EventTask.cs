@@ -23,15 +23,14 @@ namespace OSS.EventTask
 {
     public abstract  class EventTask<TTData, TTRes> 
         : BaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>>, IEventTask<TTData, TTRes>
-        //where TTData : class
-        //where TTRes : class, new()
     {
-        protected EventTask()
+        protected EventTask():this(null)
         {
         }
 
         protected EventTask(EventTaskMeta meta) : base(meta)
         {
+            OriginType = EventElementType.Task;
         }
 
         #region 扩展方法

@@ -22,7 +22,7 @@ namespace OSS.EventTask.MetaMos
 
         public GroupProcessType Process_type { get; set; }
 
-        public OwnerType owner_type { get; set; }
+        public EventElementType owner_type { get; set; }
     }
 
     public enum GroupProcessType

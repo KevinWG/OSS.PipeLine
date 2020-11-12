@@ -25,7 +25,7 @@ namespace OSS.EventTask.Interfaces
     public interface IBaseEventTask<in TTData, TTRes>//: IMeta<EventTaskMeta>
         //where TTRes :class, new()
     {
-        OwnerType OwnerType { get; }
+        EventElementType OwnerType { get; }
         Task<EventTaskResp<TTRes>> Process(TTData data);
         Task<EventTaskResp<TTRes>> Process(TTData data,int triedTimes);
     }

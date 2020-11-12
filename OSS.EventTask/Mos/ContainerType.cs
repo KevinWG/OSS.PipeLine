@@ -1,6 +1,6 @@
 ﻿namespace OSS.EventTask.Mos
 {
-    public enum OwnerType
+    public enum EventElementType
     {
         Task=1,
         Group=2,

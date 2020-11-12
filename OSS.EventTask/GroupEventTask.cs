@@ -27,12 +27,13 @@ namespace OSS.EventTask
         : BaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>>
           where TTData : class
     {
-        protected GroupEventTask()
+        protected GroupEventTask():this(null)
         {
         }
 
         protected GroupEventTask(GroupEventTaskMeta meta) : base(meta)
         {
+            OriginType = EventElementType.Group;
         }
 
         #region 内部基础方法
