@@ -21,14 +21,10 @@ using OSS.EventTask.Mos;
 namespace OSS.EventTask
 {
     public abstract  class EventTask<TTData, TTRes> 
-        : BaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>, TTRes>//, IEventTask<TTData, TTRes>
+        : BaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>>//, IEventTask<TTData, TTRes>
         where TTData : class
         where TTRes : class, new()
     {
-
-
-
-
         protected EventTask()
         {
         }
@@ -87,7 +83,7 @@ namespace OSS.EventTask
         internal override async Task Processing(TTData data, EventTaskResp<TTRes> taskResp)
         {
             // 【1】 执行起始方法 附加校验
-            var checkRes = RunCheck(taskResp.meta, data);
+            var checkRes = RunCheck(taskResp.meta);
             if (!checkRes)
                 return;
 
@@ -111,7 +107,7 @@ namespace OSS.EventTask
             } while (taskResp.run_status.IsFailed() && taskResp.loop_times <= taskResp.meta.loop_times);
         }
 
-        private static bool RunCheck(EventTaskMeta taskMeta, TTData data)
+        private static bool RunCheck(EventTaskMeta taskMeta)
         {
             if (string.IsNullOrEmpty(taskMeta?.task_id))
             {

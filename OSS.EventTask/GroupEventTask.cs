@@ -24,8 +24,8 @@ namespace OSS.EventTask
     /// <summary>
     ///  基础工作节点
     /// </summary>
-    public abstract class GroupEventTask<TTData, TTRes>
-        : BaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>, TTRes>
+    public abstract class GroupEventTask<TTData,TTRes>
+        : BaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>>
         where TTData : class
     {
         protected GroupEventTask()
@@ -76,6 +76,12 @@ namespace OSS.EventTask
                 else
                     await exeResp.TaskResults.Executing_SerialRevert(data);
             }
+
+            groupResp.run_status = (exeResp.status & GroupExecuteStatus.Failed) == GroupExecuteStatus.Failed
+                ? TaskRunStatus.RunFailed
+                : TaskRunStatus.RunCompleted;
+
+            groupResp.results = exeResp.TaskResults.Select(x => x.Value).ToList();
         }
 
         #endregion

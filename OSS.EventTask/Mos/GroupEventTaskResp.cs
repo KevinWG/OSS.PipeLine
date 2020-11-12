@@ -33,8 +33,12 @@ namespace OSS.EventTask.Mos
         internal IDictionary<IEventTask<TData, TTRes>, EventTaskResp<TTRes>> TaskResults { get; set; }
     }
 
-    public class GroupEventTaskResp<TTRes> :BaseTaskResp<GroupEventTaskMeta,TTRes>
+    public class GroupEventTaskResp<TTRes> :BaseTaskResp<GroupEventTaskMeta>
     {
-      
+        public IList<EventTaskResp<TTRes>> results
+        {
+            get;
+          internal   set;
+        }
     }
 }

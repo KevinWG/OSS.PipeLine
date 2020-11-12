@@ -19,10 +19,10 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract class BaseEventTask<TMetaType, TTData, TResp, TTResp> : BaseMeta<TMetaType>
+    public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>
         where TMetaType : BaseTaskMeta
         where TTData : class
-        where TResp : BaseTaskResp<TMetaType, TTResp>, new()
+        where TResp : BaseTaskResp<TMetaType>, new()
     {
         protected BaseEventTask()
         {

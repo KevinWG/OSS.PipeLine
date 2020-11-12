@@ -16,7 +16,7 @@ using OSS.EventTask.MetaMos;
 
 namespace OSS.EventTask.Mos
 {
-    public abstract class BaseTaskResp<TMeta, TTRes>
+    public abstract class BaseTaskResp<TMeta>
     {       
         /// <summary>
         ///   元数据信息
@@ -49,20 +49,22 @@ namespace OSS.EventTask.Mos
         public long next_time { get; set; }
 
 
-        /// <summary>
-        ///  返回信息
-        /// </summary>
-        public TTRes resp { get; internal set; }
     }
 
 
 
-    public class EventTaskResp<TTRes> : BaseTaskResp<EventTaskMeta,TTRes>
+    public class EventTaskResp<TTRes> : BaseTaskResp<EventTaskMeta>
     {
         /// <summary>
         ///  单词执行内部循环错误
         /// </summary>
         public int loop_times { get; set; } = 1;
+
+
+        /// <summary>
+        ///  返回信息
+        /// </summary>
+        public TTRes resp { get; internal set; }
     }
 
 
