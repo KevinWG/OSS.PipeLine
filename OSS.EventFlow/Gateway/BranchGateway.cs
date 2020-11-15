@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.EventFlow.Agent;
 using OSS.EventFlow.Mos;
-using OSS.EventNode.Interfaces;
 
 namespace OSS.EventFlow.Gateway
 {
@@ -14,9 +13,9 @@ namespace OSS.EventFlow.Gateway
             _nextAgents = nextAgents;
         }
 
-        internal override async Task MoveSubNext(IExecuteData preData)
+        internal override async Task MoveSubNext( )
         {
-            await MoveMulitAgents(preData, _nextAgents);
+            await MoveMulitAgents( _nextAgents);
         }
     }
 }

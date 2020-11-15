@@ -16,15 +16,15 @@ namespace OSS.EventFlow
         /// </summary>
         public BaseGateway Stop { get; set; }
         
-        /// <summary>
-        ///  异常代理
-        /// </summary>
-        public BaseAgent UnusualAgent { get; set; }
+        ///// <summary>
+        /////  异常代理
+        ///// </summary>
+        //public BaseAgent UnusualAgent { get; set; }
         
-        protected void AddAgent(BaseAgent agent, BaseGateway gateway)
-        {
+        //protected void AddAgent(BaseAgent agent, BaseGateway gateway)
+        //{
 
-        }
+        //}
 
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OSS.EventFlow.Agent;
 using OSS.EventFlow.Mos;
-using OSS.EventNode.Interfaces;
+
 
 namespace OSS.EventFlow.Gateway
 {
@@ -19,7 +19,7 @@ namespace OSS.EventFlow.Gateway
         /// </summary>
         /// <param name="preData"></param>
         /// <returns>true - 满足条件，false- 不能满足条件</returns>
-        protected internal virtual Task<bool> AggregateCheck(IExecuteData preData)
+        protected internal virtual Task<bool> AggregateCheck()
         {
             return Task.FromResult(true);
         }
@@ -29,26 +29,26 @@ namespace OSS.EventFlow.Gateway
         /// </summary>
         /// <param name="preData"></param>
         /// <returns></returns>
-        protected internal virtual Task<bool> AggregateRelease(IExecuteData preData)
+        protected internal virtual Task<bool> AggregateRelease()
         {
             return Task.FromResult(true);
         }
         
-        internal async Task MoveNext(IExecuteData preData)
+        internal async Task MoveNext()
         {
-            var aCheck = await AggregateCheck(preData);
+            var aCheck = await AggregateCheck();
             if (!aCheck)
             {
-                var release = await AggregateRelease(preData);
+                var release = await AggregateRelease();
                 if (release)
                 {
                     return ;
                 }
             }
-            await MoveSubNext(preData);
+            await MoveSubNext();
         }
 
-        internal abstract Task MoveSubNext(IExecuteData preData);
+        internal abstract Task MoveSubNext( );
 
 
         /// <summary>
@@ -56,11 +56,11 @@ namespace OSS.EventFlow.Gateway
         /// </summary>
         /// <param name="preData"></param>
         /// <returns></returns>
-        internal static async Task MoveMulitAgents(IExecuteData preData ,BaseAgent[] agents)
+        internal static async Task MoveMulitAgents( BaseAgent[] agents)
         {
             foreach (var ag in agents)
             {
-                await ag.MoveIn(preData);
+                await ag.MoveIn();
             }
         }
 
@@ -69,9 +69,9 @@ namespace OSS.EventFlow.Gateway
         /// </summary>
         /// <param name="preData"></param>
         /// <returns></returns>
-        internal static  Task MoveSingleAgents(IExecuteData preData , BaseAgent agent)
+        internal static  Task MoveSingleAgents( BaseAgent agent)
         {
-            return agent.MoveIn(preData);
+            return agent.MoveIn();
         }
 
     }
