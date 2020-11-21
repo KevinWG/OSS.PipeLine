@@ -27,6 +27,9 @@ namespace OSS.EventTask
         : BaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>>
           where TTData : class
     {
+
+
+        
         protected GroupEventTask():this(null)
         {
         }
