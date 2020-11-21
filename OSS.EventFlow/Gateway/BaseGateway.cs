@@ -1,22 +1,12 @@
 ﻿using System;
-using OSS.EventFlow.Interfaces;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Gateway
 {
-    public class BaseGateway:IPipe
-    {
-        public void InterInput(FlowContext context)
-        {
-            throw new NotImplementedException();
-        }
+    //public abstract class BaseGateway : BasePipe
+    //{
 
-        public void InterOutput(FlowContext context)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
+    //}
 
     //    public abstract class BaseGateway
     //    {
@@ -60,7 +50,6 @@ namespace OSS.EventFlow.Gateway
     //            }
     //            await MoveSubNext();
     //        }
-
     //        internal abstract Task MoveSubNext( );
 
 

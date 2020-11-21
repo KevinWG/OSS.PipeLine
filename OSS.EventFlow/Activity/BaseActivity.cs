@@ -1,19 +1,12 @@
-﻿using System;
-using OSS.EventFlow.Interfaces;
-using OSS.EventFlow.Mos;
+﻿using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow
+namespace OSS.EventFlow.Activity
 {
-    public class BaseActivity : IPipe
+    public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext>
+        where TContext : FlowContext
     {
-        public void InterInput(FlowContext context)
+        protected BaseActivity() : base(PipeType.Activity)
         {
-            throw new NotImplementedException();
-        }
-
-        public void InterOutput(FlowContext context)
-        {
-            throw new NotImplementedException();
         }
     }
 }
