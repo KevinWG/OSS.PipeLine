@@ -17,8 +17,8 @@ using OSS.EventFlow.Mos;
 namespace OSS.EventFlow
 {
 
-    public abstract class BasePipe<ContextType>
-        where ContextType : FlowContext
+    public abstract class BasePipe<TContext>
+        where TContext : FlowContext
     {
         public PipeType PipeType { get; internal set; }
 
@@ -32,7 +32,7 @@ namespace OSS.EventFlow
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task Through(ContextType context);
+        internal abstract Task Through(TContext context);
     }
 
     public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>

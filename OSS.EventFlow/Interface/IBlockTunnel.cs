@@ -16,10 +16,10 @@ using System.Threading.Tasks;
 
 namespace OSS.EventFlow.Interface
 {
-    public interface IBlockTunnel<InData,OutData>
+    public interface IBlockTunnel<TData>
     {
-        Task Push(InData data);
+        Task Push(TData data);
 
-        Task Pop(OutData data);
+        Task Pop(TData data);
     }
 }

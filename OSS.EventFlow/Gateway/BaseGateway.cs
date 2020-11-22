@@ -1,12 +1,20 @@
-﻿using System;
-using OSS.EventFlow.Mos;
+﻿using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Gateway
 {
-    //public abstract class BaseGateway : BasePipe
-    //{
+    public abstract class BaseGateway<TContext> : BasePipe<TContext>
+        where TContext : FlowContext
+    {
+        protected BaseGateway() : base(PipeType.Gateway)
+        {
+        }
 
-    //}
+
+        //  todo Gateway 多入多出
+
+
+
+    }
 
     //    public abstract class BaseGateway
     //    {

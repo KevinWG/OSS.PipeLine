@@ -2,10 +2,10 @@
 {
     public enum GatewayType
     {
-        /// <summary>
-        ///  顺序串行
-        /// </summary>
-        Serial = 10,
+        ///// <summary>
+        /////  顺序串行
+        ///// </summary>
+        //Serial = 10,
 
         /// <summary>
         ///  分支并行

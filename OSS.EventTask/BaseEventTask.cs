@@ -95,10 +95,6 @@ namespace OSS.EventTask
 
         #endregion
 
-        #region 生命周期扩展方法
-
-
-        #endregion
 
         #region 扩展方法（实现，回退，失败）  扩展方法
 
@@ -136,9 +132,5 @@ namespace OSS.EventTask
         }
 
         #endregion
-
-
-
-
     }
 }
