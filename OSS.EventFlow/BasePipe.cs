@@ -56,16 +56,16 @@ namespace OSS.EventFlow
         
      }
     
-    public abstract class BaseSinglePipe<ContextType> : BaseSinglePipe<ContextType,ContextType>
-        where ContextType : FlowContext
-    {
-        protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
-        {
-        }
+    //public abstract class BaseSinglePipe<ContextType> : BaseSinglePipe<ContextType,ContextType>
+    //    where ContextType : FlowContext
+    //{
+    //    protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
+    //    {
+    //    }
 
-        internal override Task Through(ContextType context)
-        {
-            return NextPipe.Through(context);
-        }
-    }
+    //    internal override Task Through(ContextType context)
+    //    {
+    //        return NextPipe.Through(context);
+    //    }
+    //}
 }
