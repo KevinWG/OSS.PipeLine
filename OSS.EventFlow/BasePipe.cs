@@ -20,11 +20,19 @@ namespace OSS.EventFlow
     public abstract class BasePipe<TContext>
         where TContext : FlowContext
     {
-        public PipeType PipeType { get; internal set; }
+        /// <summary>
+        ///  管道类型
+        /// </summary>
+        public PipeType pipe_type { get; internal set; }
+
+        /// <summary>
+        ///  管道元数据信息
+        /// </summary>
+        public PipeMeta pipe_meta { get; set; }
 
         protected BasePipe(PipeType pipeType)
         {
-            PipeType = pipeType;
+            pipe_type = pipeType;
         }
 
         /// <summary>

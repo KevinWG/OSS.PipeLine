@@ -24,8 +24,7 @@ namespace OSS.EventFlow.Activity
         }
         
         protected abstract Task Execute(TContext data);
-
-
+        
         internal override async Task Through(TContext context)
         {
             await Execute(context);
