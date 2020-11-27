@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace OSS.EventFlow.Interface
 {
-    public interface IBlockTunnel<TData>
+    public interface IBlockTunnel<in TData>
     {
         Task Push(TData data);
 
