@@ -16,7 +16,6 @@ using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow
 {
-
     public abstract class BasePipe<TContext>
         where TContext : FlowContext
     {
@@ -52,7 +51,7 @@ namespace OSS.EventFlow
         protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
         /// <summary>
         ///  添加下个管道
         /// </summary>
@@ -61,19 +60,6 @@ namespace OSS.EventFlow
         {
             NextPipe = nextPipe;
         }
-        
-     }
-    
-    //public abstract class BaseSinglePipe<ContextType> : BaseSinglePipe<ContextType,ContextType>
-    //    where ContextType : FlowContext
-    //{
-    //    protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
-    //    {
-    //    }
 
-    //    internal override Task Through(ContextType context)
-    //    {
-    //        return NextPipe.Through(context);
-    //    }
-    //}
+    }
 }
