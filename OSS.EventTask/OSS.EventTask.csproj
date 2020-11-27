@@ -6,6 +6,11 @@
     <Description>事件任务运行管理器</Description>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <WarningLevel>5</WarningLevel>
+    <DocumentationFile>bin/OSS.EventTask.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Domain.BaseTask.cs" />
     <Compile Remove="Domain.BaseTask.Meta.cs" />
