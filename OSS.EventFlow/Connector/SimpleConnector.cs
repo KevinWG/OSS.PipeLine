@@ -17,7 +17,7 @@ using OSS.EventFlow.Mos;
 namespace OSS.EventFlow.Connector
 {
  
-    public  class SimpleConnector<TContext> : BaseConnector<TContext, TContext>
+    public class SimpleConnector<TContext> : BaseConnector<TContext, TContext>
         where TContext : FlowContext
     {
         protected override TContext Convert(TContext inContextData)

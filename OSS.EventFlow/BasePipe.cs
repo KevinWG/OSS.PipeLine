@@ -12,10 +12,15 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow
 {
+    /// <summary>
+    /// 管道基类
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
     public abstract class BasePipe<TContext>
         where TContext : FlowContext
     {
@@ -29,6 +34,10 @@ namespace OSS.EventFlow
         /// </summary>
         public PipeMeta pipe_meta { get; set; }
 
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="pipeType"></param>
         protected BasePipe(PipeType pipeType)
         {
             pipe_type = pipeType;
@@ -42,12 +51,22 @@ namespace OSS.EventFlow
         internal abstract Task Through(TContext context);
     }
 
-    public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>
+
+    /// <summary>
+    ///  基础管道
+    /// </summary>
+    /// <typeparam name="InContext"></typeparam>
+    /// <typeparam name="OutContext"></typeparam>
+    public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, INextPipeAppender<OutContext>
         where InContext : FlowContext
         where OutContext : FlowContext
     {
         internal BasePipe<OutContext> NextPipe { get; set; }
 
+        /// <summary>
+        ///  构造函数
+        /// </summary>
+        /// <param name="pipeType"></param>
         protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
         {
         }
@@ -56,10 +75,18 @@ namespace OSS.EventFlow
         ///  添加下个管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        public void Append(BasePipe<OutContext> nextPipe)
+        internal virtual void InterAppend(BasePipe<OutContext> nextPipe)
         {
             NextPipe = nextPipe;
         }
 
+        /// <summary>
+        ///  添加下个管道
+        /// </summary>
+        /// <param name="nextPipe"></param>
+        public void Append(BasePipe<OutContext> nextPipe)
+        {
+            InterAppend(nextPipe);
+        }
     }
 }

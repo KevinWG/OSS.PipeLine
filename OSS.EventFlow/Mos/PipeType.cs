@@ -1,5 +1,8 @@
 ﻿namespace OSS.EventFlow.Mos
 {
+    /// <summary>
+    ///   管道类型
+    /// </summary>
     public enum PipeType
     {
         /// <summary>
@@ -15,7 +18,12 @@
         /// <summary>
         ///  连接通道
         /// </summary>
-        Connector
+        Connector,
+
+        /// <summary>
+        /// 组合流
+        /// </summary>
+        Flow
 
     }
 }

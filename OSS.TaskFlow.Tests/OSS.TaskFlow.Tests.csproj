@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OSS.EventFlow\OSS.EventFlow.csproj" />
     <ProjectReference Include="..\OSS.EventNode\OSS.EventNode.csproj" />
     <ProjectReference Include="..\OSS.EventTask\OSS.EventTask.csproj" />
   </ItemGroup>

@@ -11,8 +11,6 @@
 
 #endregion
 
-
-
 using System.Threading.Tasks;
 using OSS.EventFlow.Mos;
 
@@ -27,10 +25,18 @@ namespace OSS.EventFlow.Connector
         where InContext : FlowContext
         where OutContext : FlowContext
     {
+        /// <summary>
+        /// 连接基类构造函数
+        /// </summary>
         protected BaseConnector() : base(PipeType.Connector)
         {
         }
-        
+
+        /// <summary>
+        ///  连接消息体的转换功能
+        /// </summary>
+        /// <param name="inContextData"></param>
+        /// <returns></returns>
         protected abstract OutContext Convert(InContext inContextData);
 
         internal override Task Through(InContext context)
@@ -39,6 +45,4 @@ namespace OSS.EventFlow.Connector
             return NextPipe.Through(outContext);
         }
     }
-
-
 }
