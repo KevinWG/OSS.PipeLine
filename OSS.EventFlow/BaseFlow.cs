@@ -22,11 +22,11 @@ namespace OSS.EventFlow
     /// <summary>
     /// 基础流体
     /// </summary>
-    /// <typeparam name="InContext"></typeparam>
-    /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseFlow<InContext, OutContext> : BaseSinglePipe<InContext, OutContext>
-        where InContext : FlowContext
-        where OutContext : FlowContext
+    /// <typeparam name="InFlowContext"></typeparam>
+    /// <typeparam name="OutFlowContext"></typeparam>
+    public abstract class BaseFlow<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>
+        where InFlowContext : FlowContext
+        where OutFlowContext : FlowContext
     {
         /// <summary>
         /// 基础流体
@@ -38,13 +38,13 @@ namespace OSS.EventFlow
         /// <summary>
         ///  开始管道
         /// </summary>
-        public BasePipe<InContext> StartPipe { get; internal set; }
+        public BasePipe<InFlowContext> StartPipe { get; internal set; }
 
         /// <summary>
         ///  流体开始
         /// </summary>
         /// <param name="startPipe"></param>
-        public void Start(BasePipe<InContext> startPipe)
+        public void Start(BasePipe<InFlowContext> startPipe)
         {
             StartPipe = startPipe;
         }
@@ -52,13 +52,13 @@ namespace OSS.EventFlow
         /// <summary>
         ///  开始管道
         /// </summary>
-        private INextPipeAppender<OutContext> _endPipeAppender;
+        private IPipeAppender<OutFlowContext> _endPipeAppender;
 
         /// <summary>
         ///  流体开始
         /// </summary>
         /// <param name="endPipeAppender"></param>
-        public void End(INextPipeAppender<OutContext> endPipeAppender)
+        public void End(IPipeAppender<OutFlowContext> endPipeAppender)
         {
             _endPipeAppender = endPipeAppender;
         }
@@ -67,26 +67,13 @@ namespace OSS.EventFlow
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal override void InterAppend(BasePipe<OutContext> nextPipe)
+        internal override void InterAppend(BasePipe<OutFlowContext> nextPipe)
         {
             _endPipeAppender.Append(nextPipe);
         }
 
-        /// <summary>
-        ///  链接流体内部尾部管道和流体外下一截管道
-        /// </summary>
-        /// <param name="nextPipe"></param>
-        /// <param name="connectorAfterNextPipe"></param>
-        public void Append<TNextConnectorOutContext>(BasePipe<OutContext> nextPipe,
-            BaseConnector<OutContext, TNextConnectorOutContext> connectorAfterNextPipe)
-            where TNextConnectorOutContext : FlowContext
-        {
-            //todo
 
-        }
-
-
-        internal override Task Through(InContext context)
+        internal override Task Through(InFlowContext context)
         {
             return StartPipe.Through(context);
         }

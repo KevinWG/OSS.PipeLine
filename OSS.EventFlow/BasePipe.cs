@@ -34,6 +34,7 @@ namespace OSS.EventFlow
         /// </summary>
         public PipeMeta pipe_meta { get; set; }
 
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -49,6 +50,7 @@ namespace OSS.EventFlow
         /// <param name="context"></param>
         /// <returns></returns>
         internal abstract Task Through(TContext context);
+
     }
 
 
@@ -57,7 +59,7 @@ namespace OSS.EventFlow
     /// </summary>
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, INextPipeAppender<OutContext>
+    public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, IPipeAppender<OutContext>
         where InContext : FlowContext
         where OutContext : FlowContext
     {
@@ -87,6 +89,19 @@ namespace OSS.EventFlow
         public void Append(BasePipe<OutContext> nextPipe)
         {
             InterAppend(nextPipe);
+        }
+
+        /// <summary>
+        /// 添加下个管道
+        /// </summary>
+        /// <typeparam name="NextOutContext"></typeparam>
+        /// <param name="nextPipe"></param>
+        /// <returns>返回下个管道的追加器</returns>
+        public IPipeAppender<NextOutContext> Append<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
+            where NextOutContext : FlowContext
+        {
+            InterAppend(nextPipe);
+            return nextPipe;
         }
     }
 }

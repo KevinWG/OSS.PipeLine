@@ -16,13 +16,25 @@ using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Activity
 {
+    /// <summary>
+    ///  活动基类
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
     public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext,TContext>
         where TContext : FlowContext
     {
+        /// <summary>
+        ///  构造函数
+        /// </summary>
         protected BaseActivity() : base(PipeType.Activity)
         {
         }
         
+        /// <summary>
+        ///  执行
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         protected abstract Task Execute(TContext data);
         
         internal override async Task Through(TContext context)
