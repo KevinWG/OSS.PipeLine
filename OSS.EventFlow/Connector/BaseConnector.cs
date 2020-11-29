@@ -42,7 +42,7 @@ namespace OSS.EventFlow.Connector
         internal override Task Through(InContext context)
         {
             var outContext = Convert(context);
-            return NextPipe.Through(outContext);
+            return ToNextThrough(outContext);
         }
     }
 }

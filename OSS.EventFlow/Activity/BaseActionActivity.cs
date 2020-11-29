@@ -29,7 +29,7 @@ namespace OSS.EventFlow.Activity
         public async Task<TResult> Action(TContext data)
         {
             var res = await ActionExecuting(data);
-            await NextPipe.Through(data);
+            await ToNextThrough(data);
             return res;
         }
 

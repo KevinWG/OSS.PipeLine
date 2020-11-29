@@ -25,8 +25,8 @@ namespace OSS.EventFlow.Activity
 
         public async Task Pop(TContext data)
         {
-            await Execute(data); 
-            await NextPipe.Through(data);
+            await Execute(data);
+            await ToNextThrough(data);
         }
         
 

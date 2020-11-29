@@ -27,7 +27,7 @@ namespace OSS.EventFlow.Connector
         public Task Pop(InContext data)
         {
             var outContext = Convert(data);
-            return NextPipe.Through(outContext);
+            return ToNextThrough(outContext);
         }
 
         internal override Task Through(InContext context)

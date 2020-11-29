@@ -11,9 +11,7 @@
 
 #endregion
 
-using System;
 using System.Threading.Tasks;
-using OSS.EventFlow.Connector;
 using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
 
@@ -38,15 +36,15 @@ namespace OSS.EventFlow
         /// <summary>
         ///  开始管道
         /// </summary>
-        public BasePipe<InFlowContext> StartPipe { get; internal set; }
+        private BasePipe<InFlowContext> _startPipe;
 
         /// <summary>
         ///  流体开始
         /// </summary>
         /// <param name="startPipe"></param>
-        public void Start(BasePipe<InFlowContext> startPipe)
+        public void StartWith(BasePipe<InFlowContext> startPipe)
         {
-            StartPipe = startPipe;
+            _startPipe = startPipe;
         }
 
         /// <summary>
@@ -58,10 +56,22 @@ namespace OSS.EventFlow
         ///  流体开始
         /// </summary>
         /// <param name="endPipeAppender"></param>
-        public void End(IPipeAppender<OutFlowContext> endPipeAppender)
+        public void EndWith(IPipeAppender<OutFlowContext> endPipeAppender)
         {
             _endPipeAppender = endPipeAppender;
         }
+
+
+        /// <summary>
+        ///    触发
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task Trigger(InFlowContext context)
+        {
+            return Through(context);
+        }
+
 
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
@@ -73,9 +83,10 @@ namespace OSS.EventFlow
         }
 
 
+
         internal override Task Through(InFlowContext context)
         {
-            return StartPipe.Through(context);
+            return _startPipe.Through(context);
         }
     }
 }

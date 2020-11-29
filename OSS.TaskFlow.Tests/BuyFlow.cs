@@ -7,7 +7,7 @@ using OSS.Tools.Log;
 
 namespace OSS.TaskFlow.Tests
 {
-    //  申请,  审核，  支付， 入库  
+ 
     public class BuyFlow : BaseFlow<ApplyContext, StockContext>
     {
         public readonly ApplyActivity ApplyActivity = new ApplyActivity();
@@ -21,8 +21,8 @@ namespace OSS.TaskFlow.Tests
 
         public BuyFlow()
         {
-            Start(ApplyActivity);
-            End(StockActivity);
+            StartWith(ApplyActivity);
+            EndWith(StockActivity);
 
             ApplyActivity.Append(AutoAuditActivity).Append(PayConnector).Append(PayActivity).Append(StockConnector).Append(StockActivity);
         }

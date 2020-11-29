@@ -103,5 +103,10 @@ namespace OSS.EventFlow
             InterAppend(nextPipe);
             return nextPipe;
         }
+
+        internal Task ToNextThrough(OutContext nextInContext)
+        {
+            return NextPipe!=null ? NextPipe.Through(nextInContext) : Task.CompletedTask;
+        }
     }
 }

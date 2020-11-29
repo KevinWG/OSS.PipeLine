@@ -40,7 +40,7 @@ namespace OSS.EventFlow.Gateway
             var throughRes = await TriggerThrough(context);
             if (throughRes)
             {
-                await NextPipe.Through(context);
+                await ToNextThrough(context);
             }
         }
     }

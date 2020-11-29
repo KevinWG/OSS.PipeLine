@@ -40,7 +40,7 @@ namespace OSS.EventFlow.Activity
         internal override async Task Through(TContext context)
         {
             await Execute(context);
-            await NextPipe.Through(context);
+            await ToNextThrough(context);
         }
     }
 
