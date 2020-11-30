@@ -2,6 +2,7 @@
 using OSS.EventFlow;
 using OSS.EventFlow.Activity;
 using OSS.EventFlow.Connector;
+using OSS.EventFlow.Interface;
 using OSS.TaskFlow.Tests.FlowContexts;
 using OSS.Tools.Log;
 
@@ -10,8 +11,8 @@ namespace OSS.TaskFlow.Tests
  
     public class BuyFlow : BaseFlow<ApplyContext, StockContext>
     {
-        public readonly ApplyActivity ApplyActivity = new ApplyActivity();
-        public readonly AutoAuditActivity AutoAuditActivity = new AutoAuditActivity();
+        public static readonly ApplyActivity ApplyActivity = new ApplyActivity();
+        public  readonly AutoAuditActivity AutoAuditActivity = new AutoAuditActivity();
 
         public readonly PayConnector PayConnector = new PayConnector();
         public readonly PayActivity PayActivity = new PayActivity();
@@ -21,12 +22,12 @@ namespace OSS.TaskFlow.Tests
 
         public BuyFlow()
         {
-            StartWith(ApplyActivity);
-            EndWith(StockActivity);
-
             ApplyActivity.Append(AutoAuditActivity).Append(PayConnector).Append(PayActivity).Append(StockConnector).Append(StockActivity);
         }
 
+        protected override BasePipe<ApplyContext> InitialInnerStartPipe() => ApplyActivity;
+
+        protected override IPipeAppender<StockContext> InitialInnerEndPipe() => StockActivity;
     }
 
 

@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
@@ -31,36 +32,29 @@ namespace OSS.EventFlow
         /// </summary>
         protected BaseFlow() : base(PipeType.Flow)
         {
+            _startPipe       = InitialInnerStartPipe();
+            _endPipeAppender = InitialInnerEndPipe();
+
+            if (_startPipe == null || _endPipeAppender == null)
+            {
+                throw new ArgumentNullException("未发现流体的起始截止管道！");
+            }
         }
 
-        /// <summary>
-        ///  开始管道
-        /// </summary>
+     
         private BasePipe<InFlowContext> _startPipe;
-
-        /// <summary>
-        ///  流体开始
-        /// </summary>
-        /// <param name="startPipe"></param>
-        public void StartWith(BasePipe<InFlowContext> startPipe)
-        {
-            _startPipe = startPipe;
-        }
-
-        /// <summary>
-        ///  开始管道
-        /// </summary>
         private IPipeAppender<OutFlowContext> _endPipeAppender;
 
         /// <summary>
-        ///  流体开始
+        ///  初始化流体的起始管道
         /// </summary>
-        /// <param name="endPipeAppender"></param>
-        public void EndWith(IPipeAppender<OutFlowContext> endPipeAppender)
-        {
-            _endPipeAppender = endPipeAppender;
-        }
-
+        /// <returns></returns>
+        protected abstract BasePipe<InFlowContext> InitialInnerStartPipe();
+        /// <summary>
+        ///  初始化流体的结束管道
+        /// </summary>
+        /// <returns></returns>
+        protected abstract IPipeAppender<OutFlowContext> InitialInnerEndPipe();
 
         /// <summary>
         ///    触发
@@ -71,8 +65,7 @@ namespace OSS.EventFlow
         {
             return Through(context);
         }
-
-
+        
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
@@ -81,8 +74,6 @@ namespace OSS.EventFlow
         {
             _endPipeAppender.Append(nextPipe);
         }
-
-
 
         internal override Task Through(InFlowContext context)
         {

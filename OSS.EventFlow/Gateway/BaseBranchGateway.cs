@@ -32,25 +32,33 @@ namespace OSS.EventFlow.Gateway
 
         internal override async Task Through(TContext context)
         {
-            var parallelPipes = GetAvailablePipes(context).Select(p => p.Through(context));
+            var parallelPipes = FilterAvailablePipes(_branchItems, context).Select(p => p.Through(context));
             await Task.WhenAll(parallelPipes);
         }
 
-        private IEnumerable<BasePipe<TContext>> GetAvailablePipes(TContext context)
-        {
-            return _branchItems.Where(b => b.pipeSwitcher.Invoke(context)).Select(b => b.pipe);
-        }
+        protected abstract IEnumerable<BasePipe<TContext>> FilterAvailablePipes(List<BasePipe<TContext>> branchItems,
+            TContext context);
 
-        private IList<(BasePipe<TContext> pipe, Func<TContext, bool> pipeSwitcher)> _branchItems;
+        private List<BasePipe<TContext>> _branchItems;
 
-        public void Branch((BasePipe<TContext> pipe, Func<TContext, bool> pipeSwitcher) branchItem)
+        public void AddBranch(BasePipe<TContext> branchItem)
         {
             if (_branchItems == null)
             {
-                _branchItems = new List<(BasePipe<TContext>, Func<TContext, bool>)>();
+                _branchItems = new List<BasePipe<TContext>>();
             }
 
             _branchItems.Add(branchItem);
+        }
+
+        public void AddBranches(IList<BasePipe<TContext>> branchItems)
+        {
+            if (_branchItems == null)
+            {
+                _branchItems = new List<BasePipe<TContext>>();
+            }
+
+            _branchItems.AddRange(branchItems);
         }
     }
 }

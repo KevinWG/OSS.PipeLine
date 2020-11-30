@@ -29,15 +29,15 @@ namespace OSS.EventFlow.Gateway
         }
 
         /// <summary>
-        ///   是否触发通过
+        ///  是否触发通过
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        protected abstract Task<bool> TriggerThrough(TContext context);
+        protected abstract Task<bool> ConfirmThrough(TContext context);
 
         internal override async Task Through(TContext context)
         {
-            var throughRes = await TriggerThrough(context);
+            var throughRes = await ConfirmThrough(context);
             if (throughRes)
             {
                 await ToNextThrough(context);
