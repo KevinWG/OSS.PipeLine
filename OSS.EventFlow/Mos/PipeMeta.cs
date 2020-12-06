@@ -13,6 +13,9 @@
 
 namespace OSS.EventFlow.Mos
 {
+    /// <summary>
+    ///  管道元数据
+    /// </summary>
     public class PipeMeta
     {
         /// <summary>

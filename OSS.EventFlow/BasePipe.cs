@@ -33,8 +33,7 @@ namespace OSS.EventFlow
         ///  管道元数据信息
         /// </summary>
         public PipeMeta pipe_meta { get; set; }
-
-
+        
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -49,8 +48,26 @@ namespace OSS.EventFlow
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task Through(TContext context);
+        internal abstract Task<bool> Through(TContext context);
 
+        internal async Task InternalDeepThrough(TContext context)
+        {
+            var res =await Through(context);
+            if (!res)
+            {
+                await Block(context);
+            }
+        }
+
+        /// <summary>
+        ///  管道堵塞
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected virtual Task Block(TContext context)
+        {
+            return Task.CompletedTask;
+        }
     }
 
 
@@ -71,6 +88,11 @@ namespace OSS.EventFlow
         /// <param name="pipeType"></param>
         protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
         {
+        }
+
+        internal Task ToNextThrough(OutContext nextInContext)
+        {
+            return NextPipe != null ? NextPipe.InternalDeepThrough(nextInContext) : Task.CompletedTask;
         }
 
         /// <summary>
@@ -104,9 +126,6 @@ namespace OSS.EventFlow
             return nextPipe;
         }
 
-        internal Task ToNextThrough(OutContext nextInContext)
-        {
-            return NextPipe!=null ? NextPipe.Through(nextInContext) : Task.CompletedTask;
-        }
+    
     }
 }

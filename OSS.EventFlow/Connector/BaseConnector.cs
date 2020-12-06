@@ -34,15 +34,17 @@ namespace OSS.EventFlow.Connector
 
         /// <summary>
         ///  连接消息体的转换功能
+        ///     如果是异步消息延缓唤起连接，会在唤起（Pop）时执行此方法
         /// </summary>
         /// <param name="inContextData"></param>
         /// <returns></returns>
         protected abstract OutContext Convert(InContext inContextData);
 
-        internal override Task Through(InContext context)
+        internal override async Task<bool> Through(InContext context)
         {
             var outContext = Convert(context);
-            return ToNextThrough(outContext);
+            await ToNextThrough(outContext);
+            return true;
         }
     }
 }

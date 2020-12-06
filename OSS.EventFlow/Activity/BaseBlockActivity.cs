@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2020 Kevin (OSS开源系列) 公众号：OSSCore
 
 /***************************************************************************
-*　　	文件功能描述：OSS.EventFlow -  异步阻塞活动基类
+*　　	文件功能描述：OSS.EventFlow -  异步消息延缓活动基类
 *
 *　　	创建人： Kevin
 *       创建人Email：1985088337@qq.com
@@ -17,20 +17,31 @@ using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Activity
 {
-    public abstract class BaseBlockActivity<TContext> : BaseActivity<TContext>,IBlockTunnel<TContext>
+    /// <summary>
+    /// 异步消息延缓活动基类
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    public abstract class BaseBlockActivity<TContext> : BaseActivity<TContext>, ISuspendTunnel<TContext>
         where TContext : FlowContext
     {
-        public abstract Task Push(TContext data);
+        /// <inheritdoc />
+        public abstract Task<bool> Push(TContext data);
 
 
+        /// <inheritdoc />
         public async Task Pop(TContext data)
         {
-            await Execute(data);
-            await ToNextThrough(data);
-        }
-        
+            var res = await Execute(data);
+            if (res)
+            {
+                await ToNextThrough(data);
+                return;
+            }
 
-        internal override Task Through(TContext context)
+            await Block(data);
+        }
+
+        internal override Task<bool> Through(TContext context)
         {
             return Push(context);
         }

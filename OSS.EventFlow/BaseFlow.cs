@@ -41,7 +41,7 @@ namespace OSS.EventFlow
             }
         }
 
-     
+
         private BasePipe<InFlowContext> _startPipe;
         private IPipeAppender<OutFlowContext> _endPipeAppender;
 
@@ -50,6 +50,7 @@ namespace OSS.EventFlow
         /// </summary>
         /// <returns></returns>
         protected abstract BasePipe<InFlowContext> InitialInnerStartPipe();
+
         /// <summary>
         ///  初始化流体的结束管道
         /// </summary>
@@ -63,9 +64,9 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public Task Trigger(InFlowContext context)
         {
-            return Through(context);
+            return InternalDeepThrough(context);
         }
-        
+
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
@@ -75,9 +76,11 @@ namespace OSS.EventFlow
             _endPipeAppender.Append(nextPipe);
         }
 
-        internal override Task Through(InFlowContext context)
+        internal override async Task<bool> Through(InFlowContext context)
         {
-            return _startPipe.Through(context);
+            // 内部子管道的阻塞传递给父级
+            await _startPipe.InternalDeepThrough(context);
+            return true;
         }
     }
 }

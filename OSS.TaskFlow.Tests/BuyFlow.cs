@@ -33,20 +33,20 @@ namespace OSS.TaskFlow.Tests
 
     public class ApplyActivity : BaseActivity<ApplyContext>
     {
-        protected override Task Execute(ApplyContext data)
+        protected override Task<bool> Execute(ApplyContext data)
         {
             LogHelper.Info("这里刚才发生了一个采购申请"); 
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 
 
     public class AutoAuditActivity : BaseActivity<ApplyContext>
     {
-        protected override Task Execute(ApplyContext data)
+        protected override Task<bool> Execute(ApplyContext data)
         {
             LogHelper.Info("管理员审核通过");
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 
@@ -61,10 +61,10 @@ namespace OSS.TaskFlow.Tests
 
     public class PayActivity : BaseActivity<PayContext>
     {
-        protected override Task Execute(PayContext data)
+        protected override Task<bool> Execute(PayContext data)
         {
             LogHelper.Info("发起支付处理");
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 
@@ -78,10 +78,10 @@ namespace OSS.TaskFlow.Tests
 
     public class StockActivity : BaseActivity<StockContext>
     {
-        protected override Task Execute(StockContext data)
+        protected override Task<bool> Execute(StockContext data)
         {
             LogHelper.Info("库存保存");
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
     }
 }

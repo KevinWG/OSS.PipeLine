@@ -21,7 +21,7 @@ namespace OSS.EventFlow.Gateway
     /// 流体的多路聚合网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseAggregationGate<TContext> : BaseSinglePipe<TContext, TContext> 
+    public abstract class BaseAggregationGate<TContext> : BaseSinglePipe<TContext, TContext>
         where TContext : FlowContext
     {
         protected BaseAggregationGate() : base(PipeType.Gateway)
@@ -32,16 +32,23 @@ namespace OSS.EventFlow.Gateway
         ///  是否触发通过
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="isBlocked"></param>
         /// <returns></returns>
-        protected abstract Task<bool> ConfirmThrough(TContext context);
+        protected abstract Task<bool> MatchThroughCondition(TContext context, out bool isBlocked);
 
-        internal override async Task Through(TContext context)
+        internal override async Task<bool> Through(TContext context)
         {
-            var throughRes = await ConfirmThrough(context);
+            var throughRes = await MatchThroughCondition(context, out var isBlocked);
+            if (isBlocked)
+            {
+                return false;
+            }
+
             if (throughRes)
             {
                 await ToNextThrough(context);
             }
+            return true;
         }
     }
 }

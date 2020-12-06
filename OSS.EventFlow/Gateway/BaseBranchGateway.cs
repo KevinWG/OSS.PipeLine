@@ -30,12 +30,25 @@ namespace OSS.EventFlow.Gateway
         {
         }
 
-        internal override async Task Through(TContext context)
+        internal override async Task<bool> Through(TContext context)
         {
-            var parallelPipes = FilterAvailablePipes(_branchItems, context).Select(p => p.Through(context));
+            var nextPipes = FilterAvailablePipes(_branchItems, context);
+            if (nextPipes == null || !nextPipes.Any())
+            {
+                return false;
+            }
+
+            var parallelPipes = nextPipes.Select(p => p.InternalDeepThrough(context));
             await Task.WhenAll(parallelPipes);
+            return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="branchItems"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         protected abstract IEnumerable<BasePipe<TContext>> FilterAvailablePipes(List<BasePipe<TContext>> branchItems,
             TContext context);
 
