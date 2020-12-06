@@ -14,12 +14,13 @@
 using System;
 using System.Threading.Tasks;
 using OSS.EventTask.Extension;
+using OSS.EventTask.Interfaces;
 using OSS.EventTask.MetaMos;
 using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>
+    public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>,ISuspendTunnel<TTData,TResp>
         where TMetaType : BaseTaskMeta
         //where TTData : class
         where TResp : BaseTaskResp<TMetaType>, new()
@@ -42,18 +43,29 @@ namespace OSS.EventTask
         #region 扩展方法
 
         /// <summary>
-        ///  保存对应运行请求和重试相关信息
+        ///  阻塞 -  保存对应运行请求和重试相关信息
         /// </summary>
         /// <param name="data"></param>
         /// <param name="resp"></param>
         /// <returns></returns>
-        protected virtual Task SaveContext(TTData data, TResp resp)
+        public virtual Task Suspend(TTData data, TResp resp)
         {
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// 重新唤起
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="triedTimes"></param>
+        /// <returns></returns>
+        public Task Resume(TTData data, int triedTimes)
+        {
+            return Process(data, triedTimes);
+        }
+
         #endregion
-        
+
         #region 任务进入入口
 
         public Task<TResp> Process(TTData data) => Process(data, 0);
@@ -82,7 +94,7 @@ namespace OSS.EventTask
 
                 taskResp.run_status = TaskRunStatus.RunPaused;
 
-                await SaveContext(data, taskResp);
+                await Suspend(data, taskResp);
             }
 
             //  最终失败，执行失败方法
