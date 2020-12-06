@@ -28,14 +28,14 @@ namespace OSS.EventFlow.Connector
         where OutContext : FlowContext
     {
         /// <inheritdoc />
-        public abstract Task<bool> Push(InContext data);
+        public abstract Task<bool> Suspend(InContext data);
 
         /// <summary>
         ///  需要调用此方法唤起接下来的操作
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Task Pop(InContext data)
+        public Task Resume(InContext data)
         {
             var outContext = Convert(data);
             return ToNextThrough(outContext);
@@ -43,7 +43,7 @@ namespace OSS.EventFlow.Connector
 
         internal override Task<bool> Through(InContext context)
         {
-            return Push(context);
+            return Suspend(context);
         }
     }
 

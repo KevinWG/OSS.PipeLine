@@ -25,11 +25,11 @@ namespace OSS.EventFlow.Activity
         where TContext : FlowContext
     {
         /// <inheritdoc />
-        public abstract Task<bool> Push(TContext data);
+        public abstract Task<bool> Suspend(TContext data);
 
 
         /// <inheritdoc />
-        public async Task Pop(TContext data)
+        public async Task Resume(TContext data)
         {
             var res = await Execute(data);
             if (res)
@@ -43,7 +43,7 @@ namespace OSS.EventFlow.Activity
 
         internal override Task<bool> Through(TContext context)
         {
-            return Push(context);
+            return Suspend(context);
         }
     }
 }

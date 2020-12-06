@@ -27,13 +27,13 @@ namespace OSS.EventFlow.Interface
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        Task<bool> Push(TData data);
+        Task<bool> Suspend(TData data);
 
         /// <summary>
         ///  数据由阻塞通道唤起
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        Task Pop(TData data);
+        Task Resume(TData data);
     }
 }
