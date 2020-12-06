@@ -5,10 +5,17 @@
     /// </summary>
     public abstract class FlowContext
     {
-        public string id
+       
+    }
+
+    /// <inheritdoc />
+    public abstract class FlowContext<IdType>: FlowContext
+    {
+        public IdType id
         {
             get;
             set;
         }
     }
+
 }
