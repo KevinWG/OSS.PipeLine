@@ -2,7 +2,7 @@
 
 namespace OSS.TaskFlow.Tests.FlowContexts
 {
-    public class ApplyContext:FlowContext
+    public class ApplyContext:FlowContext<string>
     {
         public ApplyContext()
         {

@@ -2,7 +2,7 @@
 
 namespace OSS.TaskFlow.Tests.FlowContexts
 {
-    public class PayContext:FlowContext
+    public class PayContext:FlowContext<string>
     {
       
     }
