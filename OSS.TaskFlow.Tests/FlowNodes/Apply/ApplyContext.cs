@@ -1,6 +1,6 @@
 ﻿using OSS.EventFlow.Mos;
 
-namespace OSS.TaskFlow.Tests.FlowContexts
+namespace OSS.TaskFlow.Tests.FlowNodes.Apply
 {
     public class ApplyContext:FlowContext<string>
     {

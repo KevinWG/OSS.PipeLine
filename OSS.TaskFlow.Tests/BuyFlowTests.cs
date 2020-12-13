@@ -1,17 +1,19 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OSS.TaskFlow.Tests.FlowContexts;
+﻿using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using OSS.TaskFlow.Tests.FlowNodes;
+using OSS.TaskFlow.Tests.FlowNodes.Apply;
 
 namespace OSS.TaskFlow.Tests
 {
     [TestClass]
     public class BuyFlowTests
     {
-        private static readonly BuyFlow bFlow = new BuyFlow();
+        private static readonly AppLifeFlow bFlow = new AppLifeFlow();
 
         [TestMethod]
-        public void FlowTest()
+        public async Task FlowTest()
         {
-            bFlow.Trigger(new ApplyContext());
+            await bFlow.Start(new ApplyContext());
         }
 
     }
