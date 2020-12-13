@@ -50,7 +50,7 @@ namespace OSS.EventFlow
         /// <returns></returns>
         internal abstract Task<bool> Through(TContext context);
 
-        internal async Task InternalDeepThrough(TContext context)
+        public async Task Start(TContext context)
         {
             var res =await Through(context);
             if (!res)
@@ -92,7 +92,7 @@ namespace OSS.EventFlow
 
         internal Task ToNextThrough(OutContext nextInContext)
         {
-            return NextPipe != null ? NextPipe.InternalDeepThrough(nextInContext) : Task.CompletedTask;
+            return NextPipe != null ? NextPipe.Start(nextInContext) : Task.CompletedTask;
         }
 
         /// <summary>

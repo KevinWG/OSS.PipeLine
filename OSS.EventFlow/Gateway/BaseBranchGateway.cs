@@ -11,7 +11,6 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,7 +37,7 @@ namespace OSS.EventFlow.Gateway
                 return false;
             }
 
-            var parallelPipes = nextPipes.Select(p => p.InternalDeepThrough(context));
+            var parallelPipes = nextPipes.Select(p => p.Start(context));
             await Task.WhenAll(parallelPipes);
             return true;
         }
