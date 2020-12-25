@@ -31,7 +31,7 @@ namespace OSS.EventFlow.Activity
         /// <inheritdoc />
         public async Task Resume(TContext data)
         {
-            var res = await Execute(data);
+            var res = await Executing(data);
             if (res)
             {
                 await ToNextThrough(data);

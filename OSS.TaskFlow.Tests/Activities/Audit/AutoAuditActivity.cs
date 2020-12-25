@@ -7,7 +7,7 @@ namespace OSS.TaskFlow.Tests.Activities.Audit
 {
     public class AutoAuditActivity : BaseActivity<ApplyContext>
     {
-        protected override Task<bool> Execute(ApplyContext data)
+        protected override Task<bool> Executing(ApplyContext data)
         {
             LogHelper.Info("管理员审核通过");
             return Task.FromResult(true);

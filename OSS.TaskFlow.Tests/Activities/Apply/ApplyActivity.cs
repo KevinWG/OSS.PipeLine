@@ -6,7 +6,7 @@ namespace OSS.TaskFlow.Tests.Activities.Apply
 {
     public class ApplyActivity : BaseActivity<ApplyContext>
     {
-        protected override Task<bool> Execute(ApplyContext data)
+        protected override Task<bool> Executing(ApplyContext data)
         {
             LogHelper.Info("这里刚才发生了一个采购申请"); 
             return Task.FromResult(true);

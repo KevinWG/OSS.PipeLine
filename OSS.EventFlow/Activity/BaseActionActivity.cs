@@ -38,7 +38,7 @@ namespace OSS.EventFlow.Activity
         /// <param name="data"></param>
         /// <param name="isBlocked"></param>
         /// <returns></returns>
-        protected abstract Task<TResult> ActionExecuting(TContext data,out bool isBlocked);
+        protected abstract Task<TResult> Executing(TContext data,out bool isBlocked);
 
         /// <summary>
         ///  Action执行方法
@@ -47,7 +47,7 @@ namespace OSS.EventFlow.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var res = await ActionExecuting(data,out var isBlocked);
+            var res = await Executing(data,out var isBlocked);
             if (isBlocked)
             {
                await Block(data);

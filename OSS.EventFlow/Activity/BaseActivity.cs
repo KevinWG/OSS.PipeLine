@@ -35,11 +35,11 @@ namespace OSS.EventFlow.Activity
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        protected abstract Task<bool> Execute(TContext data);
+        protected abstract Task<bool> Executing(TContext data);
         
         internal override async Task<bool> Through(TContext context)
         {
-            var eRes= await Execute(context);
+            var eRes= await Executing(context);
             if (eRes)
             {
                 await ToNextThrough(context);

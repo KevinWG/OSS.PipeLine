@@ -6,7 +6,7 @@ namespace OSS.TaskFlow.Tests.Activities.Pay
 {
     public class PayActivity : BaseActivity<PayContext>
     {
-        protected override Task<bool> Execute(PayContext data)
+        protected override Task<bool> Executing(PayContext data)
         {
             LogHelper.Info("发起支付处理");
             return Task.FromResult(true);
