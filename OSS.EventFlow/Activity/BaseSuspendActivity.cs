@@ -22,7 +22,7 @@ namespace OSS.EventFlow.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBlockActivity<TContext> : BaseActivity<TContext>, ISuspendTunnel<TContext>
-        where TContext : FlowContext
+        where TContext : IFlowContext
     {
         /// <inheritdoc />
         public abstract Task<bool> Suspend(TContext data);

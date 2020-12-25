@@ -1,11 +1,11 @@
 ﻿using OSS.EventFlow;
 using OSS.EventFlow.Interface;
-using OSS.TaskFlow.Tests.FlowNodes.Apply;
-using OSS.TaskFlow.Tests.FlowNodes.Audit;
-using OSS.TaskFlow.Tests.FlowNodes.Pay;
-using OSS.TaskFlow.Tests.FlowNodes.Stock;
+using OSS.TaskFlow.Tests.Activities.Apply;
+using OSS.TaskFlow.Tests.Activities.Audit;
+using OSS.TaskFlow.Tests.Activities.Pay;
+using OSS.TaskFlow.Tests.Activities.Stock;
 
-namespace OSS.TaskFlow.Tests.FlowNodes
+namespace OSS.TaskFlow.Tests
 {
     /// <summary>
     ///  假设的一个进货生命周期管理

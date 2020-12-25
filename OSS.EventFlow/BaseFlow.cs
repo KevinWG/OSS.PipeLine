@@ -24,8 +24,8 @@ namespace OSS.EventFlow
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
     public abstract class BaseFlow<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>
-        where InFlowContext : FlowContext
-        where OutFlowContext : FlowContext
+        where InFlowContext : IFlowContext
+        where OutFlowContext : IFlowContext
     {
         /// <summary>
         /// 基础流体

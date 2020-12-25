@@ -23,7 +23,7 @@ namespace OSS.EventFlow.Gateway
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBranchGateway<TContext> : BasePipe<TContext>
-        where TContext : FlowContext
+        where TContext : IFlowContext
     {
         protected BaseBranchGateway() : base(PipeType.Gateway)
         {

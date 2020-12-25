@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OSS.TaskFlow.Tests.FlowNodes;
-using OSS.TaskFlow.Tests.FlowNodes.Apply;
+using OSS.TaskFlow.Tests.Activities.Apply;
 
 namespace OSS.TaskFlow.Tests
 {

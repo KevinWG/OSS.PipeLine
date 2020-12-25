@@ -22,8 +22,8 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseConnector<InContext, OutContext> : BaseSinglePipe<InContext, OutContext>
-        where InContext : FlowContext
-        where OutContext : FlowContext
+        where InContext : IFlowContext
+        where OutContext : IFlowContext
     {
         /// <summary>
         /// 连接基类构造函数

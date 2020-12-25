@@ -21,7 +21,7 @@ namespace OSS.EventFlow.Gateway
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseAggregationGate<TContext> : BaseMatchGate<TContext>
-        where TContext : FlowContext
+        where TContext : IFlowContext
     {
      
     }

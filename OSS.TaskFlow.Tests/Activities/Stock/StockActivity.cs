@@ -2,7 +2,7 @@
 using OSS.EventFlow.Activity;
 using OSS.Tools.Log;
 
-namespace OSS.TaskFlow.Tests.FlowNodes.Stock
+namespace OSS.TaskFlow.Tests.Activities.Stock
 {
     public class StockActivity : BaseActivity<StockContext>
     {

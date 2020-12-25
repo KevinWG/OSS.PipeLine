@@ -2,7 +2,7 @@
 using OSS.EventFlow.Activity;
 using OSS.Tools.Log;
 
-namespace OSS.TaskFlow.Tests.FlowNodes.Pay
+namespace OSS.TaskFlow.Tests.Activities.Pay
 {
     public class PayActivity : BaseActivity<PayContext>
     {

@@ -1,7 +1,7 @@
 ﻿using OSS.EventFlow.Connector;
-using OSS.TaskFlow.Tests.FlowNodes.Apply;
+using OSS.TaskFlow.Tests.Activities.Apply;
 
-namespace OSS.TaskFlow.Tests.FlowNodes.Pay
+namespace OSS.TaskFlow.Tests.Activities.Pay
 {
     public class PayConnector:BaseConnector<ApplyContext, PayContext>
     {

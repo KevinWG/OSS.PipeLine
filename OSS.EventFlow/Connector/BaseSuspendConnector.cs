@@ -24,8 +24,8 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseBlockConnector<InContext, OutContext> : BaseConnector<InContext, OutContext>,
         ISuspendTunnel<InContext>
-        where InContext : FlowContext
-        where OutContext : FlowContext
+        where InContext : IFlowContext
+        where OutContext : IFlowContext
     {
         /// <inheritdoc />
         public abstract Task<bool> Suspend(InContext data);
@@ -53,7 +53,7 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBlockConnector<TContext> : BaseBlockConnector<TContext, TContext>,
         ISuspendTunnel<TContext>
-        where TContext : FlowContext
+        where TContext : IFlowContext
     {
         /// <inheritdoc />
         protected override TContext Convert(TContext inContextData)

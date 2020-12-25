@@ -22,7 +22,7 @@ namespace OSS.EventFlow
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BasePipe<TContext>
-        where TContext : FlowContext
+        where TContext : IFlowContext
     {
         /// <summary>
         ///  管道类型
@@ -77,8 +77,8 @@ namespace OSS.EventFlow
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, IPipeAppender<OutContext>
-        where InContext : FlowContext
-        where OutContext : FlowContext
+        where InContext : IFlowContext
+        where OutContext : IFlowContext
     {
         internal BasePipe<OutContext> NextPipe { get; set; }
 
@@ -120,7 +120,7 @@ namespace OSS.EventFlow
         /// <param name="nextPipe"></param>
         /// <returns>返回下个管道的追加器</returns>
         public IPipeAppender<NextOutContext> Append<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            where NextOutContext : FlowContext
+            where NextOutContext : IFlowContext
         {
             InterAppend(nextPipe);
             return nextPipe;
