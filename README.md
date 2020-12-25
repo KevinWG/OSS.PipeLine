@@ -1,50 +1,37 @@
 # OSS事件流
 
-流式事件处理，自定义流式事件集合，多种触发源（消息队列，HTTP，定时器），多种处理执行（HTTP调用，Azure Function，Ali ServerLess，自定义扩展实现）。
-可以配置 重试/并发 等执行策略。事件节点参数具有多数据源组装的能力。
+以BPMN流程管理为思路，设计的流程管理基础框架，在解决方案层面可以连接不同的功能方法（不同的入参和返回）。
+示例：
 
+    /// <summary>
+    ///  假设的一个进货生命周期管理
+    ///     1. 发起进货申请
+    ///     2. 进货申请审核
+    ///     3. 进货购买支付
+    ///     4. 入库
+    /// </summary>
+    public class AppLifeFlow : BaseFlow<ApplyContext, StockContext>
+    {
+        public static readonly ApplyActivity ApplyActivity = new ApplyActivity();
+        public readonly AutoAuditActivity AutoAuditActivity = new AutoAuditActivity();
 
-workernode
-	  work   只能顺序执行
+        public readonly PayConnector PayConnector = new PayConnector();
+        public readonly PayActivity PayActivity = new PayActivity();
 
-Runer
-	Task  可以并行执行
-	
-Strategy 
-	重试策略等
+        public readonly StockConnector StockConnector = new StockConnector();
+        public readonly StockActivity StockActivity = new StockActivity();
 
-Metric -  Http，消息队列，数据库
+        public AppLifeFlow()
+        {
+            ApplyActivity
+                .Append(AutoAuditActivity)
+                .Append(PayConnector)
+                .Append(PayActivity)
+                .Append(StockConnector)
+                .Append(StockActivity);
+        }
 
+        protected override BasePipe<ApplyContext> InitialFirstPipe() => ApplyActivity;
 
-
-1. Flow基础实现		
-
-2. data参数处理  
-   请求内容的协议处理
-
-4. 获取stand下的metainfo
-5. 流程状态码
-6. 异常处理问题
-
-
-
-
-解决问题：
-业务不了解细节逻辑，开发不敢动，零散搭建
-
-
-团队如何分工
-
-
-
-定时处理项目：
-
-	1.  模块管理，决定协议（HTTP（先），消息队列 ）通知类型， 定时规则（如果是自定义）
-	2.  
-
-
-
-	消息队列服务
-	生产和消费 --  tdf,redis,rabbitmq
-	   ==  内部委托，
-
+        protected override IPipeAppender<StockContext> InitialLastPipe() => StockActivity;
+    }
