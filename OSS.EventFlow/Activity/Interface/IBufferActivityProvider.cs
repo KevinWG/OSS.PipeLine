@@ -1,28 +1,27 @@
-﻿
-#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：OSSCore
+﻿#region Copyright (C) 2021 Kevin (OSS开源系列) 公众号：OSSCore
 
 /***************************************************************************
-*　　	文件功能描述：OSS.EventTask - 流体的多路聚合网关基类
+*　　	文件功能描述：OSS.EventFlow -  默认缓冲活动提供者接口
 *
 *　　	创建人： Kevin
 *       创建人Email：1985088337@qq.com
-*       创建时间： 2020-11-27
+*       创建时间： 2021-01-24
 *       
 *****************************************************************************/
 
 #endregion
 
+using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Gateway
+namespace OSS.EventFlow.Activity.Interface
 {
     /// <summary>
-    /// 流体的多路聚合网关基类
+    ///  默认活动的提供者
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseAggregationGate<TContext> : BaseMatchGate<TContext>
+    public interface IBufferActivityProvider<in TContext>:IActivityProvider<TContext>,IBufferPush<TContext>
         where TContext : IFlowContext
     {
-     
     }
 }

@@ -13,6 +13,7 @@
 
 
 using System.Threading.Tasks;
+using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Interface
 {
@@ -20,20 +21,30 @@ namespace OSS.EventFlow.Interface
     /// 异步消息延缓中转通信管道
     /// </summary>
     /// <typeparam name="TData"></typeparam>
-    public interface ISuspendTunnel<in TData>
+    public interface IBufferTunnel<in TData>: IBufferPush<TData>
+        where TData : IFlowContext
     {
-        /// <summary>
-        ///  数据存入阻塞通道
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        Task<bool> Suspend(TData data);
-
         /// <summary>
         ///  数据由阻塞通道唤起
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        Task Resume(TData data);
+        Task Pop(TData data);
+    }
+
+
+    /// <summary>
+    ///  缓冲推送接口
+    /// </summary>
+    /// <typeparam name="TData"></typeparam>
+    public interface IBufferPush<in TData>
+        where TData : IFlowContext
+    {
+        /// <summary>
+        ///  数据存入阻塞缓冲通道
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        Task<bool> Push(TData data);
     }
 }

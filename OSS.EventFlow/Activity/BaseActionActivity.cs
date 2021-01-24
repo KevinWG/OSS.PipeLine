@@ -13,6 +13,7 @@
 
 
 using System.Threading.Tasks;
+using OSS.EventFlow.Activity.Interface;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Activity
@@ -22,7 +23,7 @@ namespace OSS.EventFlow.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseActionActivity<TContext,TResult> : BaseSinglePipe<TContext, TContext>
+    public abstract class BaseActionActivity<TContext, TResult> : BaseSinglePipe<TContext, TContext>
         where TContext : IFlowContext
     {
         /// <summary>
@@ -38,7 +39,7 @@ namespace OSS.EventFlow.Activity
         /// <param name="data"></param>
         /// <param name="isBlocked"></param>
         /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext data,out bool isBlocked);
+        protected abstract Task<TResult> Executing(TContext data, out bool isBlocked);
 
         /// <summary>
         ///  Action执行方法
@@ -47,11 +48,11 @@ namespace OSS.EventFlow.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var res = await Executing(data,out var isBlocked);
+            var res = await Executing(data, out var isBlocked);
             if (isBlocked)
             {
-               await Block(data);
-               return res;
+                await Block(data);
+                return res;
             }
 
             await ToNextThrough(data);
@@ -71,6 +72,50 @@ namespace OSS.EventFlow.Activity
         internal override Task<bool> Through(TContext context)
         {
             return Notice(context);
+        }
+    }
+
+    /// <summary>
+    ///   外部Action活动基类的默认实现
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
+    public class DefaultActionActivity<TContext, TResult> : BaseActionActivity<TContext, TResult>
+        where TContext : IFlowContext
+    {
+        private readonly IActionActivityProvider<TContext, TResult> _provider;
+
+        /// <summary>
+        ///  外部Action活动基类的默认实现
+        /// </summary>
+        /// <param name="provider">默认实现的提供者</param>
+        public DefaultActionActivity(IActionActivityProvider<TContext, TResult> provider)
+        {
+            _provider = provider;
+        }
+
+        private readonly IActionActivityWithNoticeProvider<TContext, TResult> _nProvider;
+
+        /// <summary>
+        ///  外部Action活动基类的默认实现
+        /// </summary>
+        /// <param name="provider">默认实现的提供者</param>
+        public DefaultActionActivity(IActionActivityWithNoticeProvider<TContext, TResult> provider)
+        {
+            _nProvider = provider;
+        }
+
+
+        /// <inheritdoc />
+        protected override Task<TResult> Executing(TContext data, out bool isBlocked)
+        {
+            return _provider.Executing(data, out isBlocked);
+        }
+
+        /// <inheritdoc />
+        public override Task<bool> Notice(TContext data)
+        {
+            return _nProvider?.Notice(data) ?? base.Notice(data);
         }
     }
 }

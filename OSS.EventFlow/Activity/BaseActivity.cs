@@ -12,6 +12,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.EventFlow.Activity.Interface;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Activity
@@ -20,7 +21,7 @@ namespace OSS.EventFlow.Activity
     ///  活动基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext,TContext>
+    public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext, TContext>
         where TContext : IFlowContext
     {
         /// <summary>
@@ -29,24 +30,47 @@ namespace OSS.EventFlow.Activity
         protected BaseActivity() : base(PipeType.Activity)
         {
         }
-        
+
         /// <summary>
         ///  执行
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         protected abstract Task<bool> Executing(TContext data);
-        
+
         internal override async Task<bool> Through(TContext context)
         {
-            var eRes= await Executing(context);
+            var eRes = await Executing(context);
             if (eRes)
             {
                 await ToNextThrough(context);
             }
+
             return eRes;
         }
     }
 
+
+    /// <summary>
+    /// 活动基类 的默认实现
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    public class DefaultActivity<TContext> : BaseActivity<TContext>
+        where TContext : IFlowContext
+    {
+        private readonly IActivityProvider<TContext> _provider;
+
+        /// <inheritdoc />
+        public DefaultActivity(IActivityProvider<TContext> provider)
+        {
+            _provider = provider;
+        }
+
+        /// <inheritdoc />
+        protected override Task<bool> Executing(TContext data)
+        {
+            return _provider.Executing(data);
+        }
+    }
 
 }

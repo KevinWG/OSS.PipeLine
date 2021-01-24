@@ -50,6 +50,11 @@ namespace OSS.EventFlow
         /// <returns></returns>
         internal abstract Task<bool> Through(TContext context);
 
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task Start(TContext context)
         {
             var res =await Through(context);

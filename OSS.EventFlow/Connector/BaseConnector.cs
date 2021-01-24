@@ -12,6 +12,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.EventFlow.Connector.Interface;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Connector
@@ -34,7 +35,7 @@ namespace OSS.EventFlow.Connector
 
         /// <summary>
         ///  连接消息体的转换功能
-        ///     如果是异步消息延缓唤起连接，会在唤起（Pop）时执行此方法
+        ///     如果是异步消息缓冲连接，会在唤起时执行此方法
         /// </summary>
         /// <param name="inContextData"></param>
         /// <returns></returns>
@@ -47,4 +48,31 @@ namespace OSS.EventFlow.Connector
             return true;
         }
     }
+
+
+    /// <summary>
+    ///  异步缓冲连接器的默认实现
+    /// </summary>
+    /// <typeparam name="InContext"></typeparam>
+    /// <typeparam name="OutContext"></typeparam>
+    public class DefaultConnector<InContext, OutContext> : BaseConnector<InContext, OutContext>
+        where InContext : IFlowContext
+        where OutContext : IFlowContext
+    {
+        private readonly IConnectorProvider<InContext, OutContext> _provider;
+
+        /// <inheritdoc/>
+        public DefaultConnector(IConnectorProvider<InContext, OutContext> provider)
+        {
+            _provider = provider;
+        }
+
+
+        /// <inheritdoc/>
+        protected override OutContext Convert(InContext inContextData)
+        {
+            return _provider.Convert(inContextData);
+        }
+    }
+
 }

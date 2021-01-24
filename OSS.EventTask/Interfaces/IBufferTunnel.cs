@@ -21,20 +21,20 @@ namespace OSS.EventTask.Interfaces
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TResp"></typeparam>
-    public interface ISuspendTunnel<in TData,in TResp>
+    public interface IBufferTunnel<in TData,in TResp>
     {
         /// <summary>
         ///  数据存入阻塞通道
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        Task Suspend(TData data, TResp resp);
+        Task Push(TData data, TResp resp);
 
         /// <summary>
         ///  数据由阻塞通道唤起
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        Task Resume(TData data, int triedTimes);
+        Task Pop(TData data, int triedTimes);
     }
 }

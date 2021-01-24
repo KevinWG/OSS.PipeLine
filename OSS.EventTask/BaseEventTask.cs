@@ -20,7 +20,7 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>,ISuspendTunnel<TTData,TResp>
+    public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>,IBufferTunnel<TTData,TResp>
         where TMetaType : BaseTaskMeta
         //where TTData : class
         where TResp : BaseTaskResp<TMetaType>, new()
@@ -48,7 +48,7 @@ namespace OSS.EventTask
         /// <param name="data"></param>
         /// <param name="resp"></param>
         /// <returns></returns>
-        public virtual Task Suspend(TTData data, TResp resp)
+        public virtual Task Push(TTData data, TResp resp)
         {
             return Task.CompletedTask;
         }
@@ -59,7 +59,7 @@ namespace OSS.EventTask
         /// <param name="data"></param>
         /// <param name="triedTimes"></param>
         /// <returns></returns>
-        public Task Resume(TTData data, int triedTimes)
+        public Task Pop(TTData data, int triedTimes)
         {
             return Process(data, triedTimes);
         }
@@ -94,7 +94,7 @@ namespace OSS.EventTask
 
                 taskResp.run_status = TaskRunStatus.RunPaused;
 
-                await Suspend(data, taskResp);
+                await Push(data, taskResp);
             }
 
             //  最终失败，执行失败方法
