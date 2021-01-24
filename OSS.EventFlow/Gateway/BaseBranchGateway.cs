@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -66,6 +67,11 @@ namespace OSS.EventFlow.Gateway
         /// <param name="branchItem"></param>
         public void AddBranch(BasePipe<TContext> branchItem)
         {
+            if (branchItem == null )
+            {
+                throw new ArgumentNullException(nameof(branchItem), " 不能为空！");
+            }
+
             _branchItems ??= new List<BasePipe<TContext>>();
 
             _branchItems.Add(branchItem);
@@ -77,6 +83,10 @@ namespace OSS.EventFlow.Gateway
         /// <param name="branchItems"></param>
         public void AddBranches(IList<BasePipe<TContext>> branchItems)
         {
+            if (branchItems==null|| branchItems.Count==0)
+            {
+                throw new ArgumentNullException(nameof(branchItems), " 不能为空！");
+            }
             _branchItems ??= new List<BasePipe<TContext>>();
 
             _branchItems.AddRange(branchItems);
@@ -100,6 +110,7 @@ namespace OSS.EventFlow.Gateway
         public DefaultBranchGateway(IBranchGatewayProvider<TContext> provider) 
         {
             _provider = provider;
+            AddBranches(_provider.GetAllBranches());
         }
 
         /// <summary>

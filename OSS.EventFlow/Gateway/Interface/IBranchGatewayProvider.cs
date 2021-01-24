@@ -30,5 +30,11 @@ namespace OSS.EventFlow.Gateway.Interface
         /// <param name="context"></param>
         /// <returns></returns>
         IEnumerable<BasePipe<TContext>> FilterNextPipes(List<BasePipe<TContext>> branchItems, TContext context);
+
+        /// <summary>
+        /// 获取所有分支
+        /// </summary>
+        /// <returns></returns>
+        IList<BasePipe<TContext>> GetAllBranches();
     }
 }
