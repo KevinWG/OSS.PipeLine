@@ -1,5 +1,4 @@
 ﻿using OSS.EventFlow;
-using OSS.EventFlow.Interface;
 using OSS.TaskFlow.Tests.Activities.Apply;
 using OSS.TaskFlow.Tests.Activities.Audit;
 using OSS.TaskFlow.Tests.Activities.Pay;
@@ -14,7 +13,7 @@ namespace OSS.TaskFlow.Tests
     ///     3. 进货购买支付
     ///     4. 入库
     /// </summary>
-    public class AppLifeFlow : BaseFlow<ApplyContext, StockContext>
+    public class AppLifeFlow : EventFlow<ApplyContext, StockContext>
     {
         public static readonly ApplyActivity ApplyActivity = new ApplyActivity();
         public readonly AutoAuditActivity AutoAuditActivity = new AutoAuditActivity();
@@ -23,9 +22,9 @@ namespace OSS.TaskFlow.Tests
         public readonly PayActivity PayActivity = new PayActivity();
 
         public readonly StockConnector StockConnector = new StockConnector();
-        public readonly StockActivity StockActivity = new StockActivity();
+        public static readonly StockActivity StockActivity = new StockActivity();
 
-        public AppLifeFlow()
+        public AppLifeFlow():base(ApplyActivity, StockActivity)
         {
             ApplyActivity
                 .Append(AutoAuditActivity)
@@ -35,8 +34,5 @@ namespace OSS.TaskFlow.Tests
                 .Append(StockActivity);
         }
 
-        protected override BasePipe<ApplyContext> InitialFirstPipe() => ApplyActivity;
-
-        protected override IPipeAppender<StockContext> InitialLastPipe() => StockActivity;
     }
 }

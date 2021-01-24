@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：OSSCore
 
 /***************************************************************************
-*　　	文件功能描述：OSS.EventTask - 流体基础管道部分
+*　　	文件功能描述：OSS.EventFlow - 流体基础管道部分
 *
 *　　	创建人： Kevin
 *       创建人Email：1985088337@qq.com
@@ -104,18 +104,10 @@ namespace OSS.EventFlow
         ///  添加下个管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal virtual void InterAppend(BasePipe<OutContext> nextPipe)
+        internal virtual void InterAppend<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
+            where NextOutContext : IFlowContext
         {
             NextPipe = nextPipe;
-        }
-
-        /// <summary>
-        ///  添加下个管道
-        /// </summary>
-        /// <param name="nextPipe"></param>
-        public void Append(BasePipe<OutContext> nextPipe)
-        {
-            InterAppend(nextPipe);
         }
 
         /// <summary>
@@ -133,4 +125,7 @@ namespace OSS.EventFlow
 
     
     }
+
+
+
 }

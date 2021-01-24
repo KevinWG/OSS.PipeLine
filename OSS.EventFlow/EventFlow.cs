@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：OSSCore
 
 /***************************************************************************
-*　　	文件功能描述：OSS.EventTask - 流体基类
+*　　	文件功能描述：OSS.EventFlow - 流体基类
 *
 *　　	创建人： Kevin
 *       创建人Email：1985088337@qq.com
@@ -23,19 +23,19 @@ namespace OSS.EventFlow
     /// </summary>
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
-    public abstract class BaseFlow<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>
+    public  class EventFlow<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>
         where InFlowContext : IFlowContext
         where OutFlowContext : IFlowContext
     {
         /// <summary>
         /// 基础流体
         /// </summary>
-        protected BaseFlow() : base(PipeType.Flow)
+        protected internal EventFlow(BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
         {
-            _startPipe       = InitialFirstPipe();
-            _endPipeAppender = InitialLastPipe();
+            _startPipe       = startPipe;
+            _endPipeAppender = endPipeAppender;
 
-            if (_startPipe == null || _endPipeAppender == null)
+            if (_startPipe == null)
             {
                 throw new ArgumentNullException("未发现流体的起始截止管道！");
             }
@@ -46,31 +46,21 @@ namespace OSS.EventFlow
         private IPipeAppender<OutFlowContext> _endPipeAppender;
 
         /// <summary>
-        ///  初始化流体的起始管道
-        /// </summary>
-        /// <returns></returns>
-        protected abstract BasePipe<InFlowContext> InitialFirstPipe();
-
-        /// <summary>
-        ///  初始化流体的结束管道
-        /// </summary>
-        /// <returns></returns>
-        protected abstract IPipeAppender<OutFlowContext> InitialLastPipe();
-
-        /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal override void InterAppend(BasePipe<OutFlowContext> nextPipe)
+        internal override void InterAppend<NextOutContext>(BaseSinglePipe<OutFlowContext, NextOutContext> nextPipe)
         {
             _endPipeAppender.Append(nextPipe);
         }
 
         internal override async Task<bool> Through(InFlowContext context)
         {
-            // 内部子管道的阻塞传递给父级
             await _startPipe.Start(context);
             return true;
         }
     }
+
+
+
 }

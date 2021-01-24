@@ -10,12 +10,6 @@ namespace OSS.EventFlow.Interface
         where TNextInContext : IFlowContext
     {
         /// <summary>
-        ///  追加管道
-        /// </summary>
-        /// <param name="nextPipe"></param>
-        void Append(BasePipe<TNextInContext> nextPipe);
-
-        /// <summary>
         /// 追加管道
         /// </summary>
         /// <param name="nextPipe"></param>
