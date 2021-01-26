@@ -12,6 +12,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.EventFlow.Gateway;
 using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
 
@@ -44,6 +45,17 @@ namespace OSS.EventFlow
         }
 
         /// <summary>
+        ///  管道内数据开始流动校验
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected virtual Task<bool> StartCheck(TContext context) 
+        {
+            return Task.FromResult(true);        
+        }
+
+
+        /// <summary>
         ///  管道通过方法
         /// </summary>
         /// <param name="context"></param>
@@ -57,6 +69,12 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public async Task Start(TContext context)
         {
+            var checkRes = await StartCheck(context);
+            if (!checkRes)
+            {
+                return;
+            }
+
             var res =await Through(context);
             if (!res)
             {
@@ -123,10 +141,17 @@ namespace OSS.EventFlow
             return nextPipe;
         }
 
+        /// <summary>
+        ///  追加分支网关
+        /// </summary>
+        /// <typeparam name="NextOutContext"></typeparam>
+        /// <param name="nextPipe"></param>
+        public void Append<NextOutContext>(BaseBranchGateway<OutContext> nextPipe)
+            where NextOutContext : IFlowContext
+        {
+            NextPipe = nextPipe;
 
-
-
-    
+        }
     }
 
 
