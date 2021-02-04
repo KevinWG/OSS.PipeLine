@@ -14,14 +14,14 @@
 using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Activity.Interface
+namespace OSS.EventFlow.Impls.Interface
 {
     /// <summary>
     ///  默认活动的提供者
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public interface IBufferActivityProvider<in TContext>:IActivityProvider<TContext>,IBufferPush<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
     }
 }

@@ -22,7 +22,7 @@ namespace OSS.EventFlow.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBufferActivity<TContext> : BaseActivity<TContext>, IBufferTunnel<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <inheritdoc />
         public abstract Task<bool> Push(TContext data);

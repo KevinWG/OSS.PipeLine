@@ -23,7 +23,7 @@ namespace OSS.EventFlow.Activity
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     public abstract class BaseActionActivity<TContext, TResult> : BaseSinglePipe<TContext, TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <summary>
         /// 外部Action活动基类

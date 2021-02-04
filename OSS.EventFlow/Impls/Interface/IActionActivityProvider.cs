@@ -14,7 +14,7 @@
 using System.Threading.Tasks;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Activity.Interface
+namespace OSS.EventFlow.Impls.Interface
 {
     /// <summary>
     /// 默认外部Action活动基类 的提供者接口
@@ -22,7 +22,7 @@ namespace OSS.EventFlow.Activity.Interface
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     public interface IActionActivityProvider<in TContext, TResult>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <summary>
         /// 执行活动
@@ -37,7 +37,7 @@ namespace OSS.EventFlow.Activity.Interface
 
     /// <inheritdoc />
     public interface IActionActivityWithNoticeProvider<in TContext, TResult> :IActionActivityProvider< TContext, TResult>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <summary>
         ///  消息进入通知

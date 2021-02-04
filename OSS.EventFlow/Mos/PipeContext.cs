@@ -13,14 +13,20 @@
 
 namespace OSS.EventFlow.Mos
 {
-    public interface IFlowContext
+    /// <summary>
+    ///  
+    /// </summary>
+    public interface IPipeContext
     {
 
     }
 
     /// <inheritdoc />
-    public abstract class FlowContext<IdType>: IFlowContext
+    public abstract class PipeContext<IdType>: IPipeContext
     {
+        /// <summary>
+        ///  id 编号
+        /// </summary>
         public IdType id
         {
             get;

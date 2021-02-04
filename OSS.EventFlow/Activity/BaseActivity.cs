@@ -21,7 +21,7 @@ namespace OSS.EventFlow.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext, TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <summary>
         ///  构造函数

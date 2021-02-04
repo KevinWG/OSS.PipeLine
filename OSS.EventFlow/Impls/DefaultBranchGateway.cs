@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
-using OSS.EventFlow.Gateway.Interface;
+using OSS.EventFlow.Gateway;
+using OSS.EventFlow.Impls.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Gateway
+namespace OSS.EventFlow.Impls
 {
     /// <summary>
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public class DefaultBranchGateway<TContext> : BaseBranchGateway<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
 
         private readonly IBranchGatewayProvider<TContext> _provider;

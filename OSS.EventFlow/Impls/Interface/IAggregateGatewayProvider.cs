@@ -15,7 +15,7 @@
 using System.Threading.Tasks;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Gateway.Interface
+namespace OSS.EventFlow.Impls.Interface
 {
     /// <summary>
     ///  聚合网关的提供者接口
@@ -23,7 +23,7 @@ namespace OSS.EventFlow.Gateway.Interface
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public interface IAggregateGatewayProvider<TContext> 
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <summary>
         ///  是否触发通过

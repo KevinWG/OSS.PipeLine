@@ -1,15 +1,16 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Activity.Interface;
+using OSS.EventFlow.Activity;
+using OSS.EventFlow.Impls.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Activity
+namespace OSS.EventFlow.Impls
 {
     /// <summary>
     /// 默认异步消息延缓活动基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public class DefaultBufferActivity<TContext> : BaseBufferActivity<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
 
         private readonly IBufferActivityProvider<TContext> _provider;

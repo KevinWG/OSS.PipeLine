@@ -24,8 +24,8 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseBufferConnector<InContext, OutContext> : BaseConnector<InContext, OutContext>,
         IBufferTunnel<InContext>
-        where InContext : IFlowContext
-        where OutContext : IFlowContext
+        where InContext : IPipeContext
+        where OutContext : IPipeContext
     {
         /// <inheritdoc />
         public abstract Task<bool> Push(InContext data);
@@ -54,7 +54,7 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBufferConnector<TContext> : BaseBufferConnector<TContext, TContext>,
         IBufferTunnel<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <inheritdoc />
         protected override TContext Convert(TContext inContextData)

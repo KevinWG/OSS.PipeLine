@@ -22,7 +22,7 @@ namespace OSS.EventFlow.Interface
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     public interface IBufferTunnel<in TData>: IBufferPush<TData>
-        where TData : IFlowContext
+        where TData : IPipeContext
     {
         /// <summary>
         ///  数据由阻塞通道唤起
@@ -38,7 +38,7 @@ namespace OSS.EventFlow.Interface
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     public interface IBufferPush<in TData>
-        where TData : IFlowContext
+        where TData : IPipeContext
     {
         /// <summary>
         ///  数据存入阻塞缓冲通道

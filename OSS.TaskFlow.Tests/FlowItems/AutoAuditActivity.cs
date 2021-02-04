@@ -2,14 +2,15 @@
 using OSS.EventFlow.Activity;
 using OSS.Tools.Log;
 
-namespace OSS.TaskFlow.Tests.Activities.Apply
+namespace OSS.TaskFlow.Tests.FlowItems
 {
-    public class ApplyActivity : BaseActivity<ApplyContext>
+    public class AutoAuditActivity : BaseActivity<ApplyContext>
     {
         protected override Task<bool> Executing(ApplyContext data)
         {
-            LogHelper.Info("这里刚才发生了一个采购申请"); 
+            LogHelper.Info("管理员审核通过");
             return Task.FromResult(true);
         }
     }
 }
+    

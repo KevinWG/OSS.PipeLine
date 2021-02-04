@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Activity.Interface;
+using OSS.EventFlow.Activity;
+using OSS.EventFlow.Impls.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Activity
+namespace OSS.EventFlow.Impls
 {
     /// <summary>
     ///   外部Action活动基类的默认实现
@@ -10,7 +11,7 @@ namespace OSS.EventFlow.Activity
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     public class DefaultActionActivity<TContext, TResult> : BaseActionActivity<TContext, TResult>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         private readonly IActionActivityProvider<TContext, TResult> _provider;
 

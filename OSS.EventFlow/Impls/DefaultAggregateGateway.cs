@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Gateway.Interface;
+using OSS.EventFlow.Gateway;
+using OSS.EventFlow.Impls.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Gateway
+namespace OSS.EventFlow.Impls
 {
     /// <summary>
     ///  聚合网关的默认实现类
@@ -10,7 +11,7 @@ namespace OSS.EventFlow.Gateway
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public class DefaultAggregateGateway<TContext> : BaseAggregateGateway<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         private readonly IAggregateGatewayProvider<TContext> _provider;
         /// <summary>

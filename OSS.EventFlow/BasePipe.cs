@@ -23,7 +23,7 @@ namespace OSS.EventFlow
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BasePipe<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <summary>
         ///  管道类型
@@ -100,8 +100,8 @@ namespace OSS.EventFlow
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, IPipeAppender<OutContext>
-        where InContext : IFlowContext
-        where OutContext : IFlowContext
+        where InContext : IPipeContext
+        where OutContext : IPipeContext
     {
         internal BasePipe<OutContext> NextPipe { get; set; }
 
@@ -123,7 +123,7 @@ namespace OSS.EventFlow
         /// </summary>
         /// <param name="nextPipe"></param>
         internal virtual void InterAppend<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            where NextOutContext : IFlowContext
+            where NextOutContext : IPipeContext
         {
             NextPipe = nextPipe;
         }
@@ -135,7 +135,7 @@ namespace OSS.EventFlow
         /// <param name="nextPipe"></param>
         /// <returns>返回下个管道的追加器</returns>
         public IPipeAppender<NextOutContext> Append<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            where NextOutContext : IFlowContext
+            where NextOutContext : IPipeContext
         {
             InterAppend(nextPipe);
             return nextPipe;
@@ -147,7 +147,7 @@ namespace OSS.EventFlow
         /// <typeparam name="NextOutContext"></typeparam>
         /// <param name="nextPipe"></param>
         public void Append<NextOutContext>(BaseBranchGateway<OutContext> nextPipe)
-            where NextOutContext : IFlowContext
+            where NextOutContext : IPipeContext
         {
             NextPipe = nextPipe;
 

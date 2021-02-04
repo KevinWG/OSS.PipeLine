@@ -1,7 +1,8 @@
-﻿using OSS.EventFlow.Connector.Interface;
+﻿using OSS.EventFlow.Connector;
+using OSS.EventFlow.Impls.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Connector
+namespace OSS.EventFlow.Impls
 {
     /// <summary>
     ///  异步缓冲连接器的默认实现
@@ -9,8 +10,8 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public class DefaultConnector<InContext, OutContext> : BaseConnector<InContext, OutContext>
-        where InContext : IFlowContext
-        where OutContext : IFlowContext
+        where InContext : IPipeContext
+        where OutContext : IPipeContext
     {
         private readonly IConnectorProvider<InContext, OutContext> _provider;
 

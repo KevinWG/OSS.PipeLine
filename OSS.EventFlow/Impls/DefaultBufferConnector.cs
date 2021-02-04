@@ -1,8 +1,9 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Connector.Interface;
+using OSS.EventFlow.Connector;
+using OSS.EventFlow.Impls.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Connector
+namespace OSS.EventFlow.Impls
 {
     /// <summary>
     ///  异步缓冲连接器的默认实现
@@ -10,8 +11,8 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public class DefaultBufferConnector<InContext, OutContext> : BaseBufferConnector<InContext, OutContext>
-        where InContext : IFlowContext
-        where OutContext : IFlowContext
+        where InContext : IPipeContext
+        where OutContext : IPipeContext
     {
         private readonly IBufferConnectorProvider<InContext, OutContext> _provider;
 
@@ -36,7 +37,7 @@ namespace OSS.EventFlow.Connector
 
     /// <inheritdoc />
     public class DefaultBufferConnector<TContext> : DefaultBufferConnector<TContext, TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <inheritdoc />
         public DefaultBufferConnector(IBufferConnectorProvider<TContext> provider) : base(provider)

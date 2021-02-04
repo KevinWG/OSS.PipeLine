@@ -14,13 +14,13 @@
 using System.Collections.Generic;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Gateway.Interface
+namespace OSS.EventFlow.Impls.Interface
 {
     /// <summary>
     ///  默认分支网关提供者
     /// </summary>
     public interface IBranchGatewayProvider<TContext>
-              where TContext : IFlowContext
+              where TContext : IPipeContext
     {
         /// <summary>
         ///   过滤可分发下路的分支

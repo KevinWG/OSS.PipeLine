@@ -24,13 +24,13 @@ namespace OSS.EventFlow
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
     public  class EventFlow<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>
-        where InFlowContext : IFlowContext
-        where OutFlowContext : IFlowContext
+        where InFlowContext : IPipeContext
+        where OutFlowContext : IPipeContext
     {
         /// <summary>
         /// 基础流体
         /// </summary>
-        protected internal EventFlow(BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
+        public EventFlow(BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
         {
             _startPipe       = startPipe;
             _endPipeAppender = endPipeAppender;
@@ -60,10 +60,17 @@ namespace OSS.EventFlow
             return true;
         }
 
-
-
     }
 
+    /// <inheritdoc />
+    public class EventFlow<TContext> : EventFlow<TContext, TContext>
+        where TContext : IPipeContext
+    {
+        /// <inheritdoc />
+        public EventFlow(BasePipe<TContext> startPipe, IPipeAppender<TContext> endPipeAppender):base(startPipe, endPipeAppender)
+        {
+        }
+    }
 
 
 }

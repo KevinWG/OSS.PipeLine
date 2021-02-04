@@ -14,14 +14,14 @@
 using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Connector.Interface
+namespace OSS.EventFlow.Impls.Interface
 {
 
     /// <summary>
     /// 默认缓冲连接器提供者
     /// </summary>
     public interface IBufferConnectorProvider<TContext> : IBufferConnectorProvider<TContext, TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
     }
 
@@ -30,8 +30,8 @@ namespace OSS.EventFlow.Connector.Interface
     /// 默认缓冲连接器提供者
     /// </summary>
     public interface IBufferConnectorProvider<in InContext, out OutContext> : IBufferPush<InContext>, IConnectorProvider<InContext, OutContext>
-        where InContext : IFlowContext
-        where OutContext : IFlowContext
+        where InContext : IPipeContext
+        where OutContext : IPipeContext
     {
     }
 

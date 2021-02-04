@@ -24,7 +24,7 @@ namespace OSS.EventFlow.Gateway
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBranchGateway<TContext> : BasePipe<TContext>
-        where TContext : IFlowContext
+        where TContext : IPipeContext
     {
         /// <summary>
         ///  流体的分支网关基类

@@ -22,8 +22,8 @@ namespace OSS.EventFlow
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
     public class EventFlowGenerator<InFlowContext, OutFlowContext>
-        where InFlowContext : IFlowContext
-        where OutFlowContext : IFlowContext
+        where InFlowContext : IPipeContext
+        where OutFlowContext : IPipeContext
     {
         /// <summary>
         /// 构造函数
@@ -58,8 +58,8 @@ namespace OSS.EventFlow
         /// <param name="firstPipe"></param>
         /// <returns></returns>
         public static EventFlowGenerator<InFlowContext, OutFlowContext> Create<InFlowContext, OutFlowContext>(BaseSinglePipe<InFlowContext, OutFlowContext> firstPipe)
-            where InFlowContext : IFlowContext
-            where OutFlowContext : IFlowContext
+            where InFlowContext : IPipeContext
+            where OutFlowContext : IPipeContext
         {
             return new EventFlowGenerator<InFlowContext, OutFlowContext>(firstPipe);
         }
@@ -75,9 +75,9 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public static EventFlowGenerator<InFlowContext, NOutFlowContext> AsFlowAndAdd<InFlowContext, OutFlowContext,  NOutFlowContext>(this BaseSinglePipe<InFlowContext, OutFlowContext> firstPipe, 
             BaseSinglePipe<OutFlowContext, NOutFlowContext> nextPipe)
-            where InFlowContext : IFlowContext
-            where OutFlowContext : IFlowContext
-            where NOutFlowContext : IFlowContext
+            where InFlowContext : IPipeContext
+            where OutFlowContext : IPipeContext
+            where NOutFlowContext : IPipeContext
         {
             firstPipe.Append(nextPipe);
             return new EventFlowGenerator<InFlowContext, NOutFlowContext>(firstPipe, nextPipe);
@@ -94,9 +94,9 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public static EventFlowGenerator<InFlowContext, NOutFlowContext> AddPipe<InFlowContext, OutFlowContext,  NOutFlowContext>(this EventFlowGenerator<InFlowContext, OutFlowContext> flowGenerator,
             BaseSinglePipe<OutFlowContext, NOutFlowContext> nextPipe)
-            where InFlowContext : IFlowContext
-            where OutFlowContext : IFlowContext
-            where NOutFlowContext : IFlowContext
+            where InFlowContext : IPipeContext
+            where OutFlowContext : IPipeContext
+            where NOutFlowContext : IPipeContext
         {
             flowGenerator.NPipeAppender.Append(nextPipe);
             return new EventFlowGenerator<InFlowContext, NOutFlowContext>(flowGenerator.StartPipe, nextPipe);
@@ -107,8 +107,8 @@ namespace OSS.EventFlow
         /// </summary>
         /// <returns></returns>
         public static EventFlow<InFlowContext, OutFlowContext> ToFlow<InFlowContext, OutFlowContext>(this EventFlowGenerator<InFlowContext, OutFlowContext> flowGenerator)
-            where InFlowContext : IFlowContext
-            where OutFlowContext : IFlowContext
+            where InFlowContext : IPipeContext
+            where OutFlowContext : IPipeContext
         {
             return new EventFlow<InFlowContext, OutFlowContext>(flowGenerator.StartPipe, flowGenerator.NPipeAppender);
         }
