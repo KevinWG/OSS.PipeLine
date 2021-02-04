@@ -16,25 +16,25 @@ using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Impls.Interface
 {
-    /// <summary>
-    ///  默认分支网关提供者
-    /// </summary>
-    public interface IBranchGatewayProvider<TContext>
-              where TContext : IPipeContext
-    {
-        /// <summary>
-        ///   过滤可分发下路的分支
-        ///   filer available pipes that can go to next during the runtime;
-        /// </summary>
-        /// <param name="branchItems"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        IEnumerable<BasePipe<TContext>> FilterNextPipes(List<BasePipe<TContext>> branchItems, TContext context);
+    ///// <summary>
+    /////  默认分支网关提供者
+    ///// </summary>
+    //public interface IBranchGatewayProvider<TContext>
+    //          where TContext : IPipeContext
+    //{
+    //    /// <summary>
+    //    ///   过滤可分发下路的分支
+    //    ///   filer available pipes that can go to next during the runtime;
+    //    /// </summary>
+    //    /// <param name="branchItems"></param>
+    //    /// <param name="context"></param>
+    //    /// <returns></returns>
+    //    IEnumerable<BasePipe<TContext>> FilterNextPipes(List<BasePipe<TContext>> branchItems, TContext context);
 
-        /// <summary>
-        /// 获取所有分支
-        /// </summary>
-        /// <returns></returns>
-        IList<BasePipe<TContext>> GetAllBranches();
-    }
+    //    /// <summary>
+    //    /// 获取所有分支
+    //    /// </summary>
+    //    /// <returns></returns>
+    //    IList<BasePipe<TContext>> GetAllBranches();
+    //}
 }

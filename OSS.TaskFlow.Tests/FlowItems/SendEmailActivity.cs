@@ -1,26 +1,28 @@
 ﻿using OSS.EventFlow.Activity;
 using System.Threading.Tasks;
 using OSS.EventFlow.Connector;
+using OSS.Tools.Log;
 
 namespace OSS.TaskFlow.Tests.FlowItems
 {
-    public class SendEmailActivity : BaseActivity<SendSmsContext>
+    public class SendEmailActivity : BaseActivity<SendEmailContext>
     {
-        protected override Task<bool> Executing(SendSmsContext data)
+        protected override Task<bool> Executing(SendEmailContext data)
         {
-            throw new System.NotImplementedException();
+            LogHelper.Info("分流-1.邮件发送");
+            return Task.FromResult(true);
         }
     }
 
-    public class SendSmsContext : TestContext<string>
+    public class SendEmailContext : TestContext<string>
     {
     }
 
-    public class PaySmsConnector : BaseConnector<PayContext, SendSmsContext>
+    public class PayEmailConnector : BaseConnector<PayContext, SendEmailContext>
     {
-        protected override SendSmsContext Convert(PayContext inContextData)
+        protected override SendEmailContext Convert(PayContext inContextData)
         {
-            return new SendSmsContext() { id = inContextData.id };
+            return new SendEmailContext() { id = inContextData.id };
         }
     }
 }

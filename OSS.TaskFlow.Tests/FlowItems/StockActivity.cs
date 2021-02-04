@@ -10,7 +10,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         protected override Task<bool> Executing(StockContext data)
         {
-            LogHelper.Info("库存保存");
+            LogHelper.Info("分流-2.库存保存");
             return Task.FromResult(true);
         }
     }

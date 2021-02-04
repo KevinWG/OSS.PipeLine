@@ -11,7 +11,9 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
+using OSS.EventFlow.Connector;
 using OSS.EventFlow.Gateway;
 using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
@@ -34,7 +36,7 @@ namespace OSS.EventFlow
         ///  管道元数据信息
         /// </summary>
         public PipeMeta pipe_meta { get; set; }
-        
+
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -49,9 +51,9 @@ namespace OSS.EventFlow
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        protected virtual Task<bool> StartCheck(TContext context) 
+        protected virtual Task<bool> StartCheck(TContext context)
         {
-            return Task.FromResult(true);        
+            return Task.FromResult(true);
         }
 
 
@@ -75,7 +77,7 @@ namespace OSS.EventFlow
                 return;
             }
 
-            var res =await Through(context);
+            var res = await Through(context);
             if (!res)
             {
                 await Block(context);
@@ -134,7 +136,7 @@ namespace OSS.EventFlow
         /// <typeparam name="NextOutContext"></typeparam>
         /// <param name="nextPipe"></param>
         /// <returns>返回下个管道的追加器</returns>
-        public IPipeAppender<NextOutContext> Append<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
+        public BaseSinglePipe<OutContext, NextOutContext> Append<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
             where NextOutContext : IPipeContext
         {
             InterAppend(nextPipe);
@@ -144,14 +146,42 @@ namespace OSS.EventFlow
         /// <summary>
         ///  追加分支网关
         /// </summary>
-        /// <typeparam name="NextOutContext"></typeparam>
         /// <param name="nextPipe"></param>
-        public void Append<NextOutContext>(BaseBranchGateway<OutContext> nextPipe)
-            where NextOutContext : IPipeContext
+        public BaseBranchGateway<OutContext> Append(BaseBranchGateway<OutContext> nextPipe)
         {
             NextPipe = nextPipe;
-
+            return nextPipe;
         }
+    }
+
+
+    /// <summary>
+    /// 管道扩展类
+    /// </summary>
+    public static class BaseSinglePipeExtension
+    {
+        /// <summary>
+        ///  追加上下文转换组件
+        /// </summary>
+        /// <typeparam name="InContext"></typeparam>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <typeparam name="NextOutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="convertFunc"></param>
+        /// <returns></returns>
+        public static IPipeAppender<NextOutContext> AppendConvert<InContext, OutContext, NextOutContext>(
+            this BaseSinglePipe<InContext, OutContext> pipe,
+            Func<OutContext, NextOutContext> convertFunc)
+            where InContext : IPipeContext
+            where OutContext : IPipeContext
+            where NextOutContext : IPipeContext
+        {
+            var connector = new DefaultConnector<OutContext, NextOutContext>(convertFunc);
+            pipe.InterAppend(connector);
+            return connector;
+        }
+
+
     }
 
 

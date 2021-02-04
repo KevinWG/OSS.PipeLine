@@ -1,8 +1,7 @@
-﻿using OSS.EventFlow.Connector;
-using OSS.EventFlow.Impls.Interface;
+﻿using System;
 using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Impls
+namespace OSS.EventFlow.Connector
 {
     /// <summary>
     ///  异步缓冲连接器的默认实现
@@ -13,19 +12,17 @@ namespace OSS.EventFlow.Impls
         where InContext : IPipeContext
         where OutContext : IPipeContext
     {
-        private readonly IConnectorProvider<InContext, OutContext> _provider;
-
+        private readonly Func<InContext, OutContext> _convert;
         /// <inheritdoc/>
-        public DefaultConnector(IConnectorProvider<InContext, OutContext> provider)
+        public DefaultConnector(Func<InContext, OutContext> convertFunc)
         {
-            _provider = provider;
+            _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc),"转换方法必须传入！");
         }
-
 
         /// <inheritdoc/>
         protected override OutContext Convert(InContext inContextData)
         {
-            return _provider.Convert(inContextData);
+            return _convert(inContextData);
         }
     }
 }

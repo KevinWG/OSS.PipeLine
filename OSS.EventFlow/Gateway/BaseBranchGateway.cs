@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OSS.EventFlow.Connector;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Gateway
@@ -56,39 +57,48 @@ namespace OSS.EventFlow.Gateway
         protected abstract IEnumerable<BasePipe<TContext>> FilterNextPipes(List<BasePipe<TContext>> branchItems,
             TContext context);
 
-
-
         private List<BasePipe<TContext>> _branchItems;
 
         /// <summary>
         ///   添加分支
         /// </summary>
-        /// <param name="branchItem"></param>
-        public void AddBranch(BasePipe<TContext> branchItem)
+        /// <param name="branchPipe"></param>
+        public BaseSinglePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(BaseSinglePipe<TContext, NextOutContext> branchPipe)
+            where NextOutContext : IPipeContext
         {
-            if (branchItem == null )
+            if (branchPipe == null )
             {
-                throw new ArgumentNullException(nameof(branchItem), " 不能为空！");
+                throw new ArgumentNullException(nameof(branchPipe), " 不能为空！");
             }
-
+            
             _branchItems ??= new List<BasePipe<TContext>>();
+            _branchItems.Add(branchPipe);
 
-            _branchItems.Add(branchItem);
+            return branchPipe;
         }
 
-        /// <summary>
-        ///  添加分支列表
-        /// </summary>
-        /// <param name="branchItems"></param>
-        public void AddBranches(IList<BasePipe<TContext>> branchItems)
-        {
-            if (branchItems==null|| branchItems.Count==0)
-            {
-                throw new ArgumentNullException(nameof(branchItems), " 不能为空！");
-            }
-            _branchItems ??= new List<BasePipe<TContext>>();
+    }
 
-            _branchItems.AddRange(branchItems);
+    /// <summary>
+    ///  网关扩展类
+    /// </summary>
+    public static class BaseBranchGatewayExtension
+    {
+        /// <summary>
+        ///  添加转换分支管道
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <typeparam name="NextOutContext"></typeparam>
+        /// <param name="gateway"></param>
+        /// <param name="convertFunc"></param>
+        /// <returns></returns>
+        public static BaseSinglePipe<TContext, NextOutContext> AddConvertBranchPipe<TContext, NextOutContext>(
+            this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
+            where NextOutContext : IPipeContext
+            where TContext : IPipeContext
+        {
+            var nextConverter = new DefaultConnector<TContext, NextOutContext>(convertFunc);
+            return gateway.AddBranchPipe(nextConverter);
         }
     }
 }
