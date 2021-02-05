@@ -23,7 +23,7 @@ namespace OSS.EventTask.Extension
     public static class ParallelGroupExtension
     {
         //   并行执行任务扩展
-        internal static async Task<GroupExecuteResp<TTData, TTRes>> Executing_Parallel<TTData, TTRes>(this IList<EventTask<TTData, TTRes>> tasks, TTData data)
+        internal static async Task<GroupExecuteResp<TTData, TTRes>> Executing_Parallel<TTData, TTRes>(this IList<BaseEventTask<TTData, TTRes>> tasks, TTData data)
             where TTData : class
             //where TTRes : class, new()
         {
@@ -50,7 +50,7 @@ namespace OSS.EventTask.Extension
         }
 
         // 并行任务回退处理（回退当前其他所有任务）
-        internal static async Task Executing_ParallelRevert<TTData, TTRes>( this IDictionary<EventTask<TTData, TTRes>, EventTaskResp<TTRes>> taskResults, TTData data)
+        internal static async Task Executing_ParallelRevert<TTData, TTRes>( this IDictionary<BaseEventTask<TTData, TTRes>, EventTaskResp<TTRes>> taskResults, TTData data)
             where TTData : class 
             //where TTRes : class, new()
         {

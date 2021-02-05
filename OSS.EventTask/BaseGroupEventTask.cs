@@ -23,25 +23,22 @@ namespace OSS.EventTask
     /// <summary>
     ///  基础工作节点
     /// </summary>
-    public abstract class GroupEventTask<TTData,TTRes>
-        : BaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>>
+    public abstract class BaseGroupEventTask<TTData,TTRes>
+        : InterBaseEventTask<GroupEventTaskMeta, TTData, GroupEventTaskResp<TTRes>>
           where TTData : class
     {
-
-
-        
-        protected GroupEventTask():this(null)
+        protected BaseGroupEventTask():this(null)
         {
         }
 
-        protected GroupEventTask(GroupEventTaskMeta meta) : base(meta)
+        protected BaseGroupEventTask(GroupEventTaskMeta meta) : base(meta)
         {
             OriginType = EventElementType.Group;
         }
 
         #region 内部基础方法
 
-        protected abstract Task<IList<EventTask<TTData, TTRes>>> GetTasks(int triedTimes);
+        protected abstract Task<IList<BaseEventTask<TTData, TTRes>>> GetTasks(int triedTimes);
 
         #endregion
 
@@ -68,8 +65,8 @@ namespace OSS.EventTask
 
         #region 辅助方法 —— 节点内部任务执行
 
-        private async Task ExecutingWithTasks(TTData data, GroupEventTaskResp<TTRes> groupResp,
-            IList<EventTask<TTData, TTRes>> tasks)
+        private static async Task ExecutingWithTasks(TTData data, GroupEventTaskResp<TTRes> groupResp,
+            IList<BaseEventTask<TTData, TTRes>> tasks)
         {
             GroupExecuteResp<TTData, TTRes> exeResp;
             if (groupResp.meta.Process_type == GroupProcessType.Parallel)

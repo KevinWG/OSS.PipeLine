@@ -30,7 +30,7 @@ namespace OSS.EventTask.Mos
         //where TTRes : class, new()
     {
         internal GroupExecuteStatus status { get; set; }
-        internal IDictionary<EventTask<TData, TTRes>, EventTaskResp<TTRes>> TaskResults { get; set; }
+        internal IDictionary<BaseEventTask<TData, TTRes>, EventTaskResp<TTRes>> TaskResults { get; set; }
     }
 
     public class GroupEventTaskResp<TTRes> :BaseTaskResp<GroupEventTaskMeta>

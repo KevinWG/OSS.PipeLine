@@ -1,7 +1,7 @@
 ﻿#region Copyright (C) 2016 Kevin (OSS开源系列) 公众号：OSSCore
 
 /***************************************************************************
-*　　	文件功能描述：OSS.EventTask - 事件任务基类
+*　　	文件功能描述：OSS.EventTask - 单事件任务
 *
 *　　	创建人： Kevin
 *       创建人Email：1985088337@qq.com
@@ -10,6 +10,7 @@
 *****************************************************************************/
 
 #endregion
+
 
 using System;
 using System.Threading.Tasks;
@@ -20,93 +21,34 @@ using OSS.EventTask.Mos;
 
 namespace OSS.EventTask
 {
-    public abstract class BaseEventTask<TMetaType, TTData, TResp> : BaseMeta<TMetaType>,IBufferTunnel<TTData,TResp>
-        where TMetaType : BaseTaskMeta
-        //where TTData : class
-        where TResp : BaseTaskResp<TMetaType>, new()
+    public abstract  class BaseEventTask<TTData, TTRes> 
+        : InterBaseEventTask<EventTaskMeta, TTData, EventTaskResp<TTRes>>, IEventTask<TTData, TTRes>
     {
-
-        /// <summary>
-        ///   归属类型
-        /// </summary>
-        public EventElementType OwnerType { get; internal set; } = EventElementType.Task;
-        internal EventElementType OriginType { get;  set; } = EventElementType.Task;
-
-        protected BaseEventTask()
+        protected BaseEventTask():this(null)
         {
         }
 
-        protected BaseEventTask(TMetaType meta) : base(meta)
+        protected BaseEventTask(EventTaskMeta meta) : base(meta)
         {
+            OriginType = EventElementType.Task;
         }
 
         #region 扩展方法
 
         /// <summary>
-        ///  阻塞 -  保存对应运行请求和重试相关信息
+        ///  保存对应运行请求和重试相关信息
+        ///    【仅在 OwnerType = OwnerType.Task 时发生】
+        ///     节点下的环境信息，由节点内部处理,防止节点其他耗时任务造成执行过程中发起重试操作 
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="resp"></param>
+        /// <param name="taskResp"></param>
         /// <returns></returns>
-        public virtual Task Push(TTData data, TResp resp)
+        protected virtual Task SaveTaskContext(TTData data, EventTaskResp<TTRes> taskResp)
         {
             return Task.CompletedTask;
         }
 
-        /// <summary>
-        /// 重新唤起
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="triedTimes"></param>
-        /// <returns></returns>
-        public Task Pop(TTData data, int triedTimes)
-        {
-            return Process(data, triedTimes);
-        }
-
         #endregion
-
-        #region 任务进入入口
-
-        public Task<TResp> Process(TTData data) => Process(data, 0);
-
-        public async Task<TResp> Process(TTData data, int triedTimes)
-        {
-            var meta = await GetMeta();
-            var taskResp = new TResp
-            {
-                tried_times = triedTimes,
-                run_status = TaskRunStatus.WaitToRun,
-                meta = meta
-            };
-
-            await Processing(data, taskResp);
-
-            taskResp.executed_time = DateTime.Now.ToUtcSeconds();
-
-            // 判断是否间隔执行,生成重试信息
-            // 任务被加入群组之后，间歇重试功能由群组承接
-            if (taskResp.run_status.IsFailed()
-                && taskResp.tried_times < taskResp.meta.retry_times && OwnerType == OriginType)
-            {
-                taskResp.tried_times++;
-                taskResp.next_time = taskResp.executed_time + taskResp.meta.retry_seconds;
-
-                taskResp.run_status = TaskRunStatus.RunPaused;
-
-                await Push(data, taskResp);
-            }
-
-            //  最终失败，执行失败方法
-            if (taskResp.run_status.IsFailed())
-                await FinallyFailed(data, taskResp);
-
-            return taskResp;
-        }
-
-
-        #endregion
-
 
         #region 扩展方法（实现，回退，失败）  扩展方法
 
@@ -114,35 +56,66 @@ namespace OSS.EventTask
         ///     任务的具体执行
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="res"></param>
+        /// <param name="loopTimes">内部循环执行次数</param>
+        /// <param name="triedTimes">重试运行次数</param>
         /// <returns> 
         ///  runStatus = TaskRunStatus.RunFailed 系统会字段判断是否满足重试条件执行重试
         /// </returns>
-        internal abstract Task Processing(TTData data, TResp res);
-        
+        protected abstract Task<DoResp<TTRes>> Do(TTData data, int loopTimes, int triedTimes);
 
         /// <summary>
-        /// 任务结束方法
+        ///  执行失败回退操作
+        ///   如果设置了重试配置，调用后重试
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="res">请求的上下文</param>
-        /// <returns></returns>
-        protected virtual Task ProcessEnd(TTData data, TResp res)
+        public virtual Task<bool> Revert(TTData data)
         {
-            return Task.CompletedTask;
+            return Task.FromResult(true);
         }
 
 
-        /// <summary>
-        ///  最终失败执行方法
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="res"></param>
-        protected virtual Task FinallyFailed(TTData data, TResp res)
+        #endregion
+
+        #region 辅助方法
+
+        internal override async Task Processing(TTData data, EventTaskResp<TTRes> taskResp)
         {
-            return Task.CompletedTask;
+            // 【1】 执行起始方法 附加校验
+            var checkRes = RunCheck(taskResp.meta);
+            if (!checkRes)
+                return;
+            do
+            {
+                var doResp = await Do(data, taskResp.loop_times, taskResp.tried_times);
+                doResp.SetToTaskResp(taskResp);
+
+                // 判断是否失败回退
+                if (doResp.run_status.IsFailed()
+                    && (taskResp.meta.revert_effect == RevertEffect.RevertSelf
+                        || taskResp.meta.revert_effect == RevertEffect.RevertSelf))
+                {
+                    await Revert(data);
+                    taskResp.has_reverted = true;
+                }
+                // 【3】 执行结束方法
+                await ProcessEnd(data, taskResp);
+
+                taskResp.loop_times++;
+            } while (taskResp.run_status.IsFailed() && taskResp.loop_times <= taskResp.meta.loop_times);
+        }
+
+        private static bool RunCheck(EventTaskMeta taskMeta)
+        {
+            if (string.IsNullOrEmpty(taskMeta?.task_id))
+            {
+                throw new ArgumentNullException("Task metainfo is null!");
+            }
+
+            return true;
         }
 
         #endregion
+
+  
     }
 }
