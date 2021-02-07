@@ -1,19 +1,22 @@
 # OSS事件流(OSS.EventFlow)
 
-以BPMN 2.0 流程管理为思路，设计的轻量级业务生命周期流程引擎基础框架，将业务领域对象的流程管控和事件功能抽象剥离，
-切断事件功能方法内的链式调用，提权至流程引擎统一协调管控，事件功能作为独立处理单元嵌入业务流程之中，由流程引擎处理事件的触发与消息传递，
-达成事件处理单元的有效隔离。由此将流程的衔接变成可独立编程的部分，同时向上层提供业务动作的独立扩展，保证业务单元的绝对独立和可复用性，
+以BPMN 2.0 流程管理为思路，设计的轻量级业务生命周期流程引擎基础框架，
+将业务领域对象的流程管控和事件功能抽象剥离，切断事件功能方法内的链式调用，提权至流程引擎统一协调管控，
+事件功能作为独立处理单元嵌入业务流程之中，由流程引擎处理事件的触发与消息传递，达成事件处理单元的有效隔离。
+由此流程的衔接变成可独立编程的部分，同时向上层提供业务动作的独立扩展，保证业务单元的绝对独立和可复用性，
 目的是可以像搭积木一样来完成不同功能代码的集成，系统向真正的低代码平台过渡。
 
-如果将整个业务流当做一个流程管道，结合流程流转的特性，此引擎抽象了三类核心管道组件：
-    a. 事件活动组件
-        这类组件主要是处理任务的具体内容，如发送短信，执行下单，扣减库存等实际业务操作
-    b. 网关组件
-        这类组件主要负责业务流程方向性的逻辑规则处理，如分支，合并流程
-    c. 连接器组件
-        这类组件主要负责其他组件之间的消息传递与转化。
-        
+如果将整个业务流当做一个流程管道，结合流程流转的特性，此引擎抽象了三个核心管道组件：
+    
+1. 事件活动组件
+    这个组件主要是处理任务的具体内容，如发送短信，执行下单，扣减库存等实际业务操作
 
+2. 网关组件
+    这个组件主要负责业务流程方向性的逻辑规则处理，如分支，合并流程
+
+3. 连接器组件
+    这个组件主要负责其他组件之间的消息传递与转化。
+       
 ## 一. 事件活动组件
 这个组件就是业务的动作本身，根据任务触发的特性，如关联自动执行，中断触发（如用户触发，或消息队列等），根据这两种情形，提供了两个抽象基类：
 
@@ -51,8 +54,7 @@
         
 ## 四. 简单示例场景
 首先我们假设当前有一个进货管理的场景，需经历  进货申请，申请审批，购买支付，入库（同时邮件通知申请人） 几个环节，每个环节表示一个事件活动，比如申请活动我们定义如下：
-
-``` csharper
+```csharp
     public class ApplyActivity : BaseActivity<ApplyContext>
     {
         protected override Task<bool> Executing(ApplyContext data)
@@ -64,7 +66,7 @@
     }
 ```
 这里为了方便观察，直接继承 BaseActivity，即多个活动连接后，自动运行。 相同的处理方式我们定义剩下几个环节事件，列表如下：
-``` csharper
+```csharp
     ApplyActivity      - 申请事件    (参数：ApplyContext)
     AutoAuditActivity  - 审核事件    (参数：ApplyContext)
     PayActivity        - 购买事件    (参数：PayContext)
@@ -72,8 +74,7 @@
     EmailActivity      - 发送邮件事件    (参数：SendEmailContext)
 ```
 以上五个事件活动，其具体实现和参数完全独立，同时因为购买支付后邮件和入库是相互独立的事件，定义分支网关做分流（规则）处理，代码如下：
-
-``` csharper
+```csharp
     public class PayGateway:BaseBranchGateway<PayContext>
     {
         protected override IEnumerable<BasePipe<PayContext>> FilterNextPipes(List<BasePipe<PayContext>> branchItems, PayContext context)
@@ -87,7 +88,7 @@
 这里的意思相对简单，即传入的所有的分支不用过滤，直接全部分发。
 
 同样因为五个事件的方法参数不尽相同，中间的我们添加消息连接器，作为消息的中转和转化处理（也可以在创建流体时表达式处理），以支付参数到邮件的参数转化示例：
-``` csharper
+```csharp
     public class PayEmailConnector : BaseConnector<PayContext, SendEmailContext>
     {
         protected override SendEmailContext Convert(PayContext inContextData)
@@ -100,7 +101,7 @@
 
 通过以上，申购流程的组件定义完毕，串联使用如下（这里是单元测试类，实际业务我们可以创建一个Service处理）：
 
-``` csharper
+```csharp
         public readonly ApplyActivity ApplyActivity = new ApplyActivity();
         public readonly AuditActivity AuditActivity = new AuditActivity();
 
