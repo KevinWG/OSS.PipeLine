@@ -4,7 +4,7 @@ using OSS.Tools.Log;
 
 namespace OSS.TaskFlow.Tests.FlowItems
 {
-    public class AutoAuditActivity : BaseActivity<ApplyContext>
+    public class AuditActivity : BaseActivity<ApplyContext>
     {
         protected override Task<bool> Executing(ApplyContext data)
         {

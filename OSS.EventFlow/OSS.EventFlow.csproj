@@ -12,4 +12,9 @@
     <DocumentationFile>bin/OSS.EventFlow.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Activity\BaseBufferActivity.cs" />
+    <Compile Remove="Impls\DefaultBufferActivity.cs" />
+  </ItemGroup>
+
 </Project>

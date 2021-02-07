@@ -19,12 +19,4 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
 
     }
-
-    public class PayConnector : BaseConnector<ApplyContext, PayContext>
-    {
-        protected override PayContext Convert(ApplyContext inContextData)
-        {
-            return new PayContext() { id = inContextData.id };
-        }
-    }
 }
