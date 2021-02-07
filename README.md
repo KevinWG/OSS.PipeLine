@@ -50,8 +50,7 @@
         
 ## 四. 简单示例场景
 首先我们假设当前有一个进货管理的场景，需经历  进货申请，申请审批，购买支付，入库（同时邮件通知申请人） 几个环节，每个环节表示一个事件活动，比如申请活动我们定义如下：
-
-``` csharper
+```csharp
     public class ApplyActivity : BaseActivity<ApplyContext>
     {
         protected override Task<bool> Executing(ApplyContext data)
@@ -63,7 +62,7 @@
     }
 ```
 这里为了方便观察，直接继承 BaseActivity，即多个活动连接后，自动运行。 相同的处理方式我们定义剩下几个环节事件，列表如下：
-``` csharper
+```csharp
     ApplyActivity      - 申请事件    (参数：ApplyContext)
     AutoAuditActivity  - 审核事件    (参数：ApplyContext)
     PayActivity        - 购买事件    (参数：PayContext)
@@ -71,8 +70,7 @@
     EmailActivity      - 发送邮件事件    (参数：SendEmailContext)
 ```
 以上五个事件活动，其具体实现和参数完全独立，同时因为购买支付后邮件和入库是相互独立的事件，定义分支网关做分流（规则）处理，代码如下：
-
-``` csharper
+```csharp
     public class PayGateway:BaseBranchGateway<PayContext>
     {
         protected override IEnumerable<BasePipe<PayContext>> FilterNextPipes(List<BasePipe<PayContext>> branchItems, PayContext context)
@@ -86,7 +84,7 @@
 这里的意思相对简单，即传入的所有的分支不用过滤，直接全部分发。
 
 同样因为五个事件的方法参数不尽相同，中间的我们添加消息连接器，作为消息的中转和转化处理（也可以在创建流体时表达式处理），以支付参数到邮件的参数转化示例：
-``` csharper
+```csharp
     public class PayEmailConnector : BaseConnector<PayContext, SendEmailContext>
     {
         protected override SendEmailContext Convert(PayContext inContextData)
@@ -99,7 +97,7 @@
 
 通过以上，申购流程的组件定义完毕，串联使用如下（这里是单元测试类，实际业务我们可以创建一个Service处理）：
 
-``` csharper
+```csharp
         public readonly ApplyActivity ApplyActivity = new ApplyActivity();
         public readonly AuditActivity AuditActivity = new AuditActivity();
 
