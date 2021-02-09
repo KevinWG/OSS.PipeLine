@@ -14,6 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using OSS.EventFlow.Connector;
 using OSS.EventFlow.Mos;
@@ -77,6 +78,20 @@ namespace OSS.EventFlow.Gateway
             return branchPipe;
         }
 
+
+        internal override string InterToRoute(string endPipeCode)
+        {
+            var jsonBuilder = new StringBuilder();
+
+            jsonBuilder.Append("{ \"pipe_code\":\"").Append(pipe_meta.pipe_code).Append("\"")
+                .Append(",\"pipe_name\":\"").Append(pipe_meta.pipe_name).Append("\"")
+                .Append(",\"pipe_type\":").Append((int)pipe_type)
+                .Append(",\"nexts\":[")
+                .Append(string.Join(",", _branchItems.Select(bp => bp.InterToRoute(endPipeCode))))
+                .Append("]}");
+
+            return jsonBuilder.ToString();
+        }
     }
 
     /// <summary>

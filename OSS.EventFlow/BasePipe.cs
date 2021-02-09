@@ -24,7 +24,7 @@ namespace OSS.EventFlow
     /// 管道基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BasePipe<TContext>
+    public abstract class BasePipe<TContext>: IPipe
         where TContext : IPipeContext
     {
         /// <summary>
@@ -93,6 +93,9 @@ namespace OSS.EventFlow
         {
             return Task.CompletedTask;
         }
+
+        internal abstract string InterToRoute(string endPipeCode);
+
     }
 
 
@@ -151,6 +154,15 @@ namespace OSS.EventFlow
         {
             NextPipe = nextPipe;
             return nextPipe;
+        }
+
+        internal override string InterToRoute(string endPipeCode)
+        {
+            return $"{{ \"pipe_code\":\"{pipe_meta.pipe_code}\"" +
+                $",\"pipe_name\":\"{pipe_meta.pipe_name}\" " +
+                ",\"pipe_type\":" + (int)pipe_type +
+                pipe_meta.pipe_code== endPipeCode?string.Empty:$",\"next\":{NextPipe.InterToRoute(endPipeCode)}" +
+                "}";
         }
     }
 

@@ -23,7 +23,7 @@ namespace OSS.EventFlow
     /// </summary>
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
-    public  class EventFlow<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>
+    public class EventFlow<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>
         where InFlowContext : IPipeContext
         where OutFlowContext : IPipeContext
     {
@@ -32,7 +32,7 @@ namespace OSS.EventFlow
         /// </summary>
         public EventFlow(BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
         {
-            _startPipe       = startPipe;
+            _startPipe = startPipe;
             _endPipeAppender = endPipeAppender;
 
             if (_startPipe == null)
@@ -60,6 +60,14 @@ namespace OSS.EventFlow
             return true;
         }
 
+        /// <summary>
+        ///  生成路径
+        /// </summary>
+        /// <returns></returns>
+        public string ToRoute()
+        {
+            return _startPipe.InterToRoute(_endPipeAppender.pipe_meta.pipe_code);
+        }
     }
 
     /// <inheritdoc />

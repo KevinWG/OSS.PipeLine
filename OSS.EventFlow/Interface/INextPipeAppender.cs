@@ -1,4 +1,17 @@
-﻿using OSS.EventFlow.Gateway;
+﻿#region Copyright (C) 2020 Kevin (OSS开源系列) 公众号：OSSCore
+
+/***************************************************************************
+*　　	文件功能描述：OSS.EventFlow - 流体基类
+*
+*　　	创建人： Kevin
+*       创建人Email：1985088337@qq.com
+*       创建时间： 2020-11-28
+*       
+*****************************************************************************/
+
+#endregion
+
+using OSS.EventFlow.Gateway;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Interface
@@ -7,7 +20,7 @@ namespace OSS.EventFlow.Interface
     ///  管道链接器
     /// </summary>
     /// <typeparam name="TNextInContext"></typeparam>
-    public interface IPipeAppender<TNextInContext>
+    public interface IPipeAppender<TNextInContext>:IPipe
         where TNextInContext : IPipeContext
     {
         /// <summary>

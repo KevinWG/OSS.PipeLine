@@ -28,4 +28,7 @@ namespace OSS.EventFlow.Mos
         /// </summary>
         public string pipe_name { get; set; }
     }
+
+
+  
 }
