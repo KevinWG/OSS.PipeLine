@@ -18,11 +18,6 @@ namespace OSS.EventTask.MetaMos
     public class BaseTaskMeta
     {
         /// <summary>
-        ///  流程Id
-        /// </summary>
-        public string flow_id { get; set; }
-
-        /// <summary>
         ///  分组ID
         /// </summary>
         public string group_id { get; set; }
