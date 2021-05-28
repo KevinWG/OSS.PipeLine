@@ -40,8 +40,7 @@ namespace OSS.EventFlow
                 throw new ArgumentNullException("未发现流体的起始截止管道！");
             }
         }
-
-
+        
         private BasePipe<InFlowContext> _startPipe;
         private IPipeAppender<OutFlowContext> _endPipeAppender;
 
@@ -79,6 +78,43 @@ namespace OSS.EventFlow
         {
         }
     }
+    
 
+    /// <summary>
+    /// EventFlow 创建工厂
+    /// </summary>
+    public static class EventFlowExtension
+    {
+        /// <summary>
+        /// 根据首位两个管道建立流体
+        /// </summary>
+        /// <typeparam name="InFlowContext"></typeparam>
+        /// <typeparam name="OutFlowContext"></typeparam>
+        /// <param name="startPipe"></param>
+        /// <param name="endPipeAppender"></param>
+        /// <returns></returns>
+        public static EventFlow<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
+            this BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender)
+            where InFlowContext : IPipeContext
+            where OutFlowContext : IPipeContext
+        {
+            return new(startPipe, endPipeAppender);
+        }
+
+
+        /// <summary>
+        /// 根据首位两个管道建立流体
+        /// </summary>
+        /// <typeparam name="FlowContext"></typeparam>
+        /// <param name="startPipe"></param>
+        /// <param name="endPipeAppender"></param>
+        /// <returns></returns>
+        public static EventFlow<FlowContext> AsFlowStartAndEndWith<FlowContext>(
+            this BasePipe<FlowContext> startPipe, IPipeAppender<FlowContext> endPipeAppender)
+            where FlowContext : IPipeContext
+        {
+            return new(startPipe, endPipeAppender);
+        }
+    }
 
 }

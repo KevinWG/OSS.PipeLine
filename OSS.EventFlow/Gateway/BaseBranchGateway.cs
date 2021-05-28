@@ -61,7 +61,7 @@ namespace OSS.EventFlow.Gateway
         private List<BasePipe<TContext>> _branchItems;
 
         /// <summary>
-        ///   添加分支
+        ///   添加分支       
         /// </summary>
         /// <param name="branchPipe"></param>
         public BaseSinglePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(BaseSinglePipe<TContext, NextOutContext> branchPipe)
