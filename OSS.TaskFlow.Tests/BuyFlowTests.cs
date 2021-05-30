@@ -20,7 +20,9 @@ namespace OSS.TaskFlow.Tests
 
         public readonly PayEmailConnector EmailConnector = new PayEmailConnector();
         public readonly SendEmailActivity EmailActivity  = new SendEmailActivity();
-        
+
+
+        public readonly EventFlow<ApplyContext, StockContext> Flow;
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
@@ -38,16 +40,25 @@ namespace OSS.TaskFlow.Tests
             PayGateway.AddBranchPipe(StockConnector)
             .Append(StockActivity);
             //.Append(后续事件)
+
+            Flow = ApplyActivity.AsFlowStartAndEndWith(StockActivity);
+
         }
 
 
         [TestMethod]
         public async Task FlowTest()
         {
-            await ApplyActivity.Start(new ApplyContext()
+            await Flow.Start(new ApplyContext()
             {
                 id = "test_business_id"
             });
+        }
+
+        [TestMethod]
+        public async Task RouteTest()
+        {
+            var route = Flow.ToRoute();
         }
     }
 }

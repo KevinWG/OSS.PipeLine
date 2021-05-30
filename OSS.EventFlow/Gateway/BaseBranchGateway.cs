@@ -64,14 +64,15 @@ namespace OSS.EventFlow.Gateway
         ///   添加分支       
         /// </summary>
         /// <param name="branchPipe"></param>
-        public BaseSinglePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(BaseSinglePipe<TContext, NextOutContext> branchPipe)
+        public BaseSinglePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(
+            BaseSinglePipe<TContext, NextOutContext> branchPipe)
             where NextOutContext : IPipeContext
         {
-            if (branchPipe == null )
+            if (branchPipe == null)
             {
                 throw new ArgumentNullException(nameof(branchPipe), " 不能为空！");
             }
-            
+
             _branchItems ??= new List<BasePipe<TContext>>();
             _branchItems.Add(branchPipe);
 
@@ -83,12 +84,15 @@ namespace OSS.EventFlow.Gateway
         {
             var jsonBuilder = new StringBuilder();
 
-            jsonBuilder.Append("{ \"pipe_code\":\"").Append(pipe_meta.pipe_code).Append("\"")
-                .Append(",\"pipe_name\":\"").Append(pipe_meta.pipe_name).Append("\"")
-                .Append(",\"pipe_type\":").Append((int)pipe_type)
-                .Append(",\"nexts\":[")
-                .Append(string.Join(",", _branchItems.Select(bp => bp.InterToRoute(endPipeCode))))
-                .Append("]}");
+            jsonBuilder.Append("{ \"pipe_code\":\"").Append(pipe_meta?.pipe_code).Append("\"")
+            .Append(",\"pipe_name\":\"").Append(pipe_meta?.pipe_name).Append("\"")
+            .Append(",\"pipe_type\":").Append((int) pipe_type)
+            .Append(",\"nexts\":[");
+            if (_branchItems.Any())
+            {
+                jsonBuilder.Append(string.Join(",", _branchItems.Select(bp => bp.InterToRoute(endPipeCode))));
+            }
+            jsonBuilder.Append("]}");
 
             return jsonBuilder.ToString();
         }

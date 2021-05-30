@@ -65,7 +65,7 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public string ToRoute()
         {
-            return _startPipe.InterToRoute(_endPipeAppender.pipe_meta.pipe_code);
+            return _startPipe.InterToRoute(_endPipeAppender.pipe_meta?.pipe_code);
         }
     }
 
