@@ -8,6 +8,14 @@ namespace OSS.TaskFlow.Tests.FlowItems
 {
     public class PayActivity : BaseActivity<PayContext>
     {
+        public PayActivity()
+        {
+            pipe_meta = new PipeMeta()
+            {
+                pipe_code = "PayActivity"
+            };
+        }
+
         protected override Task<bool> Executing(PayContext data)
         {
             LogHelper.Info("发起支付处理");

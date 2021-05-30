@@ -8,6 +8,14 @@ namespace OSS.TaskFlow.Tests.FlowItems
 {
     public class StockActivity : BaseActivity<StockContext>
     {
+        public StockActivity()
+        {
+            pipe_meta = new PipeMeta()
+            {
+                pipe_code = "StockActivity"
+            };
+        }
+
         protected override Task<bool> Executing(StockContext data)
         {
             LogHelper.Info("分流-2.库存保存");
@@ -22,6 +30,14 @@ namespace OSS.TaskFlow.Tests.FlowItems
 
     public class StockConnector : BaseConnector<PayContext, StockContext>
     {
+        public StockConnector()
+        {
+            pipe_meta = new PipeMeta()
+            {
+                pipe_code = "StockConnector"
+            };
+        }
+
         protected override StockContext Convert(PayContext inContextData)
         {
             return new StockContext() { id = inContextData.id };
