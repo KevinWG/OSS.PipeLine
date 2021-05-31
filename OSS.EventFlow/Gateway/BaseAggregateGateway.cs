@@ -41,7 +41,7 @@ namespace OSS.EventFlow.Gateway
         protected abstract Task<bool> IfMatchCondition(TContext context, out bool isBlocked);
 
 
-        internal override async Task<bool> Through(TContext context)
+        internal override async Task<bool> Handling(TContext context)
         {
             var throughRes = await IfMatchCondition(context, out var isBlocked);
             if (isBlocked)

@@ -53,7 +53,7 @@ namespace OSS.EventFlow
             _endPipeAppender.Append(nextPipe);
         }
 
-        internal override async Task<bool> Through(InFlowContext context)
+        internal override async Task<bool> Handling(InFlowContext context)
         {
             await _startPipe.Start(context);
             return true;
@@ -65,7 +65,7 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public string ToRoute()
         {
-            return _startPipe.InterToRoute(_endPipeAppender.pipe_meta?.pipe_code);
+            return InterToRoute(_endPipeAppender.pipe_code);
         }
     }
 

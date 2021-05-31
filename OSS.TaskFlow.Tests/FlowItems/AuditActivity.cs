@@ -9,10 +9,9 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public AuditActivity()
         {
-            pipe_meta = new PipeMeta()
-            {
-                pipe_code = "AuditActivity"
-            };
+
+            pipe_code = "AuditActivity";
+
         }
 
         protected override Task<bool> Executing(ApplyContext data)

@@ -10,10 +10,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public PayGateway()
         {
-            pipe_meta = new PipeMeta()
-            {
-                pipe_code = "PayGateway"
-            };
+                pipe_code = "PayGateway";
         }
 
         protected override IEnumerable<BasePipe<PayContext>> FilterNextPipes(List<BasePipe<PayContext>> branchItems, PayContext context)

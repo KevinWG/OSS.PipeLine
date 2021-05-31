@@ -35,7 +35,7 @@ namespace OSS.EventFlow.Gateway
         {
         }
 
-        internal override async Task<bool> Through(TContext context)
+        internal override async Task<bool> Handling(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
@@ -84,8 +84,7 @@ namespace OSS.EventFlow.Gateway
         {
             var jsonBuilder = new StringBuilder();
 
-            jsonBuilder.Append("{ \"pipe_code\":\"").Append(pipe_meta?.pipe_code).Append("\"")
-            .Append(",\"pipe_name\":\"").Append(pipe_meta?.pipe_name).Append("\"")
+            jsonBuilder.Append("{ \"pipe_code\":\"").Append(pipe_code).Append("\"")
             .Append(",\"pipe_type\":").Append((int) pipe_type)
             .Append(",\"nexts\":[");
             if (_branchItems.Any())

@@ -37,7 +37,7 @@ namespace OSS.EventFlow.Activity
         /// <returns></returns>
         protected abstract Task<bool> Executing(TContext data);
 
-        internal override async Task<bool> Through(TContext context)
+        internal override async Task<bool> Handling(TContext context)
         {
             var eRes = await Executing(context);
             if (eRes)

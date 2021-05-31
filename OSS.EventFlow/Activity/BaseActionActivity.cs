@@ -68,7 +68,7 @@ namespace OSS.EventFlow.Activity
             return Task.FromResult(true);
         }
 
-        internal override Task<bool> Through(TContext context)
+        internal override Task<bool> Handling(TContext context)
         {
             return Notice(context);
         }

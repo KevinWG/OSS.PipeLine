@@ -17,6 +17,7 @@ using OSS.EventFlow.Connector;
 using OSS.EventFlow.Gateway;
 using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
+using OSS.Tools.DataStack;
 
 namespace OSS.EventFlow
 {
@@ -33,10 +34,13 @@ namespace OSS.EventFlow
         public PipeType pipe_type { get; internal set; }
 
         /// <summary>
-        ///  管道元数据信息
+        ///  管道编码
         /// </summary>
-        public PipeMeta pipe_meta { get; set; }
+        public string pipe_code { get; set; }
 
+        // 内部异步处理入口
+        private readonly IStackPusher<TContext> _pusher ;
+        
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -44,45 +48,39 @@ namespace OSS.EventFlow
         protected BasePipe(PipeType pipeType)
         {
             pipe_type = pipeType;
+            _pusher   = DataStackFactory.CreateStack<TContext>(StackPopCaller, "OSS.EventFlow");
         }
-
-        /// <summary>
-        ///  管道内数据开始流动校验
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected virtual Task<bool> StartCheck(TContext context)
-        {
-            return Task.FromResult(true);
-        }
-
-
-        /// <summary>
-        ///  管道通过方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal abstract Task<bool> Through(TContext context);
 
         /// <summary>
         /// 启动方法
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task Start(TContext context)
+        public Task<bool> Start(TContext context)
         {
-            var checkRes = await StartCheck(context);
-            if (!checkRes)
-            {
-                return;
-            }
+           return _pusher.Push(context);
+        }
 
-            var res = await Through(context);
+        private async Task<bool> StackPopCaller(TContext context)
+        {
+            var res = await Handling(context);
             if (!res)
             {
                 await Block(context);
             }
+
+            return true;
         }
+   
+
+        #region 实际管道扩展处理方法
+        
+        /// <summary>
+        ///  管道通过方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal abstract Task<bool> Handling(TContext context);
 
         /// <summary>
         ///  管道堵塞
@@ -94,6 +92,8 @@ namespace OSS.EventFlow
             return Task.CompletedTask;
         }
 
+        #endregion
+        
         internal abstract string InterToRoute(string endPipeCode);
 
     }
@@ -109,7 +109,7 @@ namespace OSS.EventFlow
         where OutContext : IPipeContext
     {
         internal BasePipe<OutContext> NextPipe { get; set; }
-
+        
         /// <summary>
         ///  构造函数
         /// </summary>
@@ -118,9 +118,9 @@ namespace OSS.EventFlow
         {
         }
 
-        internal Task ToNextThrough(OutContext nextInContext)
+        internal Task<bool> ToNextThrough(OutContext nextInContext)
         {
-            return NextPipe != null ? NextPipe.Start(nextInContext) : Task.CompletedTask;
+            return NextPipe != null ? NextPipe.Start(nextInContext) : Task.FromResult(false);
         }
 
         /// <summary>
@@ -156,16 +156,21 @@ namespace OSS.EventFlow
             return nextPipe;
         }
 
+
+        #region MyRegion
+
+
         internal override string InterToRoute(string endPipeCode)
         {
-            return $"{{ \"pipe_code\":\"{pipe_meta?.pipe_code}\"" +
-                $",\"pipe_name\":\"{pipe_meta?.pipe_name}\" " +
-                ",\"pipe_type\":" + (int) pipe_type + (
-                    (pipe_meta?.pipe_code == endPipeCode || NextPipe == null)
-                        ? string.Empty
-                        : $",\"next\":{NextPipe.InterToRoute(endPipeCode)}") +
-                "}";
+            return $"{{ \"pipe_code\":\"{pipe_code}\"" +
+                   ",\"pipe_type\":" + (int)pipe_type + (
+                       (pipe_code == endPipeCode || NextPipe == null)
+                           ? string.Empty
+                           : $",\"next\":{NextPipe.InterToRoute(endPipeCode)}") +
+                   "}";
         }
+        #endregion
+
     }
 
 

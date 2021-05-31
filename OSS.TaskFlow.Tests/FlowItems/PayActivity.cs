@@ -10,10 +10,8 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public PayActivity()
         {
-            pipe_meta = new PipeMeta()
-            {
-                pipe_code = "PayActivity"
-            };
+         
+                pipe_code = "PayActivity";
         }
 
         protected override Task<bool> Executing(PayContext data)

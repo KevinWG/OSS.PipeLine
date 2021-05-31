@@ -17,4 +17,8 @@
     <Compile Remove="Impls\DefaultBufferActivity.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="OSS.Tools.DataStack" Version="0.1.0" />
+  </ItemGroup>
+
 </Project>

@@ -26,8 +26,8 @@ namespace OSS.EventFlow.Interface
         PipeType pipe_type { get; }
 
         /// <summary>
-        ///  管道元数据信息
+        ///  管道编码
         /// </summary>
-        PipeMeta pipe_meta { get; set; }
+        public string pipe_code { get; set; }
     }
 }

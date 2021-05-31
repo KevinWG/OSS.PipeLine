@@ -53,10 +53,11 @@ namespace OSS.TaskFlow.Tests
             {
                 id = "test_business_id"
             });
+            await Task.Delay(2000);
         }
 
         [TestMethod]
-        public async Task RouteTest()
+        public void RouteTest()
         {
             var route = Flow.ToRoute();
         }
