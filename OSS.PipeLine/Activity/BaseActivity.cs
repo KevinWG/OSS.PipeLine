@@ -21,39 +21,83 @@ namespace OSS.EventFlow.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext, TContext>
-        where TContext : IPipeContext
     {
         /// <summary>
-        ///  构造函数
+        /// 外部Action活动基类
         /// </summary>
         protected BaseActivity() : base(PipeType.Activity)
         {
         }
-
+        
         /// <summary>
-        ///  执行
+        ///  具体执行扩展方法
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         protected abstract Task<bool> Executing(TContext data);
 
+
         internal override async Task<bool> InterHandling(TContext context)
         {
-            var eRes = await Executing(context);
-            if (eRes)
+            var res = await Executing(context);
+            if (res)
             {
-                await ToNextThrough(context);
+                await Block(context);
+                return res;
             }
-            return eRes;
+
+            await ToNextThrough(context);
+            return res;
         }
     }
 
+
+    /// <summary>
+    ///  活动基类
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    public abstract class BaseEffectActivity<TContext, TResult> : BaseSinglePipe<TContext, TResult>
+    {
+        /// <summary>
+        /// 外部Action活动基类
+        /// </summary>
+        protected BaseEffectActivity() : base(PipeType.EffectActivity)
+        {
+        }
+
+
+        protected BaseEffectActivity(PipeType type) : base(type)
+        {
+        }
+
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="isBlocked"></param>
+        /// <returns></returns>
+        protected abstract Task<TResult> Executing(TContext data, out bool isBlocked);
+
+
+        internal override async Task<bool> InterHandling(TContext context)
+        {
+            var res= await Executing(context, out var isBlocked);
+            if (isBlocked)
+            {
+                await Block(context);
+                return isBlocked;
+            }
+
+            await ToNextThrough(res);
+            return isBlocked;
+        }
+    }
 
 
     /// <summary>
     ///  空上下文
     /// </summary>
-    public class EmptyContext : IPipeContext
+    public class EmptyContext //: IPipeContext
     {
 
     }

@@ -11,7 +11,7 @@ namespace OSS.EventFlow.Impls
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public class DefaultAggregateGateway<TContext> : BaseAggregateGateway<TContext>
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
         private readonly IAggregateGatewayProvider<TContext> _provider;
         /// <summary>

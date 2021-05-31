@@ -23,7 +23,7 @@ namespace OSS.EventFlow.Impls.Interface
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public interface IAggregateGatewayProvider<TContext> 
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
         /// <summary>
         ///  是否触发通过

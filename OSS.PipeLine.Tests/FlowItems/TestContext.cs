@@ -3,7 +3,7 @@
 namespace OSS.TaskFlow.Tests.FlowItems
 {
     /// <inheritdoc />
-    public abstract class TestContext<IdType> : IPipeContext
+    public abstract class TestContext<IdType> //: IPipeContext
     {
         /// <summary>
         ///  id 编号

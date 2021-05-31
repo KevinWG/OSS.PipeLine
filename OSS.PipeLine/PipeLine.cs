@@ -24,8 +24,8 @@ namespace OSS.EventFlow
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
     public class PipeLine<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>,IFlow
-        where InFlowContext : IPipeContext
-        where OutFlowContext : IPipeContext
+        //where InFlowContext : IPipeContext
+        //where OutFlowContext : IPipeContext
     {
         /// <summary>
         /// 基础流体
@@ -114,7 +114,7 @@ namespace OSS.EventFlow
 
     /// <inheritdoc />
     public class PipeLine<TContext> : PipeLine<TContext, TContext>
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
         /// <inheritdoc />
         public PipeLine(BasePipe<TContext> startPipe, IPipeAppender<TContext> endPipeAppender):base(startPipe, endPipeAppender)
@@ -139,8 +139,8 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public static PipeLine<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
             this BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,string flowPipeCode=null)
-            where InFlowContext : IPipeContext
-            where OutFlowContext : IPipeContext
+            //where InFlowContext : IPipeContext
+            //where OutFlowContext : IPipeContext
         {
             return new(startPipe, endPipeAppender){PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode,"Flow")};
         }
@@ -155,7 +155,7 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public static PipeLine<FlowContext> AsFlowStartAndEndWith<FlowContext>(
             this BasePipe<FlowContext> startPipe, IPipeAppender<FlowContext> endPipeAppender, string flowPipeCode = null)
-            where FlowContext : IPipeContext
+            //where FlowContext : IPipeContext
         {
             return new(startPipe, endPipeAppender) { PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "Flow") };
         }

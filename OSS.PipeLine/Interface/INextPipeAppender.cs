@@ -21,7 +21,7 @@ namespace OSS.EventFlow.Interface
     /// </summary>
     /// <typeparam name="TNextInContext"></typeparam>
     public interface IPipeAppender<TNextInContext>:IPipe
-        where TNextInContext : IPipeContext
+        //where TNextInContext : IPipeContext
     {
         /// <summary>
         /// 追加管道
@@ -29,8 +29,9 @@ namespace OSS.EventFlow.Interface
         /// <param name="nextPipe"></param>
         /// <typeparam name="NextOutContext"></typeparam>
         /// <returns>下个管道的追加器</returns>
-        BaseSinglePipe<TNextInContext, NextOutContext> Append<NextOutContext>(BaseSinglePipe<TNextInContext, NextOutContext> nextPipe)
-            where NextOutContext : IPipeContext;
+        BaseSinglePipe<TNextInContext, NextOutContext> Append<NextOutContext>(
+            BaseSinglePipe<TNextInContext, NextOutContext> nextPipe);
+            //where NextOutContext : IPipeContext;
 
         /// <summary>
         ///   添加网关

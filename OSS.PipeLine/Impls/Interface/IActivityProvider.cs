@@ -20,7 +20,8 @@ namespace OSS.EventFlow.Impls.Interface
     ///  默认活动提供者接口
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public interface IActivityProvider<in TContext> where TContext : IPipeContext
+    public interface IActivityProvider<in TContext>
+        //where TContext : IPipeContext
     {
         /// <summary>
         ///  执行

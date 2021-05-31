@@ -27,7 +27,7 @@ namespace OSS.EventFlow
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BasePipe<TContext>: IPipe
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
 
         /// <summary>
@@ -135,8 +135,8 @@ namespace OSS.EventFlow
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, IPipeAppender<OutContext>
-        where InContext : IPipeContext
-        where OutContext : IPipeContext
+        //where InContext : IPipeContext
+        //where OutContext : IPipeContext
     {
         internal BasePipe<OutContext> NextPipe { get; set; }
         
@@ -164,7 +164,7 @@ namespace OSS.EventFlow
         /// <param name="nextPipe"></param>
         /// <returns>返回下个管道的追加器</returns>
         public BaseSinglePipe<OutContext, NextOutContext> Append<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            where NextOutContext : IPipeContext
+            //where NextOutContext : IPipeContext
         {
             InterAppend(nextPipe);
             return nextPipe;
@@ -191,7 +191,7 @@ namespace OSS.EventFlow
         /// </summary>
         /// <param name="nextPipe"></param>
         internal virtual void InterAppend<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            where NextOutContext : IPipeContext
+            //where NextOutContext : IPipeContext
         {
             NextPipe = nextPipe;
         }
@@ -245,9 +245,9 @@ namespace OSS.EventFlow
         public static IPipeAppender<NextOutContext> AppendConvert<InContext, OutContext, NextOutContext>(
             this BaseSinglePipe<InContext, OutContext> pipe,
             Func<OutContext, NextOutContext> convertFunc)
-            where InContext : IPipeContext
-            where OutContext : IPipeContext
-            where NextOutContext : IPipeContext
+            //where InContext : IPipeContext
+            //where OutContext : IPipeContext
+            //where NextOutContext : IPipeContext
         {
             var connector = new DefaultConnector<OutContext, NextOutContext>(convertFunc);
             pipe.InterAppend(connector);

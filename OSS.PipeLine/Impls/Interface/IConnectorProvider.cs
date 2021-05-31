@@ -23,8 +23,8 @@ namespace OSS.EventFlow.Impls.Interface
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public interface IConnectorProvider<in InContext, out OutContext>
-        where InContext : IPipeContext
-        where OutContext : IPipeContext
+        //where InContext : IPipeContext
+        //where OutContext : IPipeContext
     {
         /// <summary>
         ///  连接消息体的转换功能

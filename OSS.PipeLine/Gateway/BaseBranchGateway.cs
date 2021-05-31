@@ -27,7 +27,7 @@ namespace OSS.EventFlow.Gateway
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBranchGateway<TContext> : BasePipe<TContext>
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -67,7 +67,7 @@ namespace OSS.EventFlow.Gateway
         /// <param name="branchPipe"></param>
         public BaseSinglePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(
             BaseSinglePipe<TContext, NextOutContext> branchPipe)
-            where NextOutContext : IPipeContext
+            //where NextOutContext : IPipeContext
         {
             if (branchPipe == null)
             {
@@ -127,8 +127,8 @@ namespace OSS.EventFlow.Gateway
         /// <returns></returns>
         public static BaseSinglePipe<TContext, NextOutContext> AddConvertBranchPipe<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
-            where NextOutContext : IPipeContext
-            where TContext : IPipeContext
+            //where NextOutContext : IPipeContext
+            //where TContext : IPipeContext
         {
             var nextConverter = new DefaultConnector<TContext, NextOutContext>(convertFunc);
             return gateway.AddBranchPipe(nextConverter);

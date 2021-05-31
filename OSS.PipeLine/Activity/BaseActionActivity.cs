@@ -22,18 +22,26 @@ namespace OSS.EventFlow.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseActionActivity<TContext, TResult> : BaseSinglePipe<TContext, TContext>
-        where TContext : IPipeContext
+    public abstract class BaseFuncActivity<TContext, TResult> : BaseSinglePipe<TContext, TContext>
     {
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseActionActivity() : base(PipeType.ActionActivity)
+        protected BaseFuncActivity() : base(PipeType.FuncActivity)
         {
         }
+        
+
+
+
+        internal override Task<bool> InterHandling(TContext context)
+        {
+            return Notice(context);
+        }
+
 
         /// <summary>
-        ///  Action具体执行子类扩展方法
+        ///  具体执行扩展方法
         /// </summary>
         /// <param name="data"></param>
         /// <param name="isBlocked"></param>
@@ -57,7 +65,7 @@ namespace OSS.EventFlow.Activity
             await ToNextThrough(data);
             return res;
         }
-
+        
         /// <summary>
         ///  消息进入通知
         /// </summary>
@@ -67,10 +75,62 @@ namespace OSS.EventFlow.Activity
         {
             return Task.FromResult(true);
         }
+    
+    }
+
+
+    public abstract class BaseEffectFuncActivity<TContext, TResult> : BaseSinglePipe<TContext, TResult>
+    {
+        /// <summary>
+        /// 外部Action活动基类
+        /// </summary>
+        protected BaseEffectFuncActivity() : base(PipeType.FuncEffectActivity)
+        {
+        }
+   
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="isBlocked"></param>
+        /// <returns></returns>
+        protected abstract Task<TResult> Executing(TContext data, out bool isBlocked);
+
+
+
 
         internal override Task<bool> InterHandling(TContext context)
         {
             return Notice(context);
+        }
+
+
+        /// <summary>
+        ///  Action执行方法
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public async Task<TResult> Action(TContext data)
+        {
+            var res = await Executing(data, out var isBlocked);
+            if (isBlocked)
+            {
+                await Block(data);
+                return res;
+            }
+
+            await ToNextThrough(res);
+            return res;
+        }
+
+        /// <summary>
+        ///  消息进入通知
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public virtual Task<bool> Notice(TContext data)
+        {
+            return Task.FromResult(true);
         }
     }
 }

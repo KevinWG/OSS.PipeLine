@@ -22,7 +22,7 @@ namespace OSS.EventFlow.Impls.Interface
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
     public interface IActionActivityProvider<in TContext, TResult>
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
         /// <summary>
         /// 执行活动
@@ -37,7 +37,7 @@ namespace OSS.EventFlow.Impls.Interface
 
     /// <inheritdoc />
     public interface IActionActivityWithNoticeProvider<in TContext, TResult> :IActionActivityProvider< TContext, TResult>
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
         /// <summary>
         ///  消息进入通知

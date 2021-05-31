@@ -11,9 +11,19 @@
         Activity = 100,
 
         /// <summary>
+        ///  直接活动
+        /// </summary>
+        EffectActivity = 110,
+
+        /// <summary>
         ///   独立Action活动
         /// </summary>
-        ActionActivity = 110,
+        FuncActivity = 120,
+
+        /// <summary>
+        ///   独立Action活动
+        /// </summary>
+        FuncEffectActivity = 130,
 
 
         /// <summary>

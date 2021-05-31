@@ -10,7 +10,7 @@ namespace OSS.EventFlow.Impls
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public class DefaultActivity<TContext> : BaseActivity<TContext>
-        where TContext : IPipeContext
+        //where TContext : IPipeContext
     {
         private readonly IActivityProvider<TContext> _provider;
 

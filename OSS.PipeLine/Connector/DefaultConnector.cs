@@ -9,8 +9,8 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public class DefaultConnector<InContext, OutContext> : BaseConnector<InContext, OutContext>
-        where InContext : IPipeContext
-        where OutContext : IPipeContext
+        //where InContext : IPipeContext
+        //where OutContext : IPipeContext
     {
         private readonly Func<InContext, OutContext> _convert;
         /// <inheritdoc/>

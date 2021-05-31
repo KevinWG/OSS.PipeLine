@@ -13,12 +13,12 @@
 
 namespace OSS.EventFlow.Mos
 {
-    /// <summary>
-    ///  
-    /// </summary>
-    public interface IPipeContext
-    {
+    ///// <summary>
+    /////  
+    ///// </summary>
+    //public interface IPipeContext
+    //{
 
-    }
+    //}
     
 }

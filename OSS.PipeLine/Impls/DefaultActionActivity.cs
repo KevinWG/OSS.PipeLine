@@ -10,8 +10,8 @@ namespace OSS.EventFlow.Impls
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public class DefaultActionActivity<TContext, TResult> : BaseActionActivity<TContext, TResult>
-        where TContext : IPipeContext
+    public class DefaultActionActivity<TContext, TResult> : BaseFuncActivity<TContext, TResult>
+        //where TContext : IPipeContext
     {
         private readonly IActionActivityProvider<TContext, TResult> _provider;
 
