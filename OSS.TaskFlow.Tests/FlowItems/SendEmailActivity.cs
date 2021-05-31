@@ -10,7 +10,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public SendEmailActivity()
         {
-                pipe_code = "SendEmailActivity";
+                PipeCode = "SendEmailActivity";
         }
 
         protected override Task<bool> Executing(SendEmailContext data)
@@ -28,7 +28,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public PayEmailConnector()
         {
-                pipe_code = "PayEmailConnector";
+                PipeCode = "PayEmailConnector";
         }
 
         protected override SendEmailContext Convert(PayContext inContextData)

@@ -20,18 +20,5 @@ namespace OSS.EventFlow.Mos
     {
 
     }
-
-    /// <inheritdoc />
-    public abstract class PipeContext<IdType>: IPipeContext
-    {
-        /// <summary>
-        ///  id 编号
-        /// </summary>
-        public IdType id
-        {
-            get;
-            set;
-        }
-    }
-
+    
 }

@@ -10,7 +10,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
         public ApplyActivity()
         {
 
-            pipe_code = "ApplyActivity";
+            PipeCode = "ApplyActivity";
 
         }
 

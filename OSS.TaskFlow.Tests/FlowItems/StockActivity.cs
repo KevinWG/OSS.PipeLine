@@ -10,7 +10,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public StockActivity()
         {
-                pipe_code = "StockActivity";
+                PipeCode = "StockActivity";
         }
 
         protected override Task<bool> Executing(StockContext data)
@@ -29,7 +29,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public StockConnector()
         {
-                pipe_code = "StockConnector";
+                PipeCode = "StockConnector";
         }
 
         protected override StockContext Convert(PayContext inContextData)

@@ -40,7 +40,7 @@ namespace OSS.EventFlow.Connector
         /// <returns></returns>
         protected abstract OutContext Convert(InContext inContextData);
 
-        internal override async Task<bool> Handling(InContext context)
+        internal override async Task<bool> InterHandling(InContext context)
         {
             var outContext = Convert(context);
             await ToNextThrough(outContext);

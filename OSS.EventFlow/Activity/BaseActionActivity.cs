@@ -28,7 +28,7 @@ namespace OSS.EventFlow.Activity
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseActionActivity() : base(PipeType.Activity)
+        protected BaseActionActivity() : base(PipeType.ActionActivity)
         {
         }
 
@@ -68,7 +68,7 @@ namespace OSS.EventFlow.Activity
             return Task.FromResult(true);
         }
 
-        internal override Task<bool> Handling(TContext context)
+        internal override Task<bool> InterHandling(TContext context)
         {
             return Notice(context);
         }

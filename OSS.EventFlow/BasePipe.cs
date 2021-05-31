@@ -12,6 +12,7 @@
 #endregion
 
 using System;
+using System.Text;
 using System.Threading.Tasks;
 using OSS.EventFlow.Connector;
 using OSS.EventFlow.Gateway;
@@ -28,29 +29,41 @@ namespace OSS.EventFlow
     public abstract class BasePipe<TContext>: IPipe
         where TContext : IPipeContext
     {
+
         /// <summary>
         ///  管道类型
         /// </summary>
-        public PipeType pipe_type { get; internal set; }
+        public PipeType PipeType { get; internal set; }
 
         /// <summary>
         ///  管道编码
         /// </summary>
-        public string pipe_code { get; set; }
+        public string PipeCode { get; set; }
 
-        // 内部异步处理入口
-        private readonly IStackPusher<TContext> _pusher ;
-        
+        /// <summary>
+        ///  流容器
+        /// </summary>
+        protected IPipe FlowContainer { get; set; }
+
+
+
+
         /// <summary>
         /// 构造函数
         /// </summary>
         /// <param name="pipeType"></param>
         protected BasePipe(PipeType pipeType)
         {
-            pipe_type = pipeType;
-            _pusher   = DataStackFactory.CreateStack<TContext>(StackPopCaller, "OSS.EventFlow");
+            PipeType = pipeType;
+            _pusher  = DataStackFactory.CreateStack<TContext>(StackPopCaller, "OSS.EventTask");
         }
 
+
+        #region 流体启动和异步处理逻辑
+
+        // 内部异步处理入口
+        private readonly IStackPusher<TContext> _pusher ;
+        
         /// <summary>
         /// 启动方法
         /// </summary>
@@ -63,24 +76,18 @@ namespace OSS.EventFlow
 
         private async Task<bool> StackPopCaller(TContext context)
         {
-            var res = await Handling(context);
+            var res = await InterHandling(context);
             if (!res)
             {
                 await Block(context);
             }
-
             return true;
         }
-   
+        
+        #endregion
+
 
         #region 实际管道扩展处理方法
-        
-        /// <summary>
-        ///  管道通过方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal abstract Task<bool> Handling(TContext context);
 
         /// <summary>
         ///  管道堵塞
@@ -93,8 +100,31 @@ namespace OSS.EventFlow
         }
 
         #endregion
-        
-        internal abstract string InterToRoute(string endPipeCode);
+
+
+        #region 内部扩散方法
+
+        /// <summary>
+        ///  管道处理实际业务流动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal abstract Task<bool> InterHandling(TContext context);
+
+
+        /// <summary>
+        ///  内部处理流容器初始化赋值
+        /// </summary>
+        /// <param name="containerFlow"></param>
+        internal abstract void InterInitialContainer(IFlow containerFlow);
+
+        /// <summary>
+        ///  内部处理流的路由信息
+        /// </summary>
+        /// <returns></returns>
+        internal abstract PipeRoute InterToRoute();
+
+        #endregion
 
     }
 
@@ -116,6 +146,7 @@ namespace OSS.EventFlow
         /// <param name="pipeType"></param>
         protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
         {
+            PipeCode = GetType().Name;
         }
 
         internal Task<bool> ToNextThrough(OutContext nextInContext)
@@ -123,15 +154,8 @@ namespace OSS.EventFlow
             return NextPipe != null ? NextPipe.Start(nextInContext) : Task.FromResult(false);
         }
 
-        /// <summary>
-        ///  添加下个管道
-        /// </summary>
-        /// <param name="nextPipe"></param>
-        internal virtual void InterAppend<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            where NextOutContext : IPipeContext
-        {
-            NextPipe = nextPipe;
-        }
+
+        #region 管道连接处理
 
         /// <summary>
         /// 添加下个管道
@@ -157,18 +181,48 @@ namespace OSS.EventFlow
         }
 
 
-        #region MyRegion
+        #endregion
 
 
-        internal override string InterToRoute(string endPipeCode)
+        #region 内部扩散方法
+
+        /// <summary>
+        ///  添加下个管道
+        /// </summary>
+        /// <param name="nextPipe"></param>
+        internal virtual void InterAppend<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
+            where NextOutContext : IPipeContext
         {
-            return $"{{ \"pipe_code\":\"{pipe_code}\"" +
-                   ",\"pipe_type\":" + (int)pipe_type + (
-                       (pipe_code == endPipeCode || NextPipe == null)
-                           ? string.Empty
-                           : $",\"next\":{NextPipe.InterToRoute(endPipeCode)}") +
-                   "}";
+            NextPipe = nextPipe;
         }
+
+        internal override void InterInitialContainer(IFlow flowContainer)
+        {
+            FlowContainer = flowContainer;
+            if (this.Equals(flowContainer.EndPipe))
+                return;
+            
+            if (NextPipe == null)
+                throw new ArgumentNullException(nameof(NextPipe), $"Flow({flowContainer.PipeCode})需要有明确的EndPipe，且所有的分支路径最终需到达此EndPipe");
+            
+            NextPipe.InterInitialContainer(flowContainer);
+        }
+
+        internal override PipeRoute InterToRoute()
+        {
+            var pipe = new PipeRoute()
+            {
+                pipe_code = PipeCode,
+                pipe_type = PipeType
+            };
+  
+            if (NextPipe != null)
+            {
+                pipe.next = NextPipe.InterToRoute();
+            }
+            return pipe;
+        }
+
         #endregion
 
     }

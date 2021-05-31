@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 using OSS.EventFlow.Activity;
-using OSS.EventFlow.Connector;
-using OSS.EventFlow.Mos;
 using OSS.Tools.Log;
 
 namespace OSS.TaskFlow.Tests.FlowItems
@@ -10,8 +8,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public PayActivity()
         {
-         
-                pipe_code = "PayActivity";
+            PipeCode = "PayActivity";
         }
 
         protected override Task<bool> Executing(PayContext data)

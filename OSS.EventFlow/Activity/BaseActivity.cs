@@ -37,15 +37,39 @@ namespace OSS.EventFlow.Activity
         /// <returns></returns>
         protected abstract Task<bool> Executing(TContext data);
 
-        internal override async Task<bool> Handling(TContext context)
+        internal override async Task<bool> InterHandling(TContext context)
         {
             var eRes = await Executing(context);
             if (eRes)
             {
                 await ToNextThrough(context);
             }
-
             return eRes;
         }
     }
+
+
+
+    /// <summary>
+    ///  空上下文
+    /// </summary>
+    public class EmptyContext : IPipeContext
+    {
+
+    }
+
+    /// <summary>
+    /// 空活动
+    /// </summary>
+    public class EmptyActivity : BaseActivity<EmptyContext>
+    {
+        protected override Task<bool> Executing(EmptyContext data)
+        {
+            return Task.FromResult(true);
+        }
+    }
+
+
+ 
+
 }

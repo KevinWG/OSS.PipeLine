@@ -28,7 +28,7 @@ namespace OSS.EventFlow.Gateway
         /// <summary>
         ///  流体的多路聚合网关基类构造函数
         /// </summary>
-        protected BaseAggregateGateway() : base(PipeType.Gateway)
+        protected BaseAggregateGateway() : base(PipeType.AggregateGateway)
         {
         }
 
@@ -41,7 +41,7 @@ namespace OSS.EventFlow.Gateway
         protected abstract Task<bool> IfMatchCondition(TContext context, out bool isBlocked);
 
 
-        internal override async Task<bool> Handling(TContext context)
+        internal override async Task<bool> InterHandling(TContext context)
         {
             var throughRes = await IfMatchCondition(context, out var isBlocked);
             if (isBlocked)

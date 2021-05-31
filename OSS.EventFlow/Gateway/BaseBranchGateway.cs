@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OSS.EventFlow.Connector;
+using OSS.EventFlow.Interface;
 using OSS.EventFlow.Mos;
 
 namespace OSS.EventFlow.Gateway
@@ -31,11 +32,11 @@ namespace OSS.EventFlow.Gateway
         /// <summary>
         ///  流体的分支网关基类
         /// </summary>
-        protected BaseBranchGateway() : base(PipeType.Gateway)
+        protected BaseBranchGateway() : base(PipeType.BranchGateway)
         {
         }
 
-        internal override async Task<bool> Handling(TContext context)
+        internal override async Task<bool> InterHandling(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
@@ -73,28 +74,42 @@ namespace OSS.EventFlow.Gateway
                 throw new ArgumentNullException(nameof(branchPipe), " 不能为空！");
             }
 
-            _branchItems ??= new List<BasePipe<TContext>>();
+            if (_branchItems==null)
+            {
+                _branchItems = new List<BasePipe<TContext>>();
+            }
+           
             _branchItems.Add(branchPipe);
-
             return branchPipe;
         }
-
-
-        internal override string InterToRoute(string endPipeCode)
+        
+        #region 内部扩散方法
+        
+        internal override void InterInitialContainer(IFlow flowContainer)
         {
-            var jsonBuilder = new StringBuilder();
-
-            jsonBuilder.Append("{ \"pipe_code\":\"").Append(pipe_code).Append("\"")
-            .Append(",\"pipe_type\":").Append((int) pipe_type)
-            .Append(",\"nexts\":[");
+            FlowContainer = flowContainer;
+            if (_branchItems == null|| !_branchItems.Any())
+            {
+                throw new ArgumentNullException($"分支网关({PipeCode})并没有分支路径");
+            }
+            _branchItems.ForEach(b=>b.InterInitialContainer(flowContainer));
+        }
+        
+        internal override PipeRoute InterToRoute()
+        {
+            var pipe = new PipeRoute()
+            {
+                pipe_code = PipeCode,
+                pipe_type = PipeType
+            };
             if (_branchItems.Any())
             {
-                jsonBuilder.Append(string.Join(",", _branchItems.Select(bp => bp.InterToRoute(endPipeCode))));
+                pipe.nexts = _branchItems.Select(bp => bp.InterToRoute()).ToList();
             }
-            jsonBuilder.Append("]}");
-
-            return jsonBuilder.ToString();
+            return pipe;
         }
+
+        #endregion
     }
 
     /// <summary>

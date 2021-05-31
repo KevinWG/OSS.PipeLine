@@ -23,11 +23,27 @@ namespace OSS.EventFlow.Interface
         /// <summary>
         ///  管道类型
         /// </summary>
-        PipeType pipe_type { get; }
+        PipeType PipeType { get; }
 
         /// <summary>
         ///  管道编码
         /// </summary>
-        public string pipe_code { get; set; }
+        public string PipeCode { get; set; }
     }
+
+    /// <summary>
+    ///  管道基础接口
+    /// </summary>
+    public interface IFlow: IPipe
+    {
+        /// <summary>
+        ///  开始管道
+        /// </summary>
+        public IPipe StartPipe { get; }
+        /// <summary>
+        ///  结束管道
+        /// </summary>
+        public IPipe EndPipe { get; }
+    }
+
 }

@@ -6,23 +6,36 @@
     public enum PipeType
     {
         /// <summary>
-        ///  网关
+        ///  直接活动
         /// </summary>
-        Gateway,
+        Activity = 100,
 
         /// <summary>
-        /// 活动
+        ///   独立Action活动
         /// </summary>
-        Activity,
+        ActionActivity = 110,
+
+
+        /// <summary>
+        ///  聚合网关
+        /// </summary>
+        AggregateGateway =200,
+
+        /// <summary>
+        ///  分支网关
+        /// </summary>
+        BranchGateway=210,
+        
 
         /// <summary>
         ///  连接通道
         /// </summary>
-        Connector,
+        Connector = 300,
+
 
         /// <summary>
-        /// 组合流
+        /// 组合管道
         /// </summary>
-        Flow
+        Flow = 1000
     }
 }
