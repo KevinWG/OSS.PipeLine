@@ -1,4 +1,4 @@
-# OSS事件流(OSS.EventFlow)
+# OSS事件流(OSS.PipeLine)
 
 以BPMN 2.0 流程管理为思路，设计的轻量级业务生命周期流程引擎基础框架，
 将业务领域对象的流程管控和事件功能抽象剥离，切断事件功能方法内的链式调用，提权至流程引擎统一协调管控，
@@ -6,7 +6,9 @@
 由此流程的衔接变成可独立编程的部分，同时向上层提供业务动作的独立扩展，保证业务单元的绝对独立和可复用性，
 目的是可以像搭积木一样来完成不同功能代码的集成，系统向真正的低代码平台过渡。
 
+
 如果将整个业务流当做一个流程管道，结合流程流转的特性，此引擎抽象了三个核心管道组件：
+（得益于 OSS.Tools.DataStack 的消息异构堆栈实现，所有组件之间的流动以消息触发的方式独立于组件内部异步执行，触发来源可以方便的修改为队列或数据库）
     
 1. 事件活动组件
     这个组件主要是处理任务的具体内容，如发送短信，执行下单，扣减库存等实际业务操作
@@ -39,18 +41,11 @@
     此组件将业务分流处理，定义流体时通过AddBranchPipe添加多个分支，至于如何分流，只需要继承此基类重写FilterNextPipes方法即可，你也可以在此之上实现BPMN中的几种网关类型（并行，排他，和包含）。
 
 ## 三. 连接器组件
-此组件主要负责消息的传递和转化处理，在消息的传递过程中又支持直接传递和异步缓冲（IBufferTunnel）传递，根据是否需要转化，或者异步定义三个基类如下：
+此组件主要负责消息的传递和转化处理，根据是否需要转化，或者异步定义三个基类如下：
 
 1. BaseConnector<InContext, OutContext> - 转化连接组件
     业务流经过此组件，直接执行Convert方法（需重写），转化成对应的下个组件执行参数，自动进入下个组件。
 
-2. BaseBufferConnector<TContext> - 异步缓冲连接组件，继承IBufferTunnel接口
-    继承此组件后，必须重写Push方法，实现异步缓冲保存的处理，业务流进入此组件后，调用Push方法保存，之后业务流动停止，
-    消息唤醒时，需显式调用Pop方法，业务流继续向后执行
-
-3. BaseBufferConnector<InContext, OutContext> - 异步缓冲+转化 连接组件
-    继承此组件后，必须重写Push，Convert方法，实现异步缓冲保存和转化的处理，业务流进入此组件后，同样调用Push方法保存，之后业务流动停止，
-    消息唤醒时，需显式调用Pop方法（内部调用Convert方法，完成参数转化），业务流继续向后执行
         
 ## 四. 简单示例场景
 首先我们假设当前有一个进货管理的场景，需经历  进货申请，申请审批，购买支付，入库（同时邮件通知申请人） 几个环节，每个环节表示一个事件活动，比如申请活动我们定义如下：
@@ -102,6 +97,9 @@
 通过以上，申购流程的组件定义完毕，串联使用如下（这里是单元测试类，实际业务我们可以创建一个Service处理）：
 
 ```csharp
+    [TestClass]
+    public class BuyFlowTests
+    {
         public readonly ApplyActivity ApplyActivity = new ApplyActivity();
         public readonly AuditActivity AuditActivity = new AuditActivity();
 
@@ -115,9 +113,13 @@
         public readonly PayEmailConnector EmailConnector = new PayEmailConnector();
         public readonly SendEmailActivity EmailActivity  = new SendEmailActivity();
 
-          //  构造函数内定义流体关联
+
+        public readonly PipeLine<ApplyContext, EmptyContext> Flow;
+        //  构造函数内定义流体关联
         public BuyFlowTests()
         {
+            var endActivity = new EmptyActivity();
+
             ApplyActivity
             .Append(AuditActivity)
             .AppendConvert(applyContext => new PayContext() {id = applyContext.id})// 表达式方式的转化器
@@ -126,23 +128,35 @@
 
             // 网关分支 - 发送邮件分支
             PayGateway.AddBranchPipe(EmailConnector)
-            .Append(EmailActivity);
+            .Append(EmailActivity).AppendConvert(c=>new EmptyContext()).Append(endActivity);
 
             // 网关分支- 入库分支
             PayGateway.AddBranchPipe(StockConnector)
-            .Append(StockActivity);
+            .Append(StockActivity).AppendConvert(c => new EmptyContext()).Append(endActivity); ;
             //.Append(后续事件)
+
+            Flow = ApplyActivity.AsFlowStartAndEndWith(endActivity);
         }
 
 
         [TestMethod]
         public async Task FlowTest()
         {
-            await ApplyActivity.Start(new ApplyContext()
+            await Flow.Start(new ApplyContext()
             {
                 id = "test_business_id"
             });
+            await Task.Delay(2000);
         }
+
+        [TestMethod]
+        public void RouteTest()
+        {
+            var route = Flow.ToRoute();
+          
+            Assert.IsTrue(route!=null);
+        }
+    }
 ```
 运行单元测试，结果如下：
 

@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Description>BPMN 2.0 流程管理</Description>
-    <Version>1.0.1.5</Version>
+    <Description>BPMN 标准的流程业务线管理类库</Description>
+    <Version>1.0</Version>
     <PackageReleaseNotes></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
