@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace OSS.PipeLine.Activity
 {
-  
+
     /// <summary>
-    ///  活动基类
+    ///  主动触发执行活动组件基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext, TContext>
@@ -33,14 +33,18 @@ namespace OSS.PipeLine.Activity
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <param name="contextData"></param>
-        /// <returns></returns>
+        /// <param name="contextData">当前活动上下文信息</param>
+        /// <returns>
+        /// 处理结果
+        /// False - 触发Block，业务流不再向后续管道传递。
+        /// True  - 流体自动流入后续管道
+        /// </returns>
         protected abstract Task<bool> Executing(TContext contextData);
         
         internal override async Task<bool> InterHandling(TContext context)
         {
             var res = await Executing(context);
-            if (res)
+            if (!res)
             {
                 await Block(context);
                 return true;
@@ -68,17 +72,21 @@ namespace OSS.PipeLine.Activity
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <param name="contextData"></param>
-        /// <param name="isBlocked">是否阻塞当前数据流</param>
+        /// <param name="contextData">当前活动上下文信息</param>
+        /// <param name="isOk">
+        /// 处理结果 - 决定是否阻塞当前数据流
+        /// False - 触发Block，业务流不再向后续管道传递。
+        /// True  - 流体自动流入后续管道
+        /// </param>
         /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext contextData, ref bool isBlocked);
+        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
 
         internal override async Task<bool> InterHandling(TContext context)
         {
-            var isBlocked = false;
+            var isOk = false;
 
-            var res = await Executing(context, ref isBlocked);
-            if (isBlocked)
+            var res = await Executing(context, ref isOk);
+            if (!isOk)
             {
                 await Block(context);
                 return true;

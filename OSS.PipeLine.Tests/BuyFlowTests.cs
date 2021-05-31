@@ -61,8 +61,8 @@ namespace OSS.PipeLine.Tests
         [TestMethod]
         public void RouteTest()
         {
+            // 获取当前的路由信息
             var route = PipeLine.ToRoute();
-
             Assert.IsTrue(route != null);
         }
     }

@@ -8,11 +8,8 @@ namespace OSS.PipeLine.Tests.FlowItems
     {
         public ApplyActivity()
         {
-
             PipeCode = "ApplyActivity";
-
         }
-
         protected override Task<bool> Executing(ApplyContext data)
         {
             LogHelper.Info("这里刚才发生了一个采购申请");

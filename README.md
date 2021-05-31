@@ -19,17 +19,68 @@
 3. 连接器组件
     这个组件主要负责其他组件之间的消息传递与转化。
        
-## 一. 事件活动组件
-这个组件就是业务的动作本身，根据任务触发的特性，如关联自动执行，中断触发（如用户触发，或消息队列等），根据这两种情形，提供了两个抽象基类：
+## 一. 事件活动组件 
+这个组件用来实现具体的业务功能逻辑，根据业务功能触发的特性，如关联自动执行，中断触发（像用户触发，或消息队列等），根据 主动/被动 两种情形，提供了两个抽象基类：
 
-1. BaseActivity<TContext> - 直接执行活动组件
+1. BaseActivity<TContext> - 主动触发执行活动组件
     常见如自动审核功能，或者支付成功后自动触发邮件发送等，最简单也是最基本的一种动作处理。 继承此基类，重写Executing方法实现活动内容，同一个流体下实现自动关联执行。
-    如果Executing方法返回False，则触发Block，业务流不再向后续管道传递
-    返回True，则流体自动流入后续管道
+```csharp
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="contextData">当前活动上下文信息</param>
+        /// <returns>
+        /// 处理结果
+        /// False - 触发Block，业务流不再向后续管道传递。
+        /// True  - 流体自动流入后续管道
+        /// </returns>
+        protected abstract Task<bool> Executing(TContext contextData);
+```
+    当多个业务逻辑串联时，可能会出现下游业务活动依赖上游的业务活动执行结果，场景如: 下单成功 ==》 发送确认短信，发送短信需要知道订单id。
+    这种下一个节点受上一个节点结果影响情况，框架提供了一个 BaseEffectActivity<TContext, TResult> 变体基类，其Executing方法的结果将作为下一个活动的上下文信息
+```csharp
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="contextData">当前活动上下文信息</param>
+        /// <param name="isOk">
+        /// 处理结果 - 决定是否阻塞当前数据流
+        /// False - 触发Block，业务流不再向后续管道传递。
+        /// True  - 流体自动流入后续管道
+        /// </param>
+        /// <returns></returns>
+        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
+```
 
-2. BaseActionActivity<TContext, TResult> - 用户触发活动组件
-    继承此基类 ，重写Executing方法（自定义返回结果类型）实现活动内容。 当业务流流入当前组件时，触发调用Notice（虚方法可重写），之后业务流动停止，
-    当用户触发时，显式调用 Action 方法（内部调用Executing返回自定义结果类型），流程继续向后流动执行。
+
+2. BaseFuncActivity<TContext, TResult> -  被动触发执行活动组件（如用户主动点击，或定时任务触发）
+    当业务流流入当前组件时，触发调用Notice（虚方法可重写），之后业务流动停止，被动等待调用节点的 Action 方法，流程继续向后流动执行。
+    继承此基类 ，重写Executing方法（自定义返回结果类型）实现具体业务逻辑内容。
+```csharp
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="contextData">当前活动上下文信息</param>
+        /// <param name="isOk">
+        /// 处理结果 - 决定是否阻塞当前数据流
+        /// False - 触发Block，业务流不再向后续管道传递。
+        /// True  - 流体自动流入后续管道
+        /// </param>
+        /// <returns></returns>
+        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
+
+        /// <summary>
+        ///  消息进入通知
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public virtual Task<bool> Notice(TContext data)
+        {
+            return Task.FromResult(true);
+        }
+```
+    同上，此基类也提供了受影响的变体基类：BaseEffectFuncActivity<TContext, TResult> 
+
 
 ## 二. 网关组件
 此组件主要负责逻辑的规则处理，业务的走向逻辑无非分与合，这里给出两个基类：
@@ -46,6 +97,8 @@
 1. BaseConnector<InContext, OutContext> - 转化连接组件
     业务流经过此组件，直接执行Convert方法（需重写），转化成对应的下个组件执行参数，自动进入下个组件。
 
+
+以上是三个核心的组件部分，任意以上三个组件可以组成PipeLine（流体），PipeLine本身又可以作为一个组件加入到一个更大的流体之中，通过流体的 ToRoute() 方法，可以获取对应的内部组件关联路由信息。
         
 ## 四. 简单示例场景
 首先我们假设当前有一个进货管理的场景，需经历  进货申请，申请审批，购买支付，入库（同时邮件通知申请人） 几个环节，每个环节表示一个事件活动，比如申请活动我们定义如下：
@@ -54,8 +107,7 @@
     {
         protected override Task<bool> Executing(ApplyContext data)
         {
-            // ......
-            LogHelper.Info("这里刚才发生了一个采购申请"); 
+            LogHelper.Info("这里刚才发生了一个采购申请");
             return Task.FromResult(true);
         }
     }
@@ -70,11 +122,10 @@
 ```
 以上五个事件活动，其具体实现和参数完全独立，同时因为购买支付后邮件和入库是相互独立的事件，定义分支网关做分流（规则）处理，代码如下：
 ```csharp
-    public class PayGateway:BaseBranchGateway<PayContext>
+    public class PayGateway : BaseBranchGateway<PayContext>
     {
         protected override IEnumerable<BasePipe<PayContext>> FilterNextPipes(List<BasePipe<PayContext>> branchItems, PayContext context)
         {
-            // ......
             LogHelper.Info("这里进行支付通过后的分流");
             return branchItems;
         }
@@ -108,41 +159,42 @@
         public readonly PayGateway PayGateway = new PayGateway();
 
         public readonly StockConnector StockConnector = new StockConnector();
-        public readonly StockActivity  StockActivity  = new StockActivity();
+        public readonly StockActivity StockActivity = new StockActivity();
 
         public readonly PayEmailConnector EmailConnector = new PayEmailConnector();
-        public readonly SendEmailActivity EmailActivity  = new SendEmailActivity();
+        public readonly SendEmailActivity EmailActivity = new SendEmailActivity();
 
 
-        public readonly PipeLine<ApplyContext, EmptyContext> Flow;
+        public readonly PipeLine<ApplyContext, bool> PipeLine;
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
-            var endActivity = new EmptyActivity();
+            var endActivity = new EmptyActivity<bool>();
 
             ApplyActivity
             .Append(AuditActivity)
-            .AppendConvert(applyContext => new PayContext() {id = applyContext.id})// 表达式方式的转化器
+            .AppendConvert(applyContext => new PayContext() { id = applyContext.id })// 表达式方式的转化器
             .Append(PayActivity)
             .Append(PayGateway);
 
             // 网关分支 - 发送邮件分支
             PayGateway.AddBranchPipe(EmailConnector)
-            .Append(EmailActivity).AppendConvert(c=>new EmptyContext()).Append(endActivity);
+            .Append(EmailActivity).Append(endActivity);
 
             // 网关分支- 入库分支
             PayGateway.AddBranchPipe(StockConnector)
-            .Append(StockActivity).AppendConvert(c => new EmptyContext()).Append(endActivity); ;
+            .Append(StockActivity).Append(endActivity); 
             //.Append(后续事件)
 
-            Flow = ApplyActivity.AsFlowStartAndEndWith(endActivity);
+            // 流体对象
+            PipeLine = ApplyActivity.AsFlowStartAndEndWith(endActivity);
         }
 
 
         [TestMethod]
         public async Task FlowTest()
         {
-            await Flow.Start(new ApplyContext()
+            await PipeLine.Start(new ApplyContext()
             {
                 id = "test_business_id"
             });
@@ -152,9 +204,9 @@
         [TestMethod]
         public void RouteTest()
         {
-            var route = Flow.ToRoute();
-          
-            Assert.IsTrue(route!=null);
+            var route = PipeLine.ToRoute();
+
+            Assert.IsTrue(route != null);
         }
     }
 ```

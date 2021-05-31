@@ -10,7 +10,6 @@ namespace OSS.PipeLine.Tests.FlowItems
         {
             PipeCode = "PayGateway";
         }
-
         protected override IEnumerable<BasePipe<PayContext>> FilterNextPipes(List<BasePipe<PayContext>> branchItems, PayContext context)
         {
             LogHelper.Info("这里进行支付通过后的分流");

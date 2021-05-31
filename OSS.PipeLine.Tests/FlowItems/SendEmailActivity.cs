@@ -29,7 +29,6 @@ namespace OSS.PipeLine.Tests.FlowItems
         {
             PipeCode = "PayEmailConnector";
         }
-
         protected override SendEmailContext Convert(PayContext inContextData)
         {
             // ......

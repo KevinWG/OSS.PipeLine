@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 namespace OSS.PipeLine.Activity
 {
     /// <summary>
-    /// 外部委托处理活动基类
+    ///  被动触发执行活动组件基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -35,16 +35,6 @@ namespace OSS.PipeLine.Activity
         {
             return Notice(context);
         }
-
-
-        /// <summary>
-        ///  具体执行扩展方法
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="isBlocked"></param>
-        /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext data, ref bool isBlocked);
-
         /// <summary>
         ///  Action执行方法
         /// </summary>
@@ -52,10 +42,10 @@ namespace OSS.PipeLine.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var isBlocked = false;
+            var isOK = false;
 
-            var res = await Executing(data, ref isBlocked);
-            if (isBlocked)
+            var res = await Executing(data, ref isOK);
+            if (!isOK)
             {
                 await Block(data);
                 return res;
@@ -65,6 +55,18 @@ namespace OSS.PipeLine.Activity
             return res;
         }
 
+
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="contextData">当前活动上下文信息</param>
+        /// <param name="isOk">
+        /// 处理结果 - 决定是否阻塞当前数据流
+        /// False - 触发Block，业务流不再向后续管道传递。
+        /// True  - 流体自动流入后续管道
+        /// </param>
+        /// <returns></returns>
+        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
         /// <summary>
         ///  消息进入通知
         /// </summary>
@@ -74,7 +76,6 @@ namespace OSS.PipeLine.Activity
         {
             return Task.FromResult(true);
         }
-
     }
 
 
@@ -87,17 +88,7 @@ namespace OSS.PipeLine.Activity
         protected BaseEffectFuncActivity() : base(PipeType.FuncEffectActivity)
         {
         }
-
-        /// <summary>
-        ///  具体执行扩展方法
-        /// </summary>
-        /// <param name="data"></param>
-        /// <param name="isBlocked"></param>
-        /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext data, ref bool isBlocked);
-
-
-
+        
 
         internal override Task<bool> InterHandling(TContext context)
         {
@@ -112,10 +103,10 @@ namespace OSS.PipeLine.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var isBlocked = false;
+            var isOK = false;
 
-            var res= await Executing(data, ref isBlocked);
-            if (isBlocked)
+            var res = await Executing(data, ref isOK);
+            if (!isOK)
             {
                 await Block(data);
                 return res;
@@ -124,6 +115,20 @@ namespace OSS.PipeLine.Activity
             await ToNextThrough(res);
             return res;
         }
+
+
+
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="contextData">当前活动上下文信息</param>
+        /// <param name="isOk">
+        /// 处理结果 - 决定是否阻塞当前数据流
+        /// False - 触发Block，业务流不再向后续管道传递。
+        /// True  - 流体自动流入后续管道
+        /// </param>
+        /// <returns></returns>
+        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
 
         /// <summary>
         ///  消息进入通知
