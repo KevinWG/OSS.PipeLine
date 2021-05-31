@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OSS.EventFlow\OSS.EventFlow.csproj" />
+    <ProjectReference Include="..\OSS.PipeLine\OSS.PipeLine.csproj" />
   </ItemGroup>
 
 </Project>
