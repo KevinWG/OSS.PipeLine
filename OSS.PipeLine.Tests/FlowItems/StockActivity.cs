@@ -1,19 +1,18 @@
-﻿using System.Threading.Tasks;
-using OSS.EventFlow.Activity;
-using OSS.EventFlow.Connector;
-using OSS.EventFlow.Mos;
+﻿using OSS.PipeLine.Activity;
+using OSS.PipeLine.Connector;
 using OSS.Tools.Log;
+using System.Threading.Tasks;
 
-namespace OSS.TaskFlow.Tests.FlowItems
+namespace OSS.PipeLine.Tests.FlowItems
 {
-    public class StockActivity : BaseActivity<StockContext>
+    public class StockActivity : BaseEffectActivity<StockContext,bool>
     {
         public StockActivity()
         {
-                PipeCode = "StockActivity";
+            PipeCode = "StockActivity";
         }
-
-        protected override Task<bool> Executing(StockContext data)
+        
+        protected override Task<bool> Executing(StockContext contextData, ref bool isBlocked)
         {
             LogHelper.Info("分流-2.库存保存");
             return Task.FromResult(true);
@@ -29,7 +28,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public StockConnector()
         {
-                PipeCode = "StockConnector";
+            PipeCode = "StockConnector";
         }
 
         protected override StockContext Convert(PayContext inContextData)

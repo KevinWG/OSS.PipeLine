@@ -1,16 +1,15 @@
-﻿using System.Threading.Tasks;
-using OSS.EventFlow.Activity;
-using OSS.EventFlow.Impls.Interface;
-using OSS.EventFlow.Mos;
+﻿using OSS.PipeLine.Activity;
+using OSS.PipeLine.Impls.Interface;
+using System.Threading.Tasks;
 
-namespace OSS.EventFlow.Impls
+namespace OSS.PipeLine.Impls
 {
     /// <summary>
     /// 活动基类 的默认实现
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public class DefaultActivity<TContext> : BaseActivity<TContext>
-        //where TContext : IPipeContext
+    //where TContext : IPipeContext
     {
         private readonly IActivityProvider<TContext> _provider;
 

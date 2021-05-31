@@ -12,10 +12,10 @@
 
 #endregion
 
+using OSS.PipeLine.Mos;
 using System.Threading.Tasks;
-using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Gateway
+namespace OSS.PipeLine.Gateway
 {
     /// <summary>
     /// 流体的多路聚合网关基类
@@ -23,7 +23,7 @@ namespace OSS.EventFlow.Gateway
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseAggregateGateway<TContext> : BaseSinglePipe<TContext, TContext>
-        //where TContext : IPipeContext
+    //where TContext : IPipeContext
     {
         /// <summary>
         ///  流体的多路聚合网关基类构造函数

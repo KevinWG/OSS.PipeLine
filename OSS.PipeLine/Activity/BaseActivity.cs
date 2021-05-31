@@ -11,11 +11,12 @@
 
 #endregion
 
+using OSS.PipeLine.Mos;
 using System.Threading.Tasks;
-using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Activity
+namespace OSS.PipeLine.Activity
 {
+  
     /// <summary>
     ///  活动基类
     /// </summary>
@@ -28,34 +29,33 @@ namespace OSS.EventFlow.Activity
         protected BaseActivity() : base(PipeType.Activity)
         {
         }
-        
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="contextData"></param>
         /// <returns></returns>
-        protected abstract Task<bool> Executing(TContext data);
-
-
+        protected abstract Task<bool> Executing(TContext contextData);
+        
         internal override async Task<bool> InterHandling(TContext context)
         {
             var res = await Executing(context);
             if (res)
             {
                 await Block(context);
-                return res;
+                return true;
             }
 
             await ToNextThrough(context);
-            return res;
+            return false;
         }
     }
-
 
     /// <summary>
     ///  活动基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TResult"></typeparam>
     public abstract class BaseEffectActivity<TContext, TResult> : BaseSinglePipe<TContext, TResult>
     {
         /// <summary>
@@ -65,55 +65,45 @@ namespace OSS.EventFlow.Activity
         {
         }
 
-
-        protected BaseEffectActivity(PipeType type) : base(type)
-        {
-        }
-
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="isBlocked"></param>
+        /// <param name="contextData"></param>
+        /// <param name="isBlocked">是否阻塞当前数据流</param>
         /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext data, out bool isBlocked);
-
+        protected abstract Task<TResult> Executing(TContext contextData, ref bool isBlocked);
 
         internal override async Task<bool> InterHandling(TContext context)
         {
-            var res= await Executing(context, out var isBlocked);
+            var isBlocked = false;
+
+            var res = await Executing(context, ref isBlocked);
             if (isBlocked)
             {
                 await Block(context);
-                return isBlocked;
+                return true;
             }
 
             await ToNextThrough(res);
-            return isBlocked;
+            return false;
         }
-    }
-
-
-    /// <summary>
-    ///  空上下文
-    /// </summary>
-    public class EmptyContext //: IPipeContext
-    {
-
     }
 
     /// <summary>
     /// 空活动
     /// </summary>
-    public class EmptyActivity : BaseActivity<EmptyContext>
+    public class EmptyActivity<TContext> : BaseActivity<TContext>
     {
-        protected override Task<bool> Executing(EmptyContext data)
+        /// <summary>
+        ///  执行空操作
+        /// </summary>
+        /// <param name="contextData"></param>
+        /// <returns></returns>
+        protected override Task<bool> Executing(TContext contextData)
         {
             return Task.FromResult(true);
         }
     }
-
-
- 
+    
 
 }

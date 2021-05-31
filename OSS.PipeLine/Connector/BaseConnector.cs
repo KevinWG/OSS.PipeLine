@@ -11,10 +11,10 @@
 
 #endregion
 
+using OSS.PipeLine.Mos;
 using System.Threading.Tasks;
-using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Connector
+namespace OSS.PipeLine.Connector
 {
     /// <summary>
     /// 连接基类
@@ -22,8 +22,8 @@ namespace OSS.EventFlow.Connector
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseConnector<InContext, OutContext> : BaseSinglePipe<InContext, OutContext>
-        //where InContext : IPipeContext
-        //where OutContext : IPipeContext
+    //where InContext : IPipeContext
+    //where OutContext : IPipeContext
     {
         /// <summary>
         /// 连接基类构造函数

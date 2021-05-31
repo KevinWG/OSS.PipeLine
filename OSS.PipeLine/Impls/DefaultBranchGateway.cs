@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using OSS.EventFlow.Gateway;
-using OSS.EventFlow.Impls.Interface;
-using OSS.EventFlow.Mos;
-
-namespace OSS.EventFlow.Impls
+﻿namespace OSS.PipeLine.Impls
 {
     ///// <summary>
     ///// 流体的分支网关基类

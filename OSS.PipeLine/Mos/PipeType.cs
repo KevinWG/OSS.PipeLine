@@ -1,4 +1,4 @@
-﻿namespace OSS.EventFlow.Mos
+﻿namespace OSS.PipeLine.Mos
 {
     /// <summary>
     ///   管道类型
@@ -29,13 +29,13 @@
         /// <summary>
         ///  聚合网关
         /// </summary>
-        AggregateGateway =200,
+        AggregateGateway = 200,
 
         /// <summary>
         ///  分支网关
         /// </summary>
-        BranchGateway=210,
-        
+        BranchGateway = 210,
+
 
         /// <summary>
         ///  连接通道

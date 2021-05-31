@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
-using OSS.EventFlow.Gateway;
-using OSS.EventFlow.Impls.Interface;
-using OSS.EventFlow.Mos;
+﻿using OSS.PipeLine.Gateway;
+using OSS.PipeLine.Impls.Interface;
+using System.Threading.Tasks;
 
-namespace OSS.EventFlow.Impls
+namespace OSS.PipeLine.Impls
 {
     /// <summary>
     ///  聚合网关的默认实现类
@@ -11,7 +10,7 @@ namespace OSS.EventFlow.Impls
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public class DefaultAggregateGateway<TContext> : BaseAggregateGateway<TContext>
-        //where TContext : IPipeContext
+    //where TContext : IPipeContext
     {
         private readonly IAggregateGatewayProvider<TContext> _provider;
         /// <summary>
@@ -33,7 +32,7 @@ namespace OSS.EventFlow.Impls
         /// <returns></returns>
         protected override Task<bool> IfMatchCondition(TContext context, out bool isBlocked)
         {
-            return _provider.IfMatchCondition(context,out isBlocked);
+            return _provider.IfMatchCondition(context, out isBlocked);
         }
     }
 }

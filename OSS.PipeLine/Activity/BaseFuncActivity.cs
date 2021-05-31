@@ -12,13 +12,13 @@
 #endregion
 
 
+using OSS.PipeLine.Mos;
 using System.Threading.Tasks;
-using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Activity
+namespace OSS.PipeLine.Activity
 {
     /// <summary>
-    /// 外部Action活动基类
+    /// 外部委托处理活动基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
@@ -30,9 +30,6 @@ namespace OSS.EventFlow.Activity
         protected BaseFuncActivity() : base(PipeType.FuncActivity)
         {
         }
-        
-
-
 
         internal override Task<bool> InterHandling(TContext context)
         {
@@ -46,7 +43,7 @@ namespace OSS.EventFlow.Activity
         /// <param name="data"></param>
         /// <param name="isBlocked"></param>
         /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext data, out bool isBlocked);
+        protected abstract Task<TResult> Executing(TContext data, ref bool isBlocked);
 
         /// <summary>
         ///  Action执行方法
@@ -55,7 +52,9 @@ namespace OSS.EventFlow.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var res = await Executing(data, out var isBlocked);
+            var isBlocked = false;
+
+            var res = await Executing(data, ref isBlocked);
             if (isBlocked)
             {
                 await Block(data);
@@ -65,7 +64,7 @@ namespace OSS.EventFlow.Activity
             await ToNextThrough(data);
             return res;
         }
-        
+
         /// <summary>
         ///  消息进入通知
         /// </summary>
@@ -75,10 +74,11 @@ namespace OSS.EventFlow.Activity
         {
             return Task.FromResult(true);
         }
-    
+
     }
 
 
+    /// <inheritdoc />
     public abstract class BaseEffectFuncActivity<TContext, TResult> : BaseSinglePipe<TContext, TResult>
     {
         /// <summary>
@@ -87,14 +87,14 @@ namespace OSS.EventFlow.Activity
         protected BaseEffectFuncActivity() : base(PipeType.FuncEffectActivity)
         {
         }
-   
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
         /// <param name="data"></param>
         /// <param name="isBlocked"></param>
         /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext data, out bool isBlocked);
+        protected abstract Task<TResult> Executing(TContext data, ref bool isBlocked);
 
 
 
@@ -112,7 +112,9 @@ namespace OSS.EventFlow.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var res = await Executing(data, out var isBlocked);
+            var isBlocked = false;
+
+            var res= await Executing(data, ref isBlocked);
             if (isBlocked)
             {
                 await Block(data);

@@ -3,18 +3,30 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.0</Version>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <Version>1.0.1</Version>
+    <PackageReleaseNotes>优化活动类</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
+    <PackageProjectUrl>https://github.com/KevinWG/OSS.PipeLine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KevinWG/OSS.PipeLine</RepositoryUrl>
+    <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/OSS.EventFlow.xml</DocumentationFile>
+    <DocumentationFile>bin/OSS.PipeLine.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Impls\**" />
+    <EmbeddedResource Remove="Impls\**" />
+    <None Remove="Impls\**" />
+    <None Include="..\logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Activity\BaseBufferActivity.cs" />
-    <Compile Remove="Impls\DefaultBufferActivity.cs" />
   </ItemGroup>
 
   <ItemGroup>

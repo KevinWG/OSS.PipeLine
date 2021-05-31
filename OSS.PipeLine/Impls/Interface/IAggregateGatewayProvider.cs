@@ -13,17 +13,16 @@
 
 
 using System.Threading.Tasks;
-using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Impls.Interface
+namespace OSS.PipeLine.Impls.Interface
 {
     /// <summary>
     ///  聚合网关的提供者接口
     ///  the interface of AggregateGatewayProvider
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public interface IAggregateGatewayProvider<TContext> 
-        //where TContext : IPipeContext
+    public interface IAggregateGatewayProvider<TContext>
+    //where TContext : IPipeContext
     {
         /// <summary>
         ///  是否触发通过

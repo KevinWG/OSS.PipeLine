@@ -11,10 +11,8 @@
 
 #endregion
 
-using System.Collections.Generic;
-using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Impls.Interface
+namespace OSS.PipeLine.Impls.Interface
 {
     ///// <summary>
     /////  默认分支网关提供者

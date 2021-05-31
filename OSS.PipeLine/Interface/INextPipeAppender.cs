@@ -11,17 +11,16 @@
 
 #endregion
 
-using OSS.EventFlow.Gateway;
-using OSS.EventFlow.Mos;
+using OSS.PipeLine.Gateway;
 
-namespace OSS.EventFlow.Interface
+namespace OSS.PipeLine.Interface
 {
     /// <summary>
     ///  管道链接器
     /// </summary>
     /// <typeparam name="TNextInContext"></typeparam>
-    public interface IPipeAppender<TNextInContext>:IPipe
-        //where TNextInContext : IPipeContext
+    public interface IPipeAppender<TNextInContext> : IPipe
+    //where TNextInContext : IPipeContext
     {
         /// <summary>
         /// 追加管道
@@ -31,7 +30,7 @@ namespace OSS.EventFlow.Interface
         /// <returns>下个管道的追加器</returns>
         BaseSinglePipe<TNextInContext, NextOutContext> Append<NextOutContext>(
             BaseSinglePipe<TNextInContext, NextOutContext> nextPipe);
-            //where NextOutContext : IPipeContext;
+        //where NextOutContext : IPipeContext;
 
         /// <summary>
         ///   添加网关

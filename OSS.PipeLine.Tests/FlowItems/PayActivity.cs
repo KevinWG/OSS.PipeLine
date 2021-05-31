@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Activity;
+using OSS.PipeLine.Activity;
 using OSS.Tools.Log;
 
-namespace OSS.TaskFlow.Tests.FlowItems
+namespace OSS.PipeLine.Tests.FlowItems
 {
     public class PayActivity : BaseActivity<PayContext>
     {

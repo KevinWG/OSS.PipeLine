@@ -11,23 +11,22 @@
 
 #endregion
 
+using OSS.PipeLine.Connector;
+using OSS.PipeLine.Interface;
+using OSS.PipeLine.Mos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using OSS.EventFlow.Connector;
-using OSS.EventFlow.Interface;
-using OSS.EventFlow.Mos;
 
-namespace OSS.EventFlow.Gateway
+namespace OSS.PipeLine.Gateway
 {
     /// <summary>
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BaseBranchGateway<TContext> : BasePipe<TContext>
-        //where TContext : IPipeContext
+    //where TContext : IPipeContext
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -67,34 +66,34 @@ namespace OSS.EventFlow.Gateway
         /// <param name="branchPipe"></param>
         public BaseSinglePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(
             BaseSinglePipe<TContext, NextOutContext> branchPipe)
-            //where NextOutContext : IPipeContext
+        //where NextOutContext : IPipeContext
         {
             if (branchPipe == null)
             {
                 throw new ArgumentNullException(nameof(branchPipe), " 不能为空！");
             }
 
-            if (_branchItems==null)
+            if (_branchItems == null)
             {
                 _branchItems = new List<BasePipe<TContext>>();
             }
-           
+
             _branchItems.Add(branchPipe);
             return branchPipe;
         }
-        
+
         #region 内部扩散方法
-        
+
         internal override void InterInitialContainer(IFlow flowContainer)
         {
             FlowContainer = flowContainer;
-            if (_branchItems == null|| !_branchItems.Any())
+            if (_branchItems == null || !_branchItems.Any())
             {
                 throw new ArgumentNullException($"分支网关({PipeCode})并没有分支路径");
             }
-            _branchItems.ForEach(b=>b.InterInitialContainer(flowContainer));
+            _branchItems.ForEach(b => b.InterInitialContainer(flowContainer));
         }
-        
+
         internal override PipeRoute InterToRoute()
         {
             var pipe = new PipeRoute()
@@ -127,8 +126,8 @@ namespace OSS.EventFlow.Gateway
         /// <returns></returns>
         public static BaseSinglePipe<TContext, NextOutContext> AddConvertBranchPipe<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
-            //where NextOutContext : IPipeContext
-            //where TContext : IPipeContext
+        //where NextOutContext : IPipeContext
+        //where TContext : IPipeContext
         {
             var nextConverter = new DefaultConnector<TContext, NextOutContext>(convertFunc);
             return gateway.AddBranchPipe(nextConverter);

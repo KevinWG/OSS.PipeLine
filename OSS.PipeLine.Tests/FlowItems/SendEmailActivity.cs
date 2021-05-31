@@ -1,19 +1,18 @@
-﻿using OSS.EventFlow.Activity;
-using System.Threading.Tasks;
-using OSS.EventFlow.Connector;
-using OSS.EventFlow.Mos;
+﻿using OSS.PipeLine.Activity;
+using OSS.PipeLine.Connector;
 using OSS.Tools.Log;
+using System.Threading.Tasks;
 
-namespace OSS.TaskFlow.Tests.FlowItems
+namespace OSS.PipeLine.Tests.FlowItems
 {
-    public class SendEmailActivity : BaseActivity<SendEmailContext>
+    public class SendEmailActivity : BaseEffectActivity<SendEmailContext, bool>
     {
         public SendEmailActivity()
         {
-                PipeCode = "SendEmailActivity";
+            PipeCode = "SendEmailActivity";
         }
 
-        protected override Task<bool> Executing(SendEmailContext data)
+        protected override Task<bool> Executing(SendEmailContext contextData, ref bool isBlocked)
         {
             LogHelper.Info("分流-1.邮件发送");
             return Task.FromResult(true);
@@ -28,7 +27,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
     {
         public PayEmailConnector()
         {
-                PipeCode = "PayEmailConnector";
+            PipeCode = "PayEmailConnector";
         }
 
         protected override SendEmailContext Convert(PayContext inContextData)

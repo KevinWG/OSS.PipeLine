@@ -11,23 +11,22 @@
 
 #endregion
 
-using System;
-using System.Text;
-using System.Threading.Tasks;
-using OSS.EventFlow.Connector;
-using OSS.EventFlow.Gateway;
-using OSS.EventFlow.Interface;
-using OSS.EventFlow.Mos;
+using OSS.PipeLine.Connector;
+using OSS.PipeLine.Gateway;
+using OSS.PipeLine.Interface;
+using OSS.PipeLine.Mos;
 using OSS.Tools.DataStack;
+using System;
+using System.Threading.Tasks;
 
-namespace OSS.EventFlow
+namespace OSS.PipeLine
 {
     /// <summary>
     /// 管道基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BasePipe<TContext>: IPipe
-        //where TContext : IPipeContext
+    public abstract class BasePipe<TContext> : IPipe
+    //where TContext : IPipeContext
     {
 
         /// <summary>
@@ -55,15 +54,15 @@ namespace OSS.EventFlow
         protected BasePipe(PipeType pipeType)
         {
             PipeType = pipeType;
-            _pusher  = DataStackFactory.CreateStack<TContext>(StackPopCaller, "OSS.EventTask");
+            _pusher = DataStackFactory.CreateStack<TContext>(StackPopCaller, "OSS.EventTask");
         }
 
 
         #region 流体启动和异步处理逻辑
 
         // 内部异步处理入口
-        private readonly IStackPusher<TContext> _pusher ;
-        
+        private readonly IStackPusher<TContext> _pusher;
+
         /// <summary>
         /// 启动方法
         /// </summary>
@@ -71,7 +70,7 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public Task<bool> Start(TContext context)
         {
-           return _pusher.Push(context);
+            return _pusher.Push(context);
         }
 
         private async Task<bool> StackPopCaller(TContext context)
@@ -83,7 +82,7 @@ namespace OSS.EventFlow
             }
             return true;
         }
-        
+
         #endregion
 
 
@@ -135,11 +134,11 @@ namespace OSS.EventFlow
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, IPipeAppender<OutContext>
-        //where InContext : IPipeContext
-        //where OutContext : IPipeContext
+    //where InContext : IPipeContext
+    //where OutContext : IPipeContext
     {
         internal BasePipe<OutContext> NextPipe { get; set; }
-        
+
         /// <summary>
         ///  构造函数
         /// </summary>
@@ -164,7 +163,7 @@ namespace OSS.EventFlow
         /// <param name="nextPipe"></param>
         /// <returns>返回下个管道的追加器</returns>
         public BaseSinglePipe<OutContext, NextOutContext> Append<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            //where NextOutContext : IPipeContext
+        //where NextOutContext : IPipeContext
         {
             InterAppend(nextPipe);
             return nextPipe;
@@ -191,7 +190,7 @@ namespace OSS.EventFlow
         /// </summary>
         /// <param name="nextPipe"></param>
         internal virtual void InterAppend<NextOutContext>(BaseSinglePipe<OutContext, NextOutContext> nextPipe)
-            //where NextOutContext : IPipeContext
+        //where NextOutContext : IPipeContext
         {
             NextPipe = nextPipe;
         }
@@ -201,10 +200,10 @@ namespace OSS.EventFlow
             FlowContainer = flowContainer;
             if (this.Equals(flowContainer.EndPipe))
                 return;
-            
+
             if (NextPipe == null)
                 throw new ArgumentNullException(nameof(NextPipe), $"Flow({flowContainer.PipeCode})需要有明确的EndPipe，且所有的分支路径最终需到达此EndPipe");
-            
+
             NextPipe.InterInitialContainer(flowContainer);
         }
 
@@ -215,7 +214,7 @@ namespace OSS.EventFlow
                 pipe_code = PipeCode,
                 pipe_type = PipeType
             };
-  
+
             if (NextPipe != null)
             {
                 pipe.next = NextPipe.InterToRoute();
@@ -245,9 +244,9 @@ namespace OSS.EventFlow
         public static IPipeAppender<NextOutContext> AppendConvert<InContext, OutContext, NextOutContext>(
             this BaseSinglePipe<InContext, OutContext> pipe,
             Func<OutContext, NextOutContext> convertFunc)
-            //where InContext : IPipeContext
-            //where OutContext : IPipeContext
-            //where NextOutContext : IPipeContext
+        //where InContext : IPipeContext
+        //where OutContext : IPipeContext
+        //where NextOutContext : IPipeContext
         {
             var connector = new DefaultConnector<OutContext, NextOutContext>(convertFunc);
             pipe.InterAppend(connector);

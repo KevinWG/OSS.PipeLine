@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
-using OSS.EventFlow.Activity;
-using OSS.EventFlow.Mos;
+using OSS.PipeLine.Activity;
 using OSS.Tools.Log;
 
-namespace OSS.TaskFlow.Tests.FlowItems
+namespace OSS.PipeLine.Tests.FlowItems
 {
     public class ApplyActivity : BaseActivity<ApplyContext>
     {
@@ -16,7 +15,7 @@ namespace OSS.TaskFlow.Tests.FlowItems
 
         protected override Task<bool> Executing(ApplyContext data)
         {
-            LogHelper.Info("这里刚才发生了一个采购申请"); 
+            LogHelper.Info("这里刚才发生了一个采购申请");
             return Task.FromResult(true);
         }
     }

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace OSS.EventFlow.Mos
+namespace OSS.PipeLine.Mos
 {
     /// <summary>
     ///  管道路由信息
@@ -18,7 +16,7 @@ namespace OSS.EventFlow.Mos
         ///  管道编码
         /// </summary>
         public string pipe_code { get; set; }
-        
+
         /// <summary>
         ///  下一个节点
         /// </summary>

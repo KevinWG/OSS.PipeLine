@@ -1,6 +1,4 @@
-﻿using OSS.EventFlow.Mos;
-
-namespace OSS.TaskFlow.Tests.FlowItems
+﻿namespace OSS.PipeLine.Tests.FlowItems
 {
     /// <inheritdoc />
     public abstract class TestContext<IdType> //: IPipeContext

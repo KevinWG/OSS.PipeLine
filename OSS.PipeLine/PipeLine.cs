@@ -13,19 +13,19 @@
 
 using System;
 using System.Threading.Tasks;
-using OSS.EventFlow.Interface;
-using OSS.EventFlow.Mos;
+using OSS.PipeLine.Interface;
+using OSS.PipeLine.Mos;
 
-namespace OSS.EventFlow
+namespace OSS.PipeLine
 {
     /// <summary>
     /// 基础流体
     /// </summary>
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
-    public class PipeLine<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>,IFlow
-        //where InFlowContext : IPipeContext
-        //where OutFlowContext : IPipeContext
+    public class PipeLine<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>, IFlow
+    //where InFlowContext : IPipeContext
+    //where OutFlowContext : IPipeContext
     {
         /// <summary>
         /// 基础流体
@@ -35,15 +35,15 @@ namespace OSS.EventFlow
             _startPipe = startPipe;
             _endPipe = endPipeAppender;
 
-            if (_startPipe == null|| _endPipe==null)
+            if (_startPipe == null || _endPipe == null)
             {
                 throw new ArgumentNullException("未发现流体的起始截止管道！");
             }
 
             startPipe.InterInitialContainer(this);
         }
-        
-        public readonly BasePipe<InFlowContext>       _startPipe;
+
+        public readonly BasePipe<InFlowContext> _startPipe;
         public readonly IPipeAppender<OutFlowContext> _endPipe;
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace OSS.EventFlow
         /// <summary>
         ///  当前流的路由信息
         /// </summary>
-        private PipeRoute _route; 
+        private PipeRoute _route;
 
         /// <summary>
         ///  生成路径
@@ -74,16 +74,11 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public PipeRoute ToRoute()
         {
-            if (_route == null)
-            {
-                _route = InterToRoute();
-            }
-
-            return _route;
+            return _route ??= InterToRoute();
         }
 
         #region 内部的扩散方法
-        
+
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
@@ -92,16 +87,15 @@ namespace OSS.EventFlow
         {
             _endPipe.Append(nextPipe);
         }
-        
+
         internal override PipeRoute InterToRoute()
         {
-            var pipe = new PipeRoute()
+            var pipe = new PipeRoute
             {
-                pipe_code = PipeCode, pipe_type = PipeType
+                pipe_code = PipeCode, pipe_type = PipeType, inter_pipe = _startPipe.InterToRoute()
             };
-            pipe.inter_pipe = _startPipe.InterToRoute();
-            
-            if (NextPipe!=null)
+
+            if (NextPipe != null)
             {
                 pipe.next = NextPipe.InterToRoute();
             }
@@ -114,14 +108,14 @@ namespace OSS.EventFlow
 
     /// <inheritdoc />
     public class PipeLine<TContext> : PipeLine<TContext, TContext>
-        //where TContext : IPipeContext
+    //where TContext : IPipeContext
     {
         /// <inheritdoc />
-        public PipeLine(BasePipe<TContext> startPipe, IPipeAppender<TContext> endPipeAppender):base(startPipe, endPipeAppender)
+        public PipeLine(BasePipe<TContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
         {
         }
     }
-    
+
 
     /// <summary>
     /// EventFlow 创建工厂
@@ -138,11 +132,11 @@ namespace OSS.EventFlow
         /// <param name="flowPipeCode"></param>
         /// <returns></returns>
         public static PipeLine<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,string flowPipeCode=null)
-            //where InFlowContext : IPipeContext
-            //where OutFlowContext : IPipeContext
+            this BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender, string flowPipeCode = null)
+        //where InFlowContext : IPipeContext
+        //where OutFlowContext : IPipeContext
         {
-            return new(startPipe, endPipeAppender){PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode,"Flow")};
+            return new(startPipe, endPipeAppender) { PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "Flow") };
         }
 
 
@@ -155,11 +149,11 @@ namespace OSS.EventFlow
         /// <returns></returns>
         public static PipeLine<FlowContext> AsFlowStartAndEndWith<FlowContext>(
             this BasePipe<FlowContext> startPipe, IPipeAppender<FlowContext> endPipeAppender, string flowPipeCode = null)
-            //where FlowContext : IPipeContext
+        //where FlowContext : IPipeContext
         {
             return new(startPipe, endPipeAppender) { PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "Flow") };
         }
     }
 
- 
+
 }

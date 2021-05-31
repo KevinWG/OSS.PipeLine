@@ -11,9 +11,9 @@
 
 #endregion
 
-using OSS.EventFlow.Mos;
+using OSS.PipeLine.Mos;
 
-namespace OSS.EventFlow.Interface
+namespace OSS.PipeLine.Interface
 {
     /// <summary>
     ///  管道基础接口
@@ -34,7 +34,7 @@ namespace OSS.EventFlow.Interface
     /// <summary>
     ///  管道基础接口
     /// </summary>
-    public interface IFlow: IPipe
+    public interface IFlow : IPipe
     {
         /// <summary>
         ///  开始管道
