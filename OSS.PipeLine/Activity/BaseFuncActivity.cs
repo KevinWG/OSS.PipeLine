@@ -12,6 +12,7 @@
 #endregion
 
 
+using OSS.Pipeline.Interface;
 using OSS.PipeLine.Mos;
 using System.Threading.Tasks;
 
@@ -22,7 +23,7 @@ namespace OSS.PipeLine.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseFuncActivity<TContext, TResult> : BaseSinglePipe<TContext>
+    public abstract class BaseFuncActivity<TContext, TResult> : BaseSinglePipe<TContext>, IFuncActivity<TContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -38,11 +39,11 @@ namespace OSS.PipeLine.Activity
 
 
         /// <summary>
-        ///  Action执行方法
+        ///  执行方法
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<TResult> Action(TContext data)
+        public async Task<TResult> Execute(TContext data)
         {
             var (is_ok, result) = await Executing(data);
             if (!is_ok)
@@ -72,7 +73,7 @@ namespace OSS.PipeLine.Activity
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public virtual Task<bool> Notice(TContext data)
+        protected virtual Task<bool> Notice(TContext data)
         {
             return Task.FromResult(true);
         }
@@ -80,7 +81,7 @@ namespace OSS.PipeLine.Activity
 
 
     /// <inheritdoc />
-    public abstract class BaseEffectFuncActivity<TContext, TResult> : BasePipe<TContext, TResult>
+    public abstract class BaseEffectFuncActivity<TContext, TResult> : BasePipe<TContext, TResult>, IFuncActivity<TContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -101,7 +102,7 @@ namespace OSS.PipeLine.Activity
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async Task<TResult> Action(TContext data)
+        public async Task<TResult> Execute(TContext data)
         {
             var (is_ok, result) = await Executing(data);
             if (!is_ok)

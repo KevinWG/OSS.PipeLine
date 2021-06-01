@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.0.7</Version>
-    <PackageReleaseNotes>修复活动异步返回问题</PackageReleaseNotes>
+    <Version>1.0.8</Version>
+    <PackageReleaseNotes>添加被动委托活动扩展</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.PipeLine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.PipeLine</RepositoryUrl>
@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin/OSS.PipeLine.xml</DocumentationFile>
+    <DocumentationFile>bin/OSS.Pipeline.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
