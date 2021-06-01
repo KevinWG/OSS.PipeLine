@@ -35,6 +35,8 @@ namespace OSS.PipeLine.Activity
         {
             return Notice(context);
         }
+
+
         /// <summary>
         ///  Action执行方法
         /// </summary>
@@ -42,17 +44,14 @@ namespace OSS.PipeLine.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var isOK = false;
-
-            var res = await Executing(data, ref isOK);
-            if (!isOK)
+            var (is_ok, result) = await Executing(data);
+            if (!is_ok)
             {
                 await Block(data);
-                return res;
+                return result;
             }
-
             await ToNextThrough(data);
-            return res;
+            return result;
         }
 
 
@@ -60,13 +59,14 @@ namespace OSS.PipeLine.Activity
         ///  具体执行扩展方法
         /// </summary>
         /// <param name="contextData">当前活动上下文信息</param>
-        /// <param name="isOk">
-        /// 处理结果 - 决定是否阻塞当前数据流
-        /// False - 触发Block，业务流不再向后续管道传递。
-        /// True  - 流体自动流入后续管道
-        /// </param>
-        /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
+        /// <returns>
+        /// (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
+        /// is_ok：
+        ///     False - 触发Block，业务流不再向后续管道传递。
+        ///     True  - 流体自动流入后续管道
+        /// </returns>
+        protected abstract Task<(bool is_ok,TResult result)> Executing(TContext contextData);
+
         /// <summary>
         ///  消息进入通知
         /// </summary>
@@ -103,17 +103,15 @@ namespace OSS.PipeLine.Activity
         /// <returns></returns>
         public async Task<TResult> Action(TContext data)
         {
-            var isOK = false;
-
-            var res = await Executing(data, ref isOK);
-            if (!isOK)
+            var (is_ok, result) = await Executing(data);
+            if (!is_ok)
             {
                 await Block(data);
-                return res;
+                return result;
             }
 
-            await ToNextThrough(res);
-            return res;
+            await ToNextThrough(result);
+            return result;
         }
 
 
@@ -122,13 +120,13 @@ namespace OSS.PipeLine.Activity
         ///  具体执行扩展方法
         /// </summary>
         /// <param name="contextData">当前活动上下文信息</param>
-        /// <param name="isOk">
-        /// 处理结果 - 决定是否阻塞当前数据流
-        /// False - 触发Block，业务流不再向后续管道传递。
-        /// True  - 流体自动流入后续管道
-        /// </param>
-        /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
+        /// <returns>
+        /// (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
+        /// is_ok：
+        ///     False - 触发Block，业务流不再向后续管道传递。
+        ///     True  - 流体自动流入后续管道
+        /// </returns>
+        protected abstract Task<(bool is_ok, TResult result)> Executing(TContext contextData);
 
         /// <summary>
         ///  消息进入通知

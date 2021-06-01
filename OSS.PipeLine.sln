@@ -8,9 +8,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.PipeLine", "OSS.PipeLine\OSS.PipeLine.csproj", "{530100A4-E305-4834-A21A-3BA19834F67D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Pipeline", "OSS.PipeLine\OSS.Pipeline.csproj", "{530100A4-E305-4834-A21A-3BA19834F67D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.PipeLine.Tests", "OSS.PipeLine.Tests\OSS.PipeLine.Tests.csproj", "{AAED04FB-ABD1-485E-9481-47B4A8605155}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS.Pipeline.Tests", "OSS.PipeLine.Tests\OSS.Pipeline.Tests.csproj", "{AAED04FB-ABD1-485E-9481-47B4A8605155}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

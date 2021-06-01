@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.0.6</Version>
-    <PackageReleaseNotes>优化管道扩展</PackageReleaseNotes>
+    <Version>1.0.7</Version>
+    <PackageReleaseNotes>修复活动异步返回问题</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.PipeLine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.PipeLine</RepositoryUrl>

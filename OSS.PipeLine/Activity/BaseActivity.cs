@@ -69,32 +69,30 @@ namespace OSS.PipeLine.Activity
         {
         }
 
+        internal override async Task<bool> InterHandling(TContext context)
+        {
+            var (is_ok, result) = await Executing(context);
+            if (!is_ok)
+            {
+                await Block(context);
+                return is_ok;
+            }
+
+            await ToNextThrough(result);
+            return is_ok;
+        }
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
         /// <param name="contextData">当前活动上下文信息</param>
-        /// <param name="isOk">
-        /// 处理结果 - 决定是否阻塞当前数据流
-        /// False - 触发Block，业务流不再向后续管道传递。
-        /// True  - 流体自动流入后续管道
-        /// </param>
-        /// <returns></returns>
-        protected abstract Task<TResult> Executing(TContext contextData, ref bool isOk);
-
-        internal override async Task<bool> InterHandling(TContext context)
-        {
-            var isOk = false;
-
-            var res = await Executing(context, ref isOk);
-            if (!isOk)
-            {
-                await Block(context);
-                return true;
-            }
-
-            await ToNextThrough(res);
-            return false;
-        }
+        /// <returns>
+        /// (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
+        /// is_ok：
+        ///     False - 触发Block，业务流不再向后续管道传递。
+        ///     True  - 流体自动流入后续管道
+        /// </returns>
+        protected abstract Task<(bool is_ok, TResult result)> Executing(TContext contextData);
     }
 
     /// <summary>
