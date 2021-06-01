@@ -13,10 +13,10 @@
 
 using System;
 using System.Threading.Tasks;
-using OSS.PipeLine.Interface;
-using OSS.PipeLine.Mos;
+using OSS.Pipeline.Interface;
+using OSS.Pipeline.Mos;
 
-namespace OSS.PipeLine
+namespace OSS.Pipeline
 {
     /// <summary>
     /// 基础流体
@@ -41,20 +41,21 @@ namespace OSS.PipeLine
             startPipe.InterInitialContainer(this);
         }
 
-        public readonly BasePipePart<InFlowContext>   _startPipe;
-        public readonly IPipeAppender<OutFlowContext> _endPipe;
+        private readonly BasePipePart<InFlowContext>   _startPipe;
+        private readonly IPipeAppender<OutFlowContext> _endPipe;
 
         /// <summary>
         ///  开始管道
         /// </summary>
         public IPipe StartPipe => _startPipe;
+
         /// <summary>
         ///  结束管道
         /// </summary>
         public IPipe EndPipe => _endPipe;
         
 
-        #region MyRegion
+        #region 管道的业务处理
 
         /// <summary>
         ///  管道处理实际业务流动方法
@@ -125,29 +126,6 @@ namespace OSS.PipeLine
         /// <inheritdoc />
         public PipeLine(BasePipePart<TContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
         {
-        }
-    }
-    
-    /// <summary>
-    /// EventFlow 创建工厂
-    /// </summary>
-    public static class PipeLineExtension
-    {
-        /// <summary>
-        /// 根据首位两个管道建立流体
-        /// </summary>
-        /// <typeparam name="InFlowContext"></typeparam>
-        /// <typeparam name="OutFlowContext"></typeparam>
-        /// <param name="startPipe"></param>
-        /// <param name="endPipeAppender"></param>
-        /// <param name="flowPipeCode"></param>
-        /// <returns></returns>
-        public static PipeLine<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BasePipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
-            string flowPipeCode = null)
-        {
-            return new(startPipe, endPipeAppender)
-                {PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "-", endPipeAppender.PipeCode)};
         }
     }
 }

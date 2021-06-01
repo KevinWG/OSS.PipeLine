@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using OSS.PipeLine.Gateway;
+using OSS.Pipeline.Gateway;
 using OSS.Tools.Log;
 
-namespace OSS.PipeLine.Tests.FlowItems
+namespace OSS.Pipeline.Tests.FlowItems
 {
     public class PayGateway : BaseBranchGateway<PayContext>
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OSS.PipeLine.Connector
+namespace OSS.Pipeline.Connector
 {
     /// <summary>
     ///  缓冲连接器的默认实现

@@ -11,15 +11,15 @@
 
 #endregion
 
-using OSS.PipeLine.Connector;
-using OSS.PipeLine.Interface;
-using OSS.PipeLine.Mos;
+using OSS.Pipeline.Connector;
+using OSS.Pipeline.Interface;
+using OSS.Pipeline.Mos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OSS.PipeLine.Gateway
+namespace OSS.Pipeline.Gateway
 {
     /// <summary>
     /// 流体的分支网关基类

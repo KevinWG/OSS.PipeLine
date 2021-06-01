@@ -13,10 +13,10 @@
 
 
 using OSS.Pipeline.Interface;
-using OSS.PipeLine.Mos;
+using OSS.Pipeline.Mos;
 using System.Threading.Tasks;
 
-namespace OSS.PipeLine.Activity
+namespace OSS.Pipeline.Activity
 {
     /// <summary>
     ///  被动触发执行活动组件基类

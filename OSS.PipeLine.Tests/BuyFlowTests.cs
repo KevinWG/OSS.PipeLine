@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OSS.PipeLine.Activity;
-using OSS.PipeLine.Interface;
-using OSS.PipeLine.Tests.FlowItems;
+using OSS.Pipeline.Activity;
+using OSS.Pipeline.Interface;
+using OSS.Pipeline.Tests.FlowItems;
 
-namespace OSS.PipeLine.Tests
+namespace OSS.Pipeline.Tests
 {
     [TestClass]
     public class BuyFlowTests

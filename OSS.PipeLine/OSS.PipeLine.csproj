@@ -3,11 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.0.8</Version>
-    <PackageReleaseNotes>添加被动委托活动扩展</PackageReleaseNotes>
+    <Version>1.1.0</Version>
+    <PackageReleaseNotes>管道内部优化</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
-    <PackageProjectUrl>https://github.com/KevinWG/OSS.PipeLine</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/KevinWG/OSS.PipeLine</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/KevinWG/OSS.Pipeline</RepositoryUrl>
     <PackageIcon>logo.png</PackageIcon>
   </PropertyGroup>
 

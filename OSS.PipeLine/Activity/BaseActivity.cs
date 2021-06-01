@@ -11,10 +11,10 @@
 
 #endregion
 
-using OSS.PipeLine.Mos;
+using OSS.Pipeline.Mos;
 using System.Threading.Tasks;
 
-namespace OSS.PipeLine.Activity
+namespace OSS.Pipeline.Activity
 {
 
     /// <summary>
@@ -75,11 +75,11 @@ namespace OSS.PipeLine.Activity
             if (!is_ok)
             {
                 await Block(context);
-                return is_ok;
+                return false;
             }
 
             await ToNextThrough(result);
-            return is_ok;
+            return true;
         }
 
         /// <summary>

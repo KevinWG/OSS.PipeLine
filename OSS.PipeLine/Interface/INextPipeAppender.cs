@@ -11,9 +11,9 @@
 
 #endregion
 
-using OSS.PipeLine.Gateway;
+using OSS.Pipeline.Gateway;
 
-namespace OSS.PipeLine.Interface
+namespace OSS.Pipeline.Interface
 {
     /// <summary>
     ///  管道链接器

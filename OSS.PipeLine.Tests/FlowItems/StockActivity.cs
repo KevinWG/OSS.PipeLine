@@ -1,9 +1,9 @@
-﻿using OSS.PipeLine.Activity;
-using OSS.PipeLine.Connector;
+﻿using OSS.Pipeline.Activity;
+using OSS.Pipeline.Connector;
 using OSS.Tools.Log;
 using System.Threading.Tasks;
 
-namespace OSS.PipeLine.Tests.FlowItems
+namespace OSS.Pipeline.Tests.FlowItems
 {
     public class StockActivity : BaseEffectActivity<StockContext,bool>
     {

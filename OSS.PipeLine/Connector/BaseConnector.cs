@@ -11,10 +11,10 @@
 
 #endregion
 
-using OSS.PipeLine.Mos;
+using OSS.Pipeline.Mos;
 using System.Threading.Tasks;
 
-namespace OSS.PipeLine.Connector
+namespace OSS.Pipeline.Connector
 {
     /// <summary>
     /// 连接基类

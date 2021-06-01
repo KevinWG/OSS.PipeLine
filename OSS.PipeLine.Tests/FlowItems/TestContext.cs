@@ -1,4 +1,4 @@
-﻿namespace OSS.PipeLine.Tests.FlowItems
+﻿namespace OSS.Pipeline.Tests.FlowItems
 {
     /// <inheritdoc />
     public abstract class TestContext<IdType> //: IPipeContext

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using OSS.PipeLine.Mos;
+using OSS.Pipeline.Mos;
 using OSS.Tools.DataFlow;
 
-namespace OSS.PipeLine.Connector
+namespace OSS.Pipeline.Connector
 {
     /// <summary>
     /// 异步消息延缓连接器
@@ -18,18 +18,18 @@ namespace OSS.PipeLine.Connector
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="bufferDataFlowKey">缓冲DataFlow 对应的Key</param>
-        public BaseBufferConnector(string bufferDataFlowKey) : base(PipeType.BufferConnector)
+        protected BaseBufferConnector(string bufferDataFlowKey) : base(PipeType.BufferConnector)
         {
             bufferDataFlowKey ??= PipeCode;
 
-            _pusher = DataFlowFactory.CreateFlow<InContext>(SubscribeCaller, bufferDataFlowKey, "OSS.PipeLine.Connector");
+            _pusher = DataFlowFactory.CreateFlow<InContext>(SubscribeCaller, bufferDataFlowKey, "OSS.Pipeline.Connector");
         }
 
         /// <summary>
         /// 异步缓冲连接器
         /// 缓冲DataFlow 对应的Key为当前PipeCode
         /// </summary>
-        public BaseBufferConnector() : this(null)
+        protected BaseBufferConnector() : this(null)
         {
         }
 

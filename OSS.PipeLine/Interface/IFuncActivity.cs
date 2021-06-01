@@ -11,8 +11,6 @@
 
 #endregion
 
-
-using OSS.PipeLine.Interface;
 using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Interface
@@ -22,7 +20,7 @@ namespace OSS.Pipeline.Interface
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public interface IFuncActivity<TContext, TResult> : IPipe
+    public interface IFuncActivity<in TContext, TResult> : IPipe
     {
         /// <summary>
         ///  执行方法
