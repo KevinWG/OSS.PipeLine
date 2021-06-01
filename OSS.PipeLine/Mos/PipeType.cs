@@ -42,6 +42,11 @@
         /// </summary>
         Connector = 300,
 
+        /// <summary>
+        ///  连接通道
+        /// </summary>
+        BufferConnector = 310,
+
 
         /// <summary>
         /// 组合管道

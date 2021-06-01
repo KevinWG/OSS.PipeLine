@@ -15,7 +15,6 @@ using OSS.PipeLine.Connector;
 using OSS.PipeLine.Gateway;
 using OSS.PipeLine.Interface;
 using OSS.PipeLine.Mos;
-using OSS.Tools.DataStack;
 using System;
 using System.Threading.Tasks;
 
@@ -26,7 +25,6 @@ namespace OSS.PipeLine
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     public abstract class BasePipe<TContext> : IPipe
-    //where TContext : IPipeContext
     {
 
         /// <summary>
@@ -36,6 +34,7 @@ namespace OSS.PipeLine
 
         /// <summary>
         ///  管道编码
+        ///  默认等于  this.GetType().Name
         /// </summary>
         public string PipeCode { get; set; }
 
@@ -44,9 +43,7 @@ namespace OSS.PipeLine
         /// </summary>
         protected IPipe FlowContainer { get; set; }
 
-
-
-
+        
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -54,26 +51,17 @@ namespace OSS.PipeLine
         protected BasePipe(PipeType pipeType)
         {
             PipeType = pipeType;
-            _pusher = DataStackFactory.CreateStack<TContext>(StackPopCaller, "OSS.EventTask");
+            PipeCode = GetType().Name;
         }
-
-
+        
         #region 流体启动和异步处理逻辑
-
-        // 内部异步处理入口
-        private readonly IStackPusher<TContext> _pusher;
-
+        
         /// <summary>
         /// 启动方法
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Task<bool> Start(TContext context)
-        {
-            return _pusher.Push(context);
-        }
-
-        private async Task<bool> StackPopCaller(TContext context)
+        public async Task<bool> Start(TContext context)
         {
             var res = await InterHandling(context);
             if (!res)
@@ -134,8 +122,6 @@ namespace OSS.PipeLine
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseSinglePipe<InContext, OutContext> : BasePipe<InContext>, IPipeAppender<OutContext>
-    //where InContext : IPipeContext
-    //where OutContext : IPipeContext
     {
         internal BasePipe<OutContext> NextPipe { get; set; }
 
@@ -145,7 +131,6 @@ namespace OSS.PipeLine
         /// <param name="pipeType"></param>
         protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
         {
-            PipeCode = GetType().Name;
         }
 
         internal Task<bool> ToNextThrough(OutContext nextInContext)

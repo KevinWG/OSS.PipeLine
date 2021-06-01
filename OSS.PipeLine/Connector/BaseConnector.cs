@@ -22,14 +22,17 @@ namespace OSS.PipeLine.Connector
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
     public abstract class BaseConnector<InContext, OutContext> : BaseSinglePipe<InContext, OutContext>
-    //where InContext : IPipeContext
-    //where OutContext : IPipeContext
     {
         /// <summary>
         /// 连接基类构造函数
         /// </summary>
         protected BaseConnector() : base(PipeType.Connector)
         {
+        }
+
+        protected BaseConnector(PipeType type) : base(type)
+        {
+
         }
 
         /// <summary>

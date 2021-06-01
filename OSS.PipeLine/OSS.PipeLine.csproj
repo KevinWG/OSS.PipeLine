@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.0.2</Version>
-    <PackageReleaseNotes>优化注释等信息</PackageReleaseNotes>
+    <Version>1.0.3</Version>
+    <PackageReleaseNotes>引入新的异步缓冲数据流实现</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.PipeLine</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.PipeLine</RepositoryUrl>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSS.Tools.DataStack" Version="0.1.0" />
+    <PackageReference Include="OSS.Tools.DataFlow" Version="0.1.0" />
   </ItemGroup>
 
 </Project>
