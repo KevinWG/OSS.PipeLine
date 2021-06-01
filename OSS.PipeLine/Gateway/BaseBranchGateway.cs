@@ -88,9 +88,9 @@ namespace OSS.PipeLine.Gateway
 
         #region 内部扩散方法
 
-        internal override void InterInitialContainer(IFlow flowContainer)
+        internal override void InterInitialContainer(IPipeLine flowContainer)
         {
-            FlowContainer = flowContainer;
+            LineContainer = flowContainer;
             if (_branchItems == null || !_branchItems.Any())
             {
                 throw new ArgumentNullException($"分支网关({PipeCode})并没有分支路径");
@@ -98,13 +98,19 @@ namespace OSS.PipeLine.Gateway
             _branchItems.ForEach(b => b.InterInitialContainer(flowContainer));
         }
 
-        internal override PipeRoute InterToRoute()
+        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
         {
             var pipe = new PipeRoute()
             {
                 pipe_code = PipeCode,
                 pipe_type = PipeType
             };
+
+            if (Equals(LineContainer.EndPipe))
+            {
+                return pipe;
+            }
+
             if (_branchItems.Any())
             {
                 pipe.nexts = _branchItems.Select(bp => bp.InterToRoute()).ToList();

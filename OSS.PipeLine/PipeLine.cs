@@ -23,12 +23,12 @@ namespace OSS.PipeLine
     /// </summary>
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
-    public class PipeLine<InFlowContext, OutFlowContext> : BasePipe<InFlowContext, OutFlowContext>, IFlow
+    public class PipeLine<InFlowContext, OutFlowContext> : BasePipe<InFlowContext, OutFlowContext>, IPipeLine
     {
         /// <summary>
         /// 基础流体
         /// </summary>
-        public PipeLine(BasePipePart<InFlowContext> startPipe, BaseSinglePipe<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
+        public PipeLine(BasePipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
         {
             _startPipe = startPipe;
             _endPipe = endPipeAppender;
@@ -41,8 +41,8 @@ namespace OSS.PipeLine
             startPipe.InterInitialContainer(this);
         }
 
-        public readonly BasePipePart<InFlowContext>    _startPipe;
-        public readonly BaseSinglePipe<OutFlowContext> _endPipe;
+        public readonly BasePipePart<InFlowContext>   _startPipe;
+        public readonly IPipeAppender<OutFlowContext> _endPipe;
 
         /// <summary>
         ///  开始管道
@@ -52,14 +52,39 @@ namespace OSS.PipeLine
         ///  结束管道
         /// </summary>
         public IPipe EndPipe => _endPipe;
+        
 
+        #region MyRegion
 
+        /// <summary>
+        ///  管道处理实际业务流动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         internal override async Task<bool> InterHandling(InFlowContext context)
         {
             await _startPipe.Start(context);
             return true;
         }
 
+        #endregion
+
+
+        #region 管道连接处理
+        
+        /// <summary>
+        ///  链接流体内部尾部管道和流体外下一截管道
+        /// </summary>
+        /// <param name="nextPipe"></param>
+        internal override void InterAppend<NextOutContext>(BasePipe<OutFlowContext, NextOutContext> nextPipe)
+        {
+            base.InterAppend(nextPipe);
+            _endPipe.Append(nextPipe);
+        }
+
+        #endregion
+
+        #region 路由处理
 
         /// <summary>
         ///  当前流的路由信息
@@ -72,48 +97,37 @@ namespace OSS.PipeLine
         /// <returns></returns>
         public PipeRoute ToRoute()
         {
-            return _route ??= InterToRoute();
+            return _route ??= InterToRoute(true);
         }
 
-        #region 内部的扩散方法
-
-        /// <summary>
-        ///  链接流体内部尾部管道和流体外下一截管道
-        /// </summary>
-        /// <param name="nextPipe"></param>
-        internal override void InterAppend<NextOutContext>(BasePipe<OutFlowContext, NextOutContext> nextPipe)
-        {
-            NextPipe = nextPipe;
-            _endPipe.Append(nextPipe);
-        }
-
-        internal override PipeRoute InterToRoute()
+        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
         {
             var pipe = new PipeRoute
             {
                 pipe_code = PipeCode, pipe_type = PipeType, inter_pipe = _startPipe.InterToRoute()
             };
 
-            if (NextPipe != null)
+            if (isFlowSelf || NextPipe == null|| Equals(LineContainer.EndPipe))
             {
-                pipe.next = NextPipe.InterToRoute();
+                return pipe;
             }
+
+            pipe.next = NextPipe.InterToRoute();
             return pipe;
         }
 
         #endregion
-
     }
 
     /// <inheritdoc />
     public class PipeLine<TContext> : PipeLine<TContext, TContext>
     {
         /// <inheritdoc />
-        public PipeLine(BasePipePart<TContext> startPipe, BaseSinglePipe<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
+        public PipeLine(BasePipePart<TContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
         {
         }
     }
-
+    
     /// <summary>
     /// EventFlow 创建工厂
     /// </summary>
@@ -129,11 +143,11 @@ namespace OSS.PipeLine
         /// <param name="flowPipeCode"></param>
         /// <returns></returns>
         public static PipeLine<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BasePipePart<InFlowContext> startPipe, BaseSinglePipe<OutFlowContext> endPipeAppender, string flowPipeCode = null)
+            this BasePipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
+            string flowPipeCode = null)
         {
-            return new(startPipe, endPipeAppender) { PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "Flow") };
+            return new(startPipe, endPipeAppender)
+                {PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "-", endPipeAppender.PipeCode)};
         }
     }
-
-
 }

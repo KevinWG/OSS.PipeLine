@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OSS.PipeLine.Activity;
+using OSS.PipeLine.Interface;
 using OSS.PipeLine.Tests.FlowItems;
 
 namespace OSS.PipeLine.Tests

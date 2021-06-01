@@ -34,7 +34,7 @@ namespace OSS.PipeLine.Interface
     /// <summary>
     ///  管道基础接口
     /// </summary>
-    public interface IFlow : IPipe
+    public interface IPipeLine : IPipe
     {
         /// <summary>
         ///  开始管道
