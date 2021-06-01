@@ -22,7 +22,7 @@ namespace OSS.PipeLine.Gateway
     /// the aggregative gate of flow
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseAggregateGateway<TContext> : BaseSinglePipe<TContext, TContext>
+    public abstract class BaseAggregateGateway<TContext> : BaseSinglePipe<TContext>
     //where TContext : IPipeContext
     {
         /// <summary>

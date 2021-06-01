@@ -27,10 +27,10 @@ namespace OSS.PipeLine.Tests
         public BuyFlowTests()
         {
             var endActivity = new EmptyActivity<bool>();
-
+            
             ApplyActivity
             .Append(AuditActivity)
-            .AppendConvert(applyContext => new PayContext() { id = applyContext.id })// 表达式方式的转化器
+            .Append(applyContext => new PayContext() { id = applyContext.id })// 表达式方式的转化器
             .Append(PayActivity)
             .Append(PayGateway);
 

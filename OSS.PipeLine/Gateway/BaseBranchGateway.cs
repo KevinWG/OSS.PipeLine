@@ -25,8 +25,7 @@ namespace OSS.PipeLine.Gateway
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBranchGateway<TContext> : BasePipe<TContext>
-    //where TContext : IPipeContext
+    public abstract class BaseBranchGateway<TContext> : BasePipePart<TContext>
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -55,18 +54,20 @@ namespace OSS.PipeLine.Gateway
         /// <param name="branchItems"></param>
         /// <param name="context"></param>
         /// <returns>如果为空，则触发block</returns>
-        protected abstract IEnumerable<BasePipe<TContext>> FilterNextPipes(List<BasePipe<TContext>> branchItems,
+        protected abstract IEnumerable<BasePipePart<TContext>> FilterNextPipes(List<BasePipePart<TContext>> branchItems,
             TContext context);
 
-        private List<BasePipe<TContext>> _branchItems;
 
+
+        #region 管道连接
+
+        private List<BasePipePart<TContext>> _branchItems;
         /// <summary>
         ///   添加分支       
         /// </summary>
         /// <param name="branchPipe"></param>
-        public BaseSinglePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(
-            BaseSinglePipe<TContext, NextOutContext> branchPipe)
-        //where NextOutContext : IPipeContext
+        public BasePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(
+            BasePipe<TContext, NextOutContext> branchPipe)
         {
             if (branchPipe == null)
             {
@@ -75,12 +76,15 @@ namespace OSS.PipeLine.Gateway
 
             if (_branchItems == null)
             {
-                _branchItems = new List<BasePipe<TContext>>();
+                _branchItems = new List<BasePipePart<TContext>>();
             }
 
             _branchItems.Add(branchPipe);
             return branchPipe;
         }
+
+        #endregion
+
 
         #region 内部扩散方法
 
@@ -124,12 +128,38 @@ namespace OSS.PipeLine.Gateway
         /// <param name="gateway"></param>
         /// <param name="convertFunc"></param>
         /// <returns></returns>
-        public static BaseSinglePipe<TContext, NextOutContext> AddConvertBranchPipe<TContext, NextOutContext>(
+        public static BasePipe<TContext, NextOutContext> AddBranchPipe<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
-        //where NextOutContext : IPipeContext
-        //where TContext : IPipeContext
         {
             var nextConverter = new DefaultConnector<TContext, NextOutContext>(convertFunc);
+            return gateway.AddBranchPipe(nextConverter);
+        }
+
+        /// <summary>
+        ///  添加转换分支管道
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <typeparam name="NextOutContext"></typeparam>
+        /// <param name="gateway"></param>
+        /// <param name="convertFunc"></param>
+        /// <returns></returns>
+        public static BasePipe<TContext, NextOutContext> AddBufferBranchPipe<TContext, NextOutContext>(
+            this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
+        {
+            var nextConverter = new DefaultBufferConnector<TContext, NextOutContext>(convertFunc);
+            return gateway.AddBranchPipe(nextConverter);
+        }
+
+
+        /// <summary>
+        ///  添加转换分支管道
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <param name="gateway"></param>
+        /// <returns></returns>
+        public static BasePipe<TContext, TContext> AddBufferBranchPipe<TContext>(this BaseBranchGateway<TContext> gateway)
+        {
+            var nextConverter = new DefaultBufferConnector<TContext>();
             return gateway.AddBranchPipe(nextConverter);
         }
     }

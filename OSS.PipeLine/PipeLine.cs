@@ -23,14 +23,12 @@ namespace OSS.PipeLine
     /// </summary>
     /// <typeparam name="InFlowContext"></typeparam>
     /// <typeparam name="OutFlowContext"></typeparam>
-    public class PipeLine<InFlowContext, OutFlowContext> : BaseSinglePipe<InFlowContext, OutFlowContext>, IFlow
-    //where InFlowContext : IPipeContext
-    //where OutFlowContext : IPipeContext
+    public class PipeLine<InFlowContext, OutFlowContext> : BasePipe<InFlowContext, OutFlowContext>, IFlow
     {
         /// <summary>
         /// 基础流体
         /// </summary>
-        public PipeLine(BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
+        public PipeLine(BasePipePart<InFlowContext> startPipe, BaseSinglePipe<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
         {
             _startPipe = startPipe;
             _endPipe = endPipeAppender;
@@ -43,8 +41,8 @@ namespace OSS.PipeLine
             startPipe.InterInitialContainer(this);
         }
 
-        public readonly BasePipe<InFlowContext> _startPipe;
-        public readonly IPipeAppender<OutFlowContext> _endPipe;
+        public readonly BasePipePart<InFlowContext>    _startPipe;
+        public readonly BaseSinglePipe<OutFlowContext> _endPipe;
 
         /// <summary>
         ///  开始管道
@@ -83,8 +81,9 @@ namespace OSS.PipeLine
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal override void InterAppend<NextOutContext>(BaseSinglePipe<OutFlowContext, NextOutContext> nextPipe)
+        internal override void InterAppend<NextOutContext>(BasePipe<OutFlowContext, NextOutContext> nextPipe)
         {
+            NextPipe = nextPipe;
             _endPipe.Append(nextPipe);
         }
 
@@ -108,14 +107,12 @@ namespace OSS.PipeLine
 
     /// <inheritdoc />
     public class PipeLine<TContext> : PipeLine<TContext, TContext>
-    //where TContext : IPipeContext
     {
         /// <inheritdoc />
-        public PipeLine(BasePipe<TContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
+        public PipeLine(BasePipePart<TContext> startPipe, BaseSinglePipe<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
         {
         }
     }
-
 
     /// <summary>
     /// EventFlow 创建工厂
@@ -132,24 +129,7 @@ namespace OSS.PipeLine
         /// <param name="flowPipeCode"></param>
         /// <returns></returns>
         public static PipeLine<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BasePipe<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender, string flowPipeCode = null)
-        //where InFlowContext : IPipeContext
-        //where OutFlowContext : IPipeContext
-        {
-            return new(startPipe, endPipeAppender) { PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "Flow") };
-        }
-
-
-        /// <summary>
-        /// 根据首位两个管道建立流体
-        /// </summary>
-        /// <typeparam name="FlowContext"></typeparam>
-        /// <param name="startPipe"></param>
-        /// <param name="endPipeAppender"></param>
-        /// <returns></returns>
-        public static PipeLine<FlowContext> AsFlowStartAndEndWith<FlowContext>(
-            this BasePipe<FlowContext> startPipe, IPipeAppender<FlowContext> endPipeAppender, string flowPipeCode = null)
-        //where FlowContext : IPipeContext
+            this BasePipePart<InFlowContext> startPipe, BaseSinglePipe<OutFlowContext> endPipeAppender, string flowPipeCode = null)
         {
             return new(startPipe, endPipeAppender) { PipeCode = flowPipeCode ?? string.Concat(startPipe.PipeCode, "Flow") };
         }

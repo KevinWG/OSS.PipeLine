@@ -21,7 +21,7 @@ namespace OSS.PipeLine.Activity
     ///  主动触发执行活动组件基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext, TContext>
+    public abstract class BaseActivity<TContext> : BaseSinglePipe<TContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -60,7 +60,7 @@ namespace OSS.PipeLine.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TContext, TResult> : BaseSinglePipe<TContext, TResult>
+    public abstract class BaseEffectActivity<TContext, TResult> : BasePipe<TContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类

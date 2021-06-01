@@ -21,7 +21,7 @@ namespace OSS.PipeLine.Connector
     /// </summary>
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseConnector<InContext, OutContext> : BaseSinglePipe<InContext, OutContext>
+    public abstract class BaseConnector<InContext, OutContext> : BasePipe<InContext, OutContext>
     {
         /// <summary>
         /// 连接基类构造函数
@@ -30,6 +30,7 @@ namespace OSS.PipeLine.Connector
         {
         }
 
+        /// <inheritdoc />
         protected BaseConnector(PipeType type) : base(type)
         {
 

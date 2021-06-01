@@ -22,7 +22,7 @@ namespace OSS.PipeLine.Activity
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseFuncActivity<TContext, TResult> : BaseSinglePipe<TContext, TContext>
+    public abstract class BaseFuncActivity<TContext, TResult> : BaseSinglePipe<TContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -80,7 +80,7 @@ namespace OSS.PipeLine.Activity
 
 
     /// <inheritdoc />
-    public abstract class BaseEffectFuncActivity<TContext, TResult> : BaseSinglePipe<TContext, TResult>
+    public abstract class BaseEffectFuncActivity<TContext, TResult> : BasePipe<TContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
