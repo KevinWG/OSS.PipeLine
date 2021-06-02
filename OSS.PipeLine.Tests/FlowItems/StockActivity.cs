@@ -12,10 +12,11 @@ namespace OSS.Pipeline.Tests.FlowItems
             PipeCode = "StockActivity";
         }
         
-        protected override Task<bool> Executing(StockContext contextData, ref bool isBlocked)
+     
+        protected override Task<(bool is_ok, bool result)> Executing(StockContext contextData)
         {
             LogHelper.Info("分流-2.库存保存");
-            return Task.FromResult(true);
+            return Task.FromResult((true,true));
         }
     }
 

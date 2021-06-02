@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.Mos;
@@ -18,10 +19,10 @@ using OSS.Pipeline.Mos;
 namespace OSS.Pipeline
 {
     /// <summary>
-    /// 管道部分组成基类
+    /// 管道进口基类
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public abstract class BasePipePart<TInContext> : IPipe
+    public abstract class BaseInPipePart<TInContext> : IPipe
     {
         /// <summary>
         ///  管道类型
@@ -44,11 +45,13 @@ namespace OSS.Pipeline
         /// 构造函数
         /// </summary>
         /// <param name="pipeType"></param>
-        protected BasePipePart(PipeType pipeType)
+        protected BaseInPipePart(PipeType pipeType)
         {
             PipeType = pipeType;
             PipeCode = GetType().Name;
         }
+
+
 
         #region 流体启动和异步处理逻辑
 
@@ -57,44 +60,27 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<bool> Start(TInContext context)
+        public Task<bool> Start(TInContext context)
         {
-            var res = await InterHandling(context);
-            if (!res)
-            {
-                await Block(context);
-            }
-
-            return true;
+            return InterStart(context);
         }
 
         #endregion
 
 
-        #region 实际管道扩展处理方法
-
-        /// <summary>
-        ///  管道堵塞
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected virtual Task Block(TInContext context)
-        {
-            return Task.CompletedTask;
-        }
-
-        #endregion
-
-
-        #region 内部扩散方法
+        #region 管道的业务处理
 
         /// <summary>
         ///  管道处理实际业务流动方法
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<bool> InterHandling(TInContext context);
+        internal abstract Task<bool> InterStart(TInContext context);
 
+        #endregion
+
+
+        #region 内部扩散方法
 
         /// <summary>
         ///  内部处理流容器初始化赋值
@@ -111,4 +97,44 @@ namespace OSS.Pipeline
         #endregion
 
     }
+
+    /// <summary>
+    ///  管道执行基类
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="THandlePara"></typeparam>
+    public abstract class BaseHandlePipePart<TInContext, THandlePara> : BaseInPipePart<TInContext>
+    {
+        /// <inheritdoc />
+        protected BaseHandlePipePart(PipeType pipeType) : base(pipeType)
+        {
+        }
+
+        #region 管道内部业务处理
+
+        /// <summary>
+        ///  管道处理实际业务流动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal abstract Task<bool> InterHandling(THandlePara context);
+
+        #endregion
+
+        #region 管道业务扩展方法
+
+        /// <summary>
+        ///  管道堵塞
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected virtual Task Block(THandlePara context)
+        {
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
+    }
+
 }

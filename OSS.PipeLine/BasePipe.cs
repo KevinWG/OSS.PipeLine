@@ -20,15 +20,15 @@ using System.Threading.Tasks;
 
 namespace OSS.Pipeline
 {
+
     /// <summary>
     ///  基础管道
     /// </summary>
-    /// <typeparam name="InContext"></typeparam>
-    /// <typeparam name="OutContext"></typeparam>
-    public abstract class BasePipe<InContext, OutContext> : BasePipePart<InContext>, IPipeAppender<OutContext>
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
+    /// <typeparam name="THandlePara"></typeparam>
+    public abstract class BasePipe<TInContext, THandlePara, TOutContext> : BaseHandlePipePart<TInContext, THandlePara>, IOutPipeAppender<TOutContext>
     {
-        internal BasePipePart<OutContext> NextPipe { get; set; }
-
         /// <summary>
         ///  构造函数
         /// </summary>
@@ -37,37 +37,32 @@ namespace OSS.Pipeline
         {
         }
 
-        internal Task<bool> ToNextThrough(OutContext nextInContext)
+        #region 管道连接处理
+
+
+        internal BaseInPipePart<TOutContext> NextPipe { get; set; }
+
+        internal Task<bool> ToNextThrough(TOutContext nextInContext)
         {
             return NextPipe != null ? NextPipe.Start(nextInContext) : Task.FromResult(false);
         }
-
-
-        #region 管道连接处理
 
         /// <summary>
         ///  添加下个管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal virtual void InterAppend<NextOutContext>(BasePipe<OutContext, NextOutContext> nextPipe)
+        internal virtual void InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
             NextPipe = nextPipe;
         }
 
-        void IPipeAppender<OutContext>.InterAppend<NextOutContext>(BasePipe<OutContext, NextOutContext> nextPipe)
+        void IOutPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
             InterAppend(nextPipe);
         }
 
-        BaseBranchGateway<OutContext> IPipeAppender<OutContext>.InterAppend(BaseBranchGateway<OutContext> nextPipe)
-        {
-            InterAppend<OutContext>(null); // 保证 PipeLine 的 InterAppend 可以正常执行
-            NextPipe = nextPipe;
-            return nextPipe;
-        }
-
         #endregion
-        
+
         #region 内部扩散方法
 
         internal override void InterInitialContainer(IPipeLine flowContainer)
@@ -93,7 +88,7 @@ namespace OSS.Pipeline
 
             if (NextPipe == null || Equals(LineContainer.EndPipe))
                 return pipe;
-            
+
             pipe.next = NextPipe.InterToRoute();
             return pipe;
         }
@@ -102,7 +97,35 @@ namespace OSS.Pipeline
 
     }
 
+    /// <summary>
+    ///  管道执行基类
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
+    public abstract class BasePipe<TInContext,TOutContext> : BasePipe<TInContext, TInContext, TOutContext>
+    {
+        /// <inheritdoc />
+        protected BasePipe(PipeType pipeType) : base(pipeType)
+        {
+        }
 
+        /// <summary>
+        ///  管道处理实际业务流动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal override async Task<bool> InterStart(TInContext context)
+        {
+            var res = await InterHandling(context);
+            if (res)
+            {
+                await Block(context);
+            }
+            return true;
+        }
+        
+    }
+    
     /// <summary>
     ///  基础管道
     /// </summary>
@@ -117,8 +140,7 @@ namespace OSS.Pipeline
         {
         }
     }
-
-
+    
     /// <summary>
     /// 管道扩展类
     /// </summary>
@@ -127,19 +149,19 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加管道
         /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
-        /// <typeparam name="NextOutContext"></typeparam>
+        /// <typeparam name="TOutContext"></typeparam>
+        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextPara"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BasePipe<OutContext, NextOutContext> Append<OutContext, NextOutContext>(
-            this IPipeAppender<OutContext> pipe,
-            BasePipe<OutContext, NextOutContext> nextPipe)
+        public static BasePipe<TOutContext, TNextPara, TNextOutContext> Append<TOutContext, TNextPara,TNextOutContext>(
+            this IOutPipeAppender<TOutContext> pipe, BasePipe<TOutContext,TNextPara, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
-
+        
         /// <summary>
         /// 追加分支网关管道
         /// </summary>
@@ -148,13 +170,12 @@ namespace OSS.Pipeline
         /// <param name="nextPipe"></param>
         /// <returns></returns>
         public static BaseBranchGateway<OutContext> Append<OutContext>(
-            this IPipeAppender<OutContext> pipe,
-            BaseBranchGateway<OutContext> nextPipe)
+            this IOutPipeAppender<OutContext> pipe, BaseBranchGateway<OutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
-
+        
         /// <summary>
         ///  追加 数据转换管道
         /// </summary>
@@ -164,10 +185,22 @@ namespace OSS.Pipeline
         /// <param name="convertFunc"></param>
         /// <returns></returns>
         public static DefaultConnector<OutContext, NextOutContext> Append<OutContext, NextOutContext>(
-            this IPipeAppender<OutContext> pipe,
-            Func<OutContext, NextOutContext> convertFunc)
+            this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc)
         {
             var connector = new DefaultConnector<OutContext, NextOutContext>(convertFunc);
+            pipe.InterAppend(connector);
+            return connector;
+        }
+
+        /// <summary>
+        ///  追加异步流缓冲组件
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <returns></returns>
+        public static DefaultBufferConnector<OutContext> AppendBuffer<OutContext>(this IOutPipeAppender<OutContext> pipe)
+        {
+            var connector = new DefaultBufferConnector<OutContext>();
             pipe.InterAppend(connector);
             return connector;
         }
@@ -181,25 +214,10 @@ namespace OSS.Pipeline
         /// <param name="convertFunc"></param>
         /// <returns></returns>
         public static DefaultBufferConnector<OutContext, NextOutContext> AppendBuffer<OutContext, NextOutContext>(
-            this IPipeAppender<OutContext> pipe,
+            this IOutPipeAppender<OutContext> pipe,
             Func<OutContext, NextOutContext> convertFunc)
         {
             var connector = new DefaultBufferConnector<OutContext, NextOutContext>(convertFunc);
-            pipe.InterAppend(connector);
-            return connector;
-        }
-
-
-        /// <summary>
-        ///  追加异步流缓冲组件
-        /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
-        /// <param name="pipe"></param>
-        /// <returns></returns>
-        public static DefaultBufferConnector<OutContext> AppendBuffer<OutContext>(
-            this IPipeAppender<OutContext> pipe)
-        {
-            var connector = new DefaultBufferConnector<OutContext>();
             pipe.InterAppend(connector);
             return connector;
         }

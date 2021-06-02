@@ -11,11 +11,11 @@ namespace OSS.Pipeline.Tests.FlowItems
         {
             PipeCode = "SendEmailActivity";
         }
-
-        protected override Task<bool> Executing(SendEmailContext contextData, ref bool isBlocked)
+        
+        protected override Task<(bool is_ok, bool result)> Executing(SendEmailContext contextData)
         {
             LogHelper.Info("分流-1.邮件发送");
-            return Task.FromResult(true);
+            return Task.FromResult((true,true));
         }
     }
 

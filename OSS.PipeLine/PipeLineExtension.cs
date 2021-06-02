@@ -29,13 +29,13 @@ namespace OSS.Pipeline
         /// <param name="endPipeAppender"></param>
         /// <param name="flowPipeCode"></param>
         /// <returns></returns>
-        public static PipeLine<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BasePipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
+        public static Pipeline<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
+            this BaseInPipePart<InFlowContext> startPipe, IOutPipeAppender<OutFlowContext> endPipeAppender,
             string flowPipeCode = null)
         {
             var code = flowPipeCode ?? string.Concat(startPipe.PipeCode, "-", endPipeAppender.PipeCode);
 
-            return new PipeLine<InFlowContext, OutFlowContext>(startPipe, endPipeAppender) {PipeCode = code};
+            return new Pipeline<InFlowContext, OutFlowContext>(startPipe, endPipeAppender) {PipeCode = code};
         }
 
 

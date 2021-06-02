@@ -23,7 +23,7 @@ namespace OSS.Pipeline.Tests
         public readonly SendEmailActivity EmailActivity = new SendEmailActivity();
 
 
-        public readonly PipeLine<ApplyContext, bool> PipeLine;
+        public readonly Pipeline<ApplyContext, bool> PipeLine;
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
@@ -56,7 +56,8 @@ namespace OSS.Pipeline.Tests
             {
                 id = "test_business_id"
             });
-            await Task.Delay(2000);
+
+            await Task.Delay(200000);
         }
 
         [TestMethod]

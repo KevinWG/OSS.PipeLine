@@ -11,7 +11,6 @@
 
 #endregion
 
-using OSS.Pipeline.Gateway;
 
 namespace OSS.Pipeline.Interface
 {
@@ -19,15 +18,8 @@ namespace OSS.Pipeline.Interface
     ///  管道链接器
     /// </summary>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IPipeAppender<TOutContext> : IPipe
+    public interface IOutPipeAppender<TOutContext> : IPipe
     {
-        internal void InterAppend<NextOutContext>(BasePipe<TOutContext, NextOutContext> nextPipe);
-
-        /// <summary>
-        ///   添加网关
-        /// </summary>
-        /// <param name="nextPipe"></param>
-        internal BaseBranchGateway<TOutContext> InterAppend(BaseBranchGateway<TOutContext> nextPipe);
+        internal void InterAppend(BaseInPipePart<TOutContext> nextPipe);
     }
-
 }

@@ -21,14 +21,14 @@ namespace OSS.Pipeline
     /// <summary>
     /// 基础流体
     /// </summary>
-    /// <typeparam name="InFlowContext"></typeparam>
-    /// <typeparam name="OutFlowContext"></typeparam>
-    public class PipeLine<InFlowContext, OutFlowContext> : BasePipe<InFlowContext, OutFlowContext>, IPipeLine
+    /// <typeparam name="TInFlowContext"></typeparam>
+    /// <typeparam name="TOutFlowContext"></typeparam>
+    public class Pipeline<TInFlowContext, TOutFlowContext> : BasePipe<TInFlowContext, TOutFlowContext>, IPipeLine
     {
         /// <summary>
         /// 基础流体
         /// </summary>
-        public PipeLine(BasePipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender) : base(PipeType.Flow)
+        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender) : base(PipeType.Flow)
         {
             _startPipe = startPipe;
             _endPipe = endPipeAppender;
@@ -41,8 +41,10 @@ namespace OSS.Pipeline
             startPipe.InterInitialContainer(this);
         }
 
-        private readonly BasePipePart<InFlowContext>   _startPipe;
-        private readonly IPipeAppender<OutFlowContext> _endPipe;
+
+        public readonly BaseInPipePart<TInFlowContext>   _startPipe;
+        public readonly IOutPipeAppender<TOutFlowContext> _endPipe;
+
 
         /// <summary>
         ///  开始管道
@@ -62,9 +64,10 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal override async Task<bool> InterHandling(InFlowContext context)
+        internal override async Task<bool>  InterHandling(TInFlowContext context)
         {
-            await _startPipe.Start(context);
+            await _startPipe.Start(context); 
+
             return true;
         }
 
@@ -77,10 +80,10 @@ namespace OSS.Pipeline
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal override void InterAppend<NextOutContext>(BasePipe<OutFlowContext, NextOutContext> nextPipe)
+        internal override void InterAppend(BaseInPipePart<TOutFlowContext> nextPipe)
         {
             base.InterAppend(nextPipe);
-            _endPipe.Append(nextPipe);
+            _endPipe.InterAppend(nextPipe);
         }
 
         #endregion
@@ -121,11 +124,12 @@ namespace OSS.Pipeline
     }
 
     /// <inheritdoc />
-    public class PipeLine<TContext> : PipeLine<TContext, TContext>
+    public class Pipeline<TContext> : Pipeline<TContext, TContext>
     {
         /// <inheritdoc />
-        public PipeLine(BasePipePart<TContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
+        public Pipeline(BaseInPipePart<TContext> startPipe, IOutPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
         {
         }
     }
+    
 }

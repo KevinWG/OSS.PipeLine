@@ -40,18 +40,15 @@ namespace OSS.Pipeline.Activity
         /// True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<bool> Executing(TContext contextData);
-        
+
         internal override async Task<bool> InterHandling(TContext context)
         {
             var res = await Executing(context);
-            if (!res)
+            if (res)
             {
-                await Block(context);
-                return true;
+                await ToNextThrough(context);
             }
-
-            await ToNextThrough(context);
-            return false;
+            return res;
         }
     }
 
@@ -72,14 +69,11 @@ namespace OSS.Pipeline.Activity
         internal override async Task<bool> InterHandling(TContext context)
         {
             var (is_ok, result) = await Executing(context);
-            if (!is_ok)
+            if (is_ok)
             {
-                await Block(context);
-                return false;
+                await ToNextThrough(result);
             }
-
-            await ToNextThrough(result);
-            return true;
+            return is_ok;
         }
 
         /// <summary>

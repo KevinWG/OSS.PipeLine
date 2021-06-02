@@ -25,7 +25,7 @@ namespace OSS.Pipeline.Gateway
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBranchGateway<TContext> : BasePipePart<TContext>
+    public abstract class BaseBranchGateway<TContext> : BaseInPipePart<TContext>
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -34,7 +34,7 @@ namespace OSS.Pipeline.Gateway
         {
         }
 
-        internal override async Task<bool> InterHandling(TContext context)
+        internal override async Task<bool> InterStart(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
@@ -54,14 +54,12 @@ namespace OSS.Pipeline.Gateway
         /// <param name="branchItems"></param>
         /// <param name="context"></param>
         /// <returns>如果为空，则触发block</returns>
-        protected abstract IEnumerable<BasePipePart<TContext>> FilterNextPipes(List<BasePipePart<TContext>> branchItems,
+        protected abstract IEnumerable<BaseInPipePart<TContext>> FilterNextPipes(List<BaseInPipePart<TContext>> branchItems,
             TContext context);
-
-
-
+        
         #region 管道连接
 
-        private List<BasePipePart<TContext>> _branchItems;
+        private List<BaseInPipePart<TContext>> _branchItems;
         /// <summary>
         ///   添加分支       
         /// </summary>
@@ -76,7 +74,7 @@ namespace OSS.Pipeline.Gateway
 
             if (_branchItems == null)
             {
-                _branchItems = new List<BasePipePart<TContext>>();
+                _branchItems = new List<BaseInPipePart<TContext>>();
             }
 
             _branchItems.Add(branchPipe);
