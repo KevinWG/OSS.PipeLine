@@ -9,7 +9,7 @@ namespace OSS.Pipeline.Connector
     /// </summary>
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseBufferConnector<InContext, OutContext> : BaseConnector<InContext, OutContext>
+    public abstract class BaseBufferConnector<InContext, OutContext> : BaseMsgConvertor<InContext, OutContext>
     {
         // 内部异步处理入口
         private readonly IDataPublisher<InContext> _pusher;
