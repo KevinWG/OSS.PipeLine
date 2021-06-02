@@ -64,7 +64,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="convertFunc"></param>
         /// <returns></returns>
-        public static DefaultMsgConvertor<OutContext, NextOutContext> Append<OutContext, NextOutContext>(
+        public static BaseMsgConvertor<OutContext, NextOutContext> Append<OutContext, NextOutContext>(
             this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc)
         {
             var connector = new DefaultMsgConvertor<OutContext, NextOutContext>(convertFunc);
@@ -72,34 +72,19 @@ namespace OSS.Pipeline
             return connector;
         }
 
-        ///// <summary>
-        /////  追加异步流缓冲组件
-        ///// </summary>
-        ///// <typeparam name="OutContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <returns></returns>
-        //public static DefaultBufferConnector<OutContext> AppendBuffer<OutContext>(this IOutPipeAppender<OutContext> pipe)
-        //{
-        //    var connector = new DefaultBufferConnector<OutContext>();
-        //    pipe.InterAppend(connector);
-        //    return connector;
-        //}
+        /// <summary>
+        ///  追加异步流缓冲组件
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <returns></returns>
+        public static MsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
+        {
+            var connector = new MsgFlow<OutContext>(msgFlowKey);
+            pipe.InterAppend(connector);
+            return connector;
+        }
 
-        ///// <summary>
-        /////  追加异步流缓冲数据转换组件
-        ///// </summary>
-        ///// <typeparam name="OutContext"></typeparam>
-        ///// <typeparam name="NextOutContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="convertFunc"></param>
-        ///// <returns></returns>
-        //public static DefaultBufferConnector<OutContext, NextOutContext> AppendBuffer<OutContext, NextOutContext>(
-        //    this IOutPipeAppender<OutContext> pipe,
-        //    Func<OutContext, NextOutContext> convertFunc)
-        //{
-        //    var connector = new DefaultBufferConnector<OutContext, NextOutContext>(convertFunc);
-        //    pipe.InterAppend(connector);
-        //    return connector;
-        //}
     }
 }

@@ -132,24 +132,27 @@ namespace OSS.Pipeline.Gateway
         /// <param name="gateway"></param>
         /// <param name="convertFunc"></param>
         /// <returns></returns>
-        public static DefaultMsgConvertor<TContext, NextOutContext> AddBranch<TContext, NextOutContext>(
+        public static BaseMsgConvertor<TContext, NextOutContext> AddBranch<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
         {
             var nextConverter = new DefaultMsgConvertor<TContext, NextOutContext>(convertFunc);
             gateway.AddBranch(nextConverter);
             return nextConverter;
         }
-        
-        ///// <summary>
-        /////  添加转换分支管道
-        ///// </summary>
-        ///// <typeparam name="TContext"></typeparam>
-        ///// <param name="gateway"></param>
-        ///// <returns></returns>
-        //public static BasePipe<TContext, TContext> AddMsgFlowBranch<TContext>(this BaseBranchGateway<TContext> gateway)
-        //{
-        //    var nextConverter = new DefaultBufferConnector<TContext>();
-        //    return gateway.AddBranchPipe(nextConverter);
-        //}
+
+        /// <summary>
+        ///  添加转换分支管道
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <param name="gateway"></param>
+        /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <returns></returns>
+        public static MsgFlow<TContext> AddMsgFlowBranch<TContext>(this BaseBranchGateway<TContext> gateway,
+            string msgFlowKey = null)
+        {
+            var nextConverter = new MsgFlow<TContext>(msgFlowKey);
+            gateway.AddBranch(nextConverter);
+            return nextConverter;
+        }
     }
 }
