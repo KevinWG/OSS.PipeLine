@@ -7,11 +7,11 @@ namespace OSS.Pipeline.Msg
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    internal class DefaultMsgConvertor<TInContext, TOutContext> : BaseMsgConvertor<TInContext, TOutContext>
+    internal class InterMsgConvertor<TInContext, TOutContext> : BaseMsgConvertor<TInContext, TOutContext>
     {
         private readonly Func<TInContext, TOutContext> _convert;
         /// <inheritdoc/>
-        public DefaultMsgConvertor(Func<TInContext, TOutContext> convertFunc)
+        public InterMsgConvertor(Func<TInContext, TOutContext> convertFunc)
         {
             _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc), "转换方法必须传入！");
         }
