@@ -67,7 +67,7 @@ namespace OSS.Pipeline
         public static BaseMsgConvertor<OutContext, NextOutContext> Append<OutContext, NextOutContext>(
             this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc)
         {
-            var connector = new DefaultMsgConvertor<OutContext, NextOutContext>(convertFunc);
+            var connector = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc);
             pipe.InterAppend(connector);
             return connector;
         }

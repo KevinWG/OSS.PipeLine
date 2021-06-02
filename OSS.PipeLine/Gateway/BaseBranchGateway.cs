@@ -135,7 +135,7 @@ namespace OSS.Pipeline.Gateway
         public static BaseMsgConvertor<TContext, NextOutContext> AddBranch<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
         {
-            var nextConverter = new DefaultMsgConvertor<TContext, NextOutContext>(convertFunc);
+            var nextConverter = new InterMsgConvertor<TContext, NextOutContext>(convertFunc);
             gateway.AddBranch(nextConverter);
             return nextConverter;
         }
