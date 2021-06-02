@@ -35,24 +35,13 @@ namespace OSS.Pipeline.Gateway
         ///  是否触发通过
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="isBlocked"></param>
         /// <returns></returns>
-        protected abstract Task<bool> IfMatchCondition(TContext context, out bool isBlocked);
+        protected abstract Task<bool> IfMatchCondition(TContext context);
 
 
         internal override async Task<bool> InterHandling(TContext context)
         {
-            var throughRes = await IfMatchCondition(context, out var isBlocked);
-            if (isBlocked)
-            {
-                return false;
-            }
-
-            if (throughRes)
-            {
-                await ToNextThrough(context);
-            }
-            return true;
+            return await IfMatchCondition(context);
         }
     }
 }
