@@ -1,7 +1,7 @@
 ﻿using OSS.Pipeline.Activity;
-using OSS.Pipeline.Connector;
 using OSS.Tools.Log;
 using System.Threading.Tasks;
+using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
@@ -24,7 +24,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         public string body { get; set; }
     }
 
-    public class PayEmailConnector : BaseConnector<PayContext, SendEmailContext>
+    public class PayEmailConnector : BaseMsgConvertor<PayContext, SendEmailContext>
     {
         public PayEmailConnector()
         {

@@ -18,7 +18,7 @@ namespace OSS.Pipeline
     /// <summary>
     /// EventFlow 创建工厂
     /// </summary>
-    public static class PipeLineExtension
+    public static class PipelineExtension
     {
         /// <summary>
         /// 根据首位两个管道建立流体

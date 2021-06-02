@@ -75,7 +75,6 @@ namespace OSS.Pipeline
         protected BaseInPipePart(PipeType pipeType) : base(pipeType)
         {
         }
-        
 
         #region 管道的业务处理
 

@@ -1,7 +1,7 @@
 ﻿using OSS.Pipeline.Activity;
-using OSS.Pipeline.Connector;
 using OSS.Tools.Log;
 using System.Threading.Tasks;
+using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
@@ -24,7 +24,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         public int count { get; set; }
     }
 
-    public class StockConnector : BaseConnector<PayContext, StockContext>
+    public class StockConnector : BaseMsgConvertor<PayContext, StockContext>
     {
         public StockConnector()
         {

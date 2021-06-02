@@ -2,61 +2,47 @@
 using OSS.Pipeline.Mos;
 using OSS.Tools.DataFlow;
 
-namespace OSS.Pipeline.Connector
+namespace OSS.Pipeline.Msg
 {
     /// <summary>
     /// 异步消息延缓连接器
     /// </summary>
-    /// <typeparam name="InContext"></typeparam>
-    /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseBufferConnector<InContext, OutContext> : BaseMsgConvertor<InContext, OutContext>
+    /// <typeparam name="TContext"></typeparam>
+    public abstract class BaseMsgFlow<TContext> : BasePipe<TContext, TContext>
     {
         // 内部异步处理入口
-        private readonly IDataPublisher<InContext> _pusher;
+        private readonly IDataPublisher<TContext> _pusher;
 
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="bufferDataFlowKey">缓冲DataFlow 对应的Key</param>
-        protected BaseBufferConnector(string bufferDataFlowKey) : base(PipeType.BufferConnector)
+        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key</param>
+        protected BaseMsgFlow(string msgDataFlowKey) : base(PipeType.BufferConnector)
         {
-            bufferDataFlowKey ??= PipeCode;
+            msgDataFlowKey ??= PipeCode;
 
-            _pusher = DataFlowFactory.CreateFlow<InContext>(SubscribeCaller, bufferDataFlowKey, "OSS.Pipeline.Connector");
+            _pusher = DataFlowFactory.CreateFlow<TContext>(SubscribeCaller, msgDataFlowKey, "OSS.Pipeline.Msg");
         }
 
-        /// <summary>
-        /// 异步缓冲连接器
-        /// 缓冲DataFlow 对应的Key为当前PipeCode
-        /// </summary>
-        protected BaseBufferConnector() : this(null)
-        {
-        }
+        ///// <summary>
+        ///// 异步缓冲连接器
+        ///// 缓冲DataFlow 对应的Key为当前PipeCode
+        ///// </summary>
+        //protected BaseMsgFlow() : this(null)
+        //{
+        //}
 
         // 订阅唤起操作
-        private Task<bool> SubscribeCaller(InContext data)
+        private Task<bool> SubscribeCaller(TContext data)
         {
-            var outContext = Convert(data);
-            return ToNextThrough(outContext);
+            return ToNextThrough(data);
         }
 
-        internal override Task<bool> InterHandling(InContext context)
+        internal override Task<bool> InterHandling(TContext context)
         {
             return _pusher.Publish(context);
         }
     }
 
 
-    /// <summary>
-    /// 异步消息延缓连接器
-    /// </summary>
-    /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBufferConnector<TContext> : BaseBufferConnector<TContext, TContext>
-    {
-        /// <inheritdoc />
-        protected override TContext Convert(TContext inContextData)
-        {
-            return inContextData;
-        }
-    }
 }

@@ -11,29 +11,28 @@
 
 #endregion
 
-using OSS.Pipeline.Mos;
 using System.Threading.Tasks;
+using OSS.Pipeline.Mos;
 
-namespace OSS.Pipeline.Connector
+namespace OSS.Pipeline.Msg
 {
     /// <summary>
     /// 连接基类
     /// </summary>
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseConnector<InContext, OutContext> : BasePipe<InContext, OutContext>
+    public abstract class BaseMsgConvertor<InContext, OutContext> : BasePipe<InContext, OutContext>
     {
         /// <summary>
         /// 连接基类构造函数
         /// </summary>
-        protected BaseConnector() : base(PipeType.Connector)
+        protected BaseMsgConvertor() : base(PipeType.Connector)
         {
         }
 
         /// <inheritdoc />
-        protected BaseConnector(PipeType type) : base(type)
+        protected BaseMsgConvertor(PipeType type) : base(type)
         {
-
         }
 
         /// <summary>

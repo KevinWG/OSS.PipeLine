@@ -35,13 +35,13 @@ namespace OSS.Pipeline.Tests
 
             // 网关分支 - 发送邮件分支
             PayGateway
-                .AddBranchPipe(EmailConnector)
+                .AddBranch(EmailConnector)
                 .Append(EmailActivity)
                 .Append(endActivity);
 
             // 网关分支- 入库分支
             PayGateway
-                .AddBranchPipe(StockConnector)
+                .AddBranch(StockConnector)
                 .Append(StockActivity)
                 .Append(endActivity); 
          

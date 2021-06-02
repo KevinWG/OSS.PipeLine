@@ -1,59 +1,40 @@
 ﻿using System;
 
-namespace OSS.Pipeline.Connector
+namespace OSS.Pipeline.Msg
 {
-    /// <summary>
-    ///  缓冲连接器的默认实现
-    /// </summary>
-    /// <typeparam name="InContext"></typeparam>
-    /// <typeparam name="OutContext"></typeparam>
-    public class DefaultConnector<InContext, OutContext> : BaseConnector<InContext, OutContext>
-    {
-        private readonly Func<InContext, OutContext> _convert;
-        /// <inheritdoc/>
-        public DefaultConnector(Func<InContext, OutContext> convertFunc)
-        {
-            _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc), "转换方法必须传入！");
-        }
 
-        /// <inheritdoc/>
-        protected override OutContext Convert(InContext inContextData)
-        {
-            return _convert(inContextData);
-        }
-    }
-
-
-    /// <summary>
-    ///  异步缓冲转化连接器的默认实现
-    /// </summary>
-    /// <typeparam name="InContext"></typeparam>
-    /// <typeparam name="OutContext"></typeparam>
-    public class DefaultBufferConnector<InContext, OutContext> : BaseBufferConnector<InContext, OutContext>
-    {
-        private readonly Func<InContext, OutContext> _convert;
-        /// <inheritdoc/>
-        public DefaultBufferConnector(Func<InContext, OutContext> convertFunc)
-        {
-            _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc), "转换方法必须传入！");
-        }
-
-        /// <inheritdoc/>
-        protected override OutContext Convert(InContext inContextData)
-        {
-            return _convert(inContextData);
-        }
-    }
-
-    /// <summary>
-    ///  异步缓冲连接器的默认实现
-    /// </summary>
-    /// <typeparam name="TContext"></typeparam>
-    public class DefaultBufferConnector<TContext> : BaseBufferConnector<TContext>
+    /// <inheritdoc />
+    public class DefaultMsgFlow<TContext> : BaseMsgFlow<TContext>
     {
         /// <inheritdoc />
-        public DefaultBufferConnector() 
+        public DefaultMsgFlow(string msgDataFlowKey) : base(msgDataFlowKey)
         {
+
         }
     }
+
+
+    /// <summary>
+    ///  内部转化连接器的实现
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
+    public class DefaultMsgConvertor<TInContext, TOutContext> : BaseMsgConvertor<TInContext, TOutContext>
+    {
+        private readonly Func<TInContext, TOutContext> _convert;
+        /// <inheritdoc/>
+        public DefaultMsgConvertor(Func<TInContext, TOutContext> convertFunc)
+        {
+            _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc), "转换方法必须传入！");
+        }
+
+        /// <inheritdoc/>
+        protected override TOutContext Convert(TInContext inContextData)
+        {
+            return _convert(inContextData);
+        }
+    }
+
+
+
 }

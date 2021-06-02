@@ -11,13 +11,13 @@
 
 #endregion
 
-using OSS.Pipeline.Connector;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.Mos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline.Gateway
 {
@@ -64,7 +64,7 @@ namespace OSS.Pipeline.Gateway
         ///   添加分支       
         /// </summary>
         /// <param name="branchPipe"></param>
-        public BasePipe<TContext, NextOutContext> AddBranchPipe<NextOutContext>(
+        public BasePipe<TContext, NextOutContext> AddBranch<NextOutContext>(
             BasePipe<TContext, NextOutContext> branchPipe)
         {
             if (branchPipe == null)
@@ -132,39 +132,24 @@ namespace OSS.Pipeline.Gateway
         /// <param name="gateway"></param>
         /// <param name="convertFunc"></param>
         /// <returns></returns>
-        public static BasePipe<TContext, NextOutContext> AddBranchPipe<TContext, NextOutContext>(
+        public static DefaultMsgConvertor<TContext, NextOutContext> AddBranch<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
         {
-            var nextConverter = new DefaultConnector<TContext, NextOutContext>(convertFunc);
-            return gateway.AddBranchPipe(nextConverter);
+            var nextConverter = new DefaultMsgConvertor<TContext, NextOutContext>(convertFunc);
+            gateway.AddBranch(nextConverter);
+            return nextConverter;
         }
-
-        /// <summary>
-        ///  添加转换分支管道
-        /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <typeparam name="NextOutContext"></typeparam>
-        /// <param name="gateway"></param>
-        /// <param name="convertFunc"></param>
-        /// <returns></returns>
-        public static BasePipe<TContext, NextOutContext> AddBufferBranchPipe<TContext, NextOutContext>(
-            this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
-        {
-            var nextConverter = new DefaultBufferConnector<TContext, NextOutContext>(convertFunc);
-            return gateway.AddBranchPipe(nextConverter);
-        }
-
-
-        /// <summary>
-        ///  添加转换分支管道
-        /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <param name="gateway"></param>
-        /// <returns></returns>
-        public static BasePipe<TContext, TContext> AddBufferBranchPipe<TContext>(this BaseBranchGateway<TContext> gateway)
-        {
-            var nextConverter = new DefaultBufferConnector<TContext>();
-            return gateway.AddBranchPipe(nextConverter);
-        }
+        
+        ///// <summary>
+        /////  添加转换分支管道
+        ///// </summary>
+        ///// <typeparam name="TContext"></typeparam>
+        ///// <param name="gateway"></param>
+        ///// <returns></returns>
+        //public static BasePipe<TContext, TContext> AddMsgFlowBranch<TContext>(this BaseBranchGateway<TContext> gateway)
+        //{
+        //    var nextConverter = new DefaultBufferConnector<TContext>();
+        //    return gateway.AddBranchPipe(nextConverter);
+        //}
     }
 }
