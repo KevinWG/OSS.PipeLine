@@ -5,24 +5,23 @@ using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
-    public class StockActivity : BaseEffectActivity<StockContext,bool>
+    public class StockActivity : BaseActivity<StockContext>
     {
         public StockActivity()
         {
             PipeCode = "StockActivity";
         }
-        
-     
-        protected override Task<(bool is_ok, bool result)> Executing(StockContext contextData)
+
+        protected override Task<bool> Executing(StockContext data)
         {
-            LogHelper.Info("分流-2.库存保存");
-            return Task.FromResult((true,true));
+            LogHelper.Info("分流-2.增加库存，数量：" + data.count);
+            return Task.FromResult(true);
         }
     }
 
-    public class StockContext : TestContext<string>
+    public class StockContext
     {
-
+        public int count { get; set; }
     }
 
     public class StockConnector : BaseConnector<PayContext, StockContext>
@@ -34,7 +33,7 @@ namespace OSS.Pipeline.Tests.FlowItems
 
         protected override StockContext Convert(PayContext inContextData)
         {
-            return new StockContext() { id = inContextData.id };
+            return new StockContext() {count = inContextData.count};
         }
     }
 }

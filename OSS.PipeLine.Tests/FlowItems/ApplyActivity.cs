@@ -4,20 +4,22 @@ using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
-    public class ApplyActivity : BaseActivity<ApplyContext>
+    public class ApplyActivity : BaseEffectActivity<ApplyContext, long>
     {
         public ApplyActivity()
         {
             PipeCode = "ApplyActivity";
         }
-        protected override Task<bool> Executing(ApplyContext data)
+        
+        protected override Task<(bool is_ok, long result)> Executing(ApplyContext contextData)
         {
-            LogHelper.Info("这里刚才发生了一个采购申请");
-            return Task.FromResult(true);
+            LogHelper.Info($"发起 [{contextData.name}] 采购申请");
+            return Task.FromResult((true,100000001L));
         }
     }
 
-    public class ApplyContext : TestContext<string>
+    public class ApplyContext 
     {
+        public string name { get; set; }
     }
 }

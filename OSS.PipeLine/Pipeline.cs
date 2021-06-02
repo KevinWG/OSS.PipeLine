@@ -64,10 +64,9 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal override async Task<bool>  InterHandling(TInFlowContext context)
+        internal override async Task<bool> InterHandling(TInFlowContext context)
         {
-            await _startPipe.Start(context); 
-
+            await _startPipe.Start(context);
             return true;
         }
 
@@ -75,14 +74,17 @@ namespace OSS.Pipeline
 
 
         #region 管道连接处理
-        
+
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
         internal override void InterAppend(BaseInPipePart<TOutFlowContext> nextPipe)
         {
-            base.InterAppend(nextPipe);
+            _endPipe.InterAppend(nextPipe);
+        }
+        internal override void InterAppend(BaseInPipePart<EmptyContext> nextPipe)
+        {
             _endPipe.InterAppend(nextPipe);
         }
 

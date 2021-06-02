@@ -20,7 +20,6 @@ using System.Threading.Tasks;
 
 namespace OSS.Pipeline
 {
-
     /// <summary>
     ///  基础管道
     /// </summary>
@@ -37,30 +36,79 @@ namespace OSS.Pipeline
         {
         }
 
-        #region 管道连接处理
 
+        #region 内部的业务处理 
 
-        internal BaseInPipePart<TOutContext> NextPipe { get; set; }
-
-        internal Task<bool> ToNextThrough(TOutContext nextInContext)
+        internal override Task<bool> InterStart(TInContext context)
         {
-            return NextPipe != null ? NextPipe.Start(nextInContext) : Task.FromResult(false);
+            throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterStart 方法没有实现，无法启动");
         }
 
+        internal override Task<bool> InterHandling(THandlePara context)
+        {
+            throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterHandling 方法没有实现，无法执行");
+        }
+
+        #endregion
+
+
+        #region 管道连接处理
+
+        //private 
+        internal BasePipePart NextPipe { get;private set; }
+        internal Task<bool> ToNextThrough(TOutContext nextInContext)
+        {
+            if (NextPipe != null)
+            {
+                if (_nextPipe!=null)
+                {
+                   return  _nextPipe.Start(nextInContext);
+                }
+                else
+                {
+                    return _nextEmptyPipe.Start(EmptyContext.Default);
+                }
+            }
+            return Task.FromResult(false);
+        }
+        
         /// <summary>
-        ///  添加下个管道
+        ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
         internal virtual void InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
-            NextPipe = nextPipe;
         }
-
+        private BaseInPipePart<TOutContext> _nextPipe { get; set; }
         void IOutPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
+            if (NextPipe != null)
+            {
+                throw new ArgumentException("当前节点已经关联下游节点！");
+            }
+            NextPipe = _nextPipe = nextPipe;
             InterAppend(nextPipe);
         }
 
+
+
+        /// <summary>
+        ///  链接流体内部尾部管道和流体外下一截管道 ( 接收空上下文
+        /// </summary>
+        /// <param name="nextPipe"></param>
+        internal virtual void InterAppend(BaseInPipePart<EmptyContext> nextPipe)
+        {
+        }
+        private BaseInPipePart<EmptyContext> _nextEmptyPipe { get; set; }
+        void IOutPipeAppender<TOutContext>.InterAppend(BaseInPipePart<EmptyContext> nextPipe)
+        {
+            if (NextPipe != null)
+            {
+                throw new ArgumentException("当前节点已经关联下游节点！");
+            }
+            NextPipe = _nextEmptyPipe = nextPipe;
+            InterAppend(nextPipe);
+        }
         #endregion
 
         #region 内部扩散方法
@@ -92,6 +140,8 @@ namespace OSS.Pipeline
             pipe.next = NextPipe.InterToRoute();
             return pipe;
         }
+
+
 
         #endregion
 
@@ -126,26 +176,28 @@ namespace OSS.Pipeline
         
     }
     
-    /// <summary>
-    ///  基础管道
-    /// </summary>
-    /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseSinglePipe<TContext> : BasePipe<TContext, TContext>
-    {
-        /// <summary>
-        ///  构造函数
-        /// </summary>
-        /// <param name="pipeType"></param>
-        protected BaseSinglePipe(PipeType pipeType) : base(pipeType)
-        {
-        }
-    }
     
     /// <summary>
     /// 管道扩展类
     /// </summary>
     public static class BaseSinglePipeExtension
     {
+        /// <summary>
+        ///  追加管道
+        /// </summary>
+        /// <typeparam name="TOutContext"></typeparam>
+        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextPara"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static BasePipe<EmptyContext, TNextPara, TNextOutContext> Append<TOutContext, TNextPara, TNextOutContext>(
+            this IOutPipeAppender<TOutContext> pipe, BasePipe<EmptyContext, TNextPara, TNextOutContext> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
+        }
+
         /// <summary>
         ///  追加管道
         /// </summary>

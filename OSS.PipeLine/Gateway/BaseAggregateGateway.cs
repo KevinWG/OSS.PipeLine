@@ -22,7 +22,7 @@ namespace OSS.Pipeline.Gateway
     /// the aggregative gate of flow
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseAggregateGateway<TContext> : BaseSinglePipe<TContext>
+    public abstract class BaseAggregateGateway<TContext>  : BasePipe<TContext, TContext>
     {
         /// <summary>
         ///  流体的多路聚合网关基类构造函数

@@ -4,22 +4,23 @@ using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
-    public class PayActivity : BaseActivity<PayContext>
+    public class PayActivity : BaseFuncActivity<PayContext, bool>
     {
         public PayActivity()
         {
             PipeCode = "PayActivity";
         }
 
-        protected override Task<bool> Executing(PayContext data)
+        protected override Task<(bool is_ok, bool result)> Executing(PayContext conext)
         {
-            LogHelper.Info("发起支付处理");
-            return Task.FromResult(true);
+            LogHelper.Info($"支付动作执行,数量：{conext.count}，金额：{conext.money}）");
+            return Task.FromResult((true,true));
         }
     }
 
-    public class PayContext : TestContext<string>
+    public class PayContext 
     {
-
+        public int    count  { get; set; }
+        public decimal money { get; set; }
     }
 }

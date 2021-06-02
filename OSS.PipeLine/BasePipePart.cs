@@ -11,7 +11,6 @@
 
 #endregion
 
-using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.Mos;
@@ -19,11 +18,20 @@ using OSS.Pipeline.Mos;
 namespace OSS.Pipeline
 {
     /// <summary>
-    /// 管道进口基类
+    /// 管道组成基类
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    public abstract class BaseInPipePart<TInContext> : IPipe
+    public abstract class BasePipePart : IPipe
     {
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="pipeType"></param>
+        protected BasePipePart(PipeType pipeType)
+        {
+            PipeType = pipeType;
+            PipeCode = GetType().Name;
+        }
+
         /// <summary>
         ///  管道类型
         /// </summary>
@@ -40,18 +48,33 @@ namespace OSS.Pipeline
         /// </summary>
         protected IPipeLine LineContainer { get; set; }
 
+        #region 内部扩散方法
 
         /// <summary>
-        /// 构造函数
+        ///  内部处理流容器初始化赋值
         /// </summary>
-        /// <param name="pipeType"></param>
-        protected BaseInPipePart(PipeType pipeType)
+        /// <param name="containerFlow"></param>
+        internal abstract void InterInitialContainer(IPipeLine containerFlow);
+
+        /// <summary>
+        ///  内部处理流的路由信息
+        /// </summary>
+        /// <returns></returns>
+        internal abstract PipeRoute InterToRoute(bool isFlowSelf = false);
+
+        #endregion
+    }
+
+    /// <summary>
+    /// 管道进口基类
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
+    public abstract class BaseInPipePart<TInContext> : BasePipePart
+    {
+        /// <inheritdoc />
+        protected BaseInPipePart(PipeType pipeType) : base(pipeType)
         {
-            PipeType = pipeType;
-            PipeCode = GetType().Name;
         }
-
-
 
         #region 流体启动和异步处理逻辑
 
@@ -78,24 +101,6 @@ namespace OSS.Pipeline
         internal abstract Task<bool> InterStart(TInContext context);
 
         #endregion
-
-
-        #region 内部扩散方法
-
-        /// <summary>
-        ///  内部处理流容器初始化赋值
-        /// </summary>
-        /// <param name="containerFlow"></param>
-        internal abstract void InterInitialContainer(IPipeLine containerFlow);
-
-        /// <summary>
-        ///  内部处理流的路由信息
-        /// </summary>
-        /// <returns></returns>
-        internal abstract PipeRoute InterToRoute(bool isFlowSelf = false);
-
-        #endregion
-
     }
 
     /// <summary>
@@ -121,6 +126,9 @@ namespace OSS.Pipeline
 
         #endregion
 
+
+
+
         #region 管道业务扩展方法
 
         /// <summary>
@@ -136,5 +144,21 @@ namespace OSS.Pipeline
         #endregion
 
     }
+    
+    /// <summary>
+    ///  空上下文
+    /// </summary>
+    public struct EmptyContext
+    {
+        /// <summary>
+        ///  默认空上下文
+        /// </summary>
+        public static EmptyContext Default { get; } 
+
+        static EmptyContext() {
+            Default = new EmptyContext();
+        }
+    }
+    
 
 }

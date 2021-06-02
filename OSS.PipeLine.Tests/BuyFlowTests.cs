@@ -1,7 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OSS.Pipeline.Activity;
-using OSS.Pipeline.Interface;
 using OSS.Pipeline.Tests.FlowItems;
 
 namespace OSS.Pipeline.Tests
@@ -10,7 +8,7 @@ namespace OSS.Pipeline.Tests
     public class BuyFlowTests
     {
         public readonly ApplyActivity ApplyActivity = new ApplyActivity();
-        public readonly AuditActivity AuditActivity = new AuditActivity();
+        public readonly AutoAuditActivity AuditActivity = new AutoAuditActivity();
 
         public readonly PayActivity PayActivity = new PayActivity();
 
@@ -23,48 +21,57 @@ namespace OSS.Pipeline.Tests
         public readonly SendEmailActivity EmailActivity = new SendEmailActivity();
 
 
-        public readonly Pipeline<ApplyContext, bool> PipeLine;
+        public readonly Pipeline<ApplyContext, EmptyContext> TestPipeline;
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
-            var endActivity = new EmptyActivity<bool>();
+            var endActivity = new EmptyActivity();
             
             ApplyActivity
             .Append(AuditActivity)
-            .Append(applyContext => new PayContext() { id = applyContext.id })// 表达式方式的转化器
+
             .Append(PayActivity)
             .Append(PayGateway);
 
             // 网关分支 - 发送邮件分支
-            PayGateway.AddBranchPipe(EmailConnector)
-            .Append(EmailActivity).Append(endActivity);
+            PayGateway
+                .AddBranchPipe(EmailConnector)
+                .Append(EmailActivity)
+                .Append(endActivity);
 
             // 网关分支- 入库分支
-            PayGateway.AddBranchPipe(StockConnector)
-            .Append(StockActivity).Append(endActivity); 
-            //.Append(后续事件)
-
+            PayGateway
+                .AddBranchPipe(StockConnector)
+                .Append(StockActivity)
+                .Append(endActivity); 
+         
             // 流体对象
-            PipeLine = ApplyActivity.AsFlowStartAndEndWith(endActivity);
+            TestPipeline = ApplyActivity.AsFlowStartAndEndWith(endActivity);
         }
 
 
         [TestMethod]
         public async Task FlowTest()
         {
-            await PipeLine.Start(new ApplyContext()
+            await ApplyActivity.Start(new ApplyContext()
             {
-                id = "test_business_id"
+                name = "冰箱"
+            });
+            await Task.Delay(1000);
+            await PayActivity.Execute(new PayContext()
+            {
+                count = 10,
+                money = 10000
             });
 
-            await Task.Delay(200000);
+            await Task.Delay(2000);
         }
 
         [TestMethod]
         public void RouteTest()
         {
             // 获取当前的路由信息
-            var route = PipeLine.ToRoute();
+            var route = TestPipeline.ToRoute();
             Assert.IsTrue(route != null);
         }
     }
