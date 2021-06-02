@@ -75,21 +75,7 @@ namespace OSS.Pipeline
         protected BaseInPipePart(PipeType pipeType) : base(pipeType)
         {
         }
-
-        #region 流体启动和异步处理逻辑
-
-        /// <summary>
-        /// 启动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public Task<bool> Start(TInContext context)
-        {
-            return InterStart(context);
-        }
-
-        #endregion
-
+        
 
         #region 管道的业务处理
 

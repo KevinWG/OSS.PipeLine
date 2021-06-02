@@ -42,7 +42,7 @@ namespace OSS.Pipeline.Gateway
                 return false;
             }
 
-            var parallelPipes = nextPipes.Select(p => p.Start(context));
+            var parallelPipes = nextPipes.Select(p => p.InterStart(context));
             await Task.WhenAll(parallelPipes);
             return true;
         }

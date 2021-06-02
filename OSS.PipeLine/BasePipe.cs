@@ -62,11 +62,11 @@ namespace OSS.Pipeline
             {
                 if (_nextPipe!=null)
                 {
-                   return  _nextPipe.Start(nextInContext);
+                   return  _nextPipe.InterStart(nextInContext);
                 }
                 else
                 {
-                    return _nextEmptyPipe.Start(EmptyContext.Default);
+                    return _nextEmptyPipe.InterStart(EmptyContext.Default);
                 }
             }
             return Task.FromResult(false);
@@ -158,6 +158,21 @@ namespace OSS.Pipeline
         protected BasePipe(PipeType pipeType) : base(pipeType)
         {
         }
+
+
+        #region 流体启动和异步处理逻辑
+
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<bool> Execute(TInContext context)
+        {
+            return InterStart(context);
+        }
+
+        #endregion
 
         /// <summary>
         ///  管道处理实际业务流动方法

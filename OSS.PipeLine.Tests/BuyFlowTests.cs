@@ -53,7 +53,7 @@ namespace OSS.Pipeline.Tests
         [TestMethod]
         public async Task FlowTest()
         {
-            await ApplyActivity.Start(new ApplyContext()
+            await ApplyActivity.Execute(new ApplyContext()
             {
                 name = "冰箱"
             });

@@ -55,10 +55,10 @@ namespace OSS.Pipeline
         ///  结束管道
         /// </summary>
         public IPipe EndPipe => _endPipe;
-        
+
 
         #region 管道的业务处理
-
+        
         /// <summary>
         ///  管道处理实际业务流动方法
         /// </summary>
@@ -66,7 +66,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         internal override async Task<bool> InterHandling(TInFlowContext context)
         {
-            await _startPipe.Start(context);
+            await _startPipe.InterStart(context);
             return true;
         }
 
