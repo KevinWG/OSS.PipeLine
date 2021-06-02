@@ -28,7 +28,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender) : base(PipeType.Flow)
+        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender) : base(PipeType.Pipeline)
         {
             _startPipe = startPipe;
             _endPipe = endPipeAppender;

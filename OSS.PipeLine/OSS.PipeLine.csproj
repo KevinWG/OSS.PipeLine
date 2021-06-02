@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.1.1</Version>
-    <PackageReleaseNotes>优化委托活动处理</PackageReleaseNotes>
+    <Version>1.2</Version>
+    <PackageReleaseNotes>扩展活动类实现</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Pipeline</RepositoryUrl>

@@ -49,8 +49,8 @@
 
 
         /// <summary>
-        /// 组合管道
+        /// 组合管道线
         /// </summary>
-        Flow = 1000
+        Pipeline = 1000
     }
 }

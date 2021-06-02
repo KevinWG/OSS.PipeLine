@@ -87,7 +87,7 @@ namespace OSS.Pipeline.Activity
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseFuncEffectActivity() : base(PipeType.FuncActivity)
+        protected BaseFuncEffectActivity() : base(PipeType.FuncEffectActivity)
         {
         }
         
