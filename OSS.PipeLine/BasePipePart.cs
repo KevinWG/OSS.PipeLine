@@ -63,6 +63,9 @@ namespace OSS.Pipeline
         internal abstract PipeRoute InterToRoute(bool isFlowSelf = false);
 
         #endregion
+
+
+
     }
 
     /// <summary>
