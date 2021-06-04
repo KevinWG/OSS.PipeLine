@@ -12,7 +12,6 @@
 #endregion
 
 using System.Threading.Tasks;
-using OSS.Pipeline.Mos;
 
 namespace OSS.Pipeline.Msg
 {
@@ -21,17 +20,17 @@ namespace OSS.Pipeline.Msg
     /// </summary>
     /// <typeparam name="InContext"></typeparam>
     /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseMsgConvertor<InContext, OutContext> : BasePipe<InContext, OutContext>
+    public abstract class BaseMsgConverter<InContext, OutContext> : BasePipe<InContext, OutContext>
     {
         /// <summary>
         /// 连接基类构造函数
         /// </summary>
-        protected BaseMsgConvertor() : base(PipeType.Connector)
+        protected BaseMsgConverter() : base(PipeType.Connector)
         {
         }
 
         /// <inheritdoc />
-        protected BaseMsgConvertor(PipeType type) : base(type)
+        protected BaseMsgConverter(PipeType type) : base(type)
         {
         }
 

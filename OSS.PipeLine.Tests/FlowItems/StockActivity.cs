@@ -24,7 +24,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         public int count { get; set; }
     }
 
-    public class StockConnector : BaseMsgConvertor<PayContext, StockContext>
+    public class StockConnector : BaseMsgConverter<PayContext, StockContext>
     {
         public StockConnector()
         {

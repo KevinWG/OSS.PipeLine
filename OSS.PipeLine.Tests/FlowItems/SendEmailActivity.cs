@@ -24,7 +24,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         public string body { get; set; }
     }
 
-    public class PayEmailConnector : BaseMsgConvertor<PayContext, SendEmailContext>
+    public class PayEmailConnector : BaseMsgConverter<PayContext, SendEmailContext>
     {
         public PayEmailConnector()
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using OSS.Pipeline.Gateway;
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.InterImpls.Msg;
 using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline
@@ -57,14 +58,14 @@ namespace OSS.Pipeline
         }
         
         /// <summary>
-        ///  追加 数据转换管道
+        ///  追加消息转换管道
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
         /// <typeparam name="NextOutContext"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="convertFunc"></param>
         /// <returns></returns>
-        public static BaseMsgConvertor<OutContext, NextOutContext> Append<OutContext, NextOutContext>(
+        public static BaseMsgConverter<OutContext, NextOutContext> AppendMsgConverter<OutContext, NextOutContext>(
             this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc)
         {
             var connector = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc);
@@ -73,15 +74,15 @@ namespace OSS.Pipeline
         }
 
         /// <summary>
-        ///  追加异步流缓冲组件
+        ///  追加消息流管道
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
         /// <returns></returns>
-        public static MsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
+        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
         {
-            var connector = new MsgFlow<OutContext>(msgFlowKey);
+            var connector = new InterMsgFlow<OutContext>(msgFlowKey);
             pipe.InterAppend(connector);
             return connector;
         }

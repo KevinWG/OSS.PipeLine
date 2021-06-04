@@ -1,4 +1,4 @@
-﻿namespace OSS.Pipeline.Mos
+﻿namespace OSS.Pipeline
 {
     /// <summary>
     ///   管道类型

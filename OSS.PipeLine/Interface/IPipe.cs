@@ -11,9 +11,7 @@
 
 #endregion
 
-using OSS.Pipeline.Mos;
-
-namespace OSS.Pipeline.Interface
+ namespace OSS.Pipeline.Interface
 {
     /// <summary>
     ///  管道基础接口

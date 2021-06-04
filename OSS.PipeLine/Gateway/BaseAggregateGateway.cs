@@ -12,7 +12,6 @@
 
 #endregion
 
-using OSS.Pipeline.Mos;
 using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Gateway

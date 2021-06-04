@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace OSS.Pipeline.Mos
+namespace OSS.Pipeline
 {
     /// <summary>
     ///  管道路由信息

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using OSS.Pipeline.Mos;
+using OSS.Tools.DataFlow;
 
 namespace OSS.Pipeline.Msg
 {
@@ -8,7 +8,7 @@ namespace OSS.Pipeline.Msg
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseMsgSubscriber<TContext> : BasePipe<EmptyContext,TContext,TContext>
+    public abstract class BaseMsgSubscriber<TContext> : BasePipe<EmptyContext,TContext,TContext>, IDataSubscriber<TContext>
     {
         /// <summary>
         ///  异步缓冲连接器
@@ -18,7 +18,7 @@ namespace OSS.Pipeline.Msg
         {
             msgDataFlowKey ??= string.Concat(LineContainer.PipeCode,"-", PipeCode);
 
-             CreateSubscriber(SubscribeCaller, msgDataFlowKey);
+             ReceiveSubscriber(this, msgDataFlowKey);
         }
 
         /// <summary>
@@ -27,17 +27,21 @@ namespace OSS.Pipeline.Msg
         /// <param name="subscribeFunc"></param>
         /// <param name="flowKey"></param>
         /// <returns></returns>
-        protected abstract void CreateSubscriber(Func<TContext, Task<bool>> subscribeFunc, string flowKey);
+        protected abstract void ReceiveSubscriber(IDataSubscriber<TContext> subscribeFunc, string flowKey);
         
-        // 订阅唤起操作
-        private Task<bool> SubscribeCaller(TContext data)
-        {
-            return ToNextThrough(data);
-        }
-
         internal override Task<bool> InterStart(EmptyContext context)
         {
             return Task.FromResult(true);
+        }
+
+        /// <summary>
+        ///  订阅消息的动作实现
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public Task<bool> Subscribe(TContext data)
+        {
+            return ToNextThrough(data);
         }
     }
 

@@ -1,13 +1,14 @@
 ﻿using System;
+using OSS.Pipeline.Msg;
 
-namespace OSS.Pipeline.Msg
+namespace OSS.Pipeline.InterImpls.Msg
 {
     /// <summary>
     ///  内部转化连接器的实现
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    internal class InterMsgConvertor<TInContext, TOutContext> : BaseMsgConvertor<TInContext, TOutContext>
+    internal class InterMsgConvertor<TInContext, TOutContext> : BaseMsgConverter<TInContext, TOutContext>
     {
         private readonly Func<TInContext, TOutContext> _convert;
         /// <inheritdoc/>

@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OSS.Pipeline.Mos;
 
 namespace OSS.Pipeline.Activity
 {

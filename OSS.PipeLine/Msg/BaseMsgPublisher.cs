@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Tools.DataFlow;
-using OSS.Pipeline.Mos;
 
 namespace OSS.Pipeline.Msg
 {

@@ -12,11 +12,11 @@
 #endregion
 
 using OSS.Pipeline.Interface;
-using OSS.Pipeline.Mos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OSS.Pipeline.InterImpls.Msg;
 using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline.Gateway
@@ -63,22 +63,19 @@ namespace OSS.Pipeline.Gateway
         /// <summary>
         ///   添加分支       
         /// </summary>
-        /// <param name="branchPipe"></param>
-        public BasePipe<TContext, NextOutContext> AddBranch<NextOutContext>(
-            BasePipe<TContext, NextOutContext> branchPipe)
+        /// <param name="pipe"></param>
+        public BasePipe<TContext, THandlePara, TNextOutContext> AddBranch<THandlePara, TNextOutContext>(
+            BasePipe<TContext, THandlePara, TNextOutContext> pipe)
         {
-            if (branchPipe == null)
+            if (pipe == null)
             {
-                throw new ArgumentNullException(nameof(branchPipe), " 不能为空！");
+                throw new ArgumentNullException(nameof(pipe), " 不能为空！");
             }
 
-            if (_branchItems == null)
-            {
-                _branchItems = new List<BaseInPipePart<TContext>>();
-            }
+            _branchItems ??= new List<BaseInPipePart<TContext>>();
 
-            _branchItems.Add(branchPipe);
-            return branchPipe;
+            _branchItems.Add(pipe);
+            return pipe;
         }
 
         #endregion
@@ -132,7 +129,7 @@ namespace OSS.Pipeline.Gateway
         /// <param name="gateway"></param>
         /// <param name="convertFunc"></param>
         /// <returns></returns>
-        public static BaseMsgConvertor<TContext, NextOutContext> AddBranch<TContext, NextOutContext>(
+        public static BaseMsgConverter<TContext, NextOutContext> AddBranch<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
         {
             var nextConverter = new InterMsgConvertor<TContext, NextOutContext>(convertFunc);
@@ -147,10 +144,10 @@ namespace OSS.Pipeline.Gateway
         /// <param name="gateway"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
         /// <returns></returns>
-        public static MsgFlow<TContext> AddMsgFlowBranch<TContext>(this BaseBranchGateway<TContext> gateway,
+        public static BaseMsgFlow<TContext> AddMsgFlowBranch<TContext>(this BaseBranchGateway<TContext> gateway,
             string msgFlowKey = null)
         {
-            var nextConverter = new MsgFlow<TContext>(msgFlowKey);
+            var nextConverter = new InterMsgFlow<TContext>(msgFlowKey);
             gateway.AddBranch(nextConverter);
             return nextConverter;
         }
