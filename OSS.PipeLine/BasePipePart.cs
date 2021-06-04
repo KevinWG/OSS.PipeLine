@@ -103,20 +103,7 @@ namespace OSS.Pipeline
         {
         }
 
-        #region 管道内部业务处理
-
-        /// <summary>
-        ///  管道处理实际业务流动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal abstract Task<bool> InterHandling(THandlePara context);
-
-        #endregion
-
-
-
-
+      
         #region 管道业务扩展方法
 
         /// <summary>
@@ -131,8 +118,20 @@ namespace OSS.Pipeline
 
         #endregion
 
+        #region 管道内部业务处理
+
+        /// <summary>
+        ///  管道处理实际业务流动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal abstract Task<bool> InterHandling(THandlePara context);
+
+        #endregion
+
+
     }
-    
+
     /// <summary>
     ///  空上下文
     /// </summary>

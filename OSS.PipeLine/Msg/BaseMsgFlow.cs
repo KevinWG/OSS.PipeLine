@@ -22,7 +22,7 @@ namespace OSS.Pipeline.Msg
         {
             msgDataFlowKey ??= PipeCode;
 
-            _pusher = CreateMsgFlow(SubscribeCaller, msgDataFlowKey);
+            _pusher = CreateFlow(SubscribeCaller, msgDataFlowKey);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace OSS.Pipeline.Msg
         /// <param name="subscribeFunc"></param>
         /// <param name="flowKey"></param>
         /// <returns></returns>
-        public abstract IDataPublisher<TContext> CreateMsgFlow(Func<TContext, Task<bool>> subscribeFunc, string flowKey);
+        protected abstract IDataPublisher<TContext> CreateFlow(Func<TContext, Task<bool>> subscribeFunc, string flowKey);
 
         // 订阅唤起操作
         private Task<bool> SubscribeCaller(TContext data)

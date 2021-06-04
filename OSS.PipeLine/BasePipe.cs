@@ -33,13 +33,13 @@ namespace OSS.Pipeline
         protected BasePipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
         #region 内部的业务处理 
 
-        internal override Task<bool> InterStart(TInContext context)
-        {
-            throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterStart 方法没有实现，无法启动");
-        }
+        //internal override Task<bool> InterStart(TInContext context)
+        //{
+        //    throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterStart 方法没有实现，无法启动");
+        //}
 
         internal override Task<bool> InterHandling(THandlePara context)
         {
