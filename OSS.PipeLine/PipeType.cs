@@ -38,15 +38,24 @@
 
 
         /// <summary>
-        ///  连接通道
+        ///  消息流
         /// </summary>
-        Connector = 300,
+        MsgFlow = 300,
+        
+        /// <summary>
+        ///  消息发布者
+        /// </summary>
+        MsgPublisher = 310,
 
         /// <summary>
-        ///  连接通道
+        ///  消息订阅者
         /// </summary>
-        BufferConnector = 310,
+        MsgSubscriber = 320,
 
+        /// <summary>
+        ///  消息订阅者
+        /// </summary>
+        MsgConverter = 350,
 
         /// <summary>
         /// 组合管道线

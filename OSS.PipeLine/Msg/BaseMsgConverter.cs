@@ -18,14 +18,14 @@ namespace OSS.Pipeline.Msg
     /// <summary>
     /// 连接基类
     /// </summary>
-    /// <typeparam name="InContext"></typeparam>
-    /// <typeparam name="OutContext"></typeparam>
-    public abstract class BaseMsgConverter<InContext, OutContext> : BasePipe<InContext, OutContext>
+    /// <typeparam name="TInMsg"></typeparam>
+    /// <typeparam name="TOutMsg"></typeparam>
+    public abstract class BaseMsgConverter<TInMsg, TOutMsg> : BasePipe<TInMsg, TOutMsg>
     {
         /// <summary>
         /// 连接基类构造函数
         /// </summary>
-        protected BaseMsgConverter() : base(PipeType.Connector)
+        protected BaseMsgConverter() : base(PipeType.MsgConverter)
         {
         }
 
@@ -40,9 +40,9 @@ namespace OSS.Pipeline.Msg
         /// </summary>
         /// <param name="inContextData"></param>
         /// <returns></returns>
-        protected abstract OutContext Convert(InContext inContextData);
+        protected abstract TOutMsg Convert(TInMsg inContextData);
 
-        internal override async Task<bool> InterHandling(InContext context)
+        internal override async Task<bool> InterHandling(TInMsg context)
         {
             var outContext = Convert(context);
             await ToNextThrough(outContext);

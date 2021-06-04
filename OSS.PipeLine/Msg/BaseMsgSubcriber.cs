@@ -7,14 +7,14 @@ namespace OSS.Pipeline.Msg
     /// <summary>
     ///  消息流基类
     /// </summary>
-    /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseMsgSubscriber<TContext> : BasePipe<EmptyContext,TContext,TContext>, IDataSubscriber<TContext>
+    /// <typeparam name="TMsg"></typeparam>
+    public abstract class BaseMsgSubscriber<TMsg> : BasePipe<EmptyContext,TMsg,TMsg>, IDataSubscriber<TMsg>
     {
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgSubscriber(string msgDataFlowKey) : base(PipeType.BufferConnector)
+        protected BaseMsgSubscriber(string msgDataFlowKey) : base(PipeType.MsgSubscriber)
         {
             msgDataFlowKey ??= string.Concat(LineContainer.PipeCode,"-", PipeCode);
 
@@ -27,7 +27,7 @@ namespace OSS.Pipeline.Msg
         /// <param name="subscribeFunc"></param>
         /// <param name="flowKey"></param>
         /// <returns></returns>
-        protected abstract void ReceiveSubscriber(IDataSubscriber<TContext> subscribeFunc, string flowKey);
+        protected abstract void ReceiveSubscriber(IDataSubscriber<TMsg> subscribeFunc, string flowKey);
         
         internal override Task<bool> InterStart(EmptyContext context)
         {
@@ -39,7 +39,7 @@ namespace OSS.Pipeline.Msg
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Task<bool> Subscribe(TContext data)
+        public Task<bool> Subscribe(TMsg data)
         {
             return ToNextThrough(data);
         }

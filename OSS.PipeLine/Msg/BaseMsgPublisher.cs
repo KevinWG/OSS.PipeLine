@@ -8,17 +8,17 @@ namespace OSS.Pipeline.Msg
     /// <summary>
     ///  消息流基类
     /// </summary>
-    /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseMsgPublisher<TContext> : BaseInPipePart<TContext>
+    /// <typeparam name="TMsg"></typeparam>
+    public abstract class BaseMsgPublisher<TMsg> : BaseInPipePart<TMsg>
     {
         // 内部异步处理入口
-        private readonly IDataPublisher<TContext> _pusher;
+        private readonly IDataPublisher<TMsg> _pusher;
 
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgPublisher(string msgDataFlowKey) : base(PipeType.BufferConnector)
+        protected BaseMsgPublisher(string msgDataFlowKey) : base(PipeType.MsgPublisher)
         {
             msgDataFlowKey ??= string.Concat(LineContainer.PipeCode,"-", PipeCode);
 
@@ -30,8 +30,8 @@ namespace OSS.Pipeline.Msg
         /// </summary>
         /// <param name="flowKey"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher<TContext> CreatePublisher( string flowKey);
-        internal override Task<bool> InterStart(TContext context)
+        protected abstract IDataPublisher<TMsg> CreatePublisher( string flowKey);
+        internal override Task<bool> InterStart(TMsg context)
         {
             return _pusher.Publish(context);
         }

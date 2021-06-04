@@ -64,8 +64,25 @@ namespace OSS.Pipeline.Gateway
         ///   添加分支       
         /// </summary>
         /// <param name="pipe"></param>
-        public BasePipe<TContext, THandlePara, TNextOutContext> AddBranch<THandlePara, TNextOutContext>(
-            BasePipe<TContext, THandlePara, TNextOutContext> pipe)
+        public BasePipe<TContext, TNextHandlePara, TNextOutContext> AddBranch<TNextHandlePara, TNextOutContext>(
+            BasePipe<TContext, TNextHandlePara, TNextOutContext> pipe)
+        {
+            Add(pipe);
+            return pipe;
+        }
+
+
+        /// <summary>
+        /// 追加消息发布者管道
+        /// </summary>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public void AddBranch(BaseMsgPublisher<TContext> nextPipe)
+        {
+            Add(nextPipe);
+        }
+
+        private void Add(BaseInPipePart<TContext> pipe)
         {
             if (pipe == null)
             {
@@ -75,8 +92,8 @@ namespace OSS.Pipeline.Gateway
             _branchItems ??= new List<BaseInPipePart<TContext>>();
 
             _branchItems.Add(pipe);
-            return pipe;
         }
+
 
         #endregion
 
@@ -137,19 +154,65 @@ namespace OSS.Pipeline.Gateway
             return nextConverter;
         }
 
+
+
         /// <summary>
-        ///  添加转换分支管道
+        ///  追加消息发布者管道
         /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <param name="gateway"></param>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
         /// <returns></returns>
-        public static BaseMsgFlow<TContext> AddMsgFlowBranch<TContext>(this BaseBranchGateway<TContext> gateway,
-            string msgFlowKey = null)
+        public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
         {
-            var nextConverter = new InterMsgFlow<TContext>(msgFlowKey);
-            gateway.AddBranch(nextConverter);
-            return nextConverter;
+            var nextPipe = new InterMsgPublisher<OutContext>(msgFlowKey);
+            pipe.InterAppend(nextPipe);
         }
+
+        /// <summary>
+        ///  追加消息发布者管道
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <returns></returns>
+        public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
+        {
+            var nextPipe = new InterMsgSubscriber<OutContext>(msgFlowKey);
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
+        }
+
+
+        /// <summary>
+        ///  追加消息流管道
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <returns></returns>
+        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
+        {
+            var nextPipe = new InterMsgFlow<OutContext>(msgFlowKey);
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
+        }
+
+        /// <summary>
+        ///  追加消息转换管道
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <typeparam name="NextOutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="convertFunc"></param>
+        /// <returns></returns>
+        public static BaseMsgConverter<OutContext, NextOutContext> AppendMsgConverter<OutContext, NextOutContext>(
+            this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc)
+        {
+            var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc);
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
+        }
+
     }
 }
