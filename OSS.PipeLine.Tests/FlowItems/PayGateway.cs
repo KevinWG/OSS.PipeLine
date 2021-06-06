@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using OSS.Pipeline.Gateway;
 using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems

@@ -80,7 +80,7 @@
         /// <returns></returns>
         protected virtual Task<bool> Notice(TInContext data)
         {
-            return Task.FromResult(true);
+            return InterUtil.TrueTask;
         }        
 ```
 
@@ -101,7 +101,7 @@
     业务流经过此组件，直接执行Convert方法（自定义实现），转化成对应的下个组件执行参数，自动进入下个组件。
 
 ####2. BaseBufferConnector<InContext, OutContext> - 异步缓冲转化连接组件
-    （此前组件的流动以【发布/订阅】的方式异步执行，触发来源可以方便的修改为队列或数据库，详情【OSS.Tools.DataFlow】[https://github.com/KevinWG/OSS.Tools/tree/master/Data/OSS.Tools.DataFlow]）
+    （此前组件的流动以【发布/订阅】的方式异步执行，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
 
 
 以上是三个核心的组件部分，以上三个组件任意组合可以组成PipeLine（流体），PipeLine本身又可以作为一个组件加入到一个更大的流体之中，通过流体的 ToRoute() 方法，可以获取对应的内部组件关联路由信息。
@@ -114,7 +114,7 @@
         protected override Task<bool> Executing(ApplyContext data)
         {
             LogHelper.Info("这里刚才发生了一个采购申请");
-            return Task.FromResult(true);
+            return InterUtil.TrueTask;
         }
     }
 ```

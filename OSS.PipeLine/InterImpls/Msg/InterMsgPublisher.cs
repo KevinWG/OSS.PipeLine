@@ -1,17 +1,18 @@
-﻿using OSS.Pipeline.Msg;
-using OSS.Tools.DataFlow;
+﻿
+using OSS.DataFlow;
 
 namespace OSS.Pipeline.InterImpls.Msg
 {
     internal class InterMsgPublisher<TMsg> : BaseMsgPublisher<TMsg>
     {
-        public InterMsgPublisher(string msgDataFlowKey) : base(msgDataFlowKey)
+        public InterMsgPublisher(string msgDataFlowKey,DataPublisherOption option) : base(msgDataFlowKey, option)
         {
         }
 
-        protected override IDataPublisher<TMsg> CreatePublisher(string flowKey)
+
+        protected override IDataPublisher<TMsg> CreatePublisher(string flowKey, DataPublisherOption option)
         {
-            return DataFlowFactory.CreatePublisher<TMsg>(flowKey, "OSS.Pipeline.Msg");
+            return DataFlowFactory.CreatePublisher<TMsg>(flowKey, option);
         }
     }
 }

@@ -13,7 +13,7 @@
 
 using System.Threading.Tasks;
 
-namespace OSS.Pipeline.Activity
+namespace OSS.Pipeline
 {
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)

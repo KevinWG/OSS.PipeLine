@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OSS.Pipeline.Activity;
 using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems

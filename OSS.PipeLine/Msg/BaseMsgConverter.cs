@@ -13,40 +13,33 @@
 
 using System.Threading.Tasks;
 
-namespace OSS.Pipeline.Msg
+namespace OSS.Pipeline
 {
     /// <summary>
-    /// 连接基类
+    /// 消息转化基类
     /// </summary>
     /// <typeparam name="TInMsg"></typeparam>
     /// <typeparam name="TOutMsg"></typeparam>
     public abstract class BaseMsgConverter<TInMsg, TOutMsg> : BasePipe<TInMsg, TOutMsg>
     {
         /// <summary>
-        /// 连接基类构造函数
+        /// 消息转化基类
         /// </summary>
         protected BaseMsgConverter() : base(PipeType.MsgConverter)
         {
         }
 
-        /// <inheritdoc />
-        protected BaseMsgConverter(PipeType type) : base(type)
-        {
-        }
-
         /// <summary>
         ///  连接消息体的转换功能
-        ///     如果是异步消息缓冲连接，会在唤起时执行此方法
         /// </summary>
         /// <param name="inContextData"></param>
         /// <returns></returns>
         protected abstract TOutMsg Convert(TInMsg inContextData);
 
-        internal override async Task<bool> InterHandling(TInMsg context)
+        internal override Task<bool> InterHandling(TInMsg context)
         {
             var outContext = Convert(context);
-            await ToNextThrough(outContext);
-            return true;
+            return ToNextThrough(outContext);
         }
     }
 }

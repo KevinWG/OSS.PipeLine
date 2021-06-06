@@ -1,5 +1,4 @@
 ﻿using System;
-using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline.InterImpls.Msg
 {

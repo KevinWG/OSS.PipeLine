@@ -1,7 +1,5 @@
-﻿using OSS.Pipeline.Activity;
-using OSS.Tools.Log;
+﻿using OSS.Tools.Log;
 using System.Threading.Tasks;
-using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
@@ -15,7 +13,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         protected override Task<bool> Executing(StockContext data)
         {
             LogHelper.Info("分流-2.增加库存，数量：" + data.count);
-            return Task.FromResult(true);
+            return InterUtil.TrueTask;
         }
     }
 

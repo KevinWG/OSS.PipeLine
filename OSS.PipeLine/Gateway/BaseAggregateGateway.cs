@@ -14,7 +14,7 @@
 
 using System.Threading.Tasks;
 
-namespace OSS.Pipeline.Gateway
+namespace OSS.Pipeline
 {
     /// <summary>
     /// 流体的多路聚合网关基类

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
-using OSS.Tools.DataFlow;
+using OSS.DataFlow;
 
-namespace OSS.Pipeline.Msg
+namespace OSS.Pipeline
 {
     /// <summary>
     ///  消息流基类
@@ -18,19 +17,31 @@ namespace OSS.Pipeline.Msg
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgPublisher(string msgDataFlowKey) : base(PipeType.MsgPublisher)
+        protected BaseMsgPublisher(string msgDataFlowKey) : this(msgDataFlowKey, null)
         {
-            msgDataFlowKey ??= string.Concat(LineContainer.PipeCode,"-", PipeCode);
+        }
 
-            _pusher = CreatePublisher( msgDataFlowKey);
+        /// <summary>
+        ///  异步缓冲连接器
+        /// </summary>
+        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="option"></param>
+        protected BaseMsgPublisher(string msgDataFlowKey, DataPublisherOption option) : base(PipeType.MsgPublisher)
+        {
+            msgDataFlowKey ??= string.Concat(LineContainer.PipeCode, "-", PipeCode);
+
+            _pusher = CreatePublisher(msgDataFlowKey, option);
         }
         
         /// <summary>
         ///  创建消息流
         /// </summary>
         /// <param name="flowKey"></param>
+        /// <param name="option"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher<TMsg> CreatePublisher( string flowKey);
+        protected abstract IDataPublisher<TMsg> CreatePublisher(string flowKey, DataPublisherOption option);
+
+
         internal override Task<bool> InterStart(TMsg context)
         {
             return _pusher.Publish(context);

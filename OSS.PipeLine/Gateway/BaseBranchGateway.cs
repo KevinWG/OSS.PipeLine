@@ -16,10 +16,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OSS.DataFlow;
 using OSS.Pipeline.InterImpls.Msg;
-using OSS.Pipeline.Msg;
 
-namespace OSS.Pipeline.Gateway
+namespace OSS.Pipeline
 {
     /// <summary>
     /// 流体的分支网关基类
@@ -162,10 +162,11 @@ namespace OSS.Pipeline.Gateway
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="option"></param>
         /// <returns></returns>
-        public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
+        public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey, DataPublisherOption option)
         {
-            var nextPipe = new InterMsgPublisher<OutContext>(msgFlowKey);
+            var nextPipe = new InterMsgPublisher<OutContext>(msgFlowKey, option);
             pipe.InterAppend(nextPipe);
         }
 
@@ -175,10 +176,11 @@ namespace OSS.Pipeline.Gateway
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
+        public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey , DataFlowOption option)
         {
-            var nextPipe = new InterMsgSubscriber<OutContext>(msgFlowKey);
+            var nextPipe = new InterMsgSubscriber<OutContext>(msgFlowKey, option);
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
@@ -190,10 +192,11 @@ namespace OSS.Pipeline.Gateway
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey = null)
+        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey , DataFlowOption option)
         {
-            var nextPipe = new InterMsgFlow<OutContext>(msgFlowKey);
+            var nextPipe = new InterMsgFlow<OutContext>(msgFlowKey, option);
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }

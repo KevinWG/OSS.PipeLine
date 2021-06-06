@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 
-namespace OSS.Pipeline.Activity
+namespace OSS.Pipeline
 {
     /// <summary>
     ///  被动触发执行活动组件基类
@@ -56,7 +56,7 @@ namespace OSS.Pipeline.Activity
 
         internal override Task<bool> InterStart(EmptyContext context)
         {
-            return Task.FromResult(true);
+            return InterUtil.TrueTask;
         }
 
         #endregion

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using OSS.Pipeline.Msg;
-using OSS.Tools.DataFlow;
+﻿using OSS.DataFlow;
 
 namespace OSS.Pipeline.InterImpls.Msg
 {
@@ -15,17 +12,18 @@ namespace OSS.Pipeline.InterImpls.Msg
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        public InterMsgFlow(string msgDataFlowKey) : base(msgDataFlowKey)
+        /// <param name="option"></param>
+        public InterMsgFlow(string msgDataFlowKey, DataFlowOption option) : base(msgDataFlowKey, option)
         {
         }
 
-        /// <inheritdoc />
-        protected override IDataPublisher<TContext> CreateFlow(Func<TContext, Task<bool>> subscribeFunc, string flowKey)
+     
+
+
+        protected override IDataPublisher<TContext> CreateFlow(string flowKey, IDataSubscriber<TContext> subscriber, DataFlowOption option)
         {
-            return DataFlowFactory.CreateFlow(subscribeFunc, flowKey, "OSS.Pipeline.Msg");
+            return DataFlowFactory.CreateFlow(flowKey, subscriber, option);
         }
-
-
     }
 
 

@@ -1,7 +1,6 @@
-﻿using OSS.Pipeline.Activity;
+﻿
 using OSS.Tools.Log;
 using System.Threading.Tasks;
-using OSS.Pipeline.Msg;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
@@ -15,7 +14,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         protected override Task<bool> Executing(SendEmailContext data)
         {
             LogHelper.Info("分流-1.邮件发送，内容："+data.body);
-            return Task.FromResult(true);
+            return InterUtil.TrueTask;
         }
     }
 
