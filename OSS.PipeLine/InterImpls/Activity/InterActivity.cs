@@ -47,7 +47,7 @@ namespace OSS.Pipeline
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
     /// <typeparam name="TInContext">输入输出上下文</typeparam>
-    public class InterActivity<TInContext> : BaseActivity<TInContext>
+    internal class InterActivity<TInContext> : BaseActivity<TInContext>
     {
         private readonly Func<TInContext,Task<bool>> _exeFunc;
 

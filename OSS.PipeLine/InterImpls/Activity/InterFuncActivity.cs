@@ -19,7 +19,7 @@ namespace OSS.Pipeline
 {
 
     /// <inheritdoc />
-    public class InterFuncActivity<TFuncPara, TFuncResult> : BaseFuncActivity<TFuncPara, TFuncResult>
+    internal class InterFuncActivity<TFuncPara, TFuncResult> : BaseFuncActivity<TFuncPara, TFuncResult>
     {
         private readonly Func<TFuncPara, Task<(bool is_ok, TFuncResult result)>> _exeFunc;
 

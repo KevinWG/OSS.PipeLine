@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace OSS.Pipeline
 {
     /// <inheritdoc />
-    public class InterEffectActivity<TFuncPara, TResult>: BaseEffectActivity<TFuncPara, TResult>// : BaseStraightPipe<TFuncPara, TResult>
+    internal class InterEffectActivity<TFuncPara, TResult>: BaseEffectActivity<TFuncPara, TResult>// : BaseStraightPipe<TFuncPara, TResult>
     {
         private readonly Func<TFuncPara,Task<(bool is_ok, TResult result)>> _exeFunc;
 
@@ -22,7 +22,7 @@ namespace OSS.Pipeline
     }
 
     /// <inheritdoc />
-    public class InterEffectActivity<TResult> : BaseEffectActivity<TResult>
+    internal class InterEffectActivity<TResult> : BaseEffectActivity<TResult>
     {
         private readonly Func< Task<(bool is_ok, TResult result)>> _exeFunc;
 

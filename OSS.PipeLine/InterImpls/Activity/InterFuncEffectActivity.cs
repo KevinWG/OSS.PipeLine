@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace OSS.Pipeline
 {
     /// <inheritdoc />
-    public class InterFuncEffectActivity<TFuncPara, TFuncResult> :BaseFuncEffectActivity<TFuncPara, TFuncResult> 
+    internal class InterFuncEffectActivity<TFuncPara, TFuncResult> :BaseFuncEffectActivity<TFuncPara, TFuncResult> 
     {
         private readonly Func<TFuncPara, Task<(bool is_ok, TFuncResult result)>> _exeFunc;
 
