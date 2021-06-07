@@ -104,6 +104,8 @@ namespace OSS.Pipeline
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
             LineContainer = flowContainer;
+            WatchProxy    = flowContainer.GetProxy();
+
             if (_branchItems == null || !_branchItems.Any())
             {
                 throw new ArgumentNullException($"分支网关({PipeCode})并没有分支路径");

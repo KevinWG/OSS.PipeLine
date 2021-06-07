@@ -1,4 +1,4 @@
-﻿ #region Copyright (C) 2021 Kevin (OSS开源系列) 公众号：OSSCore
+﻿#region Copyright (C) 2021 Kevin (OSS开源系列) 公众号：OSSCore
 
 /***************************************************************************
 *　　	文件功能描述：OSS.EventFlow - 流体基类
@@ -11,7 +11,9 @@
 
 #endregion
 
- namespace OSS.Pipeline.Interface
+using OSS.Pipeline.InterImpls.Watcher;
+
+namespace OSS.Pipeline.Interface
 {
     /// <summary>
     ///  管道基础接口
@@ -38,12 +40,14 @@
         ///  开始管道
         /// </summary>
         public IPipe StartPipe { get; }
-
-
+        
         /// <summary>
         ///  结束管道
         /// </summary>
         public IPipe EndPipe { get; }
+
+
+        internal PipeWatcherProxy GetProxy();
     }
 
 }

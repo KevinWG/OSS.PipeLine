@@ -17,9 +17,6 @@ namespace OSS.Pipeline.InterImpls.Msg
         {
         }
 
-     
-
-
         protected override IDataPublisher<TContext> CreateFlow(string flowKey, IDataSubscriber<TContext> subscriber, DataFlowOption option)
         {
             return DataFlowFactory.CreateFlow(flowKey, subscriber, option);

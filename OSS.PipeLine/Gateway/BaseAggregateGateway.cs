@@ -36,12 +36,39 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        protected abstract Task<bool> IfMatchCondition(TContext context);
+        protected abstract Task<MatchCondition> IfMatchCondition(TContext context);
 
 
-        internal override Task<bool> InterHandling(TContext context)
+        internal override async Task<bool> InterHandling(TContext context)
         {
-            return IfMatchCondition(context);
+            var res = await IfMatchCondition(context);
+            if (res== MatchCondition.MatchAndContinue)
+            {
+                await ToNextThrough(context);
+            }
+            return res == MatchCondition.NotMatchAndWait;//返回false触发block
         }
     }
+
+    /// <summary>
+    ///  匹配结果
+    /// </summary>
+    public enum MatchCondition
+    {
+        /// <summary>
+        ///  匹配且继续
+        /// </summary>
+        MatchAndContinue=0,
+
+        /// <summary>
+        ///  不匹配也不继续向后流动
+        /// </summary>
+        NotMatchAndWait=10,
+
+        /// <summary>
+        ///  不匹配且触发阻塞
+        /// </summary>
+        NotMatchAndBlock=20
+    }
+
 }

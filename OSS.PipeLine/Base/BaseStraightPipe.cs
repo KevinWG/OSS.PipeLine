@@ -40,9 +40,7 @@ namespace OSS.Pipeline.Base
         }
 
         #endregion
-
-
-
+        
         #region 流体业务-内部处理
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace OSS.Pipeline.Base
         internal override async Task<bool> InterStart(TInContext context)
         {
             var res = await InterHandling(context);
-            if (res)
+            if (!res)
             {
                 await Block(context);
             }

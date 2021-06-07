@@ -60,6 +60,7 @@ namespace OSS.Pipeline
         internal override void InterInitialContainer(IPipeLine containerFlow)
         {
             LineContainer = containerFlow;
+            WatchProxy    = containerFlow.GetProxy();
         }
 
         #endregion
@@ -75,9 +76,7 @@ namespace OSS.Pipeline
             };
             return pipe;
         }
-
-   
-
+        
         #endregion
 
     }

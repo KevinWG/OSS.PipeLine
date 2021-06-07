@@ -13,6 +13,7 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -47,6 +48,24 @@ namespace OSS.Pipeline.Base
         /// </summary>
         protected IPipeLine LineContainer { get; set; }
 
+
+        #region 管道监控
+
+        internal PipeWatcherProxy WatchProxy { get; set; }
+
+        internal Task<bool> Watch(WatchDataItem item)
+        {
+            if (WatchProxy != null)
+            {
+                return WatchProxy.Watch(item);
+            }
+
+            return InterUtil.FalseTask;
+        }
+
+        #endregion
+
+
         #region 内部扩散方法
 
         /// <summary>
@@ -62,9 +81,6 @@ namespace OSS.Pipeline.Base
         internal abstract PipeRoute InterToRoute(bool isFlowSelf = false);
 
         #endregion
-
-
-
     }
 
     /// <summary>
@@ -77,6 +93,8 @@ namespace OSS.Pipeline.Base
         protected BaseInPipePart(PipeType pipeType) : base(pipeType)
         {
         }
+
+  
 
         #region 管道的业务处理
 

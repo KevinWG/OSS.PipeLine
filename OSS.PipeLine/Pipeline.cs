@@ -15,6 +15,7 @@ using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -23,31 +24,10 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInFlowContext"></typeparam>
     /// <typeparam name="TOutFlowContext"></typeparam>
-    public class Pipeline<TInFlowContext, TOutFlowContext> : BaseStraightPipe<TInFlowContext, TOutFlowContext>, IPipeLine
+    public class Pipeline<TInFlowContext, TOutFlowContext> : BaseStraightPipe<TInFlowContext, TOutFlowContext> , IPipeLine
     {
-
-
-        /// <summary>
-        /// 基础流体
-        /// </summary>
-        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender) : base(PipeType.Pipeline)
-        {
-            _startPipe = startPipe;
-            _endPipe = endPipeAppender;
-
-            if (_startPipe == null || _endPipe == null)
-            {
-                throw new ArgumentNullException("未发现流体的起始截止管道！");
-            }
-
-            startPipe.InterInitialContainer(this);
-        }
-
-
-        public readonly BaseInPipePart<TInFlowContext>   _startPipe;
-        public readonly IOutPipeAppender<TOutFlowContext> _endPipe;
-
-
+        private readonly BaseInPipePart<TInFlowContext>    _startPipe;
+        private readonly IOutPipeAppender<TOutFlowContext> _endPipe;
         /// <summary>
         ///  开始管道
         /// </summary>
@@ -57,24 +37,66 @@ namespace OSS.Pipeline
         ///  结束管道
         /// </summary>
         public IPipe EndPipe => _endPipe;
-
-
-        #region 管道的业务处理
         
         /// <summary>
-        ///  管道处理实际业务流动方法
+        /// 基础流体
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal override async Task<bool> InterHandling(TInFlowContext context)
+        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender) : this(startPipe,endPipeAppender,null)
         {
-            await _startPipe.InterStart(context);
-            return true;
+        }
+
+        /// <summary>
+        /// 基础流体
+        /// </summary>
+        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
+        {
+            _startPipe = startPipe;
+            _endPipe   = endPipeAppender;
+
+            if (_startPipe == null || _endPipe == null)
+            {
+                throw new ArgumentNullException("未发现流体的起始截止管道！");
+            }
+
+            if (option?.Watcher!=null)
+            {
+                WatchProxy = new PipeWatcherProxy(option.Watcher,option.WatcherDataFlowKey,option.WatcherDataFlowOption);
+            }
+           
+            startPipe.InterInitialContainer(this);
+        }
+
+
+        #region 监控
+
+        PipeWatcherProxy IPipeLine.GetProxy()
+        {
+            return WatchProxy;
         }
 
         #endregion
 
 
+        #region 管道的业务处理
+
+        //  管道本身不再向下流动，由终结点处理
+        internal override Task<bool> InterStart(TInFlowContext context)
+        {
+            return InterHandling(context);
+        }
+
+        /// <summary>
+        ///  管道处理实际业务流动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal override Task<bool> InterHandling(TInFlowContext context)
+        {
+            return _startPipe.InterStart(context);
+        }
+
+        #endregion
+        
         #region 管道连接处理
 
         /// <summary>
@@ -93,10 +115,7 @@ namespace OSS.Pipeline
         #endregion
 
         #region 路由处理
-
-        /// <summary>
-        ///  当前流的路由信息
-        /// </summary>
+        
         private PipeRoute _route;
 
         /// <summary>
@@ -124,7 +143,10 @@ namespace OSS.Pipeline
             return pipe;
         }
 
+     
+
         #endregion
+
     }
 
     /// <inheritdoc />
@@ -135,5 +157,4 @@ namespace OSS.Pipeline
         {
         }
     }
-    
 }

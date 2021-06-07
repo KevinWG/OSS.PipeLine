@@ -53,7 +53,7 @@ namespace OSS.Pipeline.Base
 
 
 
-        #region 内部初始化扩散方法
+        #region 内部初始化和路由方法
 
         internal override void InterInitialContainer(IPipeLine containerFlow)
         {
