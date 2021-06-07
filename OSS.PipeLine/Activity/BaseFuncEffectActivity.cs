@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
-
+using OSS.Pipeline.Base;
 namespace OSS.Pipeline
 {
     /// <summary>
@@ -10,7 +10,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncEffectActivity<TFuncPara, TFuncResult> :
-        BasePipe<EmptyContext, TFuncPara, TFuncResult>, IFuncActivity<TFuncPara, TFuncResult>
+        BaseEmptyParaPipe<TFuncPara, TFuncResult>, IFuncActivity<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -19,7 +19,6 @@ namespace OSS.Pipeline
         {
         }
         
-      
         /// <summary>
         ///  执行方法
         /// </summary>
@@ -50,16 +49,6 @@ namespace OSS.Pipeline
         ///     True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<(bool is_ok, TFuncResult result)> Executing(TFuncPara contextData);
-
-
-        #region 内部的业务处理 
-
-        internal override Task<bool> InterStart(EmptyContext context)
-        {
-            return InterUtil.TrueTask;
-        }
-
-        #endregion
-
+        
     }
 }

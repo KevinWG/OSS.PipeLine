@@ -12,6 +12,8 @@
 #endregion
 
 
+using OSS.Pipeline.Base;
+
 namespace OSS.Pipeline.Interface
 {
     /// <summary>
@@ -21,10 +23,7 @@ namespace OSS.Pipeline.Interface
     public interface IOutPipeAppender<TOutContext> : IPipe
     {
         internal void InterAppend(BaseInPipePart<TOutContext> nextPipe);
-
-
-
-
+        
         internal void InterAppend(BaseInPipePart<EmptyContext> nextPipe);
     }
 }

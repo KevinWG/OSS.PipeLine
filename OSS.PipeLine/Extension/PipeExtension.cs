@@ -1,5 +1,6 @@
 ﻿using System;
 using OSS.DataFlow;
+using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
 
@@ -10,21 +11,55 @@ namespace OSS.Pipeline
     /// </summary>
     public static class PipeExtension
     {
+        #region 追加空头管道
+
         /// <summary>
-        ///  追加管道
+        ///  追加空头管道（直通类型的空头
         /// </summary>
         /// <typeparam name="TOutContext"></typeparam>
         /// <typeparam name="TNextOutContext"></typeparam>
-        /// <typeparam name="TNextPara"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BasePipe<EmptyContext, TNextPara, TNextOutContext> Append<TOutContext, TNextPara, TNextOutContext>(
-            this IOutPipeAppender<TOutContext> pipe, BasePipe<EmptyContext, TNextPara, TNextOutContext> nextPipe)
+        public static BaseStraightPipe<EmptyContext, TNextOutContext> Append<TOutContext, TNextOutContext>(
+            this IOutPipeAppender<TOutContext> pipe, BaseStraightPipe<EmptyContext, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
+
+        /// <summary>
+        ///  追加空头管道 （仅参数为空
+        /// </summary>
+        /// <typeparam name="TOutContext"></typeparam>
+        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="THandlePara"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static BasePipe<EmptyContext, THandlePara, TNextOutContext> Append<TOutContext, THandlePara, TNextOutContext>(
+            this IOutPipeAppender<TOutContext> pipe, BaseEmptyParaPipe<THandlePara, TNextOutContext> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
+        }
+
+        #endregion
+
+
+
+        /// <summary>
+        /// 追加消息发布者管道
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void Append<OutContext>(this IOutPipeAppender<OutContext> pipe, BaseInterceptPipe<OutContext> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+        }
+
 
         /// <summary>
         ///  追加管道
@@ -42,32 +77,22 @@ namespace OSS.Pipeline
             return nextPipe;
         }
         
-        /// <summary>
-        /// 追加分支网关管道
-        /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static BaseBranchGateway<OutContext> Append<OutContext>(
-            this IOutPipeAppender<OutContext> pipe, BaseBranchGateway<OutContext> nextPipe)
-        {
-            pipe.InterAppend(nextPipe);
-            return nextPipe;
-        }
+        ///// <summary>
+        ///// 追加分支网关管道
+        ///// </summary>
+        ///// <typeparam name="OutContext"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="nextPipe"></param>
+        ///// <returns></returns>
+        //public static BaseBranchGateway<OutContext> Append<OutContext>(
+        //    this IOutPipeAppender<OutContext> pipe, BaseBranchGateway<OutContext> nextPipe)
+        //{
+        //    pipe.InterAppend(nextPipe);
+        //    return nextPipe;
+        //}
 
 
-        /// <summary>
-        /// 追加消息发布者管道
-        /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static void Append<OutContext>(this IOutPipeAppender<OutContext> pipe, BaseMsgPublisher<OutContext> nextPipe)
-        {
-            pipe.InterAppend(nextPipe);
-        }
+     
 
         /// <summary>
         ///  追加消息发布者管道

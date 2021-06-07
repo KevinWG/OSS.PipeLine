@@ -12,6 +12,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -20,7 +21,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInMsg"></typeparam>
     /// <typeparam name="TOutMsg"></typeparam>
-    public abstract class BaseMsgConverter<TInMsg, TOutMsg> : BasePipe<TInMsg, TOutMsg>
+    public abstract class BaseMsgConverter<TInMsg, TOutMsg> : BaseStraightPipe<TInMsg, TOutMsg>
     {
         /// <summary>
         /// 消息转化基类

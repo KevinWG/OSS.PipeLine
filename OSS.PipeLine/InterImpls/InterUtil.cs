@@ -8,8 +8,13 @@ namespace OSS.Pipeline
     public static class InterUtil
     {
         /// <summary>
-        ///  true 的task true类型
+        ///  Task 的True值
         /// </summary>
         public static Task<bool> TrueTask { get; } = Task.FromResult(true);
+
+        /// <summary>
+        ///  Task的False值
+        /// </summary>
+        public static Task<bool> FalseTask { get; } = Task.FromResult(false);
     }
 }

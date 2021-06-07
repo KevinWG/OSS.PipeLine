@@ -15,10 +15,10 @@ using OSS.Pipeline.Interface;
 using System;
 using System.Threading.Tasks;
 
-namespace OSS.Pipeline
+namespace OSS.Pipeline.Base
 {
     /// <summary>
-    ///  基础管道
+    ///  管道基类
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
@@ -35,18 +35,12 @@ namespace OSS.Pipeline
 
         #region 内部的业务处理 
 
-        //internal override Task<bool> InterStart(TInContext context)
-        //{
-        //    throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterStart 方法没有实现，无法启动");
-        //}
-
         internal override Task<bool> InterHandling(THandlePara context)
         {
             throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterHandling 方法没有实现，无法执行");
         }
 
         #endregion
-
 
         #region 管道连接处理
 
@@ -65,7 +59,7 @@ namespace OSS.Pipeline
                     return _nextEmptyPipe.InterStart(EmptyContext.Default);
                 }
             }
-            return Task.FromResult(false);
+            return InterUtil.FalseTask;
         }
         
         /// <summary>
@@ -141,49 +135,5 @@ namespace OSS.Pipeline
 
         #endregion
 
-    }
-
-    /// <summary>
-    ///  管道执行基类
-    /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
-    public abstract class BasePipe<TInContext,TOutContext> : BasePipe<TInContext, TInContext, TOutContext>
-    {
-        /// <inheritdoc />
-        protected BasePipe(PipeType pipeType) : base(pipeType)
-        {
-        }
-
-
-        #region 流体启动和异步处理逻辑
-
-        /// <summary>
-        /// 启动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public Task<bool> Execute(TInContext context)
-        {
-            return InterStart(context);
-        }
-
-        #endregion
-
-        /// <summary>
-        ///  管道处理实际业务流动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal override async Task<bool> InterStart(TInContext context)
-        {
-            var res = await InterHandling(context);
-            if (res)
-            {
-                await Block(context);
-            }
-            return true;
-        }
-        
     }
 }

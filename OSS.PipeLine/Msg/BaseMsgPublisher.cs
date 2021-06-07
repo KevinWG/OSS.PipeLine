@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.DataFlow;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -8,7 +9,7 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgPublisher<TMsg> : BaseInPipePart<TMsg>
+    public abstract class BaseMsgPublisher<TMsg> : BaseInterceptPipe<TMsg>
     {
         // 内部异步处理入口
         private readonly IDataPublisher<TMsg> _pusher;
@@ -20,7 +21,6 @@ namespace OSS.Pipeline
         protected BaseMsgPublisher(string msgDataFlowKey) : this(msgDataFlowKey, null)
         {
         }
-
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
@@ -32,7 +32,10 @@ namespace OSS.Pipeline
 
             _pusher = CreatePublisher(msgDataFlowKey, option);
         }
-        
+
+
+        #region 扩展
+
         /// <summary>
         ///  创建消息流
         /// </summary>
@@ -41,19 +44,27 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected abstract IDataPublisher<TMsg> CreatePublisher(string flowKey, DataPublisherOption option);
 
+        #endregion
 
-        internal override Task<bool> InterStart(TMsg context)
+        #region 管道业务处理
+
+        internal override Task<bool> InterIntercept(TMsg context)
         {
             return _pusher.Publish(context);
         }
 
-        #region 内部初始化和路由方法
+        #endregion
+        
+        #region 管道初始化
 
         internal override void InterInitialContainer(IPipeLine containerFlow)
         {
             LineContainer = containerFlow;
         }
 
+        #endregion
+
+        #region 管道路由
         //  消息发布节点本身是一个独立的结束节点
         internal override PipeRoute InterToRoute(bool isFlowSelf = false)
         {
@@ -64,6 +75,8 @@ namespace OSS.Pipeline
             };
             return pipe;
         }
+
+   
 
         #endregion
 

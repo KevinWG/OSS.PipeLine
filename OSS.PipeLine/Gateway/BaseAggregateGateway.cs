@@ -13,6 +13,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -21,7 +22,7 @@ namespace OSS.Pipeline
     /// the aggregative gate of flow
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseAggregateGateway<TContext>  : BasePipe<TContext, TContext>
+    public abstract class BaseAggregateGateway<TContext>  : BaseStraightPipe<TContext, TContext>
     {
         /// <summary>
         ///  流体的多路聚合网关基类构造函数

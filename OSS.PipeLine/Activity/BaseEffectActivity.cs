@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -8,7 +9,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TContext, TResult> : BasePipe<TContext, TResult>
+    public abstract class BaseEffectActivity<TContext, TResult> : BaseStraightPipe<TContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -44,7 +45,7 @@ namespace OSS.Pipeline
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TResult> : BasePipe<EmptyContext, TResult>
+    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类

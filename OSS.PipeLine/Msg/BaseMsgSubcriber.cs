@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.DataFlow;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -7,9 +8,8 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgSubscriber<TMsg> : BasePipe<EmptyContext,TMsg,TMsg>, IDataSubscriber<TMsg>
+    public abstract class BaseMsgSubscriber<TMsg> : BaseEmptyParaPipe<TMsg,TMsg>, IDataSubscriber<TMsg>
     {
-
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
@@ -39,10 +39,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected abstract void ReceiveSubscriber(string flowKey, IDataSubscriber<TMsg> subscribeFunc,  DataFlowOption option);
         
-        internal override Task<bool> InterStart(EmptyContext context)
-        {
-            return InterUtil.TrueTask;
-        }
+    
 
         /// <summary>
         ///  订阅消息的动作实现

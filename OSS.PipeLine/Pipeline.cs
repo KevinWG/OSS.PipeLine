@@ -13,6 +13,7 @@
 
 using System;
 using System.Threading.Tasks;
+using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
@@ -22,8 +23,10 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInFlowContext"></typeparam>
     /// <typeparam name="TOutFlowContext"></typeparam>
-    public class Pipeline<TInFlowContext, TOutFlowContext> : BasePipe<TInFlowContext, TOutFlowContext>, IPipeLine
+    public class Pipeline<TInFlowContext, TOutFlowContext> : BaseStraightPipe<TInFlowContext, TOutFlowContext>, IPipeLine
     {
+
+
         /// <summary>
         /// 基础流体
         /// </summary>

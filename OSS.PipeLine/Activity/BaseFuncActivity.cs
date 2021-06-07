@@ -14,6 +14,7 @@
 
 using OSS.Pipeline.Interface;
 using System.Threading.Tasks;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -24,7 +25,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncActivity<TFuncPara, TFuncResult> :
-        BasePipe<EmptyContext, TFuncPara, TFuncPara>, IFuncActivity<TFuncPara, TFuncResult>
+        BaseEmptyParaPipe<TFuncPara, TFuncPara>, IFuncActivity<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -50,7 +51,7 @@ namespace OSS.Pipeline
             await ToNextThrough(para);
             return result;
         }
-        
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
@@ -63,7 +64,7 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<(bool is_ok, TFuncResult result)> Executing(TFuncPara contextData);
 
-        #region 内部的业务处理 
+        #region 内部的业务处理
 
         internal override Task<bool> InterStart(EmptyContext context)
         {

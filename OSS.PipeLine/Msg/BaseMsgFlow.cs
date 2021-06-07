@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.DataFlow;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -7,7 +8,7 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgFlow<TMsg> : BasePipe<TMsg, TMsg>,IDataSubscriber<TMsg>
+    public abstract class BaseMsgFlow<TMsg> : BaseStraightPipe<TMsg, TMsg>,IDataSubscriber<TMsg>
     {
         // 内部异步处理入口
         private readonly IDataPublisher<TMsg> _pusher;

@@ -18,6 +18,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OSS.DataFlow;
 using OSS.Pipeline.InterImpls.Msg;
+using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline
 {
@@ -25,7 +26,7 @@ namespace OSS.Pipeline
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBranchGateway<TContext> : BaseInPipePart<TContext>
+    public abstract class BaseBranchGateway<TContext> : BaseInterceptPipe<TContext>
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -34,7 +35,7 @@ namespace OSS.Pipeline
         {
         }
 
-        internal override async Task<bool> InterStart(TContext context)
+        internal override async Task<bool> InterIntercept(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
