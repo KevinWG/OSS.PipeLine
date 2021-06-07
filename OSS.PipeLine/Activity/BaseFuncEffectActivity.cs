@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.Watcher;
+
 namespace OSS.Pipeline
 {
     /// <summary>
@@ -22,14 +24,15 @@ namespace OSS.Pipeline
         /// <summary>
         ///  执行方法
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="para"></param>
         /// <returns></returns>
-        public async Task<TFuncResult> Execute(TFuncPara data)
+        public async Task<TFuncResult> Execute(TFuncPara para)
         {
-            var (is_ok, result) = await Executing(data);
+            var (is_ok, result) = await Executing(para);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, para, result);
             if (!is_ok)
             {
-                await Block(data);
+                await InterBlock(para);
                 return result;
             }
 

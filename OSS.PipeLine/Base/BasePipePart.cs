@@ -53,11 +53,21 @@ namespace OSS.Pipeline.Base
 
         internal PipeWatcherProxy WatchProxy { get; set; }
 
-        internal Task<bool> Watch(WatchDataItem item)
+
+        internal Task<bool> Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object data,
+            object res = null)
         {
-            if (WatchProxy != null)
+            if (WatchProxy != null && pipeType < PipeType.MsgFlow)
             {
-                return WatchProxy.Watch(item);
+                return WatchProxy.Watch(new WatchDataItem()
+                {
+                    PipeCode   = pipeCode,
+                    PipeType   = pipeType,
+                    ActionType = actionType,
+
+                    Data   = data,
+                    Result = res
+                });
             }
 
             return InterUtil.FalseTask;

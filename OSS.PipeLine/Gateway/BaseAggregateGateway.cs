@@ -14,6 +14,7 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -42,6 +43,8 @@ namespace OSS.Pipeline
         internal override async Task<bool> InterHandling(TContext context)
         {
             var res = await IfMatchCondition(context);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
+
             if (res== MatchCondition.MatchAndContinue)
             {
                 await ToNextThrough(context);

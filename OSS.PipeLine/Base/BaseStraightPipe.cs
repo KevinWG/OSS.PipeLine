@@ -12,6 +12,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -50,10 +51,11 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         internal override async Task<bool> InterStart(TInContext context)
         {
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             var res = await InterHandling(context);
             if (!res)
             {
-                await Block(context);
+                await InterBlock(context);
             }
             return true;
         }

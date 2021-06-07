@@ -13,6 +13,7 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -40,19 +41,17 @@ namespace OSS.Pipeline.Base
         }
         
 
-        internal override Task<bool> InterStart(TInContext context)
+        internal override async Task<bool> InterStart(TInContext context)
         {
-            return InterIntercept(context);
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
+            return await InterIntercept(context);
         }
         
         internal abstract Task<bool> InterIntercept(TInContext context);
 
         #endregion
 
-
-
-
-
+        
         #region 内部初始化和路由方法
 
         internal override void InterInitialContainer(IPipeLine containerFlow)

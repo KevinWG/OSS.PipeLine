@@ -30,20 +30,19 @@ namespace OSS.Pipeline.InterImpls.Watcher
 
             _watcher = watcher;
         }
-        
+
         Task<bool> WatchCallBack(WatchDataItem data)
         {
             switch (data.ActionType)
             {
                 case WatchActionType.Starting:
-                   return _watcher.Starting();
-                case WatchActionType.Blocking:
-                    return _watcher.Blocking();
+                    return _watcher.Starting();
                 case WatchActionType.Executed:
                     return _watcher.Excuted();
-                case WatchActionType.Executing:
-                    return _watcher.Excuting();
+                case WatchActionType.Blocked:
+                    return _watcher.Blocked();
             }
+
             return InterUtil.TrueTask;
         }
 
@@ -64,9 +63,13 @@ namespace OSS.Pipeline.InterImpls.Watcher
     {
         public string PipeCode { get; set; }
 
+        public PipeType PipeType { get; set; }
+
         public WatchActionType ActionType { get; set; }
 
         public object Data { get; set; }
+
+        public object Result { get; set; }
     }
 
 
@@ -78,11 +81,6 @@ namespace OSS.Pipeline.InterImpls.Watcher
         Starting,
 
         /// <summary>
-        /// 执行
-        /// </summary>
-        Executing,
-
-        /// <summary>
         ///  执行完成
         /// </summary>
         Executed,
@@ -90,7 +88,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
         /// <summary>
         ///  堵塞
         /// </summary>
-        Blocking,
+        Blocked,
     }
 
 }

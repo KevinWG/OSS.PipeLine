@@ -2,6 +2,7 @@
 using OSS.Pipeline.Interface;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -57,10 +58,10 @@ namespace OSS.Pipeline
         
         #region 管道初始化
 
-        internal override void InterInitialContainer(IPipeLine containerFlow)
+        internal override void InterInitialContainer(IPipeLine flowContainer)
         {
-            LineContainer = containerFlow;
-            WatchProxy    = containerFlow.GetProxy();
+            LineContainer = flowContainer;
+            WatchProxy    = flowContainer.GetProxy();
         }
 
         #endregion

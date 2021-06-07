@@ -14,6 +14,7 @@
 using OSS.Pipeline.Interface;
 using System;
 using System.Threading.Tasks;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -34,9 +35,19 @@ namespace OSS.Pipeline.Base
         protected BasePipe(PipeType pipeType) : base(pipeType)
         {
         }
-
-
+        
         #region 管道业务扩展方法
+
+        /// <summary>
+        ///  管道堵塞
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal virtual async Task InterBlock(THandlePara context)
+        {
+            await Watch(PipeCode,PipeType, WatchActionType.Blocked, context); 
+            await Block(context);
+        }
 
         /// <summary>
         ///  管道堵塞
@@ -48,9 +59,9 @@ namespace OSS.Pipeline.Base
             return Task.CompletedTask;
         }
 
+
         #endregion
         
-
         #region 管道连接处理
 
         //private 
@@ -124,7 +135,7 @@ namespace OSS.Pipeline.Base
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
             LineContainer = flowContainer;
-            WatchProxy    = flowContainer.GetProxy();
+            WatchProxy=flowContainer.GetProxy();
 
             if (this.Equals(flowContainer.EndPipe))
                 return;
@@ -160,6 +171,5 @@ namespace OSS.Pipeline.Base
         #endregion
 
     }
-
-
+    
 }

@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using OSS.DataFlow;
 using OSS.Pipeline.InterImpls.Msg;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -39,12 +40,12 @@ namespace OSS.Pipeline
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
-            {
                 return false;
-            }
-
+            
             var parallelPipes = nextPipes.Select(p => p.InterStart(context));
             await Task.WhenAll(parallelPipes);
+
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context,true);
             return true;
         }
 
@@ -71,8 +72,7 @@ namespace OSS.Pipeline
             Add(pipe);
             return pipe;
         }
-
-
+        
         /// <summary>
         /// 追加消息发布者管道
         /// </summary>
@@ -94,12 +94,11 @@ namespace OSS.Pipeline
 
             _branchItems.Add(pipe);
         }
-
-
+        
         #endregion
 
 
-        #region 内部扩散方法
+        #region 内部初始化
 
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
@@ -110,9 +109,14 @@ namespace OSS.Pipeline
             {
                 throw new ArgumentNullException($"分支网关({PipeCode})并没有分支路径");
             }
+
             _branchItems.ForEach(b => b.InterInitialContainer(flowContainer));
         }
 
+        #endregion
+
+        #region 内部路由处理
+        
         internal override PipeRoute InterToRoute(bool isFlowSelf = false)
         {
             var pipe = new PipeRoute()

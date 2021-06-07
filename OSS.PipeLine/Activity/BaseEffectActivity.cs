@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -21,6 +22,8 @@ namespace OSS.Pipeline
         internal override async Task<bool> InterHandling(TFuncPara context)
         {
             var (is_ok, result) = await Executing(context);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
+
             if (is_ok)
                 await ToNextThrough(result);
             
@@ -57,6 +60,7 @@ namespace OSS.Pipeline
         internal override async Task<bool> InterHandling(EmptyContext context)
         {
             var (is_ok, result) = await Executing();
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
             if (is_ok)
             {
                 await ToNextThrough(result);

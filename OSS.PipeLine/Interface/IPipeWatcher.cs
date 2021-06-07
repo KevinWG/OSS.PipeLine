@@ -11,12 +11,7 @@ namespace OSS.Pipeline.Interface
         ///  进入当前管道启动
         /// </summary>
         public Task<bool> Starting();
-
-        /// <summary>
-        ///  执行
-        /// </summary>
-        public Task<bool> Excuting();
-
+        
         /// <summary>
         ///  执行完成
         /// </summary>
@@ -25,7 +20,7 @@ namespace OSS.Pipeline.Interface
         /// <summary>
         ///  管道阻塞
         /// </summary>
-        public Task<bool> Blocking();
+        public Task<bool> Blocked();
     }
 
 

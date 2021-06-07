@@ -15,6 +15,7 @@
 using OSS.Pipeline.Interface;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -42,9 +43,10 @@ namespace OSS.Pipeline
         public async Task<TFuncResult> Execute(TFuncPara para)
         {
             var (is_ok, result) = await Executing(para);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, para,result);
             if (!is_ok)
             {
-                await Block(para);
+                await InterBlock(para);
                 return result;
             }
 
