@@ -40,8 +40,6 @@ namespace OSS.Pipeline
             return result;
         }
 
-
-
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>

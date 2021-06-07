@@ -57,7 +57,7 @@ namespace OSS.Pipeline.Base
         internal Task<bool> Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object data,
             object res = null)
         {
-            if (WatchProxy != null && pipeType < PipeType.MsgFlow)
+            if (WatchProxy != null)
             {
                 return WatchProxy.Watch(new WatchDataItem()
                 {

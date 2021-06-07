@@ -11,8 +11,8 @@ namespace OSS.Pipeline.InterImpls.Watcher
         private readonly IPipeWatcher                  _watcher;
         private readonly IDataPublisher<WatchDataItem> _publisher;
         private readonly ActionBlock<WatchDataItem>    _watchDataQueue;
-        
-        public PipeWatcherProxy(IPipeWatcher watcher,string dataFlowKey,DataFlowOption option)
+
+        public PipeWatcherProxy(IPipeWatcher watcher, string dataFlowKey, DataFlowOption option)
         {
             if (!string.IsNullOrEmpty(dataFlowKey))
             {
@@ -26,7 +26,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
                         MaxDegreeOfParallelism = 4
                     });
             }
-           
+
 
             _watcher = watcher;
         }
@@ -36,23 +36,29 @@ namespace OSS.Pipeline.InterImpls.Watcher
             switch (data.ActionType)
             {
                 case WatchActionType.Starting:
-                    return _watcher.Starting();
+                    return _watcher.Starting(data.PipeCode, data.PipeType, data.Data);
                 case WatchActionType.Executed:
-                    return _watcher.Excuted();
+                    return _watcher.Excuted(data.PipeCode, data.PipeType, data.Data, data.Result);
                 case WatchActionType.Blocked:
-                    return _watcher.Blocked();
+                    return _watcher.Blocked(data.PipeCode, data.PipeType, data.Data);
             }
 
             return InterUtil.TrueTask;
         }
 
 
-        public Task<bool> Watch(WatchDataItem data )
+        public Task<bool> Watch(WatchDataItem data)
         {
-            if (_publisher!=null)
+            if (data.PipeType >= PipeType.MsgFlow)
+            {
+                return InterUtil.TrueTask;
+            }
+
+            if (_publisher != null)
             {
                 return _publisher.Publish(data);
             }
+
             _watchDataQueue.Post(data);
             return InterUtil.TrueTask;
         }
