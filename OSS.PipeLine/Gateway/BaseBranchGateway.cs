@@ -16,8 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using OSS.DataFlow;
-using OSS.Pipeline.InterImpls.Msg;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.InterImpls.Watcher;
 
@@ -62,6 +60,7 @@ namespace OSS.Pipeline
         #region 管道连接
 
         private List<BaseInPipePart<TContext>> _branchItems;
+      
         /// <summary>
         ///   添加分支       
         /// </summary>
@@ -78,7 +77,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public void AddBranch(BaseMsgPublisher<TContext> nextPipe)
+        public void AddBranch(BaseInterceptPipe<TContext> nextPipe)
         {
             Add(nextPipe);
         }
@@ -138,91 +137,5 @@ namespace OSS.Pipeline
         }
 
         #endregion
-    }
-
-    /// <summary>
-    ///  网关扩展类
-    /// </summary>
-    public static class BaseBranchGatewayExtension
-    {
-        /// <summary>
-        ///  添加转换分支管道
-        /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <typeparam name="NextOutContext"></typeparam>
-        /// <param name="gateway"></param>
-        /// <param name="convertFunc"></param>
-        /// <returns></returns>
-        public static BaseMsgConverter<TContext, NextOutContext> AddBranch<TContext, NextOutContext>(
-            this BaseBranchGateway<TContext> gateway, Func<TContext, NextOutContext> convertFunc)
-        {
-            var nextConverter = new InterMsgConvertor<TContext, NextOutContext>(convertFunc);
-            gateway.AddBranch(nextConverter);
-            return nextConverter;
-        }
-
-
-
-        ///// <summary>
-        /////  追加消息发布者管道
-        ///// </summary>
-        ///// <typeparam name="OutContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
-        ///// <param name="option"></param>
-        ///// <returns></returns>
-        //public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey, DataPublisherOption option)
-        //{
-        //    var nextPipe = new InterMsgPublisher<OutContext>(msgFlowKey, option);
-        //    pipe.InterAppend(nextPipe);
-        //}
-
-        ///// <summary>
-        /////  追加消息发布者管道
-        ///// </summary>
-        ///// <typeparam name="OutContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
-        ///// <param name="option"></param>
-        ///// <returns></returns>
-        //public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey , DataFlowOption option)
-        //{
-        //    var nextPipe = new InterMsgSubscriber<OutContext>(msgFlowKey, option);
-        //    pipe.InterAppend(nextPipe);
-        //    return nextPipe;
-        //}
-
-
-        ///// <summary>
-        /////  追加消息流管道
-        ///// </summary>
-        ///// <typeparam name="OutContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
-        ///// <param name="option"></param>
-        ///// <returns></returns>
-        //public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey , DataFlowOption option)
-        //{
-        //    var nextPipe = new InterMsgFlow<OutContext>(msgFlowKey, option);
-        //    pipe.InterAppend(nextPipe);
-        //    return nextPipe;
-        //}
-
-        ///// <summary>
-        /////  追加消息转换管道
-        ///// </summary>
-        ///// <typeparam name="OutContext"></typeparam>
-        ///// <typeparam name="NextOutContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="convertFunc"></param>
-        ///// <returns></returns>
-        //public static BaseMsgConverter<OutContext, NextOutContext> AppendMsgConverter<OutContext, NextOutContext>(
-        //    this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc)
-        //{
-        //    var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc);
-        //    pipe.InterAppend(nextPipe);
-        //    return nextPipe;
-        //}
-
     }
 }
