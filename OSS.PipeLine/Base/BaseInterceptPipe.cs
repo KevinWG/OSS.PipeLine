@@ -26,15 +26,25 @@ namespace OSS.Pipeline.Base
         protected BaseInterceptPipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
         #region 流体业务处理
+        
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<bool> Execute(TInContext context)
+        {
+            return InterStart(context);
+        }
+        
 
         internal override Task<bool> InterStart(TInContext context)
         {
             return InterIntercept(context);
         }
-
-
+        
         internal abstract Task<bool> InterIntercept(TInContext context);
 
         #endregion

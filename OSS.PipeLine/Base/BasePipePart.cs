@@ -90,44 +90,4 @@ namespace OSS.Pipeline.Base
         #endregion
     }
 
-    /// <summary>
-    ///  管道执行基类
-    /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="THandlePara"></typeparam>
-    public abstract class BaseHandlePipePart<TInContext, THandlePara> : BaseInPipePart<TInContext>
-    {
-        /// <inheritdoc />
-        protected BaseHandlePipePart(PipeType pipeType) : base(pipeType)
-        {
-        }
-
-      
-        #region 管道业务扩展方法
-
-        /// <summary>
-        ///  管道堵塞
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected virtual Task Block(THandlePara context)
-        {
-            return Task.CompletedTask;
-        }
-
-        #endregion
-
-        #region 管道内部业务处理
-
-        /// <summary>
-        ///  管道处理实际业务流动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal abstract Task<bool> InterHandling(THandlePara context);
-
-        #endregion
-
-
-    }
 }

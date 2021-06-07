@@ -7,9 +7,9 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///       接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
-    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TContext, TResult> : BaseStraightPipe<TContext, TResult>
+    public abstract class BaseEffectActivity<TFuncPara, TResult> : BaseStraightPipe<TFuncPara, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -18,7 +18,7 @@ namespace OSS.Pipeline
         {
         }
 
-        internal override async Task<bool> InterHandling(TContext context)
+        internal override async Task<bool> InterHandling(TFuncPara context)
         {
             var (is_ok, result) = await Executing(context);
             if (is_ok)
@@ -37,7 +37,7 @@ namespace OSS.Pipeline
         ///     False - 触发Block，业务流不再向后续管道传递。
         ///     True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<(bool is_ok, TResult result)> Executing(TContext contextData);
+        protected abstract Task<(bool is_ok, TResult result)> Executing(TFuncPara contextData);
     }
 
     /// <summary>
@@ -61,7 +61,6 @@ namespace OSS.Pipeline
             {
                 await ToNextThrough(result);
             }
-
             return is_ok;
         }
 

@@ -8,7 +8,7 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgSubscriber<TMsg> : BaseEmptyParaPipe<TMsg,TMsg>, IDataSubscriber<TMsg>
+    public abstract class BaseMsgSubscriber<TMsg> : BaseFuncPipe<TMsg,TMsg>, IDataSubscriber<TMsg>
     {
         /// <summary>
         ///  异步缓冲连接器

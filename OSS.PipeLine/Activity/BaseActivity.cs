@@ -52,8 +52,8 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
-    /// <typeparam name="TContext">输入输出上下文</typeparam>
-    public abstract class BaseActivity<TContext> : BaseStraightPipe<TContext, TContext>
+    /// <typeparam name="TInContext">输入输出上下文</typeparam>
+    public abstract class BaseActivity<TInContext> : BaseStraightPipe<TInContext, TInContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -70,9 +70,9 @@ namespace OSS.Pipeline
         /// False - 触发Block，业务流不再向后续管道传递。
         /// True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<bool> Executing(TContext contextData);
+        protected abstract Task<bool> Executing(TInContext contextData);
 
-        internal override async Task<bool> InterHandling(TContext context)
+        internal override async Task<bool> InterHandling(TInContext context)
         {
             var res = await Executing(context);
             if (res)

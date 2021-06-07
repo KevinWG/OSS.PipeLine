@@ -41,6 +41,10 @@ namespace OSS.Pipeline.Base
 
         #endregion
 
+
+
+        #region 流体业务-内部处理
+
         /// <summary>
         ///  管道处理实际业务流动方法
         /// </summary>
@@ -55,5 +59,15 @@ namespace OSS.Pipeline.Base
             }
             return true;
         }
+
+        /// <summary>
+        ///  管道处理实际业务流动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal abstract Task<bool> InterHandling(TInContext context);
+        
+        #endregion
+
     }
 }

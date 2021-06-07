@@ -23,7 +23,9 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
     /// <typeparam name="THandlePara"></typeparam>
-    public abstract class BasePipe<TInContext, THandlePara, TOutContext> : BaseHandlePipePart<TInContext, THandlePara>, IOutPipeAppender<TOutContext>
+    public abstract class BasePipe<TInContext, THandlePara, TOutContext>
+        :  BaseInPipePart<TInContext>,
+        IOutPipeAppender<TOutContext>
     {
         /// <summary>
         ///  构造函数
@@ -33,35 +35,44 @@ namespace OSS.Pipeline.Base
         {
         }
 
-        #region 内部的业务处理 
 
-        internal override Task<bool> InterHandling(THandlePara context)
+        #region 管道业务扩展方法
+
+        /// <summary>
+        ///  管道堵塞
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        protected virtual Task Block(THandlePara context)
         {
-            throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterHandling 方法没有实现，无法执行");
+            return Task.CompletedTask;
         }
 
         #endregion
+        
 
         #region 管道连接处理
 
         //private 
-        internal BasePipePart NextPipe { get;private set; }
+        internal BasePipePart NextPipe { get; private set; }
+
         internal Task<bool> ToNextThrough(TOutContext nextInContext)
         {
             if (NextPipe != null)
             {
-                if (_nextPipe!=null)
+                if (_nextPipe != null)
                 {
-                   return  _nextPipe.InterStart(nextInContext);
+                    return _nextPipe.InterStart(nextInContext);
                 }
                 else
                 {
                     return _nextEmptyPipe.InterStart(EmptyContext.Default);
                 }
             }
+
             return InterUtil.FalseTask;
         }
-        
+
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
@@ -69,13 +80,16 @@ namespace OSS.Pipeline.Base
         internal virtual void InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
         }
+
         private BaseInPipePart<TOutContext> _nextPipe { get; set; }
+
         void IOutPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
             if (NextPipe != null)
             {
                 throw new ArgumentException("当前节点已经关联下游节点！");
             }
+
             NextPipe = _nextPipe = nextPipe;
             InterAppend(nextPipe);
         }
@@ -89,19 +103,23 @@ namespace OSS.Pipeline.Base
         internal virtual void InterAppend(BaseInPipePart<EmptyContext> nextPipe)
         {
         }
+
         private BaseInPipePart<EmptyContext> _nextEmptyPipe { get; set; }
+
         void IOutPipeAppender<TOutContext>.InterAppend(BaseInPipePart<EmptyContext> nextPipe)
         {
             if (NextPipe != null)
             {
                 throw new ArgumentException("当前节点已经关联下游节点！");
             }
+
             NextPipe = _nextEmptyPipe = nextPipe;
             InterAppend(nextPipe);
         }
+
         #endregion
 
-        #region 内部扩散方法
+        #region 管道初始化
 
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
@@ -115,6 +133,11 @@ namespace OSS.Pipeline.Base
 
             NextPipe.InterInitialContainer(flowContainer);
         }
+
+        #endregion
+
+        #region 管道路由
+
 
         internal override PipeRoute InterToRoute(bool isFlowSelf = false)
         {
@@ -132,8 +155,9 @@ namespace OSS.Pipeline.Base
         }
 
 
-
         #endregion
 
     }
+
+
 }

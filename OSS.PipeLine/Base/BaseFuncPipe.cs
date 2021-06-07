@@ -3,19 +3,20 @@
 namespace OSS.Pipeline.Base
 {
     /// <summary>
-    ///  管道基类（空参类型）
+    ///  管道基类（空参被动类型）
     /// </summary>
-    /// <typeparam name="TOutContext"></typeparam>
-    /// <typeparam name="THandlePara"></typeparam>
-    public abstract class BaseEmptyParaPipe<THandlePara, TOutContext> :
-       BasePipe<EmptyContext, THandlePara, TOutContext>
+    /// <typeparam name="TFuncResult"></typeparam>
+    /// <typeparam name="TFuncPara"></typeparam>
+    public abstract class BaseFuncPipe<TFuncPara, TFuncResult> :
+       BasePipe<EmptyContext, TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseEmptyParaPipe(PipeType pipeType) : base(pipeType)
+        protected BaseFuncPipe(PipeType pipeType) : base(pipeType)
         {
         }
+
 
         #region 内部的业务处理
 

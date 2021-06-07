@@ -38,7 +38,7 @@ namespace OSS.Pipeline
         /// <param name="nextPipe"></param>
         /// <returns></returns>
         public static BasePipe<EmptyContext, THandlePara, TNextOutContext> Append<TOutContext, THandlePara, TNextOutContext>(
-            this IOutPipeAppender<TOutContext> pipe, BaseEmptyParaPipe<THandlePara, TNextOutContext> nextPipe)
+            this IOutPipeAppender<TOutContext> pipe, BaseFuncPipe<THandlePara, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;

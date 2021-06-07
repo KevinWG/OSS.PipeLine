@@ -39,9 +39,9 @@ namespace OSS.Pipeline
         protected abstract Task<bool> IfMatchCondition(TContext context);
 
 
-        internal override async Task<bool> InterHandling(TContext context)
+        internal override Task<bool> InterHandling(TContext context)
         {
-            return await IfMatchCondition(context);
+            return IfMatchCondition(context);
         }
     }
 }

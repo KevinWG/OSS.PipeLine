@@ -10,7 +10,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncEffectActivity<TFuncPara, TFuncResult> :
-        BaseEmptyParaPipe<TFuncPara, TFuncResult>, IFuncActivity<TFuncPara, TFuncResult>
+        BaseFuncPipe<TFuncPara, TFuncResult>, IFuncActivity<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -24,7 +24,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public async  Task<TFuncResult> Execute(TFuncPara data)
+        public async Task<TFuncResult> Execute(TFuncPara data)
         {
             var (is_ok, result) = await Executing(data);
             if (!is_ok)
@@ -37,7 +37,8 @@ namespace OSS.Pipeline
             return result;
         }
 
-        
+
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
@@ -49,6 +50,5 @@ namespace OSS.Pipeline
         ///     True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<(bool is_ok, TFuncResult result)> Executing(TFuncPara contextData);
-        
     }
 }
