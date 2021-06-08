@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
 
@@ -15,21 +16,24 @@ namespace OSS.Pipeline
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgFlow(string msgDataFlowKey) : this(msgDataFlowKey,null)
+        /// <param name="pipeCode"> 作为缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        protected BaseMsgFlow(string pipeCode) : this(pipeCode, null)
         {
+           
         }
 
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgFlow(string msgDataFlowKey,DataFlowOption option) : base(PipeType.MsgFlow)
+        protected BaseMsgFlow(string pipeCode, DataFlowOption option) : base(PipeType.MsgFlow)
         {
-            msgDataFlowKey ??= PipeCode;
-
-            _pusher = CreateFlow( msgDataFlowKey,this, option);
+            if (string.IsNullOrEmpty(pipeCode))
+            {
+                throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
+            }
+            _pusher = CreateFlow(pipeCode, this, option);
         }
         
         /// <summary>

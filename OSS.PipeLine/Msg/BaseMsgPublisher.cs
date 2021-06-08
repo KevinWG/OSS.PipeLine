@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
@@ -18,20 +19,22 @@ namespace OSS.Pipeline
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgPublisher(string msgDataFlowKey) : this(msgDataFlowKey, null)
+        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        protected BaseMsgPublisher(string pipeCode) : this(pipeCode, null)
         {
         }
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgPublisher(string msgDataFlowKey, DataPublisherOption option) : base(PipeType.MsgPublisher)
+        protected BaseMsgPublisher(string pipeCode, DataPublisherOption option) : base(PipeType.MsgPublisher)
         {
-            msgDataFlowKey ??= string.Concat(LineContainer.PipeCode, "-", PipeCode);
-
-            _pusher = CreatePublisher(msgDataFlowKey, option);
+            if (string.IsNullOrEmpty(pipeCode))
+            {
+                throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
+            }
+            _pusher = CreatePublisher(pipeCode, option);
         }
 
 

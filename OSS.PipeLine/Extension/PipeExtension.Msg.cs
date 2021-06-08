@@ -15,17 +15,12 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
-        /// <param name="pipeCode"></param>
+        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey, string pipeCode = null, DataPublisherOption option=null)
+        public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe,  string pipeCode , DataPublisherOption option=null)
         {
-            var nextPipe = new InterMsgPublisher<OutContext>(msgFlowKey, option);
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
+            var nextPipe = new InterMsgPublisher<OutContext>(pipeCode, option);
             pipe.InterAppend(nextPipe);
         }
 
@@ -34,17 +29,13 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
-        /// <param name="pipeCode"></param>
+        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey, string pipeCode = null, DataFlowOption option=null)
+        public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string pipeCode, DataFlowOption option=null)
         {
-            var nextPipe = new InterMsgSubscriber<OutContext>(msgFlowKey, option);
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
+            var nextPipe = new InterMsgSubscriber<OutContext>(pipeCode, option);
+
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
@@ -55,17 +46,13 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
-        /// <param name="pipeCode"></param>
+        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe, string msgFlowKey , string pipeCode = null, DataFlowOption option=null)
+        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe,  string pipeCode , DataFlowOption option=null)
         {
-            var nextPipe = new InterMsgFlow<OutContext>(msgFlowKey, option);
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
+            var nextPipe = new InterMsgFlow<OutContext>(pipeCode, option);
+        
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }

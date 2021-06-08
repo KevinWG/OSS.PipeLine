@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
 
@@ -13,21 +14,24 @@ namespace OSS.Pipeline
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgSubscriber(string msgDataFlowKey) :this(msgDataFlowKey,null)
+        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        protected BaseMsgSubscriber(string pipeCode) :this(pipeCode, null)
         {
         }
 
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option">数据流配置信息</param>
-        protected BaseMsgSubscriber(string msgDataFlowKey, DataFlowOption option) : base(PipeType.MsgSubscriber)
+        protected BaseMsgSubscriber(string pipeCode, DataFlowOption option) : base(PipeType.MsgSubscriber)
         {
-            msgDataFlowKey ??= string.Concat(LineContainer.PipeCode, "-", PipeCode);
-            
-            ReceiveSubscriber(msgDataFlowKey,this, option);
+            if (string.IsNullOrEmpty(pipeCode))
+            {
+                throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
+            }
+         
+            ReceiveSubscriber(pipeCode, this, option);
         }
 
         /// <summary>
@@ -39,8 +43,6 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected abstract void ReceiveSubscriber(string flowKey, IDataSubscriber<TMsg> subscribeFunc,  DataFlowOption option);
         
-    
-
         /// <summary>
         ///  订阅消息的动作实现
         /// </summary>
