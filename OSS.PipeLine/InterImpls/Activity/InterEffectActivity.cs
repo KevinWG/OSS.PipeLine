@@ -9,8 +9,12 @@ namespace OSS.Pipeline
         private readonly Func<TFuncPara,Task<(bool is_ok, TResult result)>> _exeFunc;
 
         /// <inheritdoc />
-        public InterEffectActivity(Func<TFuncPara,Task<(bool is_ok, TResult result)>> exeFunc)
+        public InterEffectActivity(Func<TFuncPara,Task<(bool is_ok, TResult result)>> exeFunc,string pipeCode)
         {
+            if (!string.IsNullOrEmpty(pipeCode))
+            {
+                PipeCode = pipeCode;
+            }
             _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
         }
 
@@ -27,8 +31,12 @@ namespace OSS.Pipeline
         private readonly Func< Task<(bool is_ok, TResult result)>> _exeFunc;
 
         /// <inheritdoc />
-        public InterEffectActivity(Func< Task<(bool is_ok, TResult result)>> exeFunc)
+        public InterEffectActivity(Func< Task<(bool is_ok, TResult result)>> exeFunc,string pipeCode)
         {
+            if (!string.IsNullOrEmpty(pipeCode))
+            {
+                PipeCode = pipeCode;
+            }
             _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
         }
 

@@ -22,8 +22,12 @@ namespace OSS.Pipeline
     internal class InterActivity: BaseActivity //: BaseStraightPipe<EmptyContext, EmptyContext>
     {
         private readonly Func<Task<bool>> _exeFunc;
-        public InterActivity(Func<Task<bool>> exeFunc)
+        public InterActivity(Func<Task<bool>> exeFunc,string pipeCode)
         {
+            if (!string.IsNullOrEmpty(pipeCode))
+            {
+                PipeCode = pipeCode;
+            }
             _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
         }
 
@@ -52,8 +56,12 @@ namespace OSS.Pipeline
         private readonly Func<TInContext,Task<bool>> _exeFunc;
 
         /// <inheritdoc />
-        public InterActivity(Func<TInContext,Task<bool>> exeFunc)
+        public InterActivity(Func<TInContext,Task<bool>> exeFunc,string pipeCode)
         {
+            if (!string.IsNullOrEmpty(pipeCode))
+            {
+                PipeCode = pipeCode;
+            }
             _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
         }
 

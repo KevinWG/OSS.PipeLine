@@ -1,19 +1,19 @@
 ﻿using OSS.DataFlow;
 
-namespace OSS.Pipeline.InterImpls.Msg
+namespace OSS.Pipeline
 {
     /// <summary>
-    /// 异步消息延缓连接器
+    /// 消息流
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    internal class InterMsgFlow<TContext> : BaseMsgFlow<TContext>
+    internal class MsgFlow<TContext> : BaseMsgFlow<TContext>
     {
         /// <summary>
-        ///  异步缓冲连接器
+        ///  消息流
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        public InterMsgFlow(string pipeCode, DataFlowOption option) : base(pipeCode, option)
+        public MsgFlow(string pipeCode, DataFlowOption option) : base(pipeCode, option)
         {
         }
 

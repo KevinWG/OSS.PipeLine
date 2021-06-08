@@ -20,7 +20,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe,  string pipeCode , DataPublisherOption option=null)
         {
-            var nextPipe = new InterMsgPublisher<OutContext>(pipeCode, option);
+            var nextPipe = new MsgPublisher<OutContext>(pipeCode, option);
             pipe.InterAppend(nextPipe);
         }
 
@@ -34,7 +34,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string pipeCode, DataFlowOption option=null)
         {
-            var nextPipe = new InterMsgSubscriber<OutContext>(pipeCode, option);
+            var nextPipe = new MsgSubscriber<OutContext>(pipeCode, option);
 
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -51,7 +51,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe,  string pipeCode , DataFlowOption option=null)
         {
-            var nextPipe = new InterMsgFlow<OutContext>(pipeCode, option);
+            var nextPipe = new MsgFlow<OutContext>(pipeCode, option);
         
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -69,7 +69,7 @@ namespace OSS.Pipeline
         public static BaseMsgConverter<OutContext, NextOutContext> AppendMsgConverter<OutContext, NextOutContext>(
             this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc, string pipeCode = null)
         {
-            var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc);
+            var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc,pipeCode);
             if (!string.IsNullOrEmpty(pipeCode))
             {
                 nextPipe.PipeCode = pipeCode;

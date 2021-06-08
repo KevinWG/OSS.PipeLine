@@ -16,17 +16,10 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static void AppendMsgPublisher<TContext>(this BaseBranchGateway<TContext> pipe, string msgFlowKey, string pipeCode = null, DataPublisherOption option=null)
+        public static void AppendMsgPublisher<TContext>(this BaseBranchGateway<TContext> pipe, string msgFlowKey, DataPublisherOption option=null)
         {
-            var nextPipe = new InterMsgPublisher<TContext>(msgFlowKey, option);
-
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
-
+            var nextPipe = new MsgPublisher<TContext>(msgFlowKey, option);
             pipe.AddBranch(nextPipe);
         }
 
@@ -39,15 +32,9 @@ namespace OSS.Pipeline
         /// <param name="option"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseMsgFlow<TContext> AppendMsgFlow<TContext>(this BaseBranchGateway<TContext> pipe, string msgFlowKey, string pipeCode = null, DataFlowOption option=null)
+        public static BaseMsgFlow<TContext> AppendMsgFlow<TContext>(this BaseBranchGateway<TContext> pipe, string msgFlowKey, DataFlowOption option=null)
         {
-            var nextPipe = new InterMsgFlow<TContext>(msgFlowKey, option);
-
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
-
+            var nextPipe = new MsgFlow<TContext>(msgFlowKey, option);
             pipe.AddBranch(nextPipe);
             return nextPipe;
         }
@@ -64,13 +51,7 @@ namespace OSS.Pipeline
         public static BaseMsgConverter<TContext, NextOutContext> AppendMsgConverter<TContext, NextOutContext>(
             this BaseBranchGateway<TContext> pipe, Func<TContext, NextOutContext> convertFunc,string pipeCode=null)
         {
-            var nextPipe = new InterMsgConvertor<TContext, NextOutContext>(convertFunc);
-
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
-
+            var nextPipe = new InterMsgConvertor<TContext, NextOutContext>(convertFunc, pipeCode);
             pipe.AddBranch(nextPipe);
             return nextPipe;
         }
