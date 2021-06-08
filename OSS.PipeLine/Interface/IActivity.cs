@@ -23,8 +23,8 @@ namespace OSS.Pipeline.Interface
         /// <summary>
         ///  执行方法
         /// </summary>
-        /// <param name="data"></param>
+        /// <param name="paras"></param>
         /// <returns></returns>
-        Task<bool> Execute(TFuncPara context);
+        Task<bool> Execute(TFuncPara paras);
     }
 }

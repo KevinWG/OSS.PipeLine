@@ -11,9 +11,9 @@ namespace OSS.Pipeline.InterImpls.Msg
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="msgDataFlowKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        public InterMsgFlow(string msgDataFlowKey, DataFlowOption option) : base(msgDataFlowKey, option)
+        public InterMsgFlow(string pipeCode, DataFlowOption option) : base(pipeCode, option)
         {
         }
 
