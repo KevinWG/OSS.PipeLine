@@ -7,7 +7,7 @@ namespace OSS.Pipeline
     /// <summary>
     ///  网关扩展类
     /// </summary>
-    public static class BranchGatewayExtension
+    public static partial class BranchExtension
     {
         /// <summary>
         ///  追加消息发布者管道

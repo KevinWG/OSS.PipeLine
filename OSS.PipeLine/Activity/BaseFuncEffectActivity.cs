@@ -43,13 +43,13 @@ namespace OSS.Pipeline
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <param name="contextData">当前活动上下文信息</param>
+        /// <param name="para">当前活动上下文信息</param>
         /// <returns>
         /// (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
         /// is_ok：
         ///     False - 触发Block，业务流不再向后续管道传递。
         ///     True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<(bool is_ok, TFuncResult result)> Executing(TFuncPara contextData);
+        protected abstract Task<(bool is_ok, TFuncResult result)> Executing(TFuncPara para);
     }
 }

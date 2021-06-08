@@ -69,13 +69,13 @@ namespace OSS.Pipeline
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <param name="contextData">当前活动上下文（会继续传递给下一个节点）</param>
+        /// <param name="data">当前活动上下文（会继续传递给下一个节点）</param>
         /// <returns>
         /// 处理结果
         /// False - 触发Block，业务流不再向后续管道传递。
         /// True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<bool> Executing(TInContext contextData);
+        protected abstract Task<bool> Executing(TInContext data);
 
         internal override async Task<bool> InterHandling(TInContext context)
         {
