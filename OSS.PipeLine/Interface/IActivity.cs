@@ -18,14 +18,13 @@ namespace OSS.Pipeline.Interface
 
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
-    public interface IFuncActivity<in TFuncPara, TFuncResult> : IOutPipeAppender<TFuncResult>
+    public interface IActivity<in TFuncPara, TFuncResult> : IOutPipeAppender<TFuncResult>
     {
         /// <summary>
         ///  执行方法
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        Task<TFuncResult> Execute(TFuncPara data);
-        
+        Task<bool> Execute(TFuncPara context);
     }
 }

@@ -26,7 +26,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncActivity<TFuncPara, TFuncResult> :
-        BaseFuncPipe<TFuncPara, TFuncPara>, IFuncActivity<TFuncPara, TFuncResult>
+        BaseFuncPipe<TFuncPara, TFuncPara>//, IFuncActivity<TFuncPara, TFuncPara>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -65,5 +65,7 @@ namespace OSS.Pipeline
         ///     True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<(bool is_ok, TFuncResult result)> Executing(TFuncPara contextData);
+
+      
     }
 }

@@ -13,6 +13,7 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
@@ -20,7 +21,7 @@ namespace OSS.Pipeline
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    public abstract class BaseActivity : BaseStraightPipe<EmptyContext, EmptyContext>
+    public abstract class BaseActivity : BaseStraightPipe<EmptyContext, EmptyContext>, IActivity<EmptyContext, EmptyContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -57,6 +58,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInContext">输入输出上下文</typeparam>
     public abstract class BaseActivity<TInContext> : BaseStraightPipe<TInContext, TInContext>
+        , IActivity<TInContext, TInContext>
     {
         /// <summary>
         /// 外部Action活动基类

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
@@ -10,7 +11,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TFuncPara, TResult> : BaseStraightPipe<TFuncPara, TResult>
+    public abstract class BaseEffectActivity<TFuncPara, TResult> : BaseStraightPipe<TFuncPara, TResult>, IActivity<TFuncPara, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -48,7 +49,7 @@ namespace OSS.Pipeline
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>
+    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IActivity<EmptyContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
