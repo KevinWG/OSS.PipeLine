@@ -25,31 +25,16 @@ namespace OSS.Pipeline
         }
 
         /// <summary>
-        ///  追加空头管道（直通类型的空头
+        ///  追加普通管道
         /// </summary>
         /// <typeparam name="TOutContext"></typeparam>
         /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextPara"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseStraightPipe<EmptyContext, TNextOutContext> Append<TOutContext, TNextOutContext>(
-            this IOutPipeAppender<TOutContext> pipe, BaseStraightPipe<EmptyContext, TNextOutContext> nextPipe)
-        {
-            pipe.InterAppend(nextPipe);
-            return nextPipe;
-        }
-
-        /// <summary>
-        ///  追加被动委托类型管道
-        /// </summary>
-        /// <typeparam name="TOutContext"></typeparam>
-        /// <typeparam name="TNextOutContext"></typeparam>
-        /// <typeparam name="THandlePara"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static BaseFuncPipe<THandlePara, TNextOutContext> Append<TOutContext, THandlePara, TNextOutContext>(
-            this IOutPipeAppender<TOutContext> pipe, BaseFuncPipe<THandlePara, TNextOutContext> nextPipe)
+        public static BasePipe<EmptyContext, TNextPara, TNextOutContext> Append<TOutContext, TNextPara, TNextOutContext>(
+            this IOutPipeAppender<TOutContext> pipe, BasePipe<EmptyContext, TNextPara, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
