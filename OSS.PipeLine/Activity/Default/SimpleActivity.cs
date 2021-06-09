@@ -22,6 +22,8 @@ namespace OSS.Pipeline
     public class SimpleActivity: BaseActivity //: BaseStraightPipe<EmptyContext, EmptyContext>
     {
         private readonly Func<Task<bool>> _exeFunc;
+
+        /// <inheritdoc />
         public SimpleActivity(Func<Task<bool>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))

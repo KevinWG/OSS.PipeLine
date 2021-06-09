@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSS.DataFlow" Version="1.0.0" />
+    <PackageReference Include="OSS.DataFlow" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
