@@ -12,13 +12,22 @@ namespace OSS.Pipeline
         /// <summary>
         ///  消息发布者
         /// </summary>
-        /// <param name="msgDataFlowKey"></param>
+        /// <param name="pipeCode"></param>
+        public MsgPublisher(string pipeCode) : this(pipeCode, null)
+        {
+        }
+
+        /// <summary>
+        ///  消息发布者
+        /// </summary>
+        /// <param name="pipeCode"></param>
         /// <param name="option"></param>
-        public MsgPublisher(string msgDataFlowKey,DataPublisherOption option) : base(msgDataFlowKey, option)
+        public MsgPublisher(string pipeCode, DataPublisherOption option) : base(pipeCode, option)
         {
         }
 
 
+        /// <inheritdoc />
         protected override IDataPublisher<TMsg> CreatePublisher(string flowKey, DataPublisherOption option)
         {
             return DataFlowFactory.CreatePublisher<TMsg>(flowKey, option);

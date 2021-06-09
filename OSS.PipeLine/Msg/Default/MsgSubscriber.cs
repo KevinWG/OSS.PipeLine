@@ -11,9 +11,16 @@ namespace OSS.Pipeline
         /// <summary>
         /// 消息订阅者
         /// </summary>
-        /// <param name="msgDataFlowKey"></param>
+        /// <param name="pipeCode"></param>
+        public MsgSubscriber(string pipeCode) : this(pipeCode, null)
+        {
+        }
+        /// <summary>
+        /// 消息订阅者
+        /// </summary>
+        /// <param name="pipeCode"></param>
         /// <param name="option"></param>
-        public MsgSubscriber(string msgDataFlowKey,DataFlowOption option) : base(msgDataFlowKey, option)
+        public MsgSubscriber(string pipeCode, DataFlowOption option) : base(pipeCode, option)
         {
         }
 
