@@ -15,16 +15,27 @@ using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Interface
 {
-
-    /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
-    public interface IActivity<in TFuncPara, TFuncResult> : IOutPipeAppender<TFuncResult>
+    public interface IActivity<TFuncResult> : IOutPipeAppender<TFuncResult>
     {
         /// <summary>
         ///  执行方法
         /// </summary>
         /// <param name="paras"></param>
         /// <returns></returns>
-        Task<bool> Execute(TFuncPara paras);
+        Task<bool> Execute();
+    }
+
+
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TFuncResult"></typeparam>
+    public interface IActivity<in TInContext, TFuncResult> : IOutPipeAppender<TFuncResult>
+    {
+        /// <summary>
+        ///  执行方法
+        /// </summary>
+        /// <param name="paras"></param>
+        /// <returns></returns>
+        Task<bool> Execute(TInContext paras);
     }
 }

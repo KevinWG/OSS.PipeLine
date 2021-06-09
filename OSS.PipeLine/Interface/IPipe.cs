@@ -12,6 +12,7 @@
 #endregion
 
 using OSS.Pipeline.InterImpls.Watcher;
+using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Interface
 {
@@ -39,15 +40,32 @@ namespace OSS.Pipeline.Interface
         /// <summary>
         ///  开始管道
         /// </summary>
-        public IPipe StartPipe { get; }
+        IPipe StartPipe { get; }
         
         /// <summary>
         ///  结束管道
         /// </summary>
-        public IPipe EndPipe { get; }
+        IPipe EndPipe { get; }
 
+        /// <summary>
+        ///   获取路由
+        /// </summary>
+        /// <returns></returns>
+        PipeRoute ToRoute();
+        
 
         internal PipeWatcherProxy GetProxy();
+    }
+
+
+    public interface IPipeLine<TInContext>: IPipeLine
+    {
+        /// <summary>
+        ///  管道执行
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        Task<bool> Execute(TInContext context);
     }
 
 }

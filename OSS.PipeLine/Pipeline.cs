@@ -22,12 +22,12 @@ namespace OSS.Pipeline
     /// <summary>
     /// 基础流体
     /// </summary>
-    /// <typeparam name="TInFlowContext"></typeparam>
-    /// <typeparam name="TOutFlowContext"></typeparam>
-    public class Pipeline<TInFlowContext, TOutFlowContext> : BaseStraightPipe<TInFlowContext, TOutFlowContext> , IPipeLine
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
+    public class Pipeline<TInContext, TOutContext> : BaseStraightPipe<TInContext, TOutContext> , IPipeLine<TInContext>
     {
-        private readonly BaseInPipePart<TInFlowContext>    _startPipe;
-        private readonly IOutPipeAppender<TOutFlowContext> _endPipe;
+        private readonly BaseInPipePart<TInContext>    _startPipe;
+        private readonly IOutPipeAppender<TOutContext> _endPipe;
         /// <summary>
         ///  开始管道
         /// </summary>
@@ -41,14 +41,14 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender) : this(startPipe,endPipeAppender,null)
+        public Pipeline(BaseInPipePart<TInContext> startPipe, IOutPipeAppender<TOutContext> endPipeAppender) : this(startPipe,endPipeAppender,null)
         {
         }
 
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(BaseInPipePart<TInFlowContext> startPipe, IOutPipeAppender<TOutFlowContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
+        public Pipeline(BaseInPipePart<TInContext> startPipe, IOutPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
         {
             _startPipe = startPipe;
             _endPipe   = endPipeAppender;
@@ -66,21 +66,24 @@ namespace OSS.Pipeline
             startPipe.InterInitialContainer(this);
         }
 
+        #region 流体业务-启动
 
-        #region 监控
-
-        PipeWatcherProxy IPipeLine.GetProxy()
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<bool> Execute(TInContext para)
         {
-            return WatchProxy;
+            return InterStart(para);
         }
 
         #endregion
 
-
         #region 管道的业务处理
 
         //  管道本身不再向下流动，由终结点处理
-        internal override Task<bool> InterStart(TInFlowContext context)
+        internal override Task<bool> InterStart(TInContext context)
         {
             return InterHandling(context);
         }
@@ -90,7 +93,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal override Task<bool> InterHandling(TInFlowContext context)
+        internal override Task<bool> InterHandling(TInContext context)
         {
             return _startPipe.InterStart(context);
         }
@@ -103,7 +106,7 @@ namespace OSS.Pipeline
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal override void InterAppend(BaseInPipePart<TOutFlowContext> nextPipe)
+        internal override void InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
             _endPipe.InterAppend(nextPipe);
         }
@@ -142,8 +145,15 @@ namespace OSS.Pipeline
             pipe.next = NextPipe.InterToRoute();
             return pipe;
         }
+        
+        #endregion
 
-     
+        #region 监控对象处理
+
+        PipeWatcherProxy IPipeLine.GetProxy()
+        {
+            return WatchProxy;
+        }
 
         #endregion
 

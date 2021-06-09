@@ -28,6 +28,8 @@ namespace OSS.Pipeline.Interface
         Task<TFuncResult> Execute(TFuncPara data);
 
     }
+
+
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public interface IFuncEffectActivity<in TFuncPara, TFuncResult> : IOutPipeAppender<TFuncResult>

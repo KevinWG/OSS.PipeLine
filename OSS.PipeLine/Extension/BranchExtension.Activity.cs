@@ -22,10 +22,10 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseActivity<OutContext> AppendActivity<OutContext>(this BaseBranchGateway<OutContext> pipe,
+        public static SimpleActivity<OutContext> AppendActivity<OutContext>(this BaseBranchGateway<OutContext> pipe,
             Func<OutContext, Task<bool>> exeFunc, string pipeCode = null)
         {
-            var nextPipe = new InterActivity<OutContext>(exeFunc, pipeCode);
+            var nextPipe = new SimpleActivity<OutContext>(exeFunc, pipeCode);
             pipe.AddBranch(nextPipe);
             return nextPipe;
         }
@@ -50,11 +50,11 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseEffectActivity<TFuncPara, TResult> AppendEffectActivity<TFuncPara, TResult>(
+        public static SimpleEffectActivity<TFuncPara, TResult> AppendEffectActivity<TFuncPara, TResult>(
             this BaseBranchGateway<TFuncPara> pipe,
             Func<TFuncPara, Task<(bool is_ok, TResult result)>> exeFunc, string pipeCode = null)
         {
-            var nextPipe = new InterEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode);
+            var nextPipe = new SimpleEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode);
             pipe.AddBranch(nextPipe);
             return nextPipe;
         }

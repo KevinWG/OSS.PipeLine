@@ -19,12 +19,12 @@ namespace OSS.Pipeline
 {
 
     /// <inheritdoc />
-    internal class InterFuncActivity<TFuncPara, TResult> : BaseFuncActivity<TFuncPara, TResult>
+    public class SimpleFuncActivity<TFuncPara, TResult> : BaseFuncActivity<TFuncPara, TResult>
     {
         private readonly Func<TFuncPara, Task<(bool is_ok, TResult result)>> _exeFunc;
 
         /// <inheritdoc />
-        public InterFuncActivity(Func<TFuncPara, Task<(bool is_ok, TResult result)>> exeFunc,string pipeCode)
+        public SimpleFuncActivity(Func<TFuncPara, Task<(bool is_ok, TResult result)>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {

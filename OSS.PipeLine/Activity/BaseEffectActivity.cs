@@ -10,7 +10,7 @@ namespace OSS.Pipeline
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IActivity<EmptyContext, TResult>
+    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IActivity<TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -18,15 +18,7 @@ namespace OSS.Pipeline
         protected BaseEffectActivity() : base(PipeType.EffectActivity)
         {
         }
-
-        internal override async Task<bool> InterHandling(EmptyContext context)
-        {
-            var (is_ok, result) = await Executing();
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
-
-            return is_ok && await ToNextThrough(result);
-        }
-
+        
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
@@ -37,15 +29,40 @@ namespace OSS.Pipeline
         ///     True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<(bool is_ok, TResult result)> Executing();
+
+
+        #region 流体业务-启动
+
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<bool> Execute()
+        {
+            return InterStart(EmptyContext.Default);
+        }
+
+        #endregion
+
+
+
+        internal override async Task<bool> InterHandling(EmptyContext context)
+        {
+            var (is_ok, result) = await Executing();
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
+
+            return is_ok && await ToNextThrough(result);
+        }
     }
 
     /// <summary>
     ///  主动触发执行活动组件基类
     ///       接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
-    /// <typeparam name="TFuncPara"></typeparam>
+    /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TFuncPara, TResult> : BaseStraightPipe<TFuncPara, TResult>, IActivity<TFuncPara, TResult>
+    public abstract class BaseEffectActivity<TInContext, TResult> : BaseStraightPipe<TInContext, TResult>, IActivity<TInContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -54,14 +71,6 @@ namespace OSS.Pipeline
         {
         }
 
-        internal override async Task<bool> InterHandling(TFuncPara context)
-        {
-            var (is_ok, result) = await Executing(context);
-
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
-            
-            return is_ok && await ToNextThrough(result);
-        }
 
         /// <summary>
         ///  具体执行扩展方法
@@ -73,7 +82,35 @@ namespace OSS.Pipeline
         ///     False - 触发Block，业务流不再向后续管道传递。
         ///     True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<(bool is_ok, TResult result)> Executing(TFuncPara para);
+        protected abstract Task<(bool is_ok, TResult result)> Executing(TInContext para);
+
+        #region 流体业务处理
+
+        internal override async Task<bool> InterHandling(TInContext context)
+        {
+            var (is_ok, result) = await Executing(context);
+
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
+
+            return is_ok && await ToNextThrough(result);
+        }
+        
+        #endregion
+
+
+        #region 流体业务-启动
+
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<bool> Execute(TInContext para)
+        {
+            return InterStart(para);
+        }
+
+        #endregion
     }
 
 }

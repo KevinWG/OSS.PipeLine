@@ -19,10 +19,10 @@ namespace OSS.Pipeline
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    internal class InterActivity: BaseActivity //: BaseStraightPipe<EmptyContext, EmptyContext>
+    public class SimpleActivity: BaseActivity //: BaseStraightPipe<EmptyContext, EmptyContext>
     {
         private readonly Func<Task<bool>> _exeFunc;
-        public InterActivity(Func<Task<bool>> exeFunc,string pipeCode)
+        public SimpleActivity(Func<Task<bool>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -51,12 +51,12 @@ namespace OSS.Pipeline
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
     /// <typeparam name="TInContext">输入输出上下文</typeparam>
-    internal class InterActivity<TInContext> : BaseActivity<TInContext>
+    public class SimpleActivity<TInContext> : BaseActivity<TInContext>
     {
         private readonly Func<TInContext,Task<bool>> _exeFunc;
 
         /// <inheritdoc />
-        public InterActivity(Func<TInContext,Task<bool>> exeFunc,string pipeCode)
+        public SimpleActivity(Func<TInContext,Task<bool>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {

@@ -38,7 +38,6 @@ namespace OSS.Pipeline
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
-        
 
         /// <summary>
         ///  追加被动委托类型管道

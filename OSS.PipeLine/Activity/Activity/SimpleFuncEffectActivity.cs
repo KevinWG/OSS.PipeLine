@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 namespace OSS.Pipeline
 {
     /// <inheritdoc />
-    internal class InterFuncEffectActivity<TFuncPara, TResult> :BaseFuncEffectActivity<TFuncPara, TResult> 
+    public class SimpleFuncEffectActivity<TFuncPara, TResult> :BaseFuncEffectActivity<TFuncPara, TResult> 
     {
         private readonly Func<TFuncPara, Task<(bool is_ok, TResult result)>> _exeFunc;
 
         /// <inheritdoc />
-        public InterFuncEffectActivity(Func<TFuncPara, Task<(bool is_ok, TResult result)>> exeFunc,string pipeCode)
+        public SimpleFuncEffectActivity(Func<TFuncPara, Task<(bool is_ok, TResult result)>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {

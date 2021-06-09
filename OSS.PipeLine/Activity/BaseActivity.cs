@@ -21,7 +21,7 @@ namespace OSS.Pipeline
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    public abstract class BaseActivity : BaseStraightPipe<EmptyContext, EmptyContext>, IActivity<EmptyContext, EmptyContext>
+    public abstract class BaseActivity : BaseStraightPipe<EmptyContext, EmptyContext>, IActivity<EmptyContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -47,6 +47,21 @@ namespace OSS.Pipeline
 
             return res ? await ToNextThrough(context) : res;
         }
+
+
+        #region 流体业务-启动
+
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<bool> Execute()
+        {
+            return InterStart(EmptyContext.Default);
+        }
+
+        #endregion
     }
 
     /// <summary>
@@ -81,5 +96,19 @@ namespace OSS.Pipeline
 
             return res && await ToNextThrough(context);
         }
+
+        #region 流体业务-启动
+
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Task<bool> Execute(TInContext para)
+        {
+            return InterStart(para);
+        }
+
+        #endregion
     }
 }

@@ -28,20 +28,6 @@ namespace OSS.Pipeline.Base
         {
         }
         
-        #region 流体业务-启动
-
-        /// <summary>
-        /// 启动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public Task<bool> Execute(TInContext context)
-        {
-            return InterStart(context);
-        }
-
-        #endregion
-        
         #region 流体业务-内部处理
 
         /// <summary>
