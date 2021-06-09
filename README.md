@@ -95,13 +95,19 @@
     此组件将业务分流处理，定义流体时通过AddBranchPipe添加多个分支，至于如何分流，只需要继承此基类重写FilterNextPipes方法即可，你也可以在此之上实现BPMN中的几种网关类型（并行，排他，和包含）。
 
 ## 三. 连接器组件
-此组件主要负责消息的传递和转化处理，根据是否需要转化，或者异步定义三个基类如下：
+此组件主要负责消息的传递和转化处理，根据是否需要转化，或者异步定义四个基类如下：
 
-####1. BaseConnector<InContext, OutContext> - 转化连接组件
+####1. BaseMsgConverter<TInMsg, TOutMsg> - 转化连接组件
     业务流经过此组件，直接执行Convert方法（自定义实现），转化成对应的下个组件执行参数，自动进入下个组件。
 
-####2. BaseBufferConnector<InContext, OutContext> - 异步缓冲转化连接组件
+####2. BaseMsgFlow<TMsg> - 异步缓冲数据连接组件（提供默认实现：MsgFlow<TMsg>）
     （此前组件的流动以【发布/订阅】的方式异步执行，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
+
+####3. BaseMsgPublisher<TMsg> 消息发布者组件 - （提供默认实现：MsgPublisher<TMsg>）
+    （此前组件提供数据的【发布】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
+
+####4. BaseMsgSubscriber<TMsg> - 消息订阅者组件（提供默认实现：MsgSubscriber<TMsg>）
+    （此前组件提供数据的【订阅】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
 
 
 以上是三个核心的组件部分，以上三个组件任意组合可以组成PipeLine（流体），PipeLine本身又可以作为一个组件加入到一个更大的流体之中，通过流体的 ToRoute() 方法，可以获取对应的内部组件关联路由信息。

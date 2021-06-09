@@ -24,10 +24,7 @@ namespace OSS.Pipeline
             var (is_ok, result) = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
-            if (is_ok)
-                return await ToNextThrough(result);
-            
-            return false;
+            return is_ok && await ToNextThrough(result);
         }
 
         /// <summary>
@@ -60,12 +57,10 @@ namespace OSS.Pipeline
         internal override async Task<bool> InterHandling(TFuncPara context)
         {
             var (is_ok, result) = await Executing(context);
+
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
-
-            if (is_ok)
-                await ToNextThrough(result);
-
-            return is_ok;
+            
+            return is_ok && await ToNextThrough(result);
         }
 
         /// <summary>

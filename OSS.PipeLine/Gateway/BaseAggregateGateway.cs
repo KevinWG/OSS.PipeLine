@@ -47,7 +47,7 @@ namespace OSS.Pipeline
 
             if (res== MatchCondition.MatchAndContinue)
             {
-                await ToNextThrough(context);
+               return await ToNextThrough(context);
             }
             return res == MatchCondition.NotMatchAndWait;//返回false触发block
         }

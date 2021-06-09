@@ -45,10 +45,7 @@ namespace OSS.Pipeline
             var res = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context,res);
 
-            if (res)
-                await ToNextThrough(context);
-            
-            return res;
+            return res ? await ToNextThrough(context) : res;
         }
     }
 
@@ -82,11 +79,7 @@ namespace OSS.Pipeline
             var res = await Executing(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
 
-            if (res)
-            {
-                await ToNextThrough(context);
-            }
-            return res;
+            return res && await ToNextThrough(context);
         }
     }
 }

@@ -29,6 +29,7 @@ namespace OSS.Pipeline
     {
         /// <summary>
         ///  流体的分支网关基类
+        ///    所有分支都失败会触发block
         /// </summary>
         protected BaseBranchGateway() : base(PipeType.BranchGateway)
         {
@@ -41,10 +42,10 @@ namespace OSS.Pipeline
                 return false;
             
             var parallelPipes = nextPipes.Select(p => p.InterStart(context));
-            await Task.WhenAll(parallelPipes);
 
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context,true);
-            return true;
+            var res=(await Task.WhenAll(parallelPipes)).Any(r=>r);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
+            return res;
         }
 
         /// <summary>
@@ -95,8 +96,7 @@ namespace OSS.Pipeline
         }
         
         #endregion
-
-
+        
         #region 内部初始化
 
         internal override void InterInitialContainer(IPipeLine flowContainer)
