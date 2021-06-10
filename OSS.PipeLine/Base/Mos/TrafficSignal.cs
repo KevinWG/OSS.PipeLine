@@ -1,4 +1,4 @@
-﻿namespace OSS.Pipeline.Base.Mos
+﻿namespace OSS.Pipeline
 {
     /// <summary>
     ///  通行信号

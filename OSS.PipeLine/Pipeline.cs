@@ -66,24 +66,10 @@ namespace OSS.Pipeline
             startPipe.InterInitialContainer(this);
         }
 
-        #region 流体业务-启动
-
-        /// <summary>
-        /// 启动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public Task<bool> Execute(TInContext para)
-        {
-            return InterStart(para);
-        }
-
-        #endregion
-
         #region 管道的业务处理
 
         //  管道本身不再向下流动，由终结点处理
-        internal override Task<bool> InterStart(TInContext context)
+        internal override Task<TrafficSignal> InterStart(TInContext context)
         {
             return InterHandling(context);
         }
@@ -93,7 +79,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal override Task<bool> InterHandling(TInContext context)
+        internal override Task<TrafficSignal> InterHandling(TInContext context)
         {
             return _startPipe.InterStart(context);
         }

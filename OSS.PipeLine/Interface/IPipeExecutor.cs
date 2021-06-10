@@ -11,7 +11,7 @@ namespace OSS.Pipeline.Interface
         ///  执行方法
         /// </summary>
         /// <returns></returns>
-        Task<bool> Execute();
+        Task<TrafficSignal> Execute();
     }
 
     /// <summary>
@@ -24,7 +24,7 @@ namespace OSS.Pipeline.Interface
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        Task<bool> Execute(TInContext para);
+        Task<TrafficSignal> Execute(TInContext para);
     }
     
     /// <summary>

@@ -1,12 +1,11 @@
 ﻿using System.Threading.Tasks;
-using OSS.Pipeline.Base.Mos;
 
 namespace OSS.Pipeline
 {
     /// <summary>
     ///  内部辅助类
     /// </summary>
-    public static class InterUtil
+    internal static class InterUtil
     {
         /// <summary>
         ///  Task 的True值

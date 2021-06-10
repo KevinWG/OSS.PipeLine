@@ -57,7 +57,10 @@ namespace OSS.Pipeline.Interface
         internal PipeWatcherProxy GetProxy();
     }
 
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
     public interface IPipeLine<TInContext>: IPipeLine
     {
         /// <summary>
@@ -65,7 +68,7 @@ namespace OSS.Pipeline.Interface
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        Task<bool> Execute(TInContext context);
+        Task<TrafficSignal> Execute(TInContext context);
     }
 
 }

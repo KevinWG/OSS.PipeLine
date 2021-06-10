@@ -10,13 +10,12 @@ namespace OSS.Pipeline.Tests.FlowItems
             PipeCode = "PayActivity";
         }
 
-        protected override Task<(bool is_ok, bool result)> Executing(PayContext conext)
-        {
-            LogHelper.Info($"支付动作执行,数量：{conext.count}，金额：{conext.money}）");
-            return Task.FromResult((true,true));
-        }
 
-      
+        protected override Task<(TrafficSignal traffic_signal, bool result)> Executing(PayContext para)
+        {
+            LogHelper.Info($"支付动作执行,数量：{para.count}，金额：{para.money}）");
+            return Task.FromResult((TrafficSignal.Green_Pass, true));
+        }
     }
 
     public class PayContext 

@@ -35,15 +35,18 @@ namespace OSS.Pipeline
         {
         }
 
-        internal override async Task<bool> InterIntercept(TContext context)
+        internal override async Task<TrafficSignal> InterIntercept(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
-                return false;
-            
+                return TrafficSignal.Red_Block;
+
             var parallelPipes = nextPipes.Select(p => p.InterStart(context));
 
-            var res=(await Task.WhenAll(parallelPipes)).Any(r=>r);
+            var res = (await Task.WhenAll(parallelPipes)).Any(r => r == TrafficSignal.Green_Pass)
+                ? TrafficSignal.Green_Pass
+                : TrafficSignal.Red_Block;
+
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
             return res;
         }

@@ -67,7 +67,7 @@ namespace OSS.Pipeline.Base
         //private 
         internal BasePipePart NextPipe { get; private set; }
 
-        internal Task<bool> ToNextThrough(TOutContext nextInContext)
+        internal Task<TrafficSignal> ToNextThrough(TOutContext nextInContext)
         {
             if (NextPipe != null)
             {
@@ -81,7 +81,7 @@ namespace OSS.Pipeline.Base
                 }
             }
 
-            return InterUtil.FalseTask;
+            return InterUtil.Red;
         }
 
         /// <summary>

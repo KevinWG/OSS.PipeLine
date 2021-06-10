@@ -9,13 +9,13 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgSubscriber<TMsg> : BaseFuncPipe<TMsg,TMsg>, IDataSubscriber<TMsg>
+    public abstract class BaseMsgSubscriber<TMsg> : BaseFuncPipe<TMsg, TMsg>, IDataSubscriber<TMsg>
     {
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgSubscriber(string pipeCode) :this(pipeCode, null)
+        protected BaseMsgSubscriber(string pipeCode) : this(pipeCode, null)
         {
         }
 
@@ -30,7 +30,7 @@ namespace OSS.Pipeline
             {
                 throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
             }
-         
+
             ReceiveSubscriber(pipeCode, this, option);
         }
 
@@ -41,16 +41,17 @@ namespace OSS.Pipeline
         /// <param name="option"></param>
         /// <param name="flowKey"></param>
         /// <returns></returns>
-        protected abstract void ReceiveSubscriber(string flowKey, IDataSubscriber<TMsg> subscribeFunc,  DataFlowOption option);
-        
+        protected abstract void ReceiveSubscriber(string flowKey, IDataSubscriber<TMsg> subscribeFunc,
+            DataFlowOption option);
+
         /// <summary>
         ///  订阅消息的动作实现
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Task<bool> Subscribe(TMsg data)
+        public async Task<bool> Subscribe(TMsg data)
         {
-            return ToNextThrough(data);
+            return (await ToNextThrough(data)) == TrafficSignal.Green_Pass;
         }
     }
 

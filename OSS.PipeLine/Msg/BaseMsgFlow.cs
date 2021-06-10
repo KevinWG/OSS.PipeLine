@@ -43,10 +43,10 @@ namespace OSS.Pipeline
         /// <param name="flowKey"></param>
         /// <returns></returns>
         protected abstract IDataPublisher<TMsg> CreateFlow(string flowKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
-        
-        internal override Task<bool> InterHandling(TMsg context)
+
+        internal override async Task<TrafficSignal> InterHandling(TMsg context)
         {
-            return _pusher.Publish(context);
+            return (await _pusher.Publish(context)) ? TrafficSignal.Green_Pass : TrafficSignal.Red_Block;
         }
 
         /// <summary>
@@ -54,9 +54,9 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
-        public Task<bool> Subscribe(TMsg data)
+        public async Task<bool> Subscribe(TMsg data)
         {
-            return ToNextThrough(data);
+            return (await ToNextThrough(data))==TrafficSignal.Green_Pass;
         }
     }
 

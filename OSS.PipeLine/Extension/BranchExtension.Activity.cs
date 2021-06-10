@@ -23,7 +23,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static SimpleActivity<OutContext> AppendActivity<OutContext>(this BaseBranchGateway<OutContext> pipe,
-            Func<OutContext, Task<bool>> exeFunc, string pipeCode = null)
+            Func<OutContext, Task<TrafficSignal>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleActivity<OutContext>(exeFunc, pipeCode);
             pipe.AddBranch(nextPipe);
@@ -43,8 +43,8 @@ namespace OSS.Pipeline
         /// 参数：
         ///     当前活动上下文信息
         /// 结果：
-        ///     (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
-        ///         is_ok：
+        ///     (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
+        ///         traffic_signal：
         ///             False - 触发Block，业务流不再向后续管道传递。
         ///             True  - 流体自动流入后续管道
         /// </param>
@@ -52,7 +52,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static SimpleEffectActivity<TFuncPara, TResult> AppendEffectActivity<TFuncPara, TResult>(
             this BaseBranchGateway<TFuncPara> pipe,
-            Func<TFuncPara, Task<(bool is_ok, TResult result)>> exeFunc, string pipeCode = null)
+            Func<TFuncPara, Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode);
             pipe.AddBranch(nextPipe);

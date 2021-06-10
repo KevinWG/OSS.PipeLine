@@ -38,14 +38,14 @@ namespace OSS.Pipeline
         /// False - 触发Block，业务流不再向后续管道传递。
         /// True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<bool> Executing();
+        protected abstract Task<TrafficSignal> Executing();
 
-        internal override async Task<bool> InterHandling(EmptyContext context)
+        internal override async Task<TrafficSignal> InterHandling(EmptyContext context)
         {
             var res = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context,res);
 
-            return res ? await ToNextThrough(context) : res;
+            return res==TrafficSignal.Green_Pass ? await ToNextThrough(context) : res;
         }
 
 
@@ -55,7 +55,7 @@ namespace OSS.Pipeline
         /// 启动方法
         /// </summary>
         /// <returns></returns>
-        public Task<bool> Execute()
+        public Task<TrafficSignal> Execute()
         {
             return Execute(EmptyContext.Default);
         }
@@ -86,14 +86,14 @@ namespace OSS.Pipeline
         /// False - 触发Block，业务流不再向后续管道传递。
         /// True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<bool> Executing(TInContext data);
+        protected abstract Task<TrafficSignal> Executing(TInContext data);
 
-        internal override async Task<bool> InterHandling(TInContext context)
+        internal override async Task<TrafficSignal> InterHandling(TInContext context)
         {
             var res = await Executing(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
 
-            return res && await ToNextThrough(context);
+            return res == TrafficSignal.Green_Pass ? await ToNextThrough(context) : res;
         }
     }
 }

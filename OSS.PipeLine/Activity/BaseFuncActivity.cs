@@ -36,7 +36,7 @@ namespace OSS.Pipeline
         }
 
         #region 流体启动执行
-        
+
         /// <summary>
         ///  执行方法
         /// </summary>
@@ -44,15 +44,18 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<TFuncResult> Execute(TFuncPara para)
         {
-            var (is_ok, result) = await Executing(para);
+            var (traffic_signal, result) = await Executing(para);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, para, result);
-            if (!is_ok)
+            
+            if (traffic_signal == TrafficSignal.Red_Block)
             {
                 await InterBlock(para);
-                return result;
+            }
+            else if (traffic_signal == TrafficSignal.Green_Pass)
+            {
+                await ToNextThrough(para);
             }
 
-            await ToNextThrough(para);
             return result;
         }
 
@@ -64,12 +67,12 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="para">当前活动上下文信息</param>
         /// <returns>
-        /// (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
-        /// is_ok：
+        /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
+        /// traffic_signal：
         ///     False - 触发Block，业务流不再向后续管道传递。
         ///     True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<(bool is_ok, TFuncResult result)> Executing(TFuncPara para);
+        protected abstract Task<(TrafficSignal traffic_signal, TFuncResult result)> Executing(TFuncPara para);
 
       
     }

@@ -11,10 +11,10 @@ namespace OSS.Pipeline.Tests.FlowItems
             PipeCode = "SendEmailActivity";
         }
        
-        protected override Task<bool> Executing(SendEmailContext data)
+        protected override Task<TrafficSignal> Executing(SendEmailContext data)
         {
             LogHelper.Info("分流-1.邮件发送，内容："+data.body);
-            return InterUtil.TrueTask;
+            return Task.FromResult(TrafficSignal.Green_Pass);
         }
     }
 

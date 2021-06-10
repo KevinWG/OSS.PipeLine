@@ -18,37 +18,37 @@ namespace OSS.Pipeline
         protected BaseEffectActivity() : base(PipeType.EffectActivity)
         {
         }
-        
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
         /// <returns>
-        /// (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
-        /// is_ok：
+        /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
+        /// traffic_signal：
         ///     False - 触发Block，业务流不再向后续管道传递。
         ///     True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<(bool is_ok, TResult result)> Executing();
-        
+        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing();
+
         #region 流体业务-启动
 
         /// <summary>
         /// 启动方法
         /// </summary>
         /// <returns></returns>
-        public Task<bool> Execute()
+        public Task<TrafficSignal> Execute()
         {
             return Execute(EmptyContext.Default);
         }
 
         #endregion
-        
-        internal override async Task<bool> InterHandling(EmptyContext context)
+
+        internal override async Task<TrafficSignal> InterHandling(EmptyContext context)
         {
-            var (is_ok, result) = await Executing();
+            var (traffic_signal, result) = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
-            return is_ok && await ToNextThrough(result);
+            return traffic_signal == TrafficSignal.Green_Pass ? (await ToNextThrough(result)) : traffic_signal;
         }
     }
 
@@ -73,22 +73,22 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="para">当前活动上下文信息</param>
         /// <returns>
-        /// (bool is_ok,TResult result)-（活动是否处理成功，业务结果）
-        /// is_ok：
+        /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
+        /// traffic_signal：
         ///     False - 触发Block，业务流不再向后续管道传递。
         ///     True  - 流体自动流入后续管道
         /// </returns>
-        protected abstract Task<(bool is_ok, TResult result)> Executing(TInContext para);
+        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing(TInContext para);
 
         #region 流体业务处理
 
-        internal override async Task<bool> InterHandling(TInContext context)
+        internal override async Task<TrafficSignal> InterHandling(TInContext context)
         {
-            var (is_ok, result) = await Executing(context);
+            var (traffic_signal, result) = await Executing(context);
 
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
-            return is_ok && await ToNextThrough(result);
+            return traffic_signal==TrafficSignal.Green_Pass ? await ToNextThrough(result):traffic_signal;
         }
         
         #endregion

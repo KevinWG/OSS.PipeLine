@@ -47,7 +47,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
         }
 
 
-        public Task<bool> Watch(WatchDataItem data)
+        public Task Watch(WatchDataItem data)
         {
             if (data.PipeType >= PipeType.MsgFlow)
             {
@@ -60,7 +60,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
             }
 
             _watchDataQueue.Post(data);
-            return InterUtil.TrueTask;
+            return Task.CompletedTask;
         }
 
     }

@@ -10,11 +10,12 @@ namespace OSS.Pipeline.Tests.FlowItems
             PipeCode = "AuditActivity";
         }
         
-        protected override Task<(bool is_ok, bool result)> Executing(long id)
+     
+
+        protected override Task<(TrafficSignal traffic_signal, bool result)> Executing(long id)
         {
             LogHelper.Info($"自动审核通过申请（编号：{id}）");
-            return Task.FromResult((true, true));
+            return Task.FromResult((TrafficSignal.Green_Pass, true));
         }
-        
     }
 }

@@ -35,7 +35,7 @@ namespace OSS.Pipeline.Base
         /// 启动方法
         /// </summary>
         /// <returns></returns>
-        public Task<bool> Execute(TInContext para)
+        public Task<TrafficSignal> Execute(TInContext para)
         {
             return InterStart(para);
         }
@@ -49,15 +49,17 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal override async Task<bool> InterStart(TInContext context)
+        internal override async Task<TrafficSignal> InterStart(TInContext context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             var res = await InterHandling(context);
-            if (!res)
+
+            if (res == TrafficSignal.Red_Block)
             {
                 await InterBlock(context);
             }
-            return true;
+
+            return res;
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<bool> InterHandling(TInContext context);
+        internal abstract Task<TrafficSignal> InterHandling(TInContext context);
         
         #endregion
 

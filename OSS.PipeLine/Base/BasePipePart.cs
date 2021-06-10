@@ -54,7 +54,7 @@ namespace OSS.Pipeline.Base
         internal PipeWatcherProxy WatchProxy { get; set; }
 
 
-        internal Task<bool> Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object data,
+        internal Task Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object data,
             object res = null)
         {
             if (WatchProxy != null)
@@ -70,7 +70,7 @@ namespace OSS.Pipeline.Base
                 });
             }
 
-            return InterUtil.FalseTask;
+            return Task.CompletedTask;
         }
 
         #endregion
@@ -113,7 +113,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<bool> InterStart(TInContext context);
+        internal abstract Task<TrafficSignal> InterStart(TInContext context);
 
         #endregion
     }

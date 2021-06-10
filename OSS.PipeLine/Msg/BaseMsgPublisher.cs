@@ -51,9 +51,9 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override Task<bool> InterIntercept(TMsg context)
+        internal override async Task<TrafficSignal> InterIntercept(TMsg context)
         {
-            return _pusher.Publish(context);
+            return (await _pusher.Publish(context))?TrafficSignal.Green_Pass:TrafficSignal.Red_Block;
         }
 
         #endregion
