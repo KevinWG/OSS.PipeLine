@@ -26,7 +26,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncActivity<TFuncPara, TFuncResult> :
-        BaseFuncPipe<TFuncPara, TFuncPara>, IFuncActivity<TFuncPara, TFuncResult>
+        BaseFuncPipe<TFuncPara, TFuncPara> ,IPipeFuncExecutor<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -35,6 +35,8 @@ namespace OSS.Pipeline
         {
         }
 
+        #region 流体启动执行
+        
         /// <summary>
         ///  执行方法
         /// </summary>
@@ -43,7 +45,7 @@ namespace OSS.Pipeline
         public async Task<TFuncResult> Execute(TFuncPara para)
         {
             var (is_ok, result) = await Executing(para);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, para,result);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, para, result);
             if (!is_ok)
             {
                 await InterBlock(para);
@@ -53,6 +55,9 @@ namespace OSS.Pipeline
             await ToNextThrough(para);
             return result;
         }
+
+        #endregion
+
 
         /// <summary>
         ///  具体执行扩展方法

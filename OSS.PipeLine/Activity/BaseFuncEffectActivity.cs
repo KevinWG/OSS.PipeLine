@@ -12,7 +12,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncEffectActivity<TFuncPara, TFuncResult> :
-        BaseFuncPipe<TFuncPara, TFuncResult>, IFuncEffectActivity<TFuncPara, TFuncResult>
+        BaseFuncPipe<TFuncPara, TFuncResult>, IPipeFuncExecutor<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类

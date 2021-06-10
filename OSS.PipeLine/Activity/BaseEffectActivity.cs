@@ -10,7 +10,7 @@ namespace OSS.Pipeline
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IActivity<TResult>
+    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IPipeExecutor
     {
         /// <summary>
         /// 外部Action活动基类
@@ -29,24 +29,20 @@ namespace OSS.Pipeline
         ///     True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<(bool is_ok, TResult result)> Executing();
-
-
+        
         #region 流体业务-启动
 
         /// <summary>
         /// 启动方法
         /// </summary>
-        /// <param name="context"></param>
         /// <returns></returns>
         public Task<bool> Execute()
         {
-            return InterStart(EmptyContext.Default);
+            return Execute(EmptyContext.Default);
         }
 
         #endregion
-
-
-
+        
         internal override async Task<bool> InterHandling(EmptyContext context)
         {
             var (is_ok, result) = await Executing();
@@ -62,7 +58,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TInContext, TResult> : BaseStraightPipe<TInContext, TResult>, IActivity<TInContext, TResult>
+    public abstract class BaseEffectActivity<TInContext, TResult> : BaseStraightPipe<TInContext, TResult>, IPipeExecutor<TInContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -95,21 +91,6 @@ namespace OSS.Pipeline
             return is_ok && await ToNextThrough(result);
         }
         
-        #endregion
-
-
-        #region 流体业务-启动
-
-        /// <summary>
-        /// 启动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public Task<bool> Execute(TInContext para)
-        {
-            return InterStart(para);
-        }
-
         #endregion
     }
 

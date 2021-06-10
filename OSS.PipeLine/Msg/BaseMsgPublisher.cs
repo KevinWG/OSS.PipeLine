@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {

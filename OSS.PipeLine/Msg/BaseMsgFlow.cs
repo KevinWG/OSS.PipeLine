@@ -19,7 +19,6 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"> 作为缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         protected BaseMsgFlow(string pipeCode) : this(pipeCode, null)
         {
-           
         }
 
         /// <summary>

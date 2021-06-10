@@ -18,60 +18,61 @@ using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
-    /// <summary>
-    /// 流体的多路聚合网关基类
-    /// the aggregative gate of flow
-    /// </summary>
-    /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseAggregateGateway<TContext>  : BaseStraightPipe<TContext, TContext>
-    {
-        /// <summary>
-        ///  流体的多路聚合网关基类构造函数
-        /// </summary>
-        protected BaseAggregateGateway() : base(PipeType.AggregateGateway)
-        {
-        }
+    // todo 需要扩展上级节点属性后才有价值，否则当前等同于BaseActivity
+    ///// <summary>
+    ///// 流体的多路聚合网关基类
+    ///// the aggregative gate of flow
+    ///// </summary>
+    ///// <typeparam name="TContext"></typeparam>
+    //public abstract class BaseAggregateGateway<TContext>  : BaseStraightPipe<TContext, TContext>
+    //{
+    //    /// <summary>
+    //    ///  流体的多路聚合网关基类构造函数
+    //    /// </summary>
+    //    protected BaseAggregateGateway() : base(PipeType.AggregateGateway)
+    //    {
+    //    }
 
-        /// <summary>
-        ///  是否触发通过
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        protected abstract Task<MatchCondition> IfMatchCondition(TContext context);
+    //    /// <summary>
+    //    ///  是否触发通过
+    //    /// </summary>
+    //    /// <param name="context"></param>
+    //    /// <returns></returns>
+    //    protected abstract Task<MatchCondition> IfMatchCondition(TContext context);
 
 
-        internal override async Task<bool> InterHandling(TContext context)
-        {
-            var res = await IfMatchCondition(context);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
+    //    internal override async Task<bool> InterHandling(TContext context)
+    //    {
+    //        var res = await IfMatchCondition(context);
+    //        await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
 
-            if (res== MatchCondition.MatchAndContinue)
-            {
-               return await ToNextThrough(context);
-            }
-            return res == MatchCondition.NotMatchAndWait;//返回false触发block
-        }
-    }
+    //        if (res== MatchCondition.MatchAndContinue)
+    //        {
+    //           return await ToNextThrough(context);
+    //        }
+    //        return res == MatchCondition.NotMatchAndWait;//返回false触发block
+    //    }
+    //}
 
-    /// <summary>
-    ///  匹配结果
-    /// </summary>
-    public enum MatchCondition
-    {
-        /// <summary>
-        ///  匹配且继续
-        /// </summary>
-        MatchAndContinue=0,
+    ///// <summary>
+    /////  匹配结果
+    ///// </summary>
+    //public enum MatchCondition
+    //{
+    //    /// <summary>
+    //    ///  匹配且继续
+    //    /// </summary>
+    //    MatchAndContinue=0,
 
-        /// <summary>
-        ///  不匹配也不继续向后流动
-        /// </summary>
-        NotMatchAndWait=10,
+    //    /// <summary>
+    //    ///  不匹配也不继续向后流动
+    //    /// </summary>
+    //    NotMatchAndWait=10,
 
-        /// <summary>
-        ///  不匹配且触发阻塞
-        /// </summary>
-        NotMatchAndBlock=20
-    }
+    //    /// <summary>
+    //    ///  不匹配且触发阻塞
+    //    /// </summary>
+    //    NotMatchAndBlock=20
+    //}
 
 }

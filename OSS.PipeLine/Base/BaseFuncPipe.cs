@@ -1,4 +1,5 @@
-﻿using OSS.Pipeline.InterImpls.Watcher;
+﻿using OSS.Pipeline.Interface;
+using OSS.Pipeline.InterImpls.Watcher;
 using System;
 using System.Threading.Tasks;
 
@@ -18,7 +19,9 @@ namespace OSS.Pipeline.Base
         protected BaseFuncPipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
+     
+
         #region 内部的业务处理
 
         internal override Task<bool> InterStart(EmptyContext context)

@@ -21,7 +21,7 @@ namespace OSS.Pipeline.Base
     ///  管道执行基类（拦截类型）
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public abstract class BaseInterceptPipe<TInContext> : BaseInPipePart<TInContext>
+    public abstract class BaseInterceptPipe<TInContext> : BaseInPipePart<TInContext>,IPipeExecutor<TInContext>
     {
         /// <inheritdoc />
         protected BaseInterceptPipe(PipeType pipeType) : base(pipeType)

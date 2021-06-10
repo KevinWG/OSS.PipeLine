@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using OSS.Pipeline.Base.Mos;
 
 namespace OSS.Pipeline
 {
@@ -16,5 +17,9 @@ namespace OSS.Pipeline
         ///  Task的False值
         /// </summary>
         public static Task<bool> FalseTask { get; } = Task.FromResult(false);
+        
+        public static Task<TrafficSignal> Green { get; } = Task.FromResult(TrafficSignal.Green_Pass);
+        public static Task<TrafficSignal> Yellow { get; } = Task.FromResult(TrafficSignal.Yellow_Wait);
+        public static Task<TrafficSignal> Red { get; } = Task.FromResult(TrafficSignal.Red_Block);
     }
 }

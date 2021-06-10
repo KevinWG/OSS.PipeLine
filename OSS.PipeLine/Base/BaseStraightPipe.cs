@@ -12,6 +12,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
@@ -21,13 +22,26 @@ namespace OSS.Pipeline.Base
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public abstract class BaseStraightPipe<TInContext,TOutContext> : BasePipe<TInContext, TInContext, TOutContext>
+    public abstract class BaseStraightPipe<TInContext,TOutContext> : BasePipe<TInContext, TInContext, TOutContext>,IPipeExecutor<TInContext>
     {
         /// <inheritdoc />
         protected BaseStraightPipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
+        #region 流体业务-启动
+
+        /// <summary>
+        /// 启动方法
+        /// </summary>
+        /// <returns></returns>
+        public Task<bool> Execute(TInContext para)
+        {
+            return InterStart(para);
+        }
+
+        #endregion
+
         #region 流体业务-内部处理
 
         /// <summary>
