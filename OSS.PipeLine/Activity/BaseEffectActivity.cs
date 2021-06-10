@@ -19,6 +19,8 @@ namespace OSS.Pipeline
         {
         }
 
+        #region 业务扩展方法
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
@@ -29,6 +31,19 @@ namespace OSS.Pipeline
         ///     True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing();
+
+        /// <summary>
+        ///  阻塞调用扩展方法
+        /// </summary>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        protected virtual Task Block(TResult res)
+        {
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
 
         #region 流体业务-启动
 
@@ -43,13 +58,27 @@ namespace OSS.Pipeline
 
         #endregion
 
+        #region 内部业务处理
+
         internal override async Task<TrafficSignal> InterHandling(EmptyContext context)
         {
             var (traffic_signal, result) = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
-            return traffic_signal == TrafficSignal.Green_Pass ? (await ToNextThrough(result)) : traffic_signal;
+            if (traffic_signal == TrafficSignal.Green_Pass)
+            {
+                await ToNextThrough(result);
+            }
+            else if (traffic_signal == TrafficSignal.Red_Block)
+            {
+                await Block(result);
+            }
+
+            return traffic_signal;
         }
+
+        #endregion
+
     }
 
     /// <summary>
@@ -67,6 +96,7 @@ namespace OSS.Pipeline
         {
         }
 
+        #region 业务扩展方法
 
         /// <summary>
         ///  具体执行扩展方法
@@ -80,15 +110,37 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing(TInContext para);
 
+        /// <summary>
+        ///  阻塞调用扩展方法
+        /// </summary>
+        /// <param name="para"></param>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        protected virtual Task Block(TInContext para, TResult res)
+        {
+            return Task.CompletedTask;
+        }
+
+        #endregion
+
+
         #region 流体业务处理
 
         internal override async Task<TrafficSignal> InterHandling(TInContext context)
         {
             var (traffic_signal, result) = await Executing(context);
-
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
-            return traffic_signal==TrafficSignal.Green_Pass ? await ToNextThrough(result):traffic_signal;
+            if (traffic_signal == TrafficSignal.Green_Pass)
+            {
+                await ToNextThrough(result);
+            }
+            else if (traffic_signal == TrafficSignal.Red_Block)
+            {
+                await Block(context,result);
+            }
+
+            return traffic_signal;
         }
         
         #endregion

@@ -32,6 +32,7 @@ namespace OSS.Pipeline
             await Watch(PipeCode, PipeType, WatchActionType.Executed, para, result);
             if (traffic_signal == TrafficSignal.Red_Block)
             {
+                await Block(para, result);
                 await InterBlock(para);
             }
             else if (traffic_signal == TrafficSignal.Green_Pass)
@@ -52,5 +53,16 @@ namespace OSS.Pipeline
         ///     True  - 流体自动流入后续管道
         /// </returns>
         protected abstract Task<(TrafficSignal traffic_signal, TFuncResult result)> Executing(TFuncPara para);
+
+        /// <summary>
+        ///  阻塞调用扩展方法
+        /// </summary>
+        /// <param name="para"></param>
+        /// <param name="res"></param>
+        /// <returns></returns>
+        protected virtual Task Block(TFuncPara para, TFuncResult res)
+        {
+            return Task.CompletedTask;
+        }
     }
 }
