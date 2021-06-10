@@ -41,22 +41,23 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender) : this(startPipe,endPipeAppender,null)
+        public Pipeline(string pipeCode, BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender) : this(pipeCode,startPipe, endPipeAppender,null)
         {
         }
 
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
+        public Pipeline(string pipeCode,BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
         {
-            _startPipe = startPipe;
-            _endPipe   = endPipeAppender;
-
-            if (_startPipe == null || _endPipe == null)
+            if (startPipe == null || endPipeAppender == null||string.IsNullOrEmpty(pipeCode))
             {
                 throw new ArgumentNullException("未发现流体的起始截止管道！");
             }
+
+            PipeCode   = pipeCode;
+            _startPipe = startPipe;
+            _endPipe   = endPipeAppender;
 
             if (option?.Watcher!=null)
             {
@@ -149,7 +150,7 @@ namespace OSS.Pipeline
     public class SimplePipeline<TContext> : Pipeline<EmptyContext, TContext>
     {
         /// <inheritdoc />
-        public SimplePipeline(BaseInPipePart<EmptyContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
+        public SimplePipeline(string pipeCode,BaseInPipePart<EmptyContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(pipeCode,startPipe, endPipeAppender)
         {
         }
     }

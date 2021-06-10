@@ -26,7 +26,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncActivity<TFuncPara, TFuncResult> :
-        BaseFuncPipe<TFuncPara, TFuncPara> ,IPipeFuncExecutor<TFuncPara, TFuncResult>
+        BaseFuncPipe<TFuncPara, TFuncPara> ,IFuncActivity<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -69,8 +69,10 @@ namespace OSS.Pipeline
         /// <returns>
         /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
         /// traffic_signal：
-        ///     False - 触发Block，业务流不再向后续管道传递。
-        ///     True  - 流体自动流入后续管道
+        /// traffic_signal：     
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
         protected abstract Task<(TrafficSignal traffic_signal, TFuncResult result)> Executing(TFuncPara para);
 

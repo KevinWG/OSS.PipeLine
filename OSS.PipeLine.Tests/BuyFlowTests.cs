@@ -26,7 +26,7 @@ namespace OSS.Pipeline.Tests
         public BuyFlowTests()
         {
             var endActivity = new EmptyActivity();
-            
+
             ApplyActivity
             .Append(AuditActivity)
 
@@ -35,18 +35,18 @@ namespace OSS.Pipeline.Tests
 
             // 网关分支 - 发送邮件分支
             PayGateway
-                .AddBranch(EmailConnector)
-                .Append(EmailActivity)
-                .Append(endActivity);
+            .AddBranch(EmailConnector)
+            .Append(EmailActivity)
+            .Append(endActivity);
 
             // 网关分支- 入库分支
             PayGateway
-                .AddBranch(StockConnector)
-                .Append(StockActivity)
-                .Append(endActivity); 
-         
+            .AddBranch(StockConnector)
+            .Append(StockActivity)
+            .Append(endActivity);
+
             // 流体对象
-            TestPipeline = ApplyActivity.AsFlowStartAndEndWith(endActivity);
+            TestPipeline = ApplyActivity.StartAndEndWith(endActivity, "test-flow");
         }
 
 

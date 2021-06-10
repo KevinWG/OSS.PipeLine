@@ -24,28 +24,6 @@ namespace OSS.Pipeline
     public static class PipelineExtension
     {
         /// <summary>
-        /// 根据首位两个管道建立流体
-        /// </summary>
-        /// <typeparam name="InFlowContext"></typeparam>
-        /// <typeparam name="OutFlowContext"></typeparam>
-        /// <param name="startPipe"></param>
-        /// <param name="endPipeAppender"></param>
-        /// <param name="flowPipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static Pipeline<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
-            string flowPipeCode = null,PipeLineOption option=null)
-        {
-            var code = flowPipeCode ?? string.Concat(startPipe.PipeCode, "-", endPipeAppender.PipeCode);
-
-            return new Pipeline<InFlowContext, OutFlowContext>(startPipe, endPipeAppender,option) {PipeCode = code};
-        }
-
-
-
-
-        /// <summary>
         ///  追加下一个节点
         /// </summary>
         /// <typeparam name="TIn"></typeparam>
@@ -79,7 +57,22 @@ namespace OSS.Pipeline
 
 
         /// <summary>
-        ///  添加第一个节点
+        ///  追加下一个节点
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, string pipeCode, PipeLineOption option = null)
+        {
+            return new Pipeline<TIn, TOut>(pipeCode,pipe.StartPipe,pipe.EndAppender, option);
+        }
+
+
+        /// <summary>
+        ///  添加下一个节点
         /// </summary>
         /// <typeparam name="TIn"></typeparam>
         /// <typeparam name="TOut"></typeparam>

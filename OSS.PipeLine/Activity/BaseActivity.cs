@@ -22,7 +22,7 @@ namespace OSS.Pipeline
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    public abstract class BaseActivity : BaseStraightPipe<EmptyContext, EmptyContext>, IPipeExecutor
+    public abstract class BaseActivity : BaseStraightPipe<EmptyContext, EmptyContext>, IActivity<EmptyContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -36,8 +36,10 @@ namespace OSS.Pipeline
         /// </summary>
         /// <returns>
         /// 处理结果
-        /// False - 触发Block，业务流不再向后续管道传递。
-        /// True  - 流体自动流入后续管道
+        /// traffic_signal：     
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
         protected abstract Task<TrafficSignal> Executing();
 
@@ -76,8 +78,7 @@ namespace OSS.Pipeline
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
     /// <typeparam name="TInContext">输入输出上下文</typeparam>
-    public abstract class BaseActivity<TInContext> : BaseStraightPipe<TInContext, TInContext>
-        , IPipeExecutor<TInContext>
+    public abstract class BaseActivity<TInContext> : BaseStraightPipe<TInContext, TInContext>, IActivity<TInContext, TInContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -91,8 +92,10 @@ namespace OSS.Pipeline
         /// <param name="data">当前活动上下文（会继续传递给下一个节点）</param>
         /// <returns>
         /// 处理结果
-        /// False - 触发Block，业务流不再向后续管道传递。
-        /// True  - 流体自动流入后续管道
+        /// traffic_signal：     
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
         protected abstract Task<TrafficSignal> Executing(TInContext data);
 

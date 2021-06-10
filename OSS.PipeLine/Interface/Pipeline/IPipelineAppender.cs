@@ -13,6 +13,11 @@ namespace OSS.Pipeline.Interface
        internal IPipeAppender<TOutContext> EndAppender { get; set; }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
     public interface IPipelineBranchAppender<TInContext, TOutContext>
     {
         internal BaseInPipePart<TInContext>     StartPipe   { get; set; }

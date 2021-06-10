@@ -61,7 +61,7 @@ namespace OSS.Pipeline.Interface
     /// 
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public interface IPipeLine<TInContext>: IPipeLine
+    public interface IPipeLine<in TInContext>: IPipeLine
     {
         /// <summary>
         ///  管道执行

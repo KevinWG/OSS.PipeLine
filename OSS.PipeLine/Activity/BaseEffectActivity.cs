@@ -11,7 +11,7 @@ namespace OSS.Pipeline
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IPipeExecutor
+    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IActivity<TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -28,8 +28,10 @@ namespace OSS.Pipeline
         /// <returns>
         /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
         /// traffic_signal：
-        ///     False - 触发Block，业务流不再向后续管道传递。
-        ///     True  - 流体自动流入后续管道
+        /// traffic_signal：     
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
         protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing();
 
@@ -90,7 +92,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TInContext, TResult> : BaseStraightPipe<TInContext, TResult>, IPipeExecutor<TInContext>
+    public abstract class BaseEffectActivity<TInContext, TResult> : BaseStraightPipe<TInContext, TResult>, IActivity<TInContext, TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -108,8 +110,10 @@ namespace OSS.Pipeline
         /// <returns>
         /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
         /// traffic_signal：
-        ///     False - 触发Block，业务流不再向后续管道传递。
-        ///     True  - 流体自动流入后续管道
+        /// traffic_signal：     
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
         protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing(TInContext para);
 
