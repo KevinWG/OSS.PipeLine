@@ -113,7 +113,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficSignal> InterStart(TInContext context);
+        internal abstract Task<InterSingleValue> InterStart(TInContext context);
 
         #endregion
     }

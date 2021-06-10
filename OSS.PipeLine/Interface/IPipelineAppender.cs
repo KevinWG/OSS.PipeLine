@@ -10,7 +10,7 @@ namespace OSS.Pipeline.Interface
     public interface IPipelineAppender<TInContext,TOutContext>
     {
        internal BaseInPipePart<TInContext>    StartPipe   { get; set; }
-       internal IOutPipeAppender<TOutContext> EndAppender { get; set; }
+       internal IPipeAppender<TOutContext> EndAppender { get; set; }
     }
 
     public interface IPipelineBranchAppender<TInContext, TOutContext>

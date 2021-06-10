@@ -20,12 +20,12 @@ namespace OSS.Pipeline.Base
         
         #region 内部的业务处理
 
-        internal override async Task<TrafficSignal> InterStart(EmptyContext context)
+        internal override async Task<InterSingleValue> InterStart(EmptyContext context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
-            return TrafficSignal.Green_Pass;
+            return new InterSingleValue(TrafficSignal.Green_Pass, string.Empty);
         }
-        
+
         #endregion
 
     }

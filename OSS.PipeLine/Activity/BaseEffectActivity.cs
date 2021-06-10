@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Watcher;
@@ -36,8 +37,9 @@ namespace OSS.Pipeline
         ///  阻塞调用扩展方法
         /// </summary>
         /// <param name="res"></param>
+        /// <param name="blockedPipeCode">true-自身处理失败触发block，false-传递下个节点失败触发block</param>
         /// <returns></returns>
-        protected virtual Task Block(TResult res)
+        protected virtual Task Block(TResult res,string blockedPipeCode)
         {
             return Task.CompletedTask;
         }
@@ -60,21 +62,22 @@ namespace OSS.Pipeline
 
         #region 内部业务处理
 
-        internal override async Task<TrafficSignal> InterHandling(EmptyContext context)
+        internal override async Task<InterSingleValue> InterHandling(EmptyContext context)
         {
             var (traffic_signal, result) = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
             if (traffic_signal == TrafficSignal.Green_Pass)
             {
-                await ToNextThrough(result);
+               return await ToNextThrough(result);
             }
             else if (traffic_signal == TrafficSignal.Red_Block)
             {
-                await Block(result);
+                await Block(result,PipeCode);
+                return new InterSingleValue(traffic_signal, PipeCode);
             }
 
-            return traffic_signal;
+            return new InterSingleValue(traffic_signal,String.Empty);
         }
 
         #endregion
@@ -115,8 +118,9 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="para"></param>
         /// <param name="res"></param>
+        /// <param name="blockedPipeCode">true-自身处理失败触发block，false-传递下个节点失败触发block</param>
         /// <returns></returns>
-        protected virtual Task Block(TInContext para, TResult res)
+        protected virtual Task Block(TInContext para, TResult res,string blockedPipeCode)
         {
             return Task.CompletedTask;
         }
@@ -126,21 +130,24 @@ namespace OSS.Pipeline
 
         #region 流体业务处理
 
-        internal override async Task<TrafficSignal> InterHandling(TInContext context)
+        internal override async Task<InterSingleValue> InterHandling(TInContext context)
         {
+            bool isSelfBlocked = false;
             var (traffic_signal, result) = await Executing(context);
+
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
             if (traffic_signal == TrafficSignal.Green_Pass)
             {
-                await ToNextThrough(result);
+                 return await ToNextThrough(result);
             }
             else if (traffic_signal == TrafficSignal.Red_Block)
             {
-                await Block(context,result);
+                isSelfBlocked = true;
+                await Block(context,result, PipeCode);
             }
 
-            return traffic_signal;
+            return new InterSingleValue(traffic_signal, isSelfBlocked?PipeCode:String.Empty);
         }
         
         #endregion

@@ -33,16 +33,21 @@ namespace OSS.Pipeline.InterImpls.Watcher
 
         Task<bool> WatchCallBack(WatchDataItem data)
         {
-            switch (data.ActionType)
+            try
             {
-                case WatchActionType.Starting:
-                    return _watcher.Starting(data.PipeCode, data.PipeType, data.Data);
-                case WatchActionType.Executed:
-                    return _watcher.Excuted(data.PipeCode, data.PipeType, data.Data, data.Result);
-                case WatchActionType.Blocked:
-                    return _watcher.Blocked(data.PipeCode, data.PipeType, data.Data);
+                switch (data.ActionType)
+                {
+                    case WatchActionType.Starting:
+                        return _watcher.Starting(data.PipeCode, data.PipeType, data.Data);
+                    case WatchActionType.Executed:
+                        return _watcher.Excuted(data.PipeCode, data.PipeType, data.Data, data.Result);
+                    case WatchActionType.Blocked:
+                        return _watcher.Blocked(data.PipeCode, data.PipeType, data.Data);
+                }
             }
-
+            catch 
+            {
+            }
             return InterUtil.TrueTask;
         }
 

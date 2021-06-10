@@ -18,7 +18,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static void AppendMsgPublisher<OutContext>(this IOutPipeAppender<OutContext> pipe,  string pipeCode , DataPublisherOption option=null)
+        public static void AppendMsgPublisher<OutContext>(this IPipeAppender<OutContext> pipe,  string pipeCode , DataPublisherOption option=null)
         {
             var nextPipe = new MsgPublisher<OutContext>(pipeCode, option);
             pipe.InterAppend(nextPipe);
@@ -32,7 +32,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IOutPipeAppender<OutContext> pipe, string pipeCode, DataFlowOption option=null)
+        public static BaseMsgSubscriber<OutContext> AppendMsgSubscriber<OutContext>(this IPipeAppender<OutContext> pipe, string pipeCode, DataFlowOption option=null)
         {
             var nextPipe = new MsgSubscriber<OutContext>(pipeCode, option);
 
@@ -49,7 +49,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IOutPipeAppender<OutContext> pipe,  string pipeCode , DataFlowOption option=null)
+        public static BaseMsgFlow<OutContext> AppendMsgFlow<OutContext>(this IPipeAppender<OutContext> pipe,  string pipeCode , DataFlowOption option=null)
         {
             var nextPipe = new MsgFlow<OutContext>(pipeCode, option);
         
@@ -67,7 +67,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static BaseMsgConverter<OutContext, NextOutContext> AppendMsgConverter<OutContext, NextOutContext>(
-            this IOutPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc, string pipeCode = null)
+            this IPipeAppender<OutContext> pipe, Func<OutContext, NextOutContext> convertFunc, string pipeCode = null)
         {
             var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc,pipeCode);
             if (!string.IsNullOrEmpty(pipeCode))

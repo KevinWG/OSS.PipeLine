@@ -44,9 +44,12 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected abstract IDataPublisher<TMsg> CreateFlow(string flowKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
 
-        internal override async Task<TrafficSignal> InterHandling(TMsg context)
+        internal override async Task<InterSingleValue> InterHandling(TMsg context)
         {
-            return (await _pusher.Publish(context)) ? TrafficSignal.Green_Pass : TrafficSignal.Red_Block;
+            var pushRes = await _pusher.Publish(context);
+            return pushRes
+                ? new InterSingleValue(TrafficSignal.Green_Pass, string.Empty)
+                : new InterSingleValue(TrafficSignal.Red_Block, PipeCode);
         }
 
         /// <summary>
@@ -56,7 +59,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<bool> Subscribe(TMsg data)
         {
-            return (await ToNextThrough(data))==TrafficSignal.Green_Pass;
+            return (await ToNextThrough(data)).traffic_signal==TrafficSignal.Green_Pass;
         }
     }
 

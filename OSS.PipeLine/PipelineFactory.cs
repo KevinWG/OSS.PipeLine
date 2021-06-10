@@ -48,7 +48,7 @@ namespace OSS.Pipeline
 
         internal static IPipelineAppender<TIn, TOut> Set<TIn, TOut>(IPipelineAppender<TIn, TOut> appender,
             BaseInPipePart<TIn> startPipe,
-            IOutPipeAppender<TOut> endAppender)
+            IPipeAppender<TOut> endAppender)
         {
             appender.StartPipe   = startPipe;
             appender.EndAppender = endAppender;

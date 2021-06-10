@@ -37,7 +37,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected abstract TOutMsg Convert(TInMsg inContextData);
 
-        internal override Task<TrafficSignal> InterHandling(TInMsg context)
+        internal override Task<InterSingleValue> InterHandling(TInMsg context)
         {
             var outContext = Convert(context);
             return ToNextThrough(outContext);

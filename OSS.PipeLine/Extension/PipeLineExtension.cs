@@ -34,7 +34,7 @@ namespace OSS.Pipeline
         /// <param name="option"></param>
         /// <returns></returns>
         public static Pipeline<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BaseInPipePart<InFlowContext> startPipe, IOutPipeAppender<OutFlowContext> endPipeAppender,
+            this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
             string flowPipeCode = null,PipeLineOption option=null)
         {
             var code = flowPipeCode ?? string.Concat(startPipe.PipeCode, "-", endPipeAppender.PipeCode);
@@ -103,7 +103,7 @@ namespace OSS.Pipeline
         ///     扩展分支方法，并汇聚返回最终节点到主流程
         /// </param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> WithBranchBox<TIn,TOut, TNextOut>(this IPipelineBranchAppender<TIn,TOut> pipe, Func<BaseBranchGateway<TOut>,IOutPipeAppender<TNextOut>> branchGather)
+        public static IPipelineAppender<TIn, TNextOut> WithBranchBox<TIn,TOut, TNextOut>(this IPipelineBranchAppender<TIn,TOut> pipe, Func<BaseBranchGateway<TOut>,IPipeAppender<TNextOut>> branchGather)
         {
             return PipelineFactory.Set(new InterPipelineAppender<TIn, TNextOut>(), pipe.StartPipe, branchGather(pipe.EndAppender));
         }

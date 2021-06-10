@@ -49,7 +49,7 @@ namespace OSS.Pipeline
             
             if (traffic_signal == TrafficSignal.Red_Block)
             {
-                await InterBlock(para);
+                await InterBlock(para,PipeCode);
             }
             else if (traffic_signal == TrafficSignal.Green_Pass)
             {

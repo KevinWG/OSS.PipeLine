@@ -30,10 +30,11 @@ namespace OSS.Pipeline
         {
             var (traffic_signal, result) = await Executing(para);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, para, result);
+
             if (traffic_signal == TrafficSignal.Red_Block)
             {
-                await Block(para, result);
-                await InterBlock(para);
+                await Block(para, result,PipeCode);
+                await InterBlock(para,PipeCode);
             }
             else if (traffic_signal == TrafficSignal.Green_Pass)
             {
@@ -59,8 +60,9 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="para"></param>
         /// <param name="res"></param>
+        /// <param name="blockedPipeCode">true-自身处理失败触发block，false-传递下个节点失败触发block</param>
         /// <returns></returns>
-        protected virtual Task Block(TFuncPara para, TFuncResult res)
+        protected virtual Task Block(TFuncPara para, TFuncResult res,string blockedPipeCode)
         {
             return Task.CompletedTask;
         }

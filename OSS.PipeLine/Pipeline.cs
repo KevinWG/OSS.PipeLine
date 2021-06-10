@@ -27,7 +27,7 @@ namespace OSS.Pipeline
     public class Pipeline<TInContext, TOutContext> : BaseStraightPipe<TInContext, TOutContext> , IPipeLine<TInContext>
     {
         private readonly BaseInPipePart<TInContext>    _startPipe;
-        private readonly IOutPipeAppender<TOutContext> _endPipe;
+        private readonly IPipeAppender<TOutContext> _endPipe;
         /// <summary>
         ///  开始管道
         /// </summary>
@@ -41,14 +41,14 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(BaseInPipePart<TInContext> startPipe, IOutPipeAppender<TOutContext> endPipeAppender) : this(startPipe,endPipeAppender,null)
+        public Pipeline(BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender) : this(startPipe,endPipeAppender,null)
         {
         }
 
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(BaseInPipePart<TInContext> startPipe, IOutPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
+        public Pipeline(BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
         {
             _startPipe = startPipe;
             _endPipe   = endPipeAppender;
@@ -69,7 +69,7 @@ namespace OSS.Pipeline
         #region 管道的业务处理
 
         //  管道本身不再向下流动，由终结点处理
-        internal override Task<TrafficSignal> InterStart(TInContext context)
+        internal override Task<InterSingleValue> InterStart(TInContext context)
         {
             return InterHandling(context);
         }
@@ -79,7 +79,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal override Task<TrafficSignal> InterHandling(TInContext context)
+        internal override Task<InterSingleValue> InterHandling(TInContext context)
         {
             return _startPipe.InterStart(context);
         }
@@ -146,10 +146,10 @@ namespace OSS.Pipeline
     }
 
     /// <inheritdoc />
-    public class Pipeline<TContext> : Pipeline<TContext, TContext>
+    public class SimplePipeline<TContext> : Pipeline<EmptyContext, TContext>
     {
         /// <inheritdoc />
-        public Pipeline(BaseInPipePart<TContext> startPipe, IOutPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
+        public SimplePipeline(BaseInPipePart<EmptyContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(startPipe, endPipeAppender)
         {
         }
     }

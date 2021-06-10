@@ -20,7 +20,7 @@ namespace OSS.Pipeline.Interface
     ///  管道链接器
     /// </summary>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IOutPipeAppender<TOutContext> : IPipe
+    public interface IPipeAppender<TOutContext> : IPipe
     {
         internal void InterAppend(BaseInPipePart<TOutContext> nextPipe);
         

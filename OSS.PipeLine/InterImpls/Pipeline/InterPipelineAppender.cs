@@ -7,7 +7,7 @@ namespace OSS.Pipeline.InterImpls.Pipeline
     {
         BaseInPipePart<TInContext> IPipelineAppender<TInContext, TOutContext>.StartPipe { get; set; }
 
-        IOutPipeAppender<TOutContext> IPipelineAppender<TInContext, TOutContext>.EndAppender { get; set; }
+        IPipeAppender<TOutContext> IPipelineAppender<TInContext, TOutContext>.EndAppender { get; set; }
     }
 
     internal class

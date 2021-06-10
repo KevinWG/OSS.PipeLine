@@ -26,7 +26,7 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="THandlePara"></typeparam>
     public abstract class BasePipe<TInContext, THandlePara, TOutContext>
         :  BaseInPipePart<TInContext>,
-        IOutPipeAppender<TOutContext>
+        IPipeAppender<TOutContext>
     {
         /// <summary>
         ///  构造函数
@@ -35,26 +35,28 @@ namespace OSS.Pipeline.Base
         protected BasePipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
         #region 管道业务扩展方法
 
         /// <summary>
         ///  管道堵塞
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="blockedPipeCode"></param>
         /// <returns></returns>
-        internal virtual async Task InterBlock(THandlePara context)
+        internal virtual async Task InterBlock(THandlePara context,string blockedPipeCode)
         {
             await Watch(PipeCode,PipeType, WatchActionType.Blocked, context); 
-            await Block(context);
+            await Block(context, blockedPipeCode);
         }
 
         /// <summary>
         ///  管道堵塞
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="blockedPipeCode">true-自身处理失败触发block，false-传递下个节点失败触发block</param>
         /// <returns></returns>
-        protected virtual Task Block(THandlePara context)
+        protected virtual Task Block(THandlePara context, string blockedPipeCode)
         {
             return Task.CompletedTask;
         }
@@ -67,7 +69,7 @@ namespace OSS.Pipeline.Base
         //private 
         internal BasePipePart NextPipe { get; private set; }
 
-        internal Task<TrafficSignal> ToNextThrough(TOutContext nextInContext)
+        internal Task<InterSingleValue> ToNextThrough(TOutContext nextInContext)
         {
             if (NextPipe != null)
             {
@@ -81,7 +83,7 @@ namespace OSS.Pipeline.Base
                 }
             }
 
-            return InterUtil.Red;
+            return Task.FromResult(new InterSingleValue(TrafficSignal.Red_Block,PipeCode));
         }
 
         /// <summary>
@@ -94,7 +96,7 @@ namespace OSS.Pipeline.Base
 
         private BaseInPipePart<TOutContext> _nextPipe { get; set; }
 
-        void IOutPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
+        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
             if (NextPipe != null)
             {
@@ -117,7 +119,7 @@ namespace OSS.Pipeline.Base
 
         private BaseInPipePart<EmptyContext> _nextEmptyPipe { get; set; }
 
-        void IOutPipeAppender<TOutContext>.InterAppend(BaseInPipePart<EmptyContext> nextPipe)
+        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<EmptyContext> nextPipe)
         {
             if (NextPipe != null)
             {

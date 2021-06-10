@@ -35,16 +35,19 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public Task<TrafficSignal> Execute(TInContext context)
+        public async Task<TrafficSignal> Execute(TInContext context)
         {
-            return InterStart(context);
+            return (await InterStart(context)).traffic_signal;
         }
         
 
-        internal override async Task<TrafficSignal> InterStart(TInContext context)
+        internal override async Task<InterSingleValue> InterStart(TInContext context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
-            return await InterIntercept(context);
+            var intRetSignal = await InterIntercept(context);
+
+            return new InterSingleValue(intRetSignal,
+                intRetSignal == TrafficSignal.Red_Block ? PipeCode : string.Empty);
         }
         
         internal abstract Task<TrafficSignal> InterIntercept(TInContext context);

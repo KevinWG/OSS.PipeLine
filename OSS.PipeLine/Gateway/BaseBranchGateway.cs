@@ -43,7 +43,7 @@ namespace OSS.Pipeline
 
             var parallelPipes = nextPipes.Select(p => p.InterStart(context));
 
-            var res = (await Task.WhenAll(parallelPipes)).Any(r => r == TrafficSignal.Green_Pass)
+            var res = (await Task.WhenAll(parallelPipes)).Any(r => r.traffic_signal == TrafficSignal.Green_Pass)
                 ? TrafficSignal.Green_Pass
                 : TrafficSignal.Red_Block;
 

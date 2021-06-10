@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
@@ -40,12 +41,19 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal> Executing();
 
-        internal override async Task<TrafficSignal> InterHandling(EmptyContext context)
+        internal override async Task<InterSingleValue> InterHandling(EmptyContext context)
         {
             var res = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context,res);
-
-            return res==TrafficSignal.Green_Pass ? await ToNextThrough(context) : res;
+            if (res == TrafficSignal.Green_Pass)
+            {
+                return await ToNextThrough(context);
+            }
+            else if (res == TrafficSignal.Red_Block)
+            {
+                return new InterSingleValue(TrafficSignal.Red_Block, PipeCode);
+            }
+            return new InterSingleValue(res, String.Empty);
         }
 
 
@@ -88,12 +96,20 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal> Executing(TInContext data);
 
-        internal override async Task<TrafficSignal> InterHandling(TInContext context)
+        internal override async Task<InterSingleValue> InterHandling(TInContext context)
         {
             var res = await Executing(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
-
-            return res == TrafficSignal.Green_Pass ? await ToNextThrough(context) : res;
+           
+            if (res == TrafficSignal.Green_Pass)
+            {
+                return await ToNextThrough(context);
+            }
+            else if(res == TrafficSignal.Red_Block)
+            {
+                return new InterSingleValue(TrafficSignal.Red_Block, PipeCode);
+            }
+            return new InterSingleValue(res,String.Empty);
         }
     }
 }
