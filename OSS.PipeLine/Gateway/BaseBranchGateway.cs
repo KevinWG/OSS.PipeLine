@@ -47,7 +47,6 @@ namespace OSS.Pipeline
                 ? TrafficSignal.Green_Pass
                 : TrafficSignal.Red_Block;
 
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
             return res;
         }
 
@@ -58,9 +57,13 @@ namespace OSS.Pipeline
         /// <param name="branchItems"></param>
         /// <param name="context"></param>
         /// <returns>如果为空，则触发block</returns>
-        protected abstract IEnumerable<BaseInPipePart<TContext>> FilterNextPipes(List<BaseInPipePart<TContext>> branchItems,
-            TContext context);
-        
+        protected virtual IEnumerable<BaseInPipePart<TContext>> FilterNextPipes(
+            List<BaseInPipePart<TContext>> branchItems,
+            TContext context)
+        {
+            return branchItems;
+        }
+
         #region 管道连接
 
         private List<BaseInPipePart<TContext>> _branchItems;

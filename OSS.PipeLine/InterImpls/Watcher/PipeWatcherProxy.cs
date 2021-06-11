@@ -26,8 +26,6 @@ namespace OSS.Pipeline.InterImpls.Watcher
                         MaxDegreeOfParallelism = 4
                     });
             }
-
-
             _watcher = watcher;
         }
 
