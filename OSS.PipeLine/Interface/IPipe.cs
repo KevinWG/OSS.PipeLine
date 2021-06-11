@@ -68,7 +68,7 @@ namespace OSS.Pipeline.Interface
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        Task<TrafficSignal> Execute(TInContext context);
+        Task<TrafficResult> Execute(TInContext context);
     }
 
 }

@@ -10,10 +10,10 @@ namespace OSS.Pipeline.Tests.FlowItems
             PipeCode = "StockActivity";
         }
 
-        protected override Task<TrafficSignal> Executing(StockContext data)
+        protected override Task<TrafficSingleValue> Executing(StockContext data)
         {
             LogHelper.Info("分流-2.增加库存，数量：" + data.count);
-            return Task.FromResult(TrafficSignal.Green_Pass);
+            return Task.FromResult(new TrafficSingleValue(TrafficSignal.Green_Pass));
         }
     }
 

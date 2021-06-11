@@ -31,12 +31,12 @@ namespace OSS.Pipeline
             var (traffic_signal, result) = await Executing(para);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, para, result);
 
-            if (traffic_signal == TrafficSignal.Red_Block)
+            if (traffic_signal.signal == TrafficSignal.Red_Block)
             {
                 await Block(para, result,PipeCode);
                 await InterBlock(para,PipeCode);
             }
-            else if (traffic_signal == TrafficSignal.Green_Pass)
+            else if (traffic_signal.signal == TrafficSignal.Green_Pass)
             {
                 await ToNextThrough(result);
             }
@@ -54,7 +54,7 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSignal traffic_signal, TFuncResult result)> Executing(TFuncPara para);
+        protected abstract Task<(TrafficSingleValue tsValue, TFuncResult result)> Executing(TFuncPara para);
 
         /// <summary>
         ///  阻塞调用扩展方法

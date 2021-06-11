@@ -70,7 +70,7 @@ namespace OSS.Pipeline
         #region 管道的业务处理
 
         //  管道本身不再向下流动，由终结点处理
-        internal override Task<InterSingleValue> InterStart(TInContext context)
+        internal override Task<TrafficResult> InterStart(TInContext context)
         {
             return InterHandling(context);
         }
@@ -80,7 +80,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal override Task<InterSingleValue> InterHandling(TInContext context)
+        internal override Task<TrafficResult> InterHandling(TInContext context)
         {
             return _startPipe.InterStart(context);
         }

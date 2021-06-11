@@ -33,7 +33,7 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing();
+        protected abstract Task<(TrafficSingleValue tsValue, TResult result)> Executing();
 
         /// <summary>
         ///  阻塞调用扩展方法
@@ -55,7 +55,7 @@ namespace OSS.Pipeline
         /// 启动方法
         /// </summary>
         /// <returns></returns>
-        public Task<TrafficSignal> Execute()
+        public Task<TrafficResult> Execute()
         {
             return Execute(EmptyContext.Default);
         }
@@ -64,22 +64,22 @@ namespace OSS.Pipeline
 
         #region 内部业务处理
 
-        internal override async Task<InterSingleValue> InterHandling(EmptyContext context)
+        internal override async Task<TrafficResult> InterHandling(EmptyContext context)
         {
             var (traffic_signal, result) = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
-            if (traffic_signal == TrafficSignal.Green_Pass)
+            if (traffic_signal.signal == TrafficSignal.Green_Pass)
             {
                return await ToNextThrough(result);
             }
-            else if (traffic_signal == TrafficSignal.Red_Block)
+            else if (traffic_signal.signal == TrafficSignal.Red_Block)
             {
                 await Block(result,PipeCode);
-                return new InterSingleValue(traffic_signal, PipeCode);
+                return new TrafficResult(traffic_signal, PipeCode);
             }
 
-            return new InterSingleValue(traffic_signal,String.Empty);
+            return new TrafficResult(traffic_signal);
         }
 
         #endregion
@@ -115,7 +115,7 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing(TInContext para);
+        protected abstract Task<(TrafficSingleValue tsValue, TResult result)> Executing(TInContext para);
 
         /// <summary>
         ///  阻塞调用扩展方法
@@ -134,24 +134,24 @@ namespace OSS.Pipeline
 
         #region 流体业务处理
 
-        internal override async Task<InterSingleValue> InterHandling(TInContext context)
+        internal override async Task<TrafficResult> InterHandling(TInContext context)
         {
-            bool isSelfBlocked = false;
+           
             var (traffic_signal, result) = await Executing(context);
 
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
 
-            if (traffic_signal == TrafficSignal.Green_Pass)
+            if (traffic_signal.signal == TrafficSignal.Green_Pass)
             {
                  return await ToNextThrough(result);
             }
-            else if (traffic_signal == TrafficSignal.Red_Block)
+            else if (traffic_signal.signal == TrafficSignal.Red_Block)
             {
-                isSelfBlocked = true;
                 await Block(context,result, PipeCode);
+                return new TrafficResult(traffic_signal,  PipeCode);
             }
 
-            return new InterSingleValue(traffic_signal, isSelfBlocked?PipeCode:String.Empty);
+            return new TrafficResult(traffic_signal);
         }
         
         #endregion

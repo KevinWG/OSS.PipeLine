@@ -22,7 +22,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static SimpleActivity AppendActivity<OutContext>(this IPipeAppender<OutContext> pipe,
-            Func<Task<TrafficSignal>> exeFunc, string pipeCode = null)
+            Func<Task<TrafficSingleValue>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleActivity(exeFunc, pipeCode);
             pipe.InterAppend(nextPipe);
@@ -45,7 +45,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static SimpleActivity<OutContext> AppendActivity<OutContext>(this IPipeAppender<OutContext> pipe,
-            Func<OutContext, Task<TrafficSignal>> exeFunc, string pipeCode = null)
+            Func<OutContext, Task<TrafficSingleValue>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleActivity<OutContext>(exeFunc, pipeCode);
             pipe.InterAppend(nextPipe);
@@ -69,7 +69,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static SimpleEffectActivity<TResult> AppendEffectActivity<TResult>(
             this IPipeAppender<EmptyContext> pipe,
-            Func<Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<Task<(TrafficSingleValue tsValue, TResult result)>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleEffectActivity<TResult>(exeFunc, pipeCode);
             pipe.InterAppend(nextPipe);
@@ -97,7 +97,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static SimpleEffectActivity<TFuncPara, TResult> AppendEffectActivity<TFuncPara, TResult>(
             this IPipeAppender<TFuncPara> pipe,
-            Func<TFuncPara, Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<TFuncPara, Task<(TrafficSingleValue tsValue, TResult result)>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode);
             pipe.InterAppend(nextPipe);
@@ -126,7 +126,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static SimpleFuncActivity<TFuncPara, TResult> AppendFuncActivity<TFuncPara, TResult>(
             this IPipeAppender<TFuncPara> pipe,
-            Func<TFuncPara, Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<TFuncPara, Task<(TrafficSingleValue tsValue, TResult result)>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleFuncActivity<TFuncPara, TResult>(exeFunc, pipeCode);
             pipe.InterAppend(nextPipe);
@@ -153,7 +153,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static SimpleFuncEffectActivity<TFuncPara, TResult> AppendFuncEffectActivity<TFuncPara, TResult>(
             this IPipeAppender<TFuncPara> pipe,
-            Func<TFuncPara, Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<TFuncPara, Task<(TrafficSingleValue tsValue, TResult result)>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleFuncEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode);
             pipe.InterAppend(nextPipe);

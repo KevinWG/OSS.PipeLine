@@ -11,10 +11,10 @@ namespace OSS.Pipeline.Tests.FlowItems
         }
 
 
-        protected override Task<(TrafficSignal traffic_signal, bool result)> Executing(PayContext para)
+        protected override Task<(TrafficSingleValue tsValue, bool result)> Executing(PayContext para)
         {
             LogHelper.Info($"支付动作执行,数量：{para.count}，金额：{para.money}）");
-            return Task.FromResult((TrafficSignal.Green_Pass, true));
+            return Task.FromResult((new TrafficSingleValue(TrafficSignal.Green_Pass), true));
         }
     }
 

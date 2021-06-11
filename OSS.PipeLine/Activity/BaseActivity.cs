@@ -41,21 +41,21 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<TrafficSignal> Executing();
+        protected abstract Task<TrafficSingleValue> Executing();
 
-        internal override async Task<InterSingleValue> InterHandling(EmptyContext context)
+        internal override async Task<TrafficResult> InterHandling(EmptyContext context)
         {
             var res = await Executing();
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context,res);
-            if (res == TrafficSignal.Green_Pass)
+            if (res.signal == TrafficSignal.Green_Pass)
             {
                 return await ToNextThrough(context);
             }
-            else if (res == TrafficSignal.Red_Block)
+            else if (res.signal == TrafficSignal.Red_Block)
             {
-                return new InterSingleValue(TrafficSignal.Red_Block, PipeCode);
+                return new TrafficResult(res, PipeCode);
             }
-            return new InterSingleValue(res, String.Empty);
+            return new TrafficResult(res, PipeCode);
         }
 
 
@@ -65,7 +65,7 @@ namespace OSS.Pipeline
         /// 启动方法
         /// </summary>
         /// <returns></returns>
-        public Task<TrafficSignal> Execute()
+        public Task<TrafficResult> Execute()
         {
             return Execute(EmptyContext.Default);
         }
@@ -97,22 +97,22 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<TrafficSignal> Executing(TInContext data);
+        protected abstract Task<TrafficSingleValue> Executing(TInContext data);
 
-        internal override async Task<InterSingleValue> InterHandling(TInContext context)
+        internal override async Task<TrafficResult> InterHandling(TInContext context)
         {
             var res = await Executing(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
            
-            if (res == TrafficSignal.Green_Pass)
+            if (res.signal == TrafficSignal.Green_Pass)
             {
                 return await ToNextThrough(context);
             }
-            else if(res == TrafficSignal.Red_Block)
+            else if(res.signal == TrafficSignal.Red_Block)
             {
-                return new InterSingleValue(TrafficSignal.Red_Block, PipeCode);
+                return new TrafficResult(res, PipeCode);
             }
-            return new InterSingleValue(res,String.Empty);
+            return new TrafficResult(res);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace OSS.Pipeline.Base
         //private 
         internal BasePipePart NextPipe { get; private set; }
 
-        internal Task<InterSingleValue> ToNextThrough(TOutContext nextInContext)
+        internal Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
         {
             if (NextPipe != null)
             {
@@ -83,7 +83,7 @@ namespace OSS.Pipeline.Base
                 }
             }
 
-            return Task.FromResult(new InterSingleValue(TrafficSignal.Red_Block,PipeCode));
+            return Task.FromResult(new TrafficResult(TrafficSignal.Red_Block,PipeCode,"未发现下一步管道信息！"));
         }
 
         /// <summary>

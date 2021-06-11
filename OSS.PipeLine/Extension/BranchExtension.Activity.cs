@@ -23,7 +23,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static SimpleActivity<OutContext> AppendActivity<OutContext>(this BaseBranchGateway<OutContext> pipe,
-            Func<OutContext, Task<TrafficSignal>> exeFunc, string pipeCode = null)
+            Func<OutContext, Task<TrafficSingleValue>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleActivity<OutContext>(exeFunc, pipeCode);
             pipe.AddBranch(nextPipe);
@@ -52,7 +52,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static SimpleEffectActivity<TFuncPara, TResult> AppendEffectActivity<TFuncPara, TResult>(
             this BaseBranchGateway<TFuncPara> pipe,
-            Func<TFuncPara, Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<TFuncPara, Task<(TrafficSingleValue tsValue, TResult result)>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode);
             pipe.AddBranch(nextPipe);

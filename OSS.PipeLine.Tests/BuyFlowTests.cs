@@ -46,7 +46,7 @@ namespace OSS.Pipeline.Tests
             .Append(endActivity);
 
             // 流体对象
-            TestPipeline = ApplyActivity.StartAndEndWith(endActivity, "test-flow");
+            TestPipeline =new Pipeline<ApplyContext,EmptyContext>("test-flow",ApplyActivity, endActivity) ;
         }
 
 
