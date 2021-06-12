@@ -54,8 +54,8 @@ namespace OSS.Pipeline
         internal override async Task<TrafficSignal> InterIntercept(TMsg context)
         {
             return (await _pusher.Publish(context))
-                ? new TrafficSignal(SignalFlag.Green_Pass)
-                :new TrafficSignal(SignalFlag.Red_Block,$"{this.GetType().Name}发布消息失败!");
+                ? TrafficSignal.GreenSignal
+                : new TrafficSignal(SignalFlag.Red_Block,$"{this.GetType().Name}发布消息失败!");
         }
 
         #endregion

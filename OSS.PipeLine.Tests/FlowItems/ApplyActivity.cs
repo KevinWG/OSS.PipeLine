@@ -10,10 +10,10 @@ namespace OSS.Pipeline.Tests.FlowItems
             PipeCode = "ApplyActivity";
         }
         
-        protected override Task<(TrafficSingleValue tsValue, long result)> Executing(ApplyContext para)
+        protected override Task<(TrafficSignal traffic_signal, long result)> Executing(ApplyContext para)
         {
             LogHelper.Info($"发起 [{para.name}] 采购申请");
-            return Task.FromResult((new TrafficSingleValue(TrafficSignal.Green_Pass), 100000001L));
+            return Task.FromResult((new TrafficSignal(SignalFlag.Green_Pass), 100000001L));
         }
     }
 

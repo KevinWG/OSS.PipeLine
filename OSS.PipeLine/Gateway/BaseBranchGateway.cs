@@ -39,13 +39,13 @@ namespace OSS.Pipeline
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
-                return new TrafficSignal( SignalFlag.Red_Block);
+                return new TrafficSignal( SignalFlag.Red_Block,"未能找到可执行的后续节点!");
 
             var parallelPipes = nextPipes.Select(p => p.InterStart(context));
 
             var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficSignal( SignalFlag.Green_Pass)
-                : new TrafficSignal(SignalFlag.Red_Block,"所有分支运行失败！");
+                ? TrafficSignal.GreenSignal
+                :  new TrafficSignal(SignalFlag.Red_Block,"所有分支运行失败！");
 
             return res;
         }

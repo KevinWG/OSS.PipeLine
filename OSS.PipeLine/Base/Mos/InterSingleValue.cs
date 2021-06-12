@@ -8,11 +8,17 @@ namespace OSS.Pipeline
     public readonly struct TrafficSignal
     {
         /// <summary>
+        /// 默认绿灯信号
+        /// </summary>
+        public static TrafficSignal GreenSignal { get; } =
+            new TrafficSignal(SignalFlag.Green_Pass,string.Empty);
+
+        /// <summary>
         /// 流动信号
         /// </summary>
         /// <param name="trafficSignal"></param>
         /// <param name="trafficMsg"></param>
-        public TrafficSignal(SignalFlag trafficSignal, string trafficMsg = null)
+        public TrafficSignal(SignalFlag trafficSignal, string trafficMsg)
         {
             signal = trafficSignal;
             msg    = trafficMsg;

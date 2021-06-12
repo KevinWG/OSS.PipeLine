@@ -12,10 +12,10 @@ namespace OSS.Pipeline.Tests.FlowItems
         ///  执行空操作
         /// </summary>
         /// <returns></returns>
-        protected override Task<TrafficSingleValue> Executing()
+        protected override Task<TrafficSignal> Executing()
         {
             LogHelper.Info("申请流程结束！");
-            return Task.FromResult(new TrafficSingleValue(TrafficSignal.Green_Pass));
+            return Task.FromResult(new TrafficSignal(SignalFlag.Green_Pass));
         }
     }
 }
