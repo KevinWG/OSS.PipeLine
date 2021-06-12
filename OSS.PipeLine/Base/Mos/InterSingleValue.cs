@@ -16,11 +16,11 @@ namespace OSS.Pipeline
         /// <summary>
         /// 流动信号
         /// </summary>
-        /// <param name="trafficSignal"></param>
+        /// <param name="signalFlag"></param>
         /// <param name="trafficMsg"></param>
-        public TrafficSignal(SignalFlag trafficSignal, string trafficMsg)
+        public TrafficSignal(SignalFlag signalFlag, string trafficMsg)
         {
-            signal = trafficSignal;
+            signal = signalFlag;
             msg    = trafficMsg;
         }
 
