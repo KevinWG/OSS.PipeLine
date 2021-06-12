@@ -29,24 +29,26 @@ namespace OSS.Pipeline.InterImpls.Watcher
             _watcher = watcher;
         }
 
-        Task<bool> WatchCallBack(WatchDataItem data)
+        async Task<bool> WatchCallBack(WatchDataItem data)
         {
             try
             {
+                // await 保证如果出现异常能在当前线程拦截
+                //  避免造成触发队列  Complete 
                 switch (data.ActionType)
                 {
                     case WatchActionType.Starting:
-                        return _watcher.Starting(data.PipeCode, data.PipeType, data.Para);
+                        return await _watcher.Starting(data.PipeCode, data.PipeType, data.Para);
                     case WatchActionType.Executed:
-                        return _watcher.Excuted(data.PipeCode, data.PipeType, data.Para, data.Result);
+                        return await _watcher.Excuted(data.PipeCode, data.PipeType, data.Para, data.Result);
                     case WatchActionType.Blocked:
-                        return _watcher.Blocked(data.PipeCode, data.PipeType, data.Para);
+                        return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para);
                 }
             }
             catch 
             {
             }
-            return InterUtil.TrueTask;
+            return false;
         }
 
 
