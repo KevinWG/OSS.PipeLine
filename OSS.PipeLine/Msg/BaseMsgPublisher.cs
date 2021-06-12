@@ -51,11 +51,11 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override async Task<TrafficSingleValue> InterIntercept(TMsg context)
+        internal override async Task<TrafficSignal> InterIntercept(TMsg context)
         {
             return (await _pusher.Publish(context))
-                ? new TrafficSingleValue(TrafficSignal.Green_Pass)
-                :new TrafficSingleValue(TrafficSignal.Red_Block,$"{this.GetType().Name}发布消息失败!");
+                ? new TrafficSignal(SignalFlag.Green_Pass)
+                :new TrafficSignal(SignalFlag.Red_Block,$"{this.GetType().Name}发布消息失败!");
         }
 
         #endregion

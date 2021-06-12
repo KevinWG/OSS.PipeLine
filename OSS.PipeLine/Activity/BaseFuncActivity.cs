@@ -45,17 +45,19 @@ namespace OSS.Pipeline
         public async Task<TFuncResult> Execute(TFuncPara para)
         {
             var (traffic_signal, result) = await Executing(para);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, para, result);
-            
-            if (traffic_signal.signal == TrafficSignal.Red_Block)
-            {
-                await InterBlock(para,PipeCode);
-            }
-            else if (traffic_signal.signal == TrafficSignal.Green_Pass)
+            var trafficRes = new TrafficResult(traffic_signal,
+                traffic_signal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, result);
+
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, para, trafficRes);
+            if (traffic_signal.signal == SignalFlag.Green_Pass)
             {
                 await ToNextThrough(para);
             }
 
+            if (traffic_signal.signal == SignalFlag.Red_Block)
+            {
+                await InterBlock(para, trafficRes);
+            }
             return result;
         }
 
@@ -74,7 +76,7 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSingleValue tsValue, TFuncResult result)> Executing(TFuncPara para);
+        protected abstract Task<(TrafficSignal traffic_signal, TFuncResult result)> Executing(TFuncPara para);
 
       
     }

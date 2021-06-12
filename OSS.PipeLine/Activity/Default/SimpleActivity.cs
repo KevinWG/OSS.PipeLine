@@ -21,10 +21,10 @@ namespace OSS.Pipeline
     /// </summary>
     public class SimpleActivity: BaseActivity //: BaseStraightPipe<EmptyContext, EmptyContext>
     {
-        private readonly Func<Task<TrafficSingleValue>> _exeFunc;
+        private readonly Func<Task<TrafficSignal>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleActivity(Func<Task<TrafficSingleValue>> exeFunc,string pipeCode = null)
+        public SimpleActivity(Func<Task<TrafficSignal>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -41,7 +41,7 @@ namespace OSS.Pipeline
         /// False - 触发Block，业务流不再向后续管道传递。
         /// True  - 流体自动流入后续管道
         /// </returns>
-        protected override Task<TrafficSingleValue> Executing()
+        protected override Task<TrafficSignal> Executing()
         {
             return _exeFunc();
         }
@@ -55,10 +55,10 @@ namespace OSS.Pipeline
     /// <typeparam name="TInContext">输入输出上下文</typeparam>
     public class SimpleActivity<TInContext> : BaseActivity<TInContext>
     {
-        private readonly Func<TInContext,Task<TrafficSingleValue>> _exeFunc;
+        private readonly Func<TInContext,Task<TrafficSignal>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleActivity(Func<TInContext,Task<TrafficSingleValue>> exeFunc,string pipeCode = null)
+        public SimpleActivity(Func<TInContext,Task<TrafficSignal>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -68,7 +68,7 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        protected override Task<TrafficSingleValue> Executing(TInContext contextData)
+        protected override Task<TrafficSignal> Executing(TInContext contextData)
         {
             return _exeFunc(contextData);
         }

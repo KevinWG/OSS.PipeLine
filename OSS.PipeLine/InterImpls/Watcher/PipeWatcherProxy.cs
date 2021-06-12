@@ -36,11 +36,11 @@ namespace OSS.Pipeline.InterImpls.Watcher
                 switch (data.ActionType)
                 {
                     case WatchActionType.Starting:
-                        return _watcher.Starting(data.PipeCode, data.PipeType, data.Data);
+                        return _watcher.Starting(data.PipeCode, data.PipeType, data.Para);
                     case WatchActionType.Executed:
-                        return _watcher.Excuted(data.PipeCode, data.PipeType, data.Data, data.Result);
+                        return _watcher.Excuted(data.PipeCode, data.PipeType, data.Para, data.Result);
                     case WatchActionType.Blocked:
-                        return _watcher.Blocked(data.PipeCode, data.PipeType, data.Data);
+                        return _watcher.Blocked(data.PipeCode, data.PipeType, data.Para);
                 }
             }
             catch 
@@ -52,11 +52,6 @@ namespace OSS.Pipeline.InterImpls.Watcher
 
         public Task Watch(WatchDataItem data)
         {
-            if (data.PipeType >= PipeType.MsgFlow)
-            {
-                return InterUtil.TrueTask;
-            }
-
             if (_publisher != null)
             {
                 return _publisher.Publish(data);
@@ -76,9 +71,9 @@ namespace OSS.Pipeline.InterImpls.Watcher
 
         public WatchActionType ActionType { get; set; }
 
-        public object Data { get; set; }
+        public object Para { get; set; }
 
-        public object Result { get; set; }
+        public TrafficResult Result { get; set; }
     }
 
 

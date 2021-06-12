@@ -3,7 +3,7 @@
     /// <summary>
     ///  通行信号
     /// </summary>
-    public enum TrafficSignal
+    public enum SignalFlag
     {
         /// <summary>
         ///  正常通过

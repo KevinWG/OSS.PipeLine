@@ -33,7 +33,7 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSingleValue tsValue, TResult result)> Executing();
+        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing();
 
         /// <summary>
         ///  阻塞调用扩展方法
@@ -67,19 +67,21 @@ namespace OSS.Pipeline
         internal override async Task<TrafficResult> InterHandling(EmptyContext context)
         {
             var (traffic_signal, result) = await Executing();
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
+            var trafficRes = new TrafficResult(traffic_signal, traffic_signal.signal == SignalFlag.Red_Block
+                    ? PipeCode : string.Empty, result);
 
-            if (traffic_signal.signal == TrafficSignal.Green_Pass)
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
+
+            if (traffic_signal.signal == SignalFlag.Green_Pass)
             {
                return await ToNextThrough(result);
-            }
-            else if (traffic_signal.signal == TrafficSignal.Red_Block)
+            } 
+
+            if (traffic_signal.signal == SignalFlag.Red_Block)
             {
                 await Block(result,PipeCode);
-                return new TrafficResult(traffic_signal, PipeCode);
             }
-
-            return new TrafficResult(traffic_signal);
+            return trafficRes;
         }
 
         #endregion
@@ -115,7 +117,7 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSingleValue tsValue, TResult result)> Executing(TInContext para);
+        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing(TInContext para);
 
         /// <summary>
         ///  阻塞调用扩展方法
@@ -136,24 +138,26 @@ namespace OSS.Pipeline
 
         internal override async Task<TrafficResult> InterHandling(TInContext context)
         {
-           
+
             var (traffic_signal, result) = await Executing(context);
+            var trafficRes = new TrafficResult(traffic_signal,
+                traffic_signal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, result);
 
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, result);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
 
-            if (traffic_signal.signal == TrafficSignal.Green_Pass)
+            if (traffic_signal.signal == SignalFlag.Green_Pass)
             {
-                 return await ToNextThrough(result);
-            }
-            else if (traffic_signal.signal == TrafficSignal.Red_Block)
-            {
-                await Block(context,result, PipeCode);
-                return new TrafficResult(traffic_signal,  PipeCode);
+                return await ToNextThrough(result);
             }
 
-            return new TrafficResult(traffic_signal);
+            if (traffic_signal.signal == SignalFlag.Red_Block)
+            {
+                await Block(context, result, PipeCode);
+            }
+
+            return trafficRes;
         }
-        
+
         #endregion
     }
 

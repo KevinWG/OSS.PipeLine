@@ -23,6 +23,25 @@ namespace OSS.Pipeline
     /// </summary>
     public static class PipelineExtension
     {
+
+        /// <summary>
+        /// 根据首位两个管道建立流体
+        /// </summary>
+        /// <typeparam name="InFlowContext"></typeparam>
+        /// <typeparam name="OutFlowContext"></typeparam>
+        /// <param name="startPipe"></param>
+        /// <param name="endPipeAppender"></param>
+        /// <param name="flowPipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static Pipeline<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
+            this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
+            string flowPipeCode, PipeLineOption option = null)
+        {
+            return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
+        }
+
+
         /// <summary>
         ///  追加下一个节点
         /// </summary>

@@ -35,17 +35,17 @@ namespace OSS.Pipeline
         {
         }
 
-        internal override async Task<TrafficSingleValue> InterIntercept(TContext context)
+        internal override async Task<TrafficSignal> InterIntercept(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
-                return new TrafficSingleValue( TrafficSignal.Red_Block);
+                return new TrafficSignal( SignalFlag.Red_Block);
 
             var parallelPipes = nextPipes.Select(p => p.InterStart(context));
 
-            var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == TrafficSignal.Green_Pass)
-                ? new TrafficSingleValue( TrafficSignal.Green_Pass)
-                : new TrafficSingleValue(TrafficSignal.Red_Block,"所有分支运行失败！");
+            var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
+                ? new TrafficSignal( SignalFlag.Green_Pass)
+                : new TrafficSignal(SignalFlag.Red_Block,"所有分支运行失败！");
 
             return res;
         }

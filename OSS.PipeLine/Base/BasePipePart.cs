@@ -54,8 +54,8 @@ namespace OSS.Pipeline.Base
         internal PipeWatcherProxy WatchProxy { get; set; }
 
 
-        internal Task Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object data,
-            object res = null)
+        internal Task Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object para,
+            TrafficResult res )
         {
             if (WatchProxy != null)
             {
@@ -65,7 +65,7 @@ namespace OSS.Pipeline.Base
                     PipeType   = pipeType,
                     ActionType = actionType,
 
-                    Data   = data,
+                    Para   = para,
                     Result = res
                 });
             }

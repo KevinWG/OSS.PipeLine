@@ -43,13 +43,14 @@ namespace OSS.Pipeline.Base
 
         internal override async Task<TrafficResult> InterStart(TInContext context)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context,TrafficResult.GreenResult);
+
             var intRetSignal = await InterIntercept(context);
 
-            return new TrafficResult(intRetSignal, intRetSignal.signal == TrafficSignal.Red_Block ? PipeCode : string.Empty);
+            return new TrafficResult(intRetSignal, intRetSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty,null);
         }
         
-        internal abstract Task<TrafficSingleValue> InterIntercept(TInContext context);
+        internal abstract Task<TrafficSignal> InterIntercept(TInContext context);
 
         #endregion
 

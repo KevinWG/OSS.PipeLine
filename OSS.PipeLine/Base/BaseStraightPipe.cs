@@ -51,12 +51,13 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         internal override async Task<TrafficResult> InterStart(TInContext context)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context,TrafficResult.GreenResult);
             var res = await InterHandling(context);
 
-            if (res.signal == TrafficSignal.Red_Block)
+
+            if (res.signal == SignalFlag.Red_Block)
             {
-                await InterBlock(context,res.blocked_pipe_code);
+                await InterBlock(context,res);
             }
 
             return res;

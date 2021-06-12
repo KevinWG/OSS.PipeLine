@@ -42,21 +42,21 @@ namespace OSS.Pipeline.Base
         ///  管道堵塞
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="blockedPipeCode"></param>
+        /// <param name="tRes"></param>
         /// <returns></returns>
-        internal virtual async Task InterBlock(THandlePara context,string blockedPipeCode)
+        internal virtual async Task InterBlock(THandlePara context,TrafficResult tRes)
         {
-            await Watch(PipeCode,PipeType, WatchActionType.Blocked, context); 
-            await Block(context, blockedPipeCode);
+            await Watch(PipeCode,PipeType, WatchActionType.Blocked, context, tRes); 
+            await Block(context, tRes);
         }
 
         /// <summary>
         ///  管道堵塞
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="blockedPipeCode">true-自身处理失败触发block，false-传递下个节点失败触发block</param>
+        /// <param name="tRes"></param>
         /// <returns></returns>
-        protected virtual Task Block(THandlePara context, string blockedPipeCode)
+        protected virtual Task Block(THandlePara context,  TrafficResult tRes)
         {
             return Task.CompletedTask;
         }
@@ -83,7 +83,7 @@ namespace OSS.Pipeline.Base
                 }
             }
 
-            return Task.FromResult(new TrafficResult(TrafficSignal.Red_Block,PipeCode,"未发现下一步管道信息！"));
+            return Task.FromResult(new TrafficResult(SignalFlag.Red_Block,null,PipeCode,"未发现下一步管道信息！"));
         }
 
         /// <summary>

@@ -22,8 +22,11 @@ namespace OSS.Pipeline.Base
 
         internal override async Task<TrafficResult> InterStart(EmptyContext context)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
-            return new TrafficResult(TrafficSignal.Green_Pass);
+            var trafficRes = TrafficResult.GreenResult;
+
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context, trafficRes);
+
+            return trafficRes;
         }
 
         #endregion

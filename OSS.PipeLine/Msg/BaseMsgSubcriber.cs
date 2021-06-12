@@ -51,7 +51,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<bool> Subscribe(TMsg data)
         {
-            return (await ToNextThrough(data)).signal == TrafficSignal.Green_Pass;
+            return (await ToNextThrough(data)).signal == SignalFlag.Green_Pass;
         }
     }
 

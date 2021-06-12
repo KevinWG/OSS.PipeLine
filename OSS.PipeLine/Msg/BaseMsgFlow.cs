@@ -48,8 +48,8 @@ namespace OSS.Pipeline
         {
             var pushRes = await _pusher.Publish(context);
             return pushRes
-                ? new TrafficResult(TrafficSignal.Green_Pass)
-                : new TrafficResult(TrafficSignal.Red_Block, PipeCode,$"({this.GetType().Name})推送消息失败!");
+                ? TrafficResult.GreenResult
+                :  new TrafficResult(SignalFlag.Red_Block,null, PipeCode,$"({this.GetType().Name})推送消息失败!");
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<bool> Subscribe(TMsg data)
         {
-            return (await ToNextThrough(data)).signal==TrafficSignal.Green_Pass;
+            return (await ToNextThrough(data)).signal==SignalFlag.Green_Pass;
         }
     }
 
