@@ -21,10 +21,10 @@ namespace OSS.Pipeline
     /// <inheritdoc />
     public class SimpleFuncActivity<TFuncPara, TResult> : BaseFuncActivity<TFuncPara, TResult>
     {
-        private readonly Func<TFuncPara, Task<(TrafficSignal traffic_signal, TResult result)>> _exeFunc;
+        private readonly Func<TFuncPara, Task<TrafficSignal<TResult>>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleFuncActivity(Func<TFuncPara, Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc,string pipeCode = null)
+        public SimpleFuncActivity(Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -35,7 +35,7 @@ namespace OSS.Pipeline
 
 
         /// <inheritdoc />
-        protected override Task<(TrafficSignal traffic_signal, TResult result)> Executing(TFuncPara contextData)
+        protected override Task<TrafficSignal<TResult>> Executing(TFuncPara contextData)
         {
             return _exeFunc(contextData);
         }
