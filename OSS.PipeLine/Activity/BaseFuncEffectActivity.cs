@@ -29,8 +29,8 @@ namespace OSS.Pipeline
         public async Task<TFuncResult> Execute(TFuncPara para)
         {
             var trafficSignal = await Executing(para);
-            var trafficRes = new TrafficResult(trafficSignal.signal,trafficSignal.result,
-                trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficSignal.msg);
+            var trafficRes = new TrafficResult(trafficSignal.signal, trafficSignal.result
+                , trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty,trafficSignal.msg);
 
             await Watch(PipeCode, PipeType, WatchActionType.Executed, para, trafficRes);
             if (trafficSignal.signal == SignalFlag.Green_Pass)

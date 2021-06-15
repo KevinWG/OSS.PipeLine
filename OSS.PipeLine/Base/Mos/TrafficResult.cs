@@ -29,27 +29,26 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="trafficValue"></param>
         /// <param name="blockedPipeCode"></param>
-        /// <param name="funcResult"></param>
-        public TrafficResult(TrafficSignal trafficValue, string blockedPipeCode, object funcResult)
-            : this(trafficValue.signal, funcResult, blockedPipeCode, trafficValue.msg)
+        public TrafficResult(TrafficSignal trafficValue, string blockedPipeCode)
+            : this(trafficValue.signal, default, blockedPipeCode, trafficValue.msg)
         {
-
         }
+
 
         /// <summary>
         /// 流动结果
         /// </summary>
-        /// <param name="trafficSignal"></param>
+        /// <param name="signal"></param>
         /// <param name="funcResult"></param>
         /// <param name="blockedPipeCode"></param>
         /// <param name="msg"></param>
-        public TrafficResult(SignalFlag trafficSignal, object funcResult, string blockedPipeCode, string msg)
+        public TrafficResult(SignalFlag signal, object funcResult, string blockedPipeCode, string msg)
         {
-            signal            = trafficSignal;
             func_result       = funcResult;
             blocked_pipe_code = blockedPipeCode;
 
-            this.msg = msg;
+            this.signal = signal;
+            this.msg    = msg;
         }
 
 

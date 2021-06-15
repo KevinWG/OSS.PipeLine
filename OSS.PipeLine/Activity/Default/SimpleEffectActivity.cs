@@ -8,10 +8,10 @@ namespace OSS.Pipeline
     /// <inheritdoc />
     public class SimpleEffectActivity<TResult> : BaseEffectActivity<TResult>
     {
-        private readonly Func<Task<(TrafficSignal traffic_signal, TResult result)>> _exeFunc;
+        private readonly Func<Task<TrafficSignal<TResult>>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleEffectActivity(Func<Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode=null)
+        public SimpleEffectActivity(Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode=null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -21,7 +21,7 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        protected override Task<(TrafficSignal traffic_signal, TResult result)> Executing()
+        protected override Task<TrafficSignal<TResult>> Executing()
         {
             return _exeFunc();
         }

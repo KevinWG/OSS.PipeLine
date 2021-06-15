@@ -74,7 +74,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static SimpleEffectActivity<TResult> AppendEffectActivity<TOut,TResult>(
             this IPipeAppender<TOut> pipe,
-            Func<Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleEffectActivity<TResult>(exeFunc, pipeCode);
             pipe.InterAppend(nextPipe);

@@ -65,7 +65,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static IPipelineAppender<EmptyContext, TResult> StartWithEffectActivity<TResult>(
-            Func<Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
             return Start(new SimpleEffectActivity<TResult>(exeFunc, pipeCode));
      

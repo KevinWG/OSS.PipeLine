@@ -33,15 +33,13 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing();
+        protected abstract Task<TrafficSignal<TResult>> Executing();
 
         /// <summary>
         ///  阻塞调用扩展方法
         /// </summary>
-        /// <param name="res"></param>
-        /// <param name="blockedPipeCode">true-自身处理失败触发block，false-传递下个节点失败触发block</param>
         /// <returns></returns>
-        protected virtual Task Block(TResult res,string blockedPipeCode)
+        protected virtual Task Block(TrafficResult trafficResult)
         {
             return Task.CompletedTask;
         }
@@ -66,20 +64,20 @@ namespace OSS.Pipeline
 
         internal override async Task<TrafficResult> InterHandling(EmptyContext context)
         {
-            var (traffic_signal, result) = await Executing();
-            var trafficRes = new TrafficResult(traffic_signal, traffic_signal.signal == SignalFlag.Red_Block
-                    ? PipeCode : string.Empty, result);
+            var traffic_signal = await Executing();
+            var trafficRes = new TrafficResult(traffic_signal.signal,traffic_signal.result, traffic_signal.signal == SignalFlag.Red_Block
+                    ? PipeCode : string.Empty, traffic_signal.msg);
 
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
 
             if (traffic_signal.signal == SignalFlag.Green_Pass)
             {
-               return await ToNextThrough(result);
+               return await ToNextThrough(traffic_signal.result);
             } 
 
             if (traffic_signal.signal == SignalFlag.Red_Block)
             {
-                await Block(result,PipeCode);
+                await Block(trafficRes);
             }
             return trafficRes;
         }

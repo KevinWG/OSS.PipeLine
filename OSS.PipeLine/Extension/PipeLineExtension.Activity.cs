@@ -75,7 +75,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineAppender<TIn, TResult> ThenWithEffectActivity<TIn, TOut, TResult>(
             this IPipelineAppender<TIn, TOut> pipe,
-            Func<Task<(TrafficSignal traffic_signal, TResult result)>> exeFunc, string pipeCode = null)
+            Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
             return pipe.Then(new SimpleEffectActivity<TResult>(exeFunc, pipeCode));
 

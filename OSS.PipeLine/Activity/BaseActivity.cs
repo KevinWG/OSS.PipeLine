@@ -11,7 +11,6 @@
 
 #endregion
 
-using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
@@ -47,7 +46,7 @@ namespace OSS.Pipeline
         {
             var executeRes = await Executing();
             var traficResult = new TrafficResult(executeRes,
-                executeRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, null);
+                executeRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty);
 
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, traficResult);
 
@@ -100,7 +99,7 @@ namespace OSS.Pipeline
         internal override async Task<TrafficResult> InterHandling(TInContext context)
         {
             var res        = await Executing(context);
-            var trafficRes = new TrafficResult(res, res.signal == SignalFlag.Red_Block ? PipeCode : string.Empty,null);
+            var trafficRes = new TrafficResult(res, res.signal == SignalFlag.Red_Block ? PipeCode : string.Empty);
            
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
            

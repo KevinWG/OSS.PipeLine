@@ -47,7 +47,7 @@ namespace OSS.Pipeline.Base
 
             var intRetSignal = await InterIntercept(context);
 
-            return new TrafficResult(intRetSignal, intRetSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty,null);
+            return new TrafficResult(intRetSignal, intRetSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty);
         }
         
         internal abstract Task<TrafficSignal> InterIntercept(TInContext context);
