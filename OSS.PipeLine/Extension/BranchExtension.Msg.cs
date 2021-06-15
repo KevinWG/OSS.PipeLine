@@ -30,7 +30,6 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="msgFlowKey">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static BaseMsgFlow<TContext> AddMsgFlowBranch<TContext>(this BaseBranchGateway<TContext> pipe, string msgFlowKey, DataFlowOption option=null)
         {

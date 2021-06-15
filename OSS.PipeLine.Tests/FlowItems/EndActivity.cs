@@ -15,7 +15,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         protected override Task<TrafficSignal> Executing()
         {
             LogHelper.Info("申请流程结束！");
-            return Task.FromResult(new TrafficSignal(SignalFlag.Green_Pass));
+            return Task.FromResult(TrafficSignal.GreenSignal);
         }
     }
 }

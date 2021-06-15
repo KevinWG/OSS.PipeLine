@@ -21,27 +21,8 @@ namespace OSS.Pipeline
     /// <summary>
     /// EventFlow 创建工厂
     /// </summary>
-    public static class PipelineExtension
+    public static partial class PipelineExtension
     {
-
-        /// <summary>
-        /// 根据首位两个管道建立流体
-        /// </summary>
-        /// <typeparam name="InFlowContext"></typeparam>
-        /// <typeparam name="OutFlowContext"></typeparam>
-        /// <param name="startPipe"></param>
-        /// <param name="endPipeAppender"></param>
-        /// <param name="flowPipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static Pipeline<InFlowContext, OutFlowContext> AsFlowStartAndEndWith<InFlowContext, OutFlowContext>(
-            this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
-            string flowPipeCode, PipeLineOption option = null)
-        {
-            return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
-        }
-
-
         /// <summary>
         ///  追加下一个节点
         /// </summary>
@@ -55,10 +36,7 @@ namespace OSS.Pipeline
         public static IPipelineAppender<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
             BasePipe<TOut, TNextPara, TNextOut> nextPipe)
         {
-            var  newPipe= PipelineFactory.Set(new InterPipelineAppender<TIn, TNextOut>(), pipe.StartPipe, nextPipe);
-            pipe.StartPipe   = null;
-            pipe.EndAppender = null;
-            return newPipe;
+            return pipe.Set(nextPipe);
         }
 
         /// <summary>
@@ -74,31 +52,10 @@ namespace OSS.Pipeline
         public static IPipelineAppender<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
             BasePipe<EmptyContext, TNextPara, TNextOut> nextPipe)
         {
-            var newPipe = PipelineFactory.Set(new InterPipelineAppender<TIn, TNextOut>(), pipe.StartPipe, nextPipe);
-            pipe.StartPipe   = null;
-            pipe.EndAppender = null;
-            return newPipe;
+            return pipe.Set(nextPipe);
         }
 
-
-        /// <summary>
-        ///  追加下一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, string pipeCode, PipeLineOption option = null)
-        {
-            var newPipe = new Pipeline<TIn, TOut>(pipeCode,pipe.StartPipe,pipe.EndAppender, option);
-            pipe.StartPipe   = null;
-            pipe.EndAppender = null;
-            return newPipe;
-        }
-
-
+        
         /// <summary>
         ///  添加下一个节点
         /// </summary>
@@ -109,10 +66,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineBranchAppender<TIn, TOut> Then<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, BaseBranchGateway<TOut> nextPipe)
         {
-            var newPipe = PipelineFactory.Set(new InterPipelineBranchAppender<TIn, TOut>(), pipe.StartPipe, nextPipe);
-            pipe.StartPipe   = null;
-            pipe.EndAppender = null;
-            return newPipe;
+            return pipe.Set(nextPipe);
         }
 
 
@@ -129,13 +83,58 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineAppender<TIn, TNextOut> WithBranchBox<TIn,TOut, TNextOut>(this IPipelineBranchAppender<TIn,TOut> pipe, Func<BaseBranchGateway<TOut>,IPipeAppender<TNextOut>> branchGather)
         {
-            var newPipe = PipelineFactory.Set(new InterPipelineAppender<TIn, TNextOut>(), pipe.StartPipe, branchGather(pipe.EndAppender));
+            var newPipe = new InterPipelineAppender<TIn, TNextOut>(pipe.StartPipe, branchGather(pipe.EndBranchPipe));
+            
             pipe.StartPipe   = null;
-            pipe.EndAppender = null;
+            pipe.EndBranchPipe = null;
+
             return newPipe;
         }
 
 
 
+        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+            BasePipe<TOut, TNextPara, TNextOut> endPipe)
+        {
+            oldAppender.EndAppender.Append(endPipe);
+            IPipelineAppender<TIn, TNextOut> pipelineAppender = new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
+
+            oldAppender.StartPipe   = null;
+            oldAppender.EndAppender = null;
+            return pipelineAppender;
+        }
+
+
+        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+            BasePipe<EmptyContext, TNextPara, TNextOut> endPipe)
+        {
+            oldAppender.EndAppender.Append(endPipe);
+            IPipelineAppender<TIn, TNextOut> appender =
+                new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
+
+            oldAppender.StartPipe   = null;
+            oldAppender.EndAppender = null;
+            return appender;
+        }
+
+        internal static void Set<TIn, TOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+            BaseInterceptPipe<TOut> endPipe)
+        {
+            oldAppender.EndAppender.Append(endPipe);
+
+            oldAppender.StartPipe   = null;
+            oldAppender.EndAppender = null;
+        }
+
+
+        internal static IPipelineBranchAppender<TIn, TOut> Set<TIn, TOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+            BaseBranchGateway<TOut> endPipe)
+        {
+            oldAppender.EndAppender.Append(endPipe);
+            IPipelineBranchAppender<TIn, TOut> appender =
+                new InterPipelineBranchAppender<TIn, TOut>(oldAppender.StartPipe, endPipe);
+
+            return appender;
+        }
     }
 }

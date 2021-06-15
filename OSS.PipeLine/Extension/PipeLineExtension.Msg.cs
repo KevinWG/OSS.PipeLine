@@ -1,0 +1,66 @@
+﻿using System;
+using OSS.DataFlow;
+using OSS.Pipeline.Interface;
+using OSS.Pipeline.InterImpls.Msg;
+
+namespace OSS.Pipeline
+{
+    /// <summary>
+    ///  pipeline 生成器
+    /// </summary>
+    public static partial class PipelineExtension
+    {
+        /// <summary>
+        ///  追加默认消息订阅者管道
+        /// </summary>
+        /// <typeparam name="TOut"></typeparam>
+        /// <typeparam name="TIn"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static IPipelineAppender<TIn, TOut> ThenWithMsgSubscriber<TIn, TOut>(
+            this IPipelineAppender<TIn, TOut> pipe,
+            string pipeCode, DataFlowOption option = null)
+        {
+            return pipe.Then(new MsgSubscriber<TOut>(pipeCode, option));
+        }
+
+
+        /// <summary>
+        ///  追加默认消息流管道
+        /// </summary>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static IPipelineAppender<TIn, TOut> ThenWithWithMsgFlow<TIn, TOut>(
+            this IPipelineAppender<TIn, TOut> pipe, 
+            string pipeCode, DataFlowOption option = null)
+        {
+            var nextPipe = new MsgFlow<TOut>(pipeCode, option);
+
+            return pipe.Then(nextPipe);
+        }
+
+        /// <summary>
+        ///  追加默认消息转换管道
+        /// </summary>
+        /// <param name="pipe"></param>
+        /// <param name="convertFunc"></param>
+        /// <param name="pipeCode"></param>
+        /// <returns></returns>
+        public static IPipelineAppender<TIn, TNextOut> ThenWithWithMsgConverter<TIn, TOut, TNextOut>(
+            this IPipelineAppender<TIn, TOut> pipe, 
+            Func<TOut, TNextOut> convertFunc, string pipeCode = null)
+        {
+            var nextPipe = new InterMsgConvertor<TOut, TNextOut>(convertFunc, pipeCode);
+            if (!string.IsNullOrEmpty(pipeCode))
+            {
+                nextPipe.PipeCode = pipeCode;
+            }
+            return pipe.Then(nextPipe);
+        }
+
+    }
+}

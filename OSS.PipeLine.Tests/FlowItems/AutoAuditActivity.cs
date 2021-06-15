@@ -12,10 +12,10 @@ namespace OSS.Pipeline.Tests.FlowItems
         
      
 
-        protected override Task<(TrafficSignal traffic_signal, bool result)> Executing(long id)
+        protected override Task<TrafficSignal<bool>> Executing(long id)
         {
             LogHelper.Info($"自动审核通过申请（编号：{id}）");
-            return Task.FromResult((new TrafficSignal(SignalFlag.Green_Pass), true));
+            return Task.FromResult(new TrafficSignal<bool>(true));
         }
     }
 }

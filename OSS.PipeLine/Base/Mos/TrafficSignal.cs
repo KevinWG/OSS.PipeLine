@@ -20,8 +20,17 @@ namespace OSS.Pipeline
     /// </summary>
     public readonly struct TrafficSignal<TRes>
     {
+
+        /// <summary>
+        /// 流动通行信号（绿色通行）-附带结果
+        /// </summary>
+        /// <param name="res">结果数据</param>
+        public TrafficSignal(TRes res) : this(SignalFlag.Green_Pass, res, string.Empty)
+        {
+        }
+
         /// <inheritdoc />
-        public TrafficSignal(SignalFlag signalFlag, TRes res):this(signalFlag,res,string.Empty)
+        public TrafficSignal(SignalFlag signalFlag, TRes res) : this(signalFlag, res, string.Empty)
         {
         }
 

@@ -14,7 +14,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         protected override Task<TrafficSignal> Executing(SendEmailContext data)
         {
             LogHelper.Info("分流-1.邮件发送，内容："+data.body);
-            return Task.FromResult(new TrafficSignal(SignalFlag.Green_Pass));
+            return Task.FromResult(TrafficSignal.GreenSignal);
         }
     }
 

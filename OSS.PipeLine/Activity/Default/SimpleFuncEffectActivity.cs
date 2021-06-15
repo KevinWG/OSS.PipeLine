@@ -19,6 +19,7 @@ namespace OSS.Pipeline
         }
 
 
+        /// <inheritdoc />
         protected override Task<TrafficSignal<TResult>> Executing(TFuncPara contextData)
         {
             return _exeFunc(contextData);

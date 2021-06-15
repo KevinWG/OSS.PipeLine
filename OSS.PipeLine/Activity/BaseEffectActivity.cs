@@ -111,13 +111,12 @@ namespace OSS.Pipeline
         /// <param name="para">当前活动上下文信息</param>
         /// <returns>
         /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
-        /// traffic_signal：
         /// traffic_signal：     
         ///     Green_Pass  - 流体自动流入后续管道
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<(TrafficSignal traffic_signal, TResult result)> Executing(TInContext para);
+        protected abstract Task<TrafficSignal<TResult>> Executing(TInContext para);
 
         /// <summary>
         ///  阻塞调用扩展方法
@@ -139,20 +138,20 @@ namespace OSS.Pipeline
         internal override async Task<TrafficResult> InterHandling(TInContext context)
         {
 
-            var (traffic_signal, result) = await Executing(context);
-            var trafficRes = new TrafficResult(traffic_signal,
-                traffic_signal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, result);
+            var trafficSignal = await Executing(context);
+            var trafficRes = new TrafficResult(trafficSignal.signal, trafficSignal.result,
+                trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficSignal.msg);
 
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
 
-            if (traffic_signal.signal == SignalFlag.Green_Pass)
+            if (trafficSignal.signal == SignalFlag.Green_Pass)
             {
-                return await ToNextThrough(result);
+                return await ToNextThrough(trafficSignal.result);
             }
 
-            if (traffic_signal.signal == SignalFlag.Red_Block)
+            if (trafficSignal.signal == SignalFlag.Red_Block)
             {
-                await Block(context, result, PipeCode);
+                await Block(context, trafficSignal.result, PipeCode);
             }
 
             return trafficRes;
