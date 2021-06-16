@@ -38,11 +38,11 @@ namespace OSS.Pipeline.InterImpls.Watcher
                 switch (data.ActionType)
                 {
                     case WatchActionType.Starting:
-                        return await _watcher.Starting(data.PipeCode, data.PipeType, data.Para);
+                        return await _watcher.Starting(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
                     case WatchActionType.Executed:
-                        return await _watcher.Excuted(data.PipeCode, data.PipeType, data.Para, data.Result);
+                        return await _watcher.Excuted(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
                     case WatchActionType.Blocked:
-                        return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para);
+                        return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
                 }
             }
             catch 
