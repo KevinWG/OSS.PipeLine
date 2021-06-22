@@ -35,14 +35,7 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal<TResult>> Executing();
 
-        /// <summary>
-        ///  阻塞调用扩展方法
-        /// </summary>
-        /// <returns></returns>
-        protected virtual Task Block(TrafficResult trafficResult)
-        {
-            return Task.CompletedTask;
-        }
+      
 
         #endregion
 
@@ -75,10 +68,6 @@ namespace OSS.Pipeline
                return await ToNextThrough(traffic_signal.result);
             } 
 
-            if (traffic_signal.signal == SignalFlag.Red_Block)
-            {
-                await Block(trafficRes);
-            }
             return trafficRes;
         }
 
@@ -116,18 +105,6 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal<TResult>> Executing(TInContext para);
 
-        /// <summary>
-        ///  阻塞调用扩展方法
-        /// </summary>
-        /// <param name="para"></param>
-        /// <param name="res"></param>
-        /// <param name="blockedPipeCode">true-自身处理失败触发block，false-传递下个节点失败触发block</param>
-        /// <returns></returns>
-        protected virtual Task Block(TInContext para, TResult res,string blockedPipeCode)
-        {
-            return Task.CompletedTask;
-        }
-
         #endregion
 
 
@@ -146,12 +123,6 @@ namespace OSS.Pipeline
             {
                 return await ToNextThrough(trafficSignal.result);
             }
-
-            if (trafficSignal.signal == SignalFlag.Red_Block)
-            {
-                await Block(context, trafficSignal.result, PipeCode);
-            }
-
             return trafficRes;
         }
 

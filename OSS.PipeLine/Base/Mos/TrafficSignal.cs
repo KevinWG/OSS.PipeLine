@@ -56,7 +56,7 @@ namespace OSS.Pipeline
         ///  消息
         /// </summary>
         public string msg { get; }
-
+        
         /// <summary>
         ///结果
         /// </summary>
