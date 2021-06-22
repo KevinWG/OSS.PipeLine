@@ -39,7 +39,7 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TResult, TResult>> InterExecuting(Empty context)
+        internal override async Task<TrafficResult<TResult, TResult>> InterHandlePack(Empty context)
         {
             var trafficRes = await Executing();
             return new TrafficResult<TResult, TResult>(trafficRes,
@@ -99,7 +99,7 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TResult, TResult>> InterExecuting(TInContext context)
+        internal override async Task<TrafficResult<TResult, TResult>> InterHandlePack(TInContext context)
         {
             var trafficRes = await Executing(context);
             return new TrafficResult<TResult, TResult>(trafficRes,

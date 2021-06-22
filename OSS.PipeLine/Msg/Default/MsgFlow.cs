@@ -1,4 +1,5 @@
-﻿using OSS.DataFlow;
+﻿using System.Threading.Tasks;
+using OSS.DataFlow;
 
 namespace OSS.Pipeline
 {
@@ -29,6 +30,7 @@ namespace OSS.Pipeline
         {
             return DataFlowFactory.CreateFlow(flowKey, subscriber, option);
         }
+
     }
 
 

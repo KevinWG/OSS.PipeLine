@@ -24,16 +24,17 @@ namespace OSS.Pipeline
         {
             return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
         }
-        
+
         /// <summary>
         ///  添加第一个节点
         /// </summary>
         /// <typeparam name="TPara"></typeparam>
         /// <typeparam name="TIn"></typeparam>
         /// <typeparam name="TOut"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> Start<TIn, TPara, TOut>(BasePipe<TIn, TPara, TOut> startPipe)
+        public static IPipelineAppender<TIn, TOut> Start<TIn, TPara, TResult, TOut>(BasePipe<TIn, TPara,TResult, TOut> startPipe)
         {
             return new InterPipelineAppender<TIn, TOut>( startPipe, startPipe);
         }
@@ -43,9 +44,10 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TPara"></typeparam>
         /// <typeparam name="TOut"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, TOut> Start< TPara, TOut>(BasePipe<Empty, TPara, TOut> startPipe)
+        public static IPipelineAppender<Empty, TOut> Start< TPara, TResult, TOut>(BasePipe<Empty, TPara, TResult, TOut> startPipe)
         {
             return new InterPipelineAppender<Empty, TOut>( startPipe, startPipe);
         }

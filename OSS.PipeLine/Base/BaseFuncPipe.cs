@@ -1,6 +1,7 @@
 ﻿using OSS.Pipeline.Interface;
 using System;
 using System.Threading.Tasks;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -36,6 +37,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterStart(Empty context)
         {
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             return  new TrafficResult(SignalFlag.Green_Pass,String.Empty, String.Empty);
         }
         

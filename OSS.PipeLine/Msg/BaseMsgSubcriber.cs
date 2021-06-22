@@ -53,7 +53,7 @@ namespace OSS.Pipeline
             return (await InterExecute(data)).signal==SignalFlag.Green_Pass;
         }
 
-        internal override Task<TrafficResult<TMsg, TMsg>> InterExecuting(TMsg context)
+        internal override Task<TrafficResult<TMsg, TMsg>> InterHandlePack(TMsg context)
         {
             return Task.FromResult(new TrafficResult<TMsg, TMsg>(TrafficSignal.GreenSignal, string.Empty, context));
         }

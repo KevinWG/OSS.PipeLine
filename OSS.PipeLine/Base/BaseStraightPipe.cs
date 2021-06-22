@@ -13,6 +13,7 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -36,21 +37,28 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        public async Task<TrafficResult> Execute(TInContext para)
+        public Task<TrafficResult> Execute(TInContext para)
         {
-            var tRes = await InterExecute(para);
-            return tRes.ToResult();
+            return InterStart(para);
         }
 
         #endregion
 
 
+        #region 流体内部业务处理
+
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterStart(TInContext context)
         {
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             var tRes = await InterExecute(context);
             return tRes.ToResult();
         }
+
+
+        #endregion
+
+
 
     }
 }

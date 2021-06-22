@@ -36,10 +36,9 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<TrafficResult> Execute(TInContext context)
+        public  Task<TrafficResult> Execute(TInContext context)
         {
-            var tRes = await InterExecute(context);
-            return tRes.ToResult();
+            return InterStart(context);
         }
 
 
@@ -50,6 +49,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterStart(TInContext context)
         {
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             var tRes = await InterExecute(context);
             return tRes.ToResult();
         }

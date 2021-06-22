@@ -72,23 +72,20 @@ namespace OSS.Pipeline
         //  管道本身不再向下流动，由终结点处理
         internal override Task<TrafficResult> InterStart(TInContext context)
         {
-            return InterHandling(context);
+           return _startPipe.InterStart(context);
         }
 
-        /// <summary>
-        ///  管道处理实际业务流动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal override Task<TrafficResult> InterHandling(TInContext context)
+
+        /// <inheritdoc />
+        internal override Task<TrafficResult<TOutContext, TOutContext>> InterHandlePack(TInContext context)
         {
-            return _startPipe.InterStart(context);
+            throw new Exception("不应该执行到此方法!");
         }
 
         #endregion
-        
-        #region 管道连接处理
 
+        #region 管道连接处理
+        
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>

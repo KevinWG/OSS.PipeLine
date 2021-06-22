@@ -44,10 +44,8 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        /// <inheritdoc />
         internal async Task<TrafficResult<THandleResult,TOutContext>> InterExecute(THandlePara context)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             var res = await InterHandling(context);
 
             if (res.signal == SignalFlag.Red_Block)
@@ -65,7 +63,7 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         internal virtual async Task<TrafficResult<THandleResult, TOutContext>> InterHandling(THandlePara context)
         {
-            var trafficRes = await InterExecuting(context);
+            var trafficRes = await InterHandlePack(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
 
             if (trafficRes.signal == SignalFlag.Green_Pass)
@@ -85,7 +83,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterExecuting(THandlePara context);
+        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterHandlePack(THandlePara context);
 
         #endregion
 

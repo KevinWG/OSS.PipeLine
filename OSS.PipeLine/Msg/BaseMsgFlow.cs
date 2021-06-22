@@ -44,13 +44,29 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected abstract IDataPublisher<TMsg> CreateFlow(string flowKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
 
-        internal override async Task<TrafficResult> InterHandling(TMsg context)
+
+        #region 流体内部业务处理
+
+        /// <inheritdoc />
+        internal override async Task<TrafficResult> InterStart(TMsg context)
         {
             var pushRes = await _pusher.Publish(context);
             return pushRes
-                ? TrafficResult.GreenResult
-                :  new TrafficResult(SignalFlag.Red_Block,null, PipeCode,$"({this.GetType().Name})推送消息失败!");
+                ? new TrafficResult(SignalFlag.Green_Pass, string.Empty, string.Empty)
+                : new TrafficResult(SignalFlag.Red_Block, PipeCode, $"({this.GetType().Name})推送消息失败!");
         }
+
+        /// <inheritdoc />
+        internal override Task<TrafficResult<TMsg, TMsg>> InterHandlePack(TMsg context)
+        {
+            return Task.FromResult(new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty,
+                context));
+        }
+
+
+        #endregion
+
+
 
         /// <summary>
         ///  订阅唤起操作
@@ -59,7 +75,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<bool> Subscribe(TMsg data)
         {
-            return (await ToNextThrough(data)).signal==SignalFlag.Green_Pass;
+            return (await InterExecute(data)).signal==SignalFlag.Green_Pass;
         }
     }
 
