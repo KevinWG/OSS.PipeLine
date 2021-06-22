@@ -22,6 +22,7 @@ namespace OSS.Pipeline
         protected BaseMsgPublisher(string pipeCode) : this(pipeCode, null)
         {
         }
+
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
@@ -35,7 +36,6 @@ namespace OSS.Pipeline
             }
             _pusher = CreatePublisher(pipeCode, option);
         }
-
 
         #region 扩展
 
@@ -51,15 +51,15 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override async Task<TrafficSignal> InterIntercept(TMsg context)
+        internal override async Task<TrafficResult<Empty, TMsg>> InterHandling(TMsg context)
         {
             return (await _pusher.Publish(context))
-                ? TrafficSignal.GreenSignal
-                : new TrafficSignal(SignalFlag.Red_Block,$"{this.GetType().Name}发布消息失败!");
+                ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass,string.Empty,string.Empty,default)
+                : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block,PipeCode, $"{this.GetType().Name}发布消息失败!",default);
         }
-
+      
         #endregion
-        
+
         #region 管道初始化
 
         internal override void InterInitialContainer(IPipeLine flowContainer)

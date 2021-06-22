@@ -13,7 +13,6 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
-using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -22,55 +21,36 @@ namespace OSS.Pipeline.Base
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public abstract class BaseStraightPipe<TInContext,TOutContext> : BasePipe<TInContext, TInContext, TOutContext>,IPipeExecutor<TInContext>
+    public abstract class BaseStraightPipe<TInContext, TOutContext> : BasePipe<TInContext, TInContext, TOutContext, TOutContext>,
+        IPipeExecutor<TInContext>
     {
         /// <inheritdoc />
         protected BaseStraightPipe(PipeType pipeType) : base(pipeType)
         {
         }
 
-        #region 流体业务-启动
+        #region 流体外部扩展
 
         /// <summary>
-        /// 启动方法
+        /// 外部执行方法 - 启动入口
         /// </summary>
+        /// <param name="para"></param>
         /// <returns></returns>
-        public  Task<TrafficResult> Execute(TInContext para)
+        public async Task<TrafficResult> Execute(TInContext para)
         {
-            return  InterStart(para);
+            var tRes = await InterExecute(para);
+            return tRes.ToResult();
         }
 
         #endregion
 
-        #region 流体业务-内部处理
 
-        /// <summary>
-        ///  管道处理实际业务流动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <inheritdoc />
         internal override async Task<TrafficResult> InterStart(TInContext context)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context,TrafficResult.GreenResult);
-            var res = await InterHandling(context);
-
-
-            if (res.signal == SignalFlag.Red_Block)
-            {
-                await InterBlock(context,res);
-            }
-
-            return res;
+            var tRes = await InterExecute(context);
+            return tRes.ToResult();
         }
-
-        /// <summary>
-        ///  管道处理实际业务流动方法
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal abstract Task<TrafficResult> InterHandling(TInContext context);
-        
-        #endregion
 
     }
 }

@@ -30,11 +30,12 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
         /// <typeparam name="TNextOut"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
-            BasePipe<TOut, TNextPara, TNextOut> nextPipe)
+        public static IPipelineAppender<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
+            BasePipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
         {
             return pipe.Set(nextPipe);
         }
@@ -46,11 +47,12 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
         /// <typeparam name="TNextOut"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
-            BasePipe<EmptyContext, TNextPara, TNextOut> nextPipe)
+        public static IPipelineAppender<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
+            BasePipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
         {
             return pipe.Set(nextPipe);
         }
@@ -93,8 +95,8 @@ namespace OSS.Pipeline
 
 
 
-        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-            BasePipe<TOut, TNextPara, TNextOut> endPipe)
+        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+            BasePipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
             IPipelineAppender<TIn, TNextOut> pipelineAppender = new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
@@ -105,8 +107,8 @@ namespace OSS.Pipeline
         }
 
 
-        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-            BasePipe<EmptyContext, TNextPara, TNextOut> endPipe)
+        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+            BasePipe<Empty, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
             IPipelineAppender<TIn, TNextOut> appender =

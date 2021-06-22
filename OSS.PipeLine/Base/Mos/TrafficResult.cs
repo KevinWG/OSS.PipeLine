@@ -18,34 +18,105 @@ namespace OSS.Pipeline
     /// </summary>
     public readonly struct TrafficResult
     {
-        /// <summary>
-        /// 通行
-        /// </summary>
-        public static TrafficResult GreenResult { get; } =
-            new TrafficResult(SignalFlag.Green_Pass, null, string.Empty, string.Empty);
+        public static TrafficResult Green { get; } =
+            new TrafficResult(SignalFlag.Green_Pass, string.Empty, string.Empty);
 
         /// <summary>
         /// 流动结果
         /// </summary>
-        /// <param name="trafficValue"></param>
+        /// <param name="tSignal"></param>
         /// <param name="blockedPipeCode"></param>
-        public TrafficResult(TrafficSignal trafficValue, string blockedPipeCode)
-            : this(trafficValue.signal, default, blockedPipeCode, trafficValue.msg)
+        public TrafficResult(TrafficSignal tSignal, string blockedPipeCode)
         {
-        }
+            blocked_pipe_code = blockedPipeCode;
 
+            this.signal = tSignal.signal;
+            this.msg    = tSignal.msg;
+        }
 
         /// <summary>
         /// 流动结果
         /// </summary>
         /// <param name="signal"></param>
-        /// <param name="funcResult"></param>
         /// <param name="blockedPipeCode"></param>
         /// <param name="msg"></param>
-        public TrafficResult(SignalFlag signal, object funcResult, string blockedPipeCode, string msg)
+        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg)
         {
-            func_result       = funcResult;
             blocked_pipe_code = blockedPipeCode;
+
+            this.signal = signal;
+            this.msg    = msg;
+        }
+
+        /// <summary>
+        ///  流动信号
+        /// </summary>
+        public SignalFlag signal { get; }
+
+        /// <summary>
+        /// 阻塞的管道PipeCode
+        /// </summary>
+        public string blocked_pipe_code { get; }
+
+        /// <summary>
+        ///  消息
+        /// </summary>
+        public string msg { get; }
+    }
+
+    /// <summary>
+    ///  流动结果（附带其他结果）
+    /// </summary>
+    public readonly struct TrafficResult<THandleResult, TOut>
+    {
+
+        /// <summary>
+        /// 流动结果
+        /// </summary>
+        /// <param name="trafficSignal"></param>
+        /// <param name="nextParas"></param>
+        /// <param name="blockedPipeCode"></param>
+        public TrafficResult(TrafficSignal trafficSignal, string blockedPipeCode, TOut nextParas)
+            : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, nextParas, default)
+        {
+        }
+        /// <summary>
+        /// 流动结果
+        /// </summary>
+        /// <param name="trafficSignal"></param>
+        /// <param name="nextParas"></param>
+        /// <param name="blockedPipeCode"></param>
+        public TrafficResult(TrafficSignal<THandleResult> trafficSignal, string blockedPipeCode, TOut nextParas)
+            : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, nextParas, trafficSignal.result)
+        {
+        }
+
+        /// <summary>
+        /// 流动结果
+        /// </summary>
+        /// <param name="signal"></param>
+        /// <param name="nextParas"></param>
+        /// <param name="blockedPipeCode"></param>
+        /// <param name="msg"></param>
+        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, TOut nextParas):
+            this(signal, blockedPipeCode, msg, nextParas,default)
+        {
+        }
+
+        /// <summary>
+        /// 流动结果
+        /// </summary>
+        /// <param name="signal"></param>
+        /// <param name="nextParas"></param>
+        /// <param name="activityResult"></param>
+        /// <param name="blockedPipeCode"></param>
+        /// <param name="msg"></param>
+        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, TOut nextParas,
+            THandleResult activityResult)
+        {
+            next_paras        = nextParas;
+            blocked_pipe_code = blockedPipeCode;
+            result            = activityResult;
 
             this.signal = signal;
             this.msg    = msg;
@@ -68,8 +139,23 @@ namespace OSS.Pipeline
         public string msg { get; }
 
         /// <summary>
-        ///  
+        ///  下节管道上下文参数
         /// </summary>
-        public object func_result { get; }
+        public TOut next_paras { get; }
+
+        /// <summary>
+        ///  活动执行方法结果
+        /// </summary>
+        public THandleResult result { get; }
     }
+
+    public static class TrafficResultMap
+    {
+        public static TrafficResult ToResult<TOut, TActivityResult>(this TrafficResult<TOut, TActivityResult> otRes)
+        {
+            return new TrafficResult(otRes.signal, otRes.blocked_pipe_code, otRes.msg);
+        }
+    }
+
+
 }

@@ -24,7 +24,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, EmptyContext> ThenWithActivity<TIn, TOut>(
+        public static IPipelineAppender<TIn, Empty> ThenWithActivity<TIn, TOut>(
             this IPipelineAppender<TIn, TOut> pipe,
             Func<Task<TrafficSignal>> exeFunc, string pipeCode = null)
         {

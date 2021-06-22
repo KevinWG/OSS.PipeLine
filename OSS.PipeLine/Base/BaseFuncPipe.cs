@@ -1,4 +1,5 @@
-﻿using OSS.Pipeline.InterImpls.Watcher;
+﻿using OSS.Pipeline.Interface;
+using System;
 using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Base
@@ -6,10 +7,11 @@ namespace OSS.Pipeline.Base
     /// <summary>
     ///  管道基类（空参被动类型）
     /// </summary>
-    /// <typeparam name="TFuncResult"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
     /// <typeparam name="TFuncPara"></typeparam>
-    public abstract class BaseFuncPipe<TFuncPara, TFuncResult> :
-       BasePipe<EmptyContext, TFuncPara, TFuncResult>
+    /// <typeparam name="TFuncResult"></typeparam>
+    public abstract class BaseFuncPipe<TFuncPara,TFuncResult, TOut> :
+       BasePipe<Empty, TFuncPara, TFuncResult, TOut>,IPipeFuncExecutor<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -17,19 +19,29 @@ namespace OSS.Pipeline.Base
         protected BaseFuncPipe(PipeType pipeType) : base(pipeType)
         {
         }
+
+        /// <summary>
+        ///  启动
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        public async Task<TFuncResult> Execute(TFuncPara para)
+        {
+            var trafficRes = await InterExecute(para);
+            return trafficRes.result;
+        }
         
         #region 内部的业务处理
 
-        internal override async Task<TrafficResult> InterStart(EmptyContext context)
+        /// <inheritdoc />
+        internal override async Task<TrafficResult> InterStart(Empty context)
         {
-            var trafficRes = TrafficResult.GreenResult;
-
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context, trafficRes);
-
-            return trafficRes;
+            return  new TrafficResult(SignalFlag.Green_Pass,String.Empty, String.Empty);
         }
-
+        
         #endregion
+
+
 
     }
 }

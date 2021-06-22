@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
-using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -11,7 +9,7 @@ namespace OSS.Pipeline
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<EmptyContext, TResult>, IActivity<TResult>
+    public abstract class BaseEffectActivity<TResult> : BaseStraightPipe<Empty, TResult>, IActivity<TResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -35,40 +33,30 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal<TResult>> Executing();
 
-      
 
         #endregion
 
+        #region 流体内部业务处理
 
+        /// <inheritdoc />
+        internal override async Task<TrafficResult<TResult, TResult>> InterExecuting(Empty context)
+        {
+            var trafficRes = await Executing();
+            return new TrafficResult<TResult, TResult>(trafficRes,
+                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficRes.result);
+        }
+
+
+        #endregion
         #region 流体业务-启动
 
         /// <summary>
-        /// 启动方法
+        /// 启动
         /// </summary>
         /// <returns></returns>
         public Task<TrafficResult> Execute()
         {
-            return Execute(EmptyContext.Default);
-        }
-
-        #endregion
-
-        #region 内部业务处理
-
-        internal override async Task<TrafficResult> InterHandling(EmptyContext context)
-        {
-            var traffic_signal = await Executing();
-            var trafficRes = new TrafficResult(traffic_signal.signal,traffic_signal.result, traffic_signal.signal == SignalFlag.Red_Block
-                    ? PipeCode : string.Empty, traffic_signal.msg);
-
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
-
-            if (traffic_signal.signal == SignalFlag.Green_Pass)
-            {
-               return await ToNextThrough(traffic_signal.result);
-            } 
-
-            return trafficRes;
+            return Execute(Empty.Default);
         }
 
         #endregion
@@ -108,22 +96,14 @@ namespace OSS.Pipeline
         #endregion
 
 
-        #region 流体业务处理
+        #region 流体内部业务处理
 
-        internal override async Task<TrafficResult> InterHandling(TInContext context)
+        /// <inheritdoc />
+        internal override async Task<TrafficResult<TResult, TResult>> InterExecuting(TInContext context)
         {
-
-            var trafficSignal = await Executing(context);
-            var trafficRes = new TrafficResult(trafficSignal.signal, trafficSignal.result,
-                trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficSignal.msg);
-
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
-
-            if (trafficSignal.signal == SignalFlag.Green_Pass)
-            {
-                return await ToNextThrough(trafficSignal.result);
-            }
-            return trafficRes;
+            var trafficRes = await Executing(context);
+            return new TrafficResult<TResult, TResult>(trafficRes,
+                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficRes.result);
         }
 
         #endregion

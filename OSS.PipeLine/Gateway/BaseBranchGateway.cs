@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -35,17 +34,17 @@ namespace OSS.Pipeline
         {
         }
 
-        internal override async Task<TrafficSignal> InterIntercept(TContext context)
+        internal override async Task<TrafficResult<Empty, TContext>> InterHandling(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
-                return new TrafficSignal( SignalFlag.Red_Block,"未能找到可执行的后续节点!");
+                return new TrafficResult<Empty, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context);
 
             var parallelPipes = nextPipes.Select(p => p.InterStart(context));
 
             var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? TrafficSignal.GreenSignal
-                :  new TrafficSignal(SignalFlag.Red_Block,"所有分支运行失败！");
+                ? new TrafficResult<Empty, TContext>(SignalFlag.Green_Pass, String.Empty, String.Empty, context)
+                : new TrafficResult<Empty, TContext>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", context);
 
             return res;
         }
@@ -72,8 +71,8 @@ namespace OSS.Pipeline
         ///   添加分支       
         /// </summary>
         /// <param name="pipe"></param>
-        public BasePipe<TContext, TNextHandlePara, TNextOutContext> AddBranch<TNextHandlePara, TNextOutContext>(
-            BasePipe<TContext, TNextHandlePara, TNextOutContext> pipe)
+        public BasePipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
+            BasePipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> pipe)
         {
             Add(pipe);
             return pipe;

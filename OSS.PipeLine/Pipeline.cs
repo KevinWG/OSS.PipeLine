@@ -97,7 +97,7 @@ namespace OSS.Pipeline
         {
             _endPipe.InterAppend(nextPipe);
         }
-        internal override void InterAppend(BaseInPipePart<EmptyContext> nextPipe)
+        internal override void InterAppend(BaseInPipePart<Empty> nextPipe)
         {
             _endPipe.InterAppend(nextPipe);
         }
@@ -147,10 +147,10 @@ namespace OSS.Pipeline
     }
 
     /// <inheritdoc />
-    public class SimplePipeline<TContext> : Pipeline<EmptyContext, TContext>
+    public class SimplePipeline<TContext> : Pipeline<Empty, TContext>
     {
         /// <inheritdoc />
-        public SimplePipeline(string pipeCode,BaseInPipePart<EmptyContext> startPipe, IPipeAppender<TContext> endPipeAppender) : base(pipeCode,startPipe, endPipeAppender)
+        public SimplePipeline(string pipeCode,BaseInPipePart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender) : base(pipeCode,startPipe, endPipeAppender)
         {
         }
     }

@@ -21,7 +21,7 @@ namespace OSS.Pipeline.Tests
         public readonly SendEmailActivity EmailActivity = new SendEmailActivity();
 
 
-        public readonly Pipeline<ApplyContext, EmptyContext> TestPipeline;
+        public readonly Pipeline<ApplyContext, Empty> TestPipeline;
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
@@ -46,7 +46,7 @@ namespace OSS.Pipeline.Tests
             .Append(endActivity);
 
             // 流体对象
-            TestPipeline =new Pipeline<ApplyContext,EmptyContext>("test-flow",ApplyActivity, endActivity) ;
+            TestPipeline =new Pipeline<ApplyContext,Empty>("test-flow",ApplyActivity, endActivity) ;
         }
 
 

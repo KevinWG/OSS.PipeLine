@@ -24,6 +24,6 @@ namespace OSS.Pipeline.Interface
     {
         internal void InterAppend(BaseInPipePart<TOutContext> nextPipe);
         
-        internal void InterAppend(BaseInPipePart<EmptyContext> nextPipe);
+        internal void InterAppend(BaseInPipePart<Empty> nextPipe);
     }
 }

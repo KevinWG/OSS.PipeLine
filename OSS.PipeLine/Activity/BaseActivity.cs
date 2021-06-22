@@ -21,7 +21,7 @@ namespace OSS.Pipeline
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    public abstract class BaseActivity : BaseStraightPipe<EmptyContext, EmptyContext>, IActivity<EmptyContext>
+    public abstract class BaseActivity : BaseStraightPipe<Empty, Empty>, IActivity<Empty>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -42,18 +42,6 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal> Executing();
 
-        internal override async Task<TrafficResult> InterHandling(EmptyContext context)
-        {
-            var executeRes = await Executing();
-            var traficResult = new TrafficResult(executeRes,
-                executeRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty);
-
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, traficResult);
-
-            return executeRes.signal == SignalFlag.Green_Pass
-                ? await ToNextThrough(context)
-                : traficResult;
-        }
 
 
         #region 流体业务-启动
@@ -64,7 +52,18 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public Task<TrafficResult> Execute()
         {
-            return Execute(EmptyContext.Default);
+            return Execute(Empty.Default);
+        }
+
+        #endregion
+
+        #region 流体内部业务处理
+
+        internal override async Task<TrafficResult<Empty, Empty>> InterExecuting(Empty context)
+        {
+            var trafficRes = await Executing();
+            return new TrafficResult<Empty, Empty>(trafficRes,
+                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context);
         }
 
         #endregion
@@ -86,7 +85,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <param name="data">当前活动上下文（会继续传递给下一个节点）</param>
+        /// <param name="para">当前活动上下文（会继续传递给下一个节点）</param>
         /// <returns>
         /// 处理结果
         /// traffic_signal：     
@@ -94,20 +93,17 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<TrafficSignal> Executing(TInContext data);
+        protected abstract Task<TrafficSignal> Executing(TInContext para);
 
-        internal override async Task<TrafficResult> InterHandling(TInContext context)
+        #region 流体内部业务处理
+
+        internal override async Task<TrafficResult<TInContext, TInContext>> InterExecuting(TInContext context)
         {
-            var res        = await Executing(context);
-            var trafficRes = new TrafficResult(res, res.signal == SignalFlag.Red_Block ? PipeCode : string.Empty);
-           
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes);
-           
-            if (res.signal == SignalFlag.Green_Pass)
-            {
-                return await ToNextThrough(context);
-            }
-            return trafficRes;
+            var trafficRes = await Executing(context);
+            return new TrafficResult<TInContext, TInContext>(trafficRes,
+                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context);
         }
+      
+        #endregion
     }
 }

@@ -24,7 +24,8 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
     /// <typeparam name="THandlePara"></typeparam>
-    public abstract class BasePipe<TInContext, THandlePara, TOutContext>
+    /// <typeparam name="THandleResult"></typeparam>
+    public abstract class BasePipe<TInContext, THandlePara,THandleResult, TOutContext>
         :  BaseInPipePart<TInContext>,
         IPipeAppender<TOutContext>
     {
@@ -35,8 +36,61 @@ namespace OSS.Pipeline.Base
         protected BasePipe(PipeType pipeType) : base(pipeType)
         {
         }
+        
+        #region 管道内部业务流转处理
+        
+        /// <summary>
+        ///  内部管道 -- （2）执行
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        /// <inheritdoc />
+        internal async Task<TrafficResult<THandleResult,TOutContext>> InterExecute(THandlePara context)
+        {
+            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
+            var res = await InterHandling(context);
 
-        #region 管道业务扩展方法
+            if (res.signal == SignalFlag.Red_Block)
+            {
+                await InterBlock(context, res);
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        ///  内部管道 -- （3）执行 - 控制流转
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal virtual async Task<TrafficResult<THandleResult, TOutContext>> InterHandling(THandlePara context)
+        {
+            var trafficRes = await InterExecuting(context);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
+
+            if (trafficRes.signal == SignalFlag.Green_Pass)
+            {
+                var nextTrafficRes = await ToNextThrough(trafficRes.next_paras);
+                return new TrafficResult<THandleResult, TOutContext>(
+                    nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg,
+                    trafficRes.next_paras, trafficRes.result
+                );
+            }
+
+            return trafficRes;
+        }
+
+        /// <summary>
+        ///  内部管道 -- （4）执行 - 组装业务处理结果
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterExecuting(THandlePara context);
+
+        #endregion
+
+        #region 管道阻塞扩展
+
 
         /// <summary>
         ///  管道堵塞
@@ -44,9 +98,9 @@ namespace OSS.Pipeline.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        internal virtual async Task InterBlock(THandlePara context,TrafficResult tRes)
+        internal virtual async Task InterBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
         {
-            await Watch(PipeCode,PipeType, WatchActionType.Blocked, context, tRes); 
+            await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult());
             await Block(context, tRes);
         }
 
@@ -56,14 +110,13 @@ namespace OSS.Pipeline.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        protected virtual Task Block(THandlePara context,  TrafficResult tRes)
+        protected virtual Task Block(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
         {
             return Task.CompletedTask;
         }
 
-
         #endregion
-        
+
         #region 管道连接处理
 
         //private 
@@ -79,11 +132,10 @@ namespace OSS.Pipeline.Base
                 }
                 else
                 {
-                    return _nextEmptyPipe.InterStart(EmptyContext.Default);
+                    return _nextEmptyPipe.InterStart(Empty.Default);
                 }
             }
-
-            return Task.FromResult(new TrafficResult(SignalFlag.Red_Block,null,PipeCode,"未发现下一步管道信息！"));
+            return Task.FromResult(new TrafficResult(SignalFlag.Red_Block,PipeCode,"未发现下一步管道信息！"));
         }
 
         /// <summary>
@@ -113,13 +165,13 @@ namespace OSS.Pipeline.Base
         ///  链接流体内部尾部管道和流体外下一截管道 ( 接收空上下文
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal virtual void InterAppend(BaseInPipePart<EmptyContext> nextPipe)
+        internal virtual void InterAppend(BaseInPipePart<Empty> nextPipe)
         {
         }
 
-        private BaseInPipePart<EmptyContext> _nextEmptyPipe { get; set; }
+        private BaseInPipePart<Empty> _nextEmptyPipe { get; set; }
 
-        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<EmptyContext> nextPipe)
+        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<Empty> nextPipe)
         {
             if (NextPipe != null)
             {

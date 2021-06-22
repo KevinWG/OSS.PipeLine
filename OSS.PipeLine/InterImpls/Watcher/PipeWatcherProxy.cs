@@ -42,7 +42,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
                     case WatchActionType.Executed:
                         return await _watcher.Excuted(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
                     case WatchActionType.Blocked:
-                        return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
+                        return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
                 }
             }
             catch 
@@ -75,7 +75,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
 
         public object Para { get; set; }
 
-        public TrafficResult Result { get; set; }
+        public WatchResult Result { get; set; }
     }
 
 

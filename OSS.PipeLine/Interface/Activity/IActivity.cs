@@ -13,15 +13,15 @@
 
 namespace OSS.Pipeline.Interface
 {
-    /// <typeparam name="TFuncResult"></typeparam>
-    public interface IActivity<TFuncResult> : IPipeAppender<TFuncResult>,IPipeExecutor
+    /// <typeparam name="TOutContext"></typeparam>
+    public interface IActivity<TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor
     {
     }
 
 
     /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TFuncResult"></typeparam>
-    public interface IActivity<in TInContext, TFuncResult> : IPipeAppender<TFuncResult>,IPipeExecutor<TInContext>
+    /// <typeparam name="TOutContext"></typeparam>
+    public interface IActivity<in TInContext, TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor<TInContext>
     {
     }
 }

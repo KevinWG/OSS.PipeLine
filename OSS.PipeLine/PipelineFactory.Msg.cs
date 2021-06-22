@@ -17,7 +17,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineAppender<EmptyContext,OutContext> StartWithMsgSubscriber<OutContext>( string pipeCode, DataFlowOption option = null)
+        public static IPipelineAppender<Empty,OutContext> StartWithMsgSubscriber<OutContext>( string pipeCode, DataFlowOption option = null)
         {
             var nextPipe = new MsgSubscriber<OutContext>(pipeCode, option);
             

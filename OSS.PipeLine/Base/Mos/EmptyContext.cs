@@ -14,17 +14,17 @@
 namespace OSS.Pipeline
 {
     /// <summary>
-    ///  空上下文
+    ///  空值
     /// </summary>
-    public struct EmptyContext
+    public struct Empty
     {
         /// <summary>
         ///  默认空上下文
         /// </summary>
-        public static EmptyContext Default { get; } 
+        public static Empty Default { get; } 
 
-        static EmptyContext() {
-            Default = new EmptyContext();
+        static Empty() {
+            Default = new Empty();
         }
     }
 }

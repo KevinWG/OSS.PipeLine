@@ -22,7 +22,6 @@ namespace OSS.Pipeline.Interface
     {
     }
 
-
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public interface IFuncEffectActivity<in TFuncPara, TFuncResult> : IPipeAppender<TFuncResult>, IPipeFuncExecutor<TFuncPara, TFuncResult>

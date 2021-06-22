@@ -22,7 +22,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<EmptyContext, EmptyContext> StartWithActivity<OutContext>(
+        public static IPipelineAppender<Empty, Empty> StartWithActivity<OutContext>(
             Func<Task<TrafficSignal>> exeFunc, string pipeCode = null)
         {
             return  Start(new SimpleActivity(exeFunc, pipeCode));
@@ -64,7 +64,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<EmptyContext, TResult> StartWithEffectActivity<TResult>(
+        public static IPipelineAppender<Empty, TResult> StartWithEffectActivity<TResult>(
             Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
             return Start(new SimpleEffectActivity<TResult>(exeFunc, pipeCode));
@@ -116,7 +116,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<EmptyContext, TFuncPara> StartWithFuncActivity<TFuncPara, TResult>(
+        public static IPipelineAppender<Empty, TFuncPara> StartWithFuncActivity<TFuncPara, TResult>(
             Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
             return Start(new SimpleFuncActivity<TFuncPara, TResult>(exeFunc, pipeCode));
@@ -140,7 +140,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<EmptyContext, TResult> StartWithFuncEffectActivity<TFuncPara, TResult>(
+        public static IPipelineAppender<Empty, TResult> StartWithFuncEffectActivity<TFuncPara, TResult>(
             Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
             return Start(new SimpleFuncEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode));

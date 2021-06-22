@@ -9,7 +9,7 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgSubscriber<TMsg> : BaseFuncPipe<TMsg, TMsg>, IDataSubscriber<TMsg>
+    public abstract class BaseMsgSubscriber<TMsg> : BaseFuncPipe<TMsg, TMsg, TMsg>, IDataSubscriber<TMsg>
     {
         /// <summary>
         ///  异步缓冲连接器
@@ -30,7 +30,6 @@ namespace OSS.Pipeline
             {
                 throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
             }
-
             ReceiveSubscriber(pipeCode, this, option);
         }
 
@@ -51,7 +50,12 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<bool> Subscribe(TMsg data)
         {
-            return (await ToNextThrough(data)).signal == SignalFlag.Green_Pass;
+            return (await InterExecute(data)).signal==SignalFlag.Green_Pass;
+        }
+
+        internal override Task<TrafficResult<TMsg, TMsg>> InterExecuting(TMsg context)
+        {
+            return Task.FromResult(new TrafficResult<TMsg, TMsg>(TrafficSignal.GreenSignal, string.Empty, context));
         }
     }
 

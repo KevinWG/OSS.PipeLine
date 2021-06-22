@@ -45,9 +45,9 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<EmptyContext, TOut> Start< TPara, TOut>(BasePipe<EmptyContext, TPara, TOut> startPipe)
+        public static IPipelineAppender<Empty, TOut> Start< TPara, TOut>(BasePipe<Empty, TPara, TOut> startPipe)
         {
-            return new InterPipelineAppender<EmptyContext, TOut>( startPipe, startPipe);
+            return new InterPipelineAppender<Empty, TOut>( startPipe, startPipe);
         }
         
         /// <summary>

@@ -12,10 +12,10 @@
 #endregion
 
 
+using System;
 using OSS.Pipeline.Interface;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
@@ -26,7 +26,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncActivity<TFuncPara, TFuncResult> :
-        BaseFuncPipe<TFuncPara, TFuncPara> ,IFuncActivity<TFuncPara, TFuncResult>
+        BaseFuncPipe<TFuncPara, TFuncResult, TFuncPara> ,IFuncActivity<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -34,37 +34,7 @@ namespace OSS.Pipeline
         protected BaseFuncActivity() : base(PipeType.FuncActivity)
         {
         }
-
-        #region 流体启动执行
-
-        /// <summary>
-        ///  执行方法
-        /// </summary>
-        /// <param name="para"></param>
-        /// <returns></returns>
-        public async Task<TFuncResult> Execute(TFuncPara para)
-        {
-            var trafficSignal = await Executing(para);
-            var trafficRes = new TrafficResult(trafficSignal.signal,
-                trafficSignal.result,
-                trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficSignal.msg);
-
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, para, trafficRes);
-            if (trafficSignal.signal == SignalFlag.Green_Pass)
-            {
-                await ToNextThrough(para);
-            }
-
-            if (trafficSignal.signal == SignalFlag.Red_Block)
-            {
-                await InterBlock(para, trafficRes);
-            }
-            return trafficSignal.result;
-        }
-
-        #endregion
-
-
+        
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
@@ -79,6 +49,14 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal<TFuncResult>> Executing(TFuncPara para);
 
-      
+
+        /// <inheritdoc />
+        internal override async Task<TrafficResult<TFuncResult, TFuncPara>> InterExecuting(TFuncPara context)
+        {
+            var tSignal = await Executing(context);
+            return new TrafficResult<TFuncResult, TFuncPara>(tSignal,
+                tSignal.signal == SignalFlag.Red_Block ? PipeCode : String.Empty, context);
+        }
+
     }
 }

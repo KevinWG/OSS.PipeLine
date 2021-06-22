@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 
@@ -37,10 +38,11 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected abstract TOutMsg Convert(TInMsg inContextData);
 
-        internal override Task<TrafficResult> InterHandling(TInMsg context)
+        internal override Task<TrafficResult<TOutMsg, TOutMsg>> InterExecuting(TInMsg context)
         {
             var outContext = Convert(context);
-            return ToNextThrough(outContext);
+            return Task.FromResult(new TrafficResult<TOutMsg, TOutMsg>(SignalFlag.Green_Pass, String.Empty,
+                string.Empty, outContext));
         }
     }
 }

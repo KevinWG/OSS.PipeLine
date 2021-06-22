@@ -55,7 +55,7 @@ namespace OSS.Pipeline.Base
 
 
         internal Task Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object para,
-            TrafficResult res )
+            WatchResult res)
         {
             if (WatchProxy != null)
             {
@@ -73,9 +73,13 @@ namespace OSS.Pipeline.Base
             return Task.CompletedTask;
         }
 
+        internal Task Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object para)
+        {
+            return Watch(pipeCode, pipeType, actionType, para, default);
+        }
+
         #endregion
-
-
+        
         #region 内部扩散方法
 
         /// <summary>
@@ -104,12 +108,11 @@ namespace OSS.Pipeline.Base
         {
         }
 
-  
 
         #region 管道的业务处理
 
         /// <summary>
-        ///  管道处理实际业务流动方法
+        ///  内部管道 -- 唤起
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>

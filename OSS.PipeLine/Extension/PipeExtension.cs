@@ -17,8 +17,8 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BasePipe<TOutContext, TNextPara, TNextOutContext> Append<TOutContext, TNextPara, TNextOutContext>(
-            this IPipeAppender<TOutContext> pipe, BasePipe<TOutContext, TNextPara, TNextOutContext> nextPipe)
+        public static BasePipe<TOutContext, TNextPara, TNextResult, TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
+            this IPipeAppender<TOutContext> pipe, BasePipe<TOutContext, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -30,11 +30,12 @@ namespace OSS.Pipeline
         /// <typeparam name="TOutContext"></typeparam>
         /// <typeparam name="TNextOutContext"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BasePipe<EmptyContext, TNextPara, TNextOutContext> Append<TOutContext, TNextPara, TNextOutContext>(
-            this IPipeAppender<TOutContext> pipe, BasePipe<EmptyContext, TNextPara, TNextOutContext> nextPipe)
+        public static BasePipe<Empty, TNextPara,TNextResult, TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
+            this IPipeAppender<TOutContext> pipe, BasePipe<Empty, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
