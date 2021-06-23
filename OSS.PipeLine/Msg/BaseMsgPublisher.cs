@@ -51,11 +51,11 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override async Task<TrafficResult<Empty, TMsg>> InterHandling(TMsg context)
+        internal override async Task<TrafficResult<TMsg, TMsg>> InterHandling(TMsg context)
         {
             return (await _pusher.Publish(context))
-                ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass,string.Empty,string.Empty,default)
-                : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block,PipeCode, $"{this.GetType().Name}发布消息失败!",default);
+                ? new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass,string.Empty,string.Empty,context,context)
+                : new TrafficResult<TMsg, TMsg>(SignalFlag.Red_Block,PipeCode, $"{this.GetType().Name}发布消息失败!", context, context);
         }
       
         #endregion

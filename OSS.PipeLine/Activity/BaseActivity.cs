@@ -14,14 +14,13 @@
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
-using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline
 {
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    public abstract class BaseActivity : BaseStraightPipe<Empty, Empty>, IActivity<Empty>
+    public abstract class BaseActivity : BaseStraightPipe<Empty, Empty>, IActivity<Empty,Empty>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -50,7 +49,7 @@ namespace OSS.Pipeline
         /// 启动方法
         /// </summary>
         /// <returns></returns>
-        public Task<TrafficResult> Execute()
+        public Task<Empty> Execute()
         {
             return Execute(Empty.Default);
         }
@@ -63,7 +62,7 @@ namespace OSS.Pipeline
         {
             var trafficRes = await Executing();
             return new TrafficResult<Empty, Empty>(trafficRes,
-                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context);
+                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
         }
 
         #endregion
@@ -101,7 +100,7 @@ namespace OSS.Pipeline
         {
             var trafficRes = await Executing(context);
             return new TrafficResult<TInContext, TInContext>(trafficRes,
-                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context);
+                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
         }
       
         #endregion

@@ -23,7 +23,7 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
     public abstract class BaseStraightPipe<TInContext, TOutContext> : BasePipe<TInContext, TInContext, TOutContext, TOutContext>,
-        IPipeExecutor<TInContext>
+        IPipeExecutor<TInContext,TOutContext>
     {
         /// <inheritdoc />
         protected BaseStraightPipe(PipeType pipeType) : base(pipeType)
@@ -37,9 +37,9 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        public Task<TrafficResult> Execute(TInContext para)
+        public async Task<TOutContext> Execute(TInContext para)
         {
-            return InterStart(para);
+            return (await InterExecute(para)).result;
         }
 
         #endregion

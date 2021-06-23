@@ -60,7 +60,7 @@ namespace OSS.Pipeline
         internal override Task<TrafficResult<TMsg, TMsg>> InterHandlePack(TMsg context)
         {
             return Task.FromResult(new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty,
-                context));
+                context,context));
         }
 
 

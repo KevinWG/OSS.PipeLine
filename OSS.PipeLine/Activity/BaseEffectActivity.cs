@@ -48,13 +48,14 @@ namespace OSS.Pipeline
 
 
         #endregion
+
         #region 流体业务-启动
 
         /// <summary>
         /// 启动
         /// </summary>
         /// <returns></returns>
-        public Task<TrafficResult> Execute()
+        public Task<TResult> Execute()
         {
             return Execute(Empty.Default);
         }

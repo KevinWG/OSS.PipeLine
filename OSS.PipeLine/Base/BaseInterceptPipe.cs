@@ -21,14 +21,13 @@ namespace OSS.Pipeline.Base
     ///  管道执行基类（拦截类型）
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public abstract class BaseInterceptPipe<TInContext> : BaseInPipePart<TInContext>,IPipeExecutor<TInContext>
+    public abstract class BaseInterceptPipe<TInContext> : BaseInPipePart<TInContext>,IPipeExecutor<TInContext,TInContext>
     {
         /// <inheritdoc />
         protected BaseInterceptPipe(PipeType pipeType) : base(pipeType)
         {
         }
-
-
+        
         #region 外部业务扩展
 
         /// <summary>
@@ -36,9 +35,9 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public  Task<TrafficResult> Execute(TInContext context)
+        public async Task<TInContext> Execute(TInContext context)
         {
-            return InterStart(context);
+            return (await InterExecute(context)).result;
         }
 
 
@@ -60,7 +59,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal async Task<TrafficResult<Empty, TInContext>> InterExecute(TInContext context)
+        internal async Task<TrafficResult<TInContext, TInContext>> InterExecute(TInContext context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             var handleRes = await InterHandling(context);
@@ -79,7 +78,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<Empty,TInContext>> InterHandling(TInContext context);
+        internal abstract Task<TrafficResult<TInContext, TInContext>> InterHandling(TInContext context);
         
         /// <summary>
         ///  管道堵塞
@@ -87,7 +86,7 @@ namespace OSS.Pipeline.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        internal virtual async Task InterBlock(TInContext context, TrafficResult<Empty, TInContext> tRes)
+        internal virtual async Task InterBlock(TInContext context, TrafficResult<TInContext, TInContext> tRes)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult());
             await Block(context, tRes);
@@ -99,13 +98,12 @@ namespace OSS.Pipeline.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        protected virtual Task Block(TInContext context, TrafficResult<Empty, TInContext> tRes)
+        protected virtual Task Block(TInContext context, TrafficResult<TInContext, TInContext> tRes)
         {
             return Task.CompletedTask;
         }
         #endregion
-
-
+        
         #region 内部初始化和路由方法
 
         internal override void InterInitialContainer(IPipeLine containerFlow)

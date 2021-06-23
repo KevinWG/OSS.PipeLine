@@ -24,7 +24,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public class Pipeline<TInContext, TOutContext> : BaseStraightPipe<TInContext, TOutContext> , IPipeLine<TInContext>
+    public class Pipeline<TInContext, TOutContext> : BasePipe<TInContext, TInContext, TOutContext, TOutContext>, IPipeLine<TInContext>
     {
         private readonly BaseInPipePart<TInContext>    _startPipe;
         private readonly IPipeAppender<TOutContext> _endPipe;
@@ -66,6 +66,16 @@ namespace OSS.Pipeline
            
             startPipe.InterInitialContainer(this);
         }
+
+        #region 管道启动
+
+        /// <inheritdoc />
+        public Task<TrafficResult> Execute(TInContext context)
+        {
+            return InterStart(context);
+        }
+
+        #endregion
 
         #region 管道的业务处理
 
@@ -138,6 +148,8 @@ namespace OSS.Pipeline
         {
             return WatchProxy;
         }
+
+
 
         #endregion
 

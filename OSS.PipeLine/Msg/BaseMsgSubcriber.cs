@@ -55,7 +55,7 @@ namespace OSS.Pipeline
 
         internal override Task<TrafficResult<TMsg, TMsg>> InterHandlePack(TMsg context)
         {
-            return Task.FromResult(new TrafficResult<TMsg, TMsg>(TrafficSignal.GreenSignal, string.Empty, context));
+            return Task.FromResult(new TrafficResult<TMsg, TMsg>(TrafficSignal.GreenSignal, string.Empty, context,context));
         }
     }
 

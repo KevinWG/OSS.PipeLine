@@ -70,8 +70,8 @@ namespace OSS.Pipeline.Base
             {
                 var nextTrafficRes = await ToNextThrough(trafficRes.next_paras);
                 return new TrafficResult<THandleResult, TOutContext>(
-                    nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg,
-                    trafficRes.next_paras, trafficRes.result
+                    nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg
+                    , trafficRes.result, trafficRes.next_paras
                 );
             }
 

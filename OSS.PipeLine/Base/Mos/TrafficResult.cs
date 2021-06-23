@@ -69,15 +69,15 @@ namespace OSS.Pipeline
     /// </summary>
     public readonly struct TrafficResult<THandleResult, TOut>
     {
-
         /// <summary>
         /// 流动结果
         /// </summary>
         /// <param name="trafficSignal"></param>
         /// <param name="nextParas"></param>
         /// <param name="blockedPipeCode"></param>
-        public TrafficResult(TrafficSignal trafficSignal, string blockedPipeCode, TOut nextParas)
-            : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, nextParas, default)
+        /// <param name="res"></param>
+        public TrafficResult(TrafficSignal trafficSignal, string blockedPipeCode, THandleResult res, TOut nextParas)
+            : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, res, nextParas)
         {
         }
         /// <summary>
@@ -87,36 +87,36 @@ namespace OSS.Pipeline
         /// <param name="nextParas"></param>
         /// <param name="blockedPipeCode"></param>
         public TrafficResult(TrafficSignal<THandleResult> trafficSignal, string blockedPipeCode, TOut nextParas)
-            : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, nextParas, trafficSignal.result)
+            : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, trafficSignal.result, nextParas)
         {
         }
+
+        ///// <summary>
+        ///// 流动结果
+        ///// </summary>
+        ///// <param name="signal"></param>
+        ///// <param name="nextParas"></param>
+        ///// <param name="blockedPipeCode"></param>
+        ///// <param name="msg"></param>
+        //public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, TOut nextParas):
+        //    this(signal, blockedPipeCode, msg, nextParas,default)
+        //{
+        //}
 
         /// <summary>
         /// 流动结果
         /// </summary>
         /// <param name="signal"></param>
         /// <param name="nextParas"></param>
+        /// <param name="executeResult"></param>
         /// <param name="blockedPipeCode"></param>
         /// <param name="msg"></param>
-        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, TOut nextParas):
-            this(signal, blockedPipeCode, msg, nextParas,default)
-        {
-        }
-
-        /// <summary>
-        /// 流动结果
-        /// </summary>
-        /// <param name="signal"></param>
-        /// <param name="nextParas"></param>
-        /// <param name="activityResult"></param>
-        /// <param name="blockedPipeCode"></param>
-        /// <param name="msg"></param>
-        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, TOut nextParas,
-            THandleResult activityResult)
+        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, THandleResult executeResult, TOut nextParas
+           )
         {
             next_paras        = nextParas;
             blocked_pipe_code = blockedPipeCode;
-            result            = activityResult;
+            result            = executeResult;
 
             this.signal = signal;
             this.msg    = msg;

@@ -14,14 +14,14 @@
 namespace OSS.Pipeline.Interface
 {
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IActivity<TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor
+    public interface IActivity<TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor<TOutContext>
     {
     }
 
 
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IActivity<in TInContext, TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor<TInContext>
+    public interface IActivity<in TInContext, TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor<TInContext, TOutContext>
     {
     }
 }

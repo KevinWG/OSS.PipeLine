@@ -5,26 +5,26 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     /// 管道对外执行接口
     /// </summary>
-    public interface IPipeExecutor:IPipe
+    public interface IPipeExecutor<TOut>:IPipe
     {
         /// <summary>
         ///  执行方法
         /// </summary>
         /// <returns></returns>
-        Task<TrafficResult> Execute();
+        Task<TOut> Execute();
     }
 
     /// <summary>
     /// 管道对外执行接口
     /// </summary>
-    public interface IPipeExecutor<in TInContext> : IPipe
+    public interface IPipeExecutor<in TInContext, TOut> : IPipe
     {
         /// <summary>
         ///  执行方法
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        Task<TrafficResult> Execute(TInContext para);
+        Task<TOut> Execute(TInContext para);
     }
     
     /// <summary>
