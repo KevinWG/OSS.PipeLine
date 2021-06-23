@@ -130,7 +130,7 @@ namespace OSS.Pipeline.Base
                     return _nextEmptyPipe.InterPreCall(Empty.Default);
                 }
             }
-            return Task.FromResult(new TrafficResult(SignalFlag.Red_Block,PipeCode,"未发现下一步管道信息！"));
+            return Task.FromResult(TrafficResult.Green);
         }
 
         /// <summary>
