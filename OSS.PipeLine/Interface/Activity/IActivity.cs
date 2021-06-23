@@ -17,11 +17,18 @@ namespace OSS.Pipeline.Interface
     public interface IActivity<TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor<TOutContext>
     {
     }
-
-
+    
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IActivity<in TInContext, TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor<TInContext, TOutContext>
+    public interface IActivity<in TInContext, TOutContext> : IActivity<TInContext, TOutContext, TOutContext>
     {
     }
+    
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
+    /// <typeparam name="THandleResult"></typeparam>
+    public interface IActivity<in TInContext, THandleResult, TOutContext> : IPipeAppender<TOutContext>, IPipeExecutor<TInContext, THandleResult,TOutContext>
+    {
+    }
+    
 }

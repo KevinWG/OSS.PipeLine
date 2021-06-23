@@ -72,8 +72,8 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
-    /// <typeparam name="TInContext">输入输出上下文</typeparam>
-    public abstract class BaseActivity<TInContext> : BaseStraightPipe<TInContext, TInContext>, IActivity<TInContext, TInContext>
+    /// <typeparam name="TContext">输入输出上下文</typeparam>
+    public abstract class BaseActivity<TContext> : BaseStraightPipe<TContext, TContext>, IActivity<TContext, TContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -92,17 +92,56 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<TrafficSignal> Executing(TInContext para);
+        protected abstract Task<TrafficSignal> Executing(TContext para);
 
         #region 流体内部业务处理
 
-        internal override async Task<TrafficResult<TInContext, TInContext>> InterProcessPackage(TInContext context)
+        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context)
         {
             var trafficRes = await Executing(context);
-            return new TrafficResult<TInContext, TInContext>(trafficRes,
+            return new TrafficResult<TContext, TContext>(trafficRes,
                 trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
         }
       
+        #endregion
+    }
+
+    /// <summary>
+    ///  主动触发执行活动组件基类
+    ///    接收输入上下文，且此上下文继续传递下一个节点
+    /// </summary>
+    /// <typeparam name="TContext">输入输出上下文</typeparam>
+    /// <typeparam name="THandleResult"></typeparam>
+    public abstract class BaseActivity<TContext, THandleResult> : BaseStraightPipe<TContext, THandleResult, TContext>, IActivity<TContext, THandleResult, TContext>
+    {
+        /// <summary>
+        /// 外部Action活动基类
+        /// </summary>
+        protected BaseActivity() : base(PipeType.Activity)
+        {
+        }
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="para">当前活动上下文（会继续传递给下一个节点）</param>
+        /// <returns>
+        /// 处理结果
+        /// traffic_signal：     
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
+        /// </returns>
+        protected abstract Task<TrafficSignal<THandleResult>> Executing(TContext para);
+
+        #region 流体内部业务处理
+
+        internal override async Task<TrafficResult<THandleResult, TContext>> InterProcessPackage(TContext context)
+        {
+            var trafficRes = await Executing(context);
+            return new TrafficResult<THandleResult, TContext>(trafficRes,
+                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context);
+        }
+
         #endregion
     }
 }

@@ -18,14 +18,14 @@ namespace OSS.Pipeline
     /// <summary>
     ///  流动信号
     /// </summary>
-    public readonly struct TrafficSignal<TRes>
+    public readonly struct TrafficSignal<THandleResult>
     {
 
         /// <summary>
         /// 流动通行信号（绿色通行）-附带结果
         /// </summary>
         /// <param name="res">结果数据</param>
-        public TrafficSignal(TRes res) : this(SignalFlag.Green_Pass, res, string.Empty)
+        public TrafficSignal(THandleResult res) : this(SignalFlag.Green_Pass, res, string.Empty)
         {
         }
 
@@ -40,7 +40,7 @@ namespace OSS.Pipeline
         /// <param name="signalFlag"></param>
         /// <param name="trafficMsg"></param>
         /// <param name="res"></param>
-        public TrafficSignal(SignalFlag signalFlag, TRes res, string trafficMsg)
+        public TrafficSignal(SignalFlag signalFlag, THandleResult res, string trafficMsg)
         {
             signal = signalFlag;
             msg    = trafficMsg;
@@ -60,7 +60,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///结果
         /// </summary>
-        public TRes result { get; }
+        public THandleResult result { get; }
     }
 
 

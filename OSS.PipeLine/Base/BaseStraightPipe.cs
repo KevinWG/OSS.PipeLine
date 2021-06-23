@@ -17,13 +17,14 @@ using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
+
     /// <summary>
     ///  管道执行基类（直通类型）
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public abstract class BaseStraightPipe<TInContext, TOutContext> : BasePipe<TInContext, TInContext, TOutContext, TOutContext>,
-        IPipeExecutor<TInContext,TOutContext>
+    public abstract class BaseStraightPipe<TInContext, THandleResult, TOutContext> : BasePipe<TInContext, TInContext, THandleResult, TOutContext>,
+        IPipeExecutor<TInContext, THandleResult, TOutContext>
     {
         /// <inheritdoc />
         protected BaseStraightPipe(PipeType pipeType) : base(pipeType)
@@ -37,7 +38,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        public async Task<TOutContext> Execute(TInContext para)
+        public async Task<THandleResult> Execute(TInContext para)
         {
             return (await InterProcess(para)).result;
         }
@@ -55,10 +56,24 @@ namespace OSS.Pipeline.Base
             return tRes.ToResult();
         }
 
-
         #endregion
 
 
+
+    }
+
+
+    /// <summary>
+    ///  管道执行基类（直通类型）
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
+    public abstract class BaseStraightPipe<TInContext, TOutContext> : BaseStraightPipe<TInContext, TOutContext, TOutContext>
+    {
+        /// <inheritdoc />
+        protected BaseStraightPipe(PipeType pipeType) : base(pipeType)
+        {
+        }
 
     }
 }
