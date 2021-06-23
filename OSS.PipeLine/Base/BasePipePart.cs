@@ -116,7 +116,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult> InterStart(TInContext context);
+        internal abstract Task<TrafficResult> InterPreCall(TInContext context);
 
         #endregion
     }

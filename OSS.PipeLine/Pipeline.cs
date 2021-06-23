@@ -72,7 +72,7 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         public Task<TrafficResult> Execute(TInContext context)
         {
-            return InterStart(context);
+            return InterPreCall(context);
         }
 
         #endregion
@@ -80,14 +80,14 @@ namespace OSS.Pipeline
         #region 管道的业务处理
 
         //  管道本身不再向下流动，由终结点处理
-        internal override Task<TrafficResult> InterStart(TInContext context)
+        internal override Task<TrafficResult> InterPreCall(TInContext context)
         {
-           return _startPipe.InterStart(context);
+           return _startPipe.InterPreCall(context);
         }
 
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<TOutContext, TOutContext>> InterHandlePack(TInContext context)
+        internal override Task<TrafficResult<TOutContext, TOutContext>> InterProcessPackage(TInContext context)
         {
             throw new Exception("不应该执行到此方法!");
         }
@@ -148,9 +148,7 @@ namespace OSS.Pipeline
         {
             return WatchProxy;
         }
-
-
-
+        
         #endregion
 
     }

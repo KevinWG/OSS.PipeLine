@@ -32,7 +32,7 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal<TFuncResult>> Executing(TFuncPara para);
 
-        internal override async Task<TrafficResult<TFuncResult, TFuncResult>> InterHandlePack(TFuncPara context)
+        internal override async Task<TrafficResult<TFuncResult, TFuncResult>> InterProcessPackage(TFuncPara context)
         {
             var tSignal = await Executing(context);
             return new TrafficResult<TFuncResult, TFuncResult>(tSignal,

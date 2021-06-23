@@ -34,13 +34,13 @@ namespace OSS.Pipeline
         {
         }
 
-        internal override async Task<TrafficResult<TContext, TContext>> InterHandling(TContext context)
+        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context)
         {
             var nextPipes = FilterNextPipes(_branchItems, context);
             if (nextPipes == null || !nextPipes.Any())
                 return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,context);
 
-            var parallelPipes = nextPipes.Select(p => p.InterStart(context));
+            var parallelPipes = nextPipes.Select(p => p.InterPreCall(context));
 
             var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
                 ? new TrafficResult<TContext, TContext>(SignalFlag.Green_Pass, string.Empty, string.Empty, context, context)

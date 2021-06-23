@@ -58,7 +58,7 @@ namespace OSS.Pipeline
 
         #region 流体内部业务处理
 
-        internal override async Task<TrafficResult<Empty, Empty>> InterHandlePack(Empty context)
+        internal override async Task<TrafficResult<Empty, Empty>> InterProcessPackage(Empty context)
         {
             var trafficRes = await Executing();
             return new TrafficResult<Empty, Empty>(trafficRes,
@@ -96,7 +96,7 @@ namespace OSS.Pipeline
 
         #region 流体内部业务处理
 
-        internal override async Task<TrafficResult<TInContext, TInContext>> InterHandlePack(TInContext context)
+        internal override async Task<TrafficResult<TInContext, TInContext>> InterProcessPackage(TInContext context)
         {
             var trafficRes = await Executing(context);
             return new TrafficResult<TInContext, TInContext>(trafficRes,

@@ -37,7 +37,7 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         public async Task<TInContext> Execute(TInContext context)
         {
-            return (await InterExecute(context)).result;
+            return (await InterProcess(context)).result;
         }
 
 
@@ -46,10 +46,10 @@ namespace OSS.Pipeline.Base
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterStart(TInContext context)
+        internal override async Task<TrafficResult> InterPreCall(TInContext context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
-            var tRes = await InterExecute(context);
+            var tRes = await InterProcess(context);
             return tRes.ToResult();
         }
 
@@ -59,18 +59,9 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal async Task<TrafficResult<TInContext, TInContext>> InterExecute(TInContext context)
+        internal Task<TrafficResult<TInContext, TInContext>> InterProcess(TInContext context)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
-            var handleRes = await InterHandling(context);
-            
-            if (handleRes.signal == SignalFlag.Red_Block)
-            {
-                await InterBlock(context, handleRes);
-            }
-
-            return handleRes;
-            //return new TrafficResult<TInContext>(intRetSignal.signal, intRetSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, intRetSignal.msg);
+            return InterProcessHandling(context);
         }
 
         /// <summary>
@@ -78,8 +69,26 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<TInContext, TInContext>> InterHandling(TInContext context);
-        
+        internal async Task<TrafficResult<TInContext, TInContext>> InterProcessHandling(TInContext context)
+        {
+            var trafficRes = await InterProcessPackage(context);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
+            
+            if (trafficRes.signal == SignalFlag.Red_Block)
+            {
+                await InterBlock(context, trafficRes);
+            }
+            return trafficRes;
+        }
+
+        /// <summary>
+        ///  内部管道 -- （4）执行 - 组装业务处理结果
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        internal abstract Task<TrafficResult<TInContext, TInContext>> InterProcessPackage(TInContext context);
+
+
         /// <summary>
         ///  管道堵塞
         /// </summary>

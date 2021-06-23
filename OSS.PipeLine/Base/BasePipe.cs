@@ -44,26 +44,19 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal async Task<TrafficResult<THandleResult,TOutContext>> InterExecute(THandlePara context)
+        internal Task<TrafficResult<THandleResult,TOutContext>> InterProcess(THandlePara context)
         {
-            var res = await InterHandling(context);
-
-            if (res.signal == SignalFlag.Red_Block)
-            {
-                await InterBlock(context, res);
-            }
-
-            return res;
+            return InterProcessHandling(context);
         }
 
         /// <summary>
-        ///  内部管道 -- （3）执行 - 控制流转
+        ///  内部管道 -- （3）执行 - 控制流转，阻塞处理
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal virtual async Task<TrafficResult<THandleResult, TOutContext>> InterHandling(THandlePara context)
+        internal async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context)
         {
-            var trafficRes = await InterHandlePack(context);
+            var trafficRes = await InterProcessPackage(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
 
             if (trafficRes.signal == SignalFlag.Green_Pass)
@@ -75,6 +68,10 @@ namespace OSS.Pipeline.Base
                 );
             }
 
+            if (trafficRes.signal == SignalFlag.Red_Block)
+            {
+                await InterBlock(context, trafficRes);
+            }
             return trafficRes;
         }
 
@@ -83,7 +80,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterHandlePack(THandlePara context);
+        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context);
 
         #endregion
 
@@ -126,11 +123,11 @@ namespace OSS.Pipeline.Base
             {
                 if (_nextPipe != null)
                 {
-                    return _nextPipe.InterStart(nextInContext);
+                    return _nextPipe.InterPreCall(nextInContext);
                 }
                 else
                 {
-                    return _nextEmptyPipe.InterStart(Empty.Default);
+                    return _nextEmptyPipe.InterPreCall(Empty.Default);
                 }
             }
             return Task.FromResult(new TrafficResult(SignalFlag.Red_Block,PipeCode,"未发现下一步管道信息！"));

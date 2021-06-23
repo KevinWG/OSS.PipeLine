@@ -26,4 +26,6 @@ namespace OSS.Pipeline.Interface
         
         internal void InterAppend(BaseInPipePart<Empty> nextPipe);
     }
+
+
 }

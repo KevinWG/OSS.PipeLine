@@ -28,14 +28,14 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         public async Task<TFuncResult> Execute(TFuncPara para)
         {
-            var trafficRes = await InterExecute(para);
+            var trafficRes = await InterProcess(para);
             return trafficRes.result;
         }
         
         #region 内部的业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterStart(Empty context)
+        internal override async Task<TrafficResult> InterPreCall(Empty context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             return  new TrafficResult(SignalFlag.Green_Pass,String.Empty, String.Empty);
