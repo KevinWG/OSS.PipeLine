@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.5.6</Version>
+    <Version>1.5.7</Version>
     <PackageReleaseNotes>统一底层方法</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="OSS.DataFlow" Version="1.0.3" />
+    <PackageReference Include="OSS.DataFlow" Version="1.0.5" />
   </ItemGroup>
 
 </Project>

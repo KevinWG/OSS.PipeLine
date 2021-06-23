@@ -82,7 +82,7 @@ namespace OSS.Pipeline.Base
         }
 
         /// <summary>
-        ///  内部管道 -- （4）执行 - 组装业务处理结果
+        ///  内部管道 -- （4）执行 - 组装业务结果
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
