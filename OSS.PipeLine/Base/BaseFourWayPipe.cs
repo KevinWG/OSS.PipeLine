@@ -19,7 +19,7 @@ using OSS.Pipeline.InterImpls.Watcher;
 namespace OSS.Pipeline.Base
 {
     /// <summary>
-    ///  管道基类
+    ///  管道基类 (双入双出类型)
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>

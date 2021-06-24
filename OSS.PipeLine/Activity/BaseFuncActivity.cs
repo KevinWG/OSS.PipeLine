@@ -12,7 +12,6 @@
 #endregion
 
 
-using System;
 using OSS.Pipeline.Interface;
 using System.Threading.Tasks;
 using OSS.Pipeline.Activity.Base;
