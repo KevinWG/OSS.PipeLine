@@ -29,7 +29,7 @@ namespace OSS.Pipeline.Interface
         /// <summary>
         ///  管道编码
         /// </summary>
-        public string PipeCode { get; set; }
+        string PipeCode { get; set; }
     }
 
     /// <summary>

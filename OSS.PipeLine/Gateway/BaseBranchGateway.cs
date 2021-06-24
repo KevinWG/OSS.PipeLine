@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.GateWay;
 
 namespace OSS.Pipeline
 {
@@ -24,7 +25,7 @@ namespace OSS.Pipeline
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBranchGateway<TContext> : BaseOneWayPipe<TContext>
+    public abstract class BaseBranchGateway<TContext> : BaseThreeWayPipe<TContext,TContext, TContext>
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -36,7 +37,7 @@ namespace OSS.Pipeline
 
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context)
         {
-            var nextPipes = FilterNextPipes(_branchItems, context);
+            var nextPipes = FilterNextPipes( context, _branchItems);
             if (nextPipes == null || !nextPipes.Any())
                 return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,context);
 
@@ -53,40 +54,63 @@ namespace OSS.Pipeline
         ///   过滤可分发下路的分支
         ///   filer available pipes that can go to next during the runtime;
         /// </summary>
-        /// <param name="branchItems"></param>
+        /// <param name="branchNodePool"></param>
         /// <param name="context"></param>
         /// <returns>如果为空，则触发block</returns>
-        protected virtual IEnumerable<BaseInPipePart<TContext>> FilterNextPipes(
-            List<BaseInPipePart<TContext>> branchItems,
-            TContext context)
+        protected virtual IEnumerable<IBranchNodePipe> FilterNextPipes(TContext context,
+            List<IBranchNodePipe> branchNodePool)
         {
-            return branchItems;
+            return branchNodePool;
         }
 
         #region 管道连接
-
-        private List<BaseInPipePart<TContext>> _branchItems;
-      
-        /// <summary>
-        ///   添加分支       
-        /// </summary>
-        /// <param name="pipe"></param>
-        public BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
-            BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> pipe)
-        {
-            Add(pipe);
-            return pipe;
-        }
         
-        /// <summary>
-        /// 追加消息发布者管道
-        /// </summary>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public void AddBranch(BaseOneWayPipe<TContext> nextPipe)
+        ///// <summary>
+        /////   添加分支       
+        ///// </summary>
+        ///// <param name="pipe"></param>
+        //public BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
+        //    BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> pipe)
+        //{
+        //    Add(pipe);
+        //    return pipe;
+        //}
+
+        ///// <summary>
+        /////   添加分支       
+        ///// </summary>
+        ///// <param name="pipe"></param>
+        //public BaseFourWayPipe<Empty, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
+        //    BaseFourWayPipe<Empty, TNextHandlePara, TNextResult, TNextOutContext> pipe)
+        //{
+        //    Add(pipe);
+        //    return pipe;
+        //}
+
+        ///// <summary>
+        ///// 追加消息发布者管道
+        ///// </summary>
+        ///// <param name="nextPipe"></param>
+        ///// <returns></returns>
+        //public void AddBranch(BaseOneWayPipe<TContext> nextPipe)
+        //{
+        //    Add(nextPipe);
+        //}
+        
+        internal override void InterAppend(BaseInPipePart<TContext> nextPipe)
         {
             Add(nextPipe);
+            nextPipe.InterAppendTo(this);
         }
+
+        internal override void InterAppend(BaseInPipePart<Empty> nextPipe)
+        {
+            Add(nextPipe);
+            nextPipe.InterAppendTo(this);
+        }
+
+
+        private List<IBranchNodePipe> _branchItems;
 
         private void Add(BaseInPipePart<TContext> pipe)
         {
@@ -95,13 +119,25 @@ namespace OSS.Pipeline
                 throw new ArgumentNullException(nameof(pipe), " 不能为空！");
             }
 
-            _branchItems ??= new List<BaseInPipePart<TContext>>();
+            _branchItems ??= new List<IBranchNodePipe>();
 
-            _branchItems.Add(pipe);
+            _branchItems.Add(new BranchNodeWrap<TContext>(pipe));
         }
-        
+
+
+        private void Add(BaseInPipePart<Empty> pipe)
+        {
+            if (pipe == null)
+            {
+                throw new ArgumentNullException(nameof(pipe), " 不能为空！");
+            }
+
+            _branchItems ??= new List<IBranchNodePipe>();
+            _branchItems.Add(new BranchNodeWrap(pipe));
+        }
+
         #endregion
-        
+
         #region 内部初始化
 
         internal override void InterInitialContainer(IPipeLine flowContainer)
@@ -136,7 +172,7 @@ namespace OSS.Pipeline
 
             if (_branchItems.Any())
             {
-                pipe.nexts = _branchItems.Select(bp => bp.InterToRoute()).ToList();
+                pipe.nexts = _branchItems.Select(bp => bp.InterToRoute(isFlowSelf)).ToList();
             }
             return pipe;
         }

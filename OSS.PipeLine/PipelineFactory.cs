@@ -23,22 +23,6 @@ namespace OSS.Pipeline
     public static partial class PipelineFactory
     {
         /// <summary>
-        /// 根据首位两个管道建立流体
-        /// </summary>
-        /// <typeparam name="InFlowContext"></typeparam>
-        /// <typeparam name="OutFlowContext"></typeparam>
-        /// <param name="startPipe"></param>
-        /// <param name="endPipeAppender"></param>
-        /// <param name="flowPipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static Pipeline<InFlowContext, OutFlowContext> AsPipelineStartAndEndWith<InFlowContext, OutFlowContext>(this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
-            string flowPipeCode, PipeLineOption option = null)
-        {
-            return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
-        }
-
-        /// <summary>
         ///  添加第一个节点
         /// </summary>
         /// <typeparam name="TPara"></typeparam>
@@ -79,6 +63,23 @@ namespace OSS.Pipeline
 
 
 
+
+
+        /// <summary>
+        /// 根据首位两个管道建立流体
+        /// </summary>
+        /// <typeparam name="InFlowContext"></typeparam>
+        /// <typeparam name="OutFlowContext"></typeparam>
+        /// <param name="startPipe"></param>
+        /// <param name="endPipeAppender"></param>
+        /// <param name="flowPipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static Pipeline<InFlowContext, OutFlowContext> AsPipelineStartAndEndWith<InFlowContext, OutFlowContext>(this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
+            string flowPipeCode, PipeLineOption option = null)
+        {
+            return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
+        }
 
         /// <summary>
         ///  追加下一个节点

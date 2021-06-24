@@ -72,6 +72,7 @@ namespace OSS.Pipeline.Base
         
         #region 管道初始化
 
+        /// <inheritdoc />
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
             LineContainer = flowContainer;

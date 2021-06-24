@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls.GateWay;
 using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems
@@ -11,7 +11,7 @@ namespace OSS.Pipeline.Tests.FlowItems
             PipeCode = "PayGateway";
         }
 
-        protected override IEnumerable<BaseInPipePart<PayContext>> FilterNextPipes(List<BaseInPipePart<PayContext>> branchItems, PayContext context)
+        protected override IEnumerable<IBranchNodePipe> FilterNextPipes( PayContext context, List<IBranchNodePipe> branchItems)
         {
             LogHelper.Info("这里进行支付通过后的分流");
             return branchItems;

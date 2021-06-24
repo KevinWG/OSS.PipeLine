@@ -27,6 +27,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TOutContext"></typeparam>
         /// <typeparam name="TNextOutContext"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
@@ -54,6 +55,8 @@ namespace OSS.Pipeline
             return nextPipe;
         }
 
+
+
         /// <summary>
         /// 追加拦截类型管道
         /// </summary>
@@ -65,7 +68,21 @@ namespace OSS.Pipeline
         {
             pipe.InterAppend(nextPipe);
         }
-        
-    
+
+
+        /// <summary>
+        /// 追加分支管道
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void Append<OutContext>(this IPipeAppender<OutContext> pipe, BaseBranchGateway<OutContext> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+        }
+
+
+
     }
 }

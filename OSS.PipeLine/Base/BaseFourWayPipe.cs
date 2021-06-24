@@ -67,7 +67,7 @@ namespace OSS.Pipeline.Base
         #region 管道连接处理
 
         //private 
-        internal BasePipePart NextPipe { get; private set; }
+        internal BasePipePart NextPipe { get; set; }
 
         internal Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
         {
@@ -85,54 +85,53 @@ namespace OSS.Pipeline.Base
             return Task.FromResult(TrafficResult.Green);
         }
 
+
+        private BaseInPipePart<TOutContext> _nextPipe { get; set; }
+        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
+        {
+            InterAppend(nextPipe);
+            nextPipe.InterAppendTo(this);
+        }
+
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
         internal virtual void InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
-        }
-
-        private BaseInPipePart<TOutContext> _nextPipe { get; set; }
-
-        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
-        {
             if (NextPipe != null)
             {
                 throw new ArgumentException("当前节点已经关联下游节点！");
             }
-
             NextPipe = _nextPipe = nextPipe;
-            InterAppend(nextPipe);
         }
 
 
-
+        private BaseInPipePart<Empty> _nextEmptyPipe { get; set; }
+        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<Empty> nextPipe)
+        {
+            InterAppend(nextPipe);
+            nextPipe.InterAppendTo(this);
+        }
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道 ( 接收空上下文
         /// </summary>
         /// <param name="nextPipe"></param>
         internal virtual void InterAppend(BaseInPipePart<Empty> nextPipe)
         {
-        }
-
-        private BaseInPipePart<Empty> _nextEmptyPipe { get; set; }
-
-        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<Empty> nextPipe)
-        {
             if (NextPipe != null)
             {
                 throw new ArgumentException("当前节点已经关联下游节点！");
             }
-
             NextPipe = _nextEmptyPipe = nextPipe;
-            InterAppend(nextPipe);
         }
+
 
         #endregion
 
         #region 管道初始化
 
+        /// <inheritdoc />
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
             LineContainer = flowContainer;

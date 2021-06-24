@@ -47,8 +47,7 @@ namespace OSS.Pipeline.Base
         ///  流容器
         /// </summary>
         protected IPipeLine LineContainer { get; set; }
-
-
+        
         #region 管道监控
 
         internal PipeWatcherProxy WatchProxy { get; set; }
@@ -79,7 +78,7 @@ namespace OSS.Pipeline.Base
         }
 
         #endregion
-        
+
         #region 内部扩散方法
 
         /// <summary>
@@ -116,6 +115,19 @@ namespace OSS.Pipeline.Base
         /// <param name="context"></param>
         /// <returns></returns>
         internal abstract Task<TrafficResult> InterPreCall(TInContext context);
+
+        #endregion
+
+        #region 管道连接
+
+        /// <summary>
+        /// 被连接到时执行
+        /// </summary>
+        /// <param name="prePipe">被追加的上级管道</param>
+        internal virtual void InterAppendTo(IPipe prePipe)
+        {
+        }
+
 
         #endregion
     }

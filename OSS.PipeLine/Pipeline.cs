@@ -102,10 +102,12 @@ namespace OSS.Pipeline
         /// <param name="nextPipe"></param>
         internal override void InterAppend(BaseInPipePart<TOutContext> nextPipe)
         {
+            base.InterAppend(nextPipe);
             _endPipe.InterAppend(nextPipe);
         }
         internal override void InterAppend(BaseInPipePart<Empty> nextPipe)
         {
+            base.InterAppend(nextPipe);
             _endPipe.InterAppend(nextPipe);
         }
 

@@ -28,28 +28,27 @@ namespace OSS.Pipeline.Tests
             var endActivity = new EmptyActivity();
 
             ApplyActivity
-            .Append(AuditActivity)
+                .Append(AuditActivity)
 
-            .Append(PayActivity)
-            .Append(PayGateway);
+                .Append(PayActivity)
+                .Append(PayGateway);
 
             // 网关分支 - 发送邮件分支
             PayGateway
-            .AddBranch(EmailConnector)
-            .Append(EmailActivity)
-            .Append(endActivity);
+                .Append(EmailConnector)
+                .Append(EmailActivity)
+                .Append(endActivity);
 
             // 网关分支- 入库分支
             PayGateway
-            .AddBranch(StockConnector)
-            .Append(StockActivity)
-            .Append(endActivity);
+                .Append(StockConnector)
+                .Append(StockActivity)
+                .Append(endActivity);
 
             // 流体对象
-            TestPipeline =new Pipeline<ApplyContext,Empty>("test-flow",ApplyActivity, endActivity) ;
+            TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, endActivity);
         }
-
-
+        
         [TestMethod]
         public async Task FlowTest()
         {
