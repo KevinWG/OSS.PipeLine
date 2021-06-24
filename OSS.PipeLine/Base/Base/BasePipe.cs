@@ -33,33 +33,36 @@ namespace OSS.Pipeline.Base.Base
         protected BasePipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
         #region 管道内部业务流转处理
 
         /// <summary>
         ///  内部管道 -- （1）执行
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
-        internal Task<TrafficResult<THandleResult,TOutContext>> InterProcess(THandlePara context)
+        internal Task<TrafficResult<THandleResult,TOutContext>> InterProcess(THandlePara context,string prePipeCode)
         {
-            return InterProcessHandling(context);
+            return InterProcessHandling(context,prePipeCode);
         }
 
         /// <summary>
         ///  内部管道 -- （2）执行 - 控制流转，阻塞处理
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context);
+        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode);
 
         /// <summary>
         ///  内部管道 -- （3）执行 - 组装业务处理结果
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context);
-        
+        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context, string prePipeCode);
+
         /// <summary>
         ///  管道堵塞  --  执行阻塞后调用
         /// </summary>
@@ -71,11 +74,11 @@ namespace OSS.Pipeline.Base.Base
             await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult());
             await Block(context, tRes);
         }
-        
+
         #endregion
 
         #region 管道阻塞扩展
-        
+
         /// <summary>
         ///  管道堵塞
         /// </summary>

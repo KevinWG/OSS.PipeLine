@@ -63,7 +63,7 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override async Task<TrafficResult<TMsg, TMsg>> InterProcessPackage(TMsg context)
+        internal override async Task<TrafficResult<TMsg, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
         {
             return (await _pusher.Publish(context))
                 ? new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass,string.Empty,string.Empty,context,context)

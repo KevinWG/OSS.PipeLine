@@ -38,7 +38,7 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         public async Task<TContext> Execute(TContext context)
         {
-            return (await InterProcess(context)).result;
+            return (await InterProcess(context,string.Empty)).result;
         }
         
         #endregion
@@ -48,17 +48,17 @@ namespace OSS.Pipeline.Base
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(TContext context)
+        internal override async Task<TrafficResult> InterPreCall(TContext context, string prePipeCode)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
-            var tRes = await InterProcess(context);
+            var tRes = await InterProcess(context,prePipeCode);
             return tRes.ToResult();
         }
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TContext, TContext>> InterProcessHandling(TContext context)
+        internal override async Task<TrafficResult<TContext, TContext>> InterProcessHandling(TContext context, string prePipeCode)
         {
-            var trafficRes = await InterProcessPackage(context);
+            var trafficRes = await InterProcessPackage(context,prePipeCode);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
             
             if (trafficRes.signal == SignalFlag.Red_Block)

@@ -41,9 +41,9 @@ namespace OSS.Pipeline.Base
         #region 管道内部业务流转处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context)
+        internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode)
         {
-            var trafficRes = await InterProcessPackage(context);
+            var trafficRes = await InterProcessPackage(context,prePipeCode);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
 
             if (trafficRes.signal == SignalFlag.Green_Pass)
@@ -75,11 +75,11 @@ namespace OSS.Pipeline.Base
             {
                 if (_nextPipe != null)
                 {
-                    return _nextPipe.InterPreCall(nextInContext);
+                    return _nextPipe.InterPreCall(nextInContext,PipeCode);
                 }
                 else
                 {
-                    return _nextEmptyPipe.InterPreCall(Empty.Default);
+                    return _nextEmptyPipe.InterPreCall(Empty.Default,PipeCode);
                 }
             }
             return Task.FromResult(TrafficResult.Green);

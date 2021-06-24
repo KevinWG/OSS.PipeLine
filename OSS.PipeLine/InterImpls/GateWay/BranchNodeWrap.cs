@@ -9,7 +9,7 @@ namespace OSS.Pipeline.InterImpls.GateWay
     /// </summary>
     public interface IBranchNodePipe:IPipe
     {
-        internal Task<TrafficResult> InterPreCall(object context);
+        internal Task<TrafficResult> InterPreCall(object context, string prePipeCode);
 
         /// <summary>
         ///  内部处理流容器初始化赋值
@@ -39,9 +39,9 @@ namespace OSS.Pipeline.InterImpls.GateWay
             _pipePart = pipePart;
         }
 
-        Task<TrafficResult> IBranchNodePipe.InterPreCall(object context)
+        Task<TrafficResult> IBranchNodePipe.InterPreCall(object context,string prePipeCode)
         {
-            return _pipePart.InterPreCall((TContext) context);
+            return _pipePart.InterPreCall((TContext) context,prePipeCode);
         }
 
         void IBranchNodePipe.InterInitialContainer(IPipeLine containerFlow)
@@ -71,9 +71,9 @@ namespace OSS.Pipeline.InterImpls.GateWay
             _pipePart = pipePart;
         }
 
-        Task<TrafficResult> IBranchNodePipe.InterPreCall(object context)
+        Task<TrafficResult> IBranchNodePipe.InterPreCall(object context, string prePipeCode)
         {
-            return _pipePart.InterPreCall(Empty.Default);
+            return _pipePart.InterPreCall(Empty.Default,prePipeCode);
         }
 
         void IBranchNodePipe.InterInitialContainer(IPipeLine containerFlow)

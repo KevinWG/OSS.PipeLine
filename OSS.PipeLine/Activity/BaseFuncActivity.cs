@@ -37,7 +37,7 @@ namespace OSS.Pipeline
       
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TFuncResult, TFuncPara>> InterProcessPackage(TFuncPara context)
+        internal override async Task<TrafficResult<TFuncResult, TFuncPara>> InterProcessPackage(TFuncPara context, string prePipeCode)
         {
             var tSignal = await Executing(context);
             return new TrafficResult<TFuncResult, TFuncPara>(tSignal,
