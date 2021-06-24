@@ -9,10 +9,11 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgFlow<TMsg> : BaseStraightPipe<TMsg, TMsg>,IDataSubscriber<TMsg>
+    public abstract class BaseMsgFlow<TMsg> : BaseThreeWayPipe<TMsg, TMsg, TMsg>,IDataSubscriber<TMsg>
     {
         // 内部异步处理入口
         private readonly IDataPublisher<TMsg> _pusher;
+
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>

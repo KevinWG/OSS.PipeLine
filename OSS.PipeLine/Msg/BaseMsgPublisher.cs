@@ -10,7 +10,7 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgPublisher<TMsg> : BaseInterceptPipe<TMsg>
+    public abstract class BaseMsgPublisher<TMsg> : BaseOneWayPipe<TMsg>
     {
         // 内部异步处理入口
         private readonly IDataPublisher<TMsg> _pusher;
@@ -60,29 +60,7 @@ namespace OSS.Pipeline
       
         #endregion
 
-        #region 管道初始化
-
-        internal override void InterInitialContainer(IPipeLine flowContainer)
-        {
-            LineContainer = flowContainer;
-            WatchProxy    = flowContainer.GetProxy();
-        }
-
-        #endregion
-
-        #region 管道路由
-        //  消息发布节点本身是一个独立的结束节点
-        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
-        {
-            var pipe = new PipeRoute()
-            {
-                pipe_code = PipeCode,
-                pipe_type = PipeType
-            };
-            return pipe;
-        }
-        
-        #endregion
+    
 
     }
 

@@ -25,7 +25,7 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TOutContext"></typeparam>
     /// <typeparam name="THandlePara"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BasePipe<TInContext, THandlePara,THandleResult, TOutContext>
+    public abstract class BaseFourWayPipe<TInContext, THandlePara,THandleResult, TOutContext>
         :  BaseInPipePart<TInContext>,
         IPipeAppender<TOutContext>
     {
@@ -33,12 +33,22 @@ namespace OSS.Pipeline.Base
         ///  构造函数
         /// </summary>
         /// <param name="pipeType"></param>
-        protected BasePipe(PipeType pipeType) : base(pipeType)
+        protected BaseFourWayPipe(PipeType pipeType) : base(pipeType)
         {
         }
-        
+
+        #region 管道业务扩展
+
+        //protected virtual Task<TrafficSignal> ProcessFilter(THandlePara context)
+        //{
+
+        //}
+
+        #endregion
+
+
         #region 管道内部业务流转处理
-        
+
         /// <summary>
         ///  内部管道 -- （2）执行
         /// </summary>

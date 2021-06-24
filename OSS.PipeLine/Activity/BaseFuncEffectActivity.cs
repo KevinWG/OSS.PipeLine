@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.Activity.Base;
 
 namespace OSS.Pipeline
 {
@@ -11,7 +12,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
     public abstract class BaseFuncEffectActivity<TFuncPara, TFuncResult> :
-        BaseFuncPipe<TFuncPara, TFuncResult, TFuncResult>, IFuncEffectActivity<TFuncPara, TFuncResult>
+        BaseThreeWayFuncActivity<TFuncPara, TFuncResult, TFuncResult>, IFuncEffectActivity<TFuncPara, TFuncResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -19,19 +20,7 @@ namespace OSS.Pipeline
         protected BaseFuncEffectActivity() : base(PipeType.FuncEffectActivity)
         {
         }
-        /// <summary>
-        ///  具体执行扩展方法
-        /// </summary>
-        /// <param name="para">当前活动上下文信息</param>
-        /// <returns>
-        /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
-        /// traffic_signal：     
-        ///     Green_Pass  - 流体自动流入后续管道
-        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
-        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
-        /// </returns>
-        protected abstract Task<TrafficSignal<TFuncResult>> Executing(TFuncPara para);
-
+        
         internal override async Task<TrafficResult<TFuncResult, TFuncResult>> InterProcessPackage(TFuncPara context)
         {
             var tSignal = await Executing(context);

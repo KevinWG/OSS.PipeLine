@@ -24,7 +24,7 @@ namespace OSS.Pipeline
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBranchGateway<TContext> : BaseInterceptPipe<TContext>
+    public abstract class BaseBranchGateway<TContext> : BaseOneWayPipe<TContext>
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -71,8 +71,8 @@ namespace OSS.Pipeline
         ///   添加分支       
         /// </summary>
         /// <param name="pipe"></param>
-        public BasePipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
-            BasePipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> pipe)
+        public BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
+            BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> pipe)
         {
             Add(pipe);
             return pipe;
@@ -83,7 +83,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public void AddBranch(BaseInterceptPipe<TContext> nextPipe)
+        public void AddBranch(BaseOneWayPipe<TContext> nextPipe)
         {
             Add(nextPipe);
         }

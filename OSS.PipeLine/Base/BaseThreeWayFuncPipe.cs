@@ -6,18 +6,20 @@ using OSS.Pipeline.InterImpls.Watcher;
 namespace OSS.Pipeline.Base
 {
     /// <summary>
-    ///  管道基类（空参被动类型）
+    ///  管道基类（被动三向类型 ）
+    ///   输入：被动入参 （隐形忽略上游传参
+    ///   输出：被动结果输出， 下游上下文参数输出
     /// </summary>
     /// <typeparam name="TOut"></typeparam>
-    /// <typeparam name="TFuncPara"></typeparam>
-    /// <typeparam name="TFuncResult"></typeparam>
-    public abstract class BaseFuncPipe<TFuncPara,TFuncResult, TOut> :
-       BasePipe<Empty, TFuncPara, TFuncResult, TOut>,IPipeFuncExecutor<TFuncPara, TFuncResult>
+    /// <typeparam name="THandlePara"></typeparam>
+    /// <typeparam name="THandleResult"></typeparam>
+    public abstract class BaseThreeWayFuncPipe<THandlePara,THandleResult, TOut> :
+       BaseFourWayPipe<Empty, THandlePara, THandleResult, TOut>,IPipeFuncExecutor<THandlePara, THandleResult>
     {
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseFuncPipe(PipeType pipeType) : base(pipeType)
+        protected BaseThreeWayFuncPipe(PipeType pipeType) : base(pipeType)
         {
         }
 
@@ -26,7 +28,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        public async Task<TFuncResult> Execute(TFuncPara para)
+        public async Task<THandleResult> Execute(THandlePara para)
         {
             var trafficRes = await InterProcess(para);
             return trafficRes.result;

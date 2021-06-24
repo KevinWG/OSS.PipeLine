@@ -34,7 +34,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TResult"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> Start<TIn, TPara, TResult, TOut>(BasePipe<TIn, TPara,TResult, TOut> startPipe)
+        public static IPipelineAppender<TIn, TOut> Start<TIn, TPara, TResult, TOut>(BaseFourWayPipe<TIn, TPara,TResult, TOut> startPipe)
         {
             return new InterPipelineAppender<TIn, TOut>( startPipe, startPipe);
         }
@@ -47,7 +47,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TResult"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, TOut> Start< TPara, TResult, TOut>(BasePipe<Empty, TPara, TResult, TOut> startPipe)
+        public static IPipelineAppender<Empty, TOut> Start< TPara, TResult, TOut>(BaseFourWayPipe<Empty, TPara, TResult, TOut> startPipe)
         {
             return new InterPipelineAppender<Empty, TOut>( startPipe, startPipe);
         }

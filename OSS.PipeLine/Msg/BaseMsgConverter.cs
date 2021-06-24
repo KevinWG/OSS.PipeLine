@@ -22,7 +22,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInMsg"></typeparam>
     /// <typeparam name="TOutMsg"></typeparam>
-    public abstract class BaseMsgConverter<TInMsg, TOutMsg> : BaseStraightPipe<TInMsg, TOutMsg>
+    public abstract class BaseMsgConverter<TInMsg, TOutMsg> : BaseThreeWayPipe<TInMsg, TOutMsg,TOutMsg>
     {
         /// <summary>
         /// 消息转化基类

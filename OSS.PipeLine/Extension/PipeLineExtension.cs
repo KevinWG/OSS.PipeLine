@@ -35,7 +35,7 @@ namespace OSS.Pipeline
         /// <param name="nextPipe"></param>
         /// <returns></returns>
         public static IPipelineAppender<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
-            BasePipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
+            BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
         {
             return pipe.Set(nextPipe);
         }
@@ -52,7 +52,7 @@ namespace OSS.Pipeline
         /// <param name="nextPipe"></param>
         /// <returns></returns>
         public static IPipelineAppender<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
-            BasePipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
+            BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
         {
             return pipe.Set(nextPipe);
         }
@@ -96,7 +96,7 @@ namespace OSS.Pipeline
 
 
         internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-            BasePipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
+            BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
             IPipelineAppender<TIn, TNextOut> pipelineAppender = new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
@@ -108,7 +108,7 @@ namespace OSS.Pipeline
 
 
         internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-            BasePipe<Empty, TNextPara, TNextResult, TNextOut> endPipe)
+            BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
             IPipelineAppender<TIn, TNextOut> appender =
@@ -120,7 +120,7 @@ namespace OSS.Pipeline
         }
 
         internal static void Set<TIn, TOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-            BaseInterceptPipe<TOut> endPipe)
+            BaseOneWayPipe<TOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
 

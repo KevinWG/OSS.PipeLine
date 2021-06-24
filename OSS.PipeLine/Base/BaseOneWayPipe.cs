@@ -18,13 +18,13 @@ using OSS.Pipeline.InterImpls.Watcher;
 namespace OSS.Pipeline.Base
 {
     /// <summary>
-    ///  管道执行基类（拦截类型）
+    ///  管道执行基类（单入类型）
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public abstract class BaseInterceptPipe<TInContext> : BaseInPipePart<TInContext>,IPipeExecutor<TInContext,TInContext>
+    public abstract class BaseOneWayPipe<TInContext> : BaseInPipePart<TInContext>,IPipeExecutor<TInContext,TInContext>
     {
         /// <inheritdoc />
-        protected BaseInterceptPipe(PipeType pipeType) : base(pipeType)
+        protected BaseOneWayPipe(PipeType pipeType) : base(pipeType)
         {
         }
         
@@ -112,19 +112,31 @@ namespace OSS.Pipeline.Base
             return Task.CompletedTask;
         }
         #endregion
-        
-        #region 内部初始化和路由方法
 
-        internal override void InterInitialContainer(IPipeLine containerFlow)
-        {
-            throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterInitialContainer 方法没有实现，无法执行");
-        }
+    
+        #region 管道初始化
 
-        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
+        internal override void InterInitialContainer(IPipeLine flowContainer)
         {
-            throw new System.NotImplementedException($"{PipeCode} 当前的内部 InterToRoute 方法没有实现，无法执行");
+            LineContainer = flowContainer;
+            WatchProxy    = flowContainer.GetProxy();
         }
 
         #endregion
+
+        #region 管道路由
+        //  消息发布节点本身是一个独立的结束节点
+        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
+        {
+            var pipe = new PipeRoute()
+            {
+                pipe_code = PipeCode,
+                pipe_type = PipeType
+            };
+            return pipe;
+        }
+
+        #endregion
+     
     }
 }
