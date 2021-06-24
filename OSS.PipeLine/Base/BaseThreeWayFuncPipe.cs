@@ -57,8 +57,5 @@ namespace OSS.Pipeline.Base
         }
         
         #endregion
-
-
-
     }
 }

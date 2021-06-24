@@ -12,6 +12,7 @@
 #endregion
 
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.Base.Base;
 using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.InterImpls.Watcher;
@@ -26,7 +27,7 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="THandlePara"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
     public abstract class BaseFourWayPipe<TInContext, THandlePara,THandleResult, TOutContext>
-        :  BaseInPipePart<TInContext>,
+        : BasePipe<TInContext, THandlePara, THandleResult, TOutContext>,
         IPipeAppender<TOutContext>
     {
         /// <summary>
@@ -37,34 +38,10 @@ namespace OSS.Pipeline.Base
         {
         }
 
-        #region 管道业务扩展
-
-        //protected virtual Task<TrafficSignal> ProcessFilter(THandlePara context)
-        //{
-
-        //}
-
-        #endregion
-
-
         #region 管道内部业务流转处理
 
-        /// <summary>
-        ///  内部管道 -- （2）执行
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal Task<TrafficResult<THandleResult,TOutContext>> InterProcess(THandlePara context)
-        {
-            return InterProcessHandling(context);
-        }
-
-        /// <summary>
-        ///  内部管道 -- （3）执行 - 控制流转，阻塞处理
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context)
+        /// <inheritdoc />
+        internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context)
         {
             var trafficRes = await InterProcessPackage(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
@@ -85,43 +62,8 @@ namespace OSS.Pipeline.Base
             return trafficRes;
         }
 
-        /// <summary>
-        ///  内部管道 -- （4）执行 - 组装业务处理结果
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context);
-
         #endregion
-
-        #region 管道阻塞扩展
-
-
-        /// <summary>
-        ///  管道堵塞
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="tRes"></param>
-        /// <returns></returns>
-        internal virtual async Task InterBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
-        {
-            await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult());
-            await Block(context, tRes);
-        }
-
-        /// <summary>
-        ///  管道堵塞
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="tRes"></param>
-        /// <returns></returns>
-        protected virtual Task Block(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
-        {
-            return Task.CompletedTask;
-        }
-
-        #endregion
-
+        
         #region 管道连接处理
 
         //private 

@@ -111,7 +111,7 @@ namespace OSS.Pipeline
 
             if (_branchItems == null || !_branchItems.Any())
             {
-                throw new ArgumentNullException($"分支网关({PipeCode})并没有分支路径");
+                throw new ArgumentNullException($"分支网关({PipeCode})并没有可用下游管道");
             }
 
             _branchItems.ForEach(b => b.InterInitialContainer(flowContainer));

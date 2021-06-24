@@ -13,6 +13,7 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.Base.Base;
 using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
@@ -20,8 +21,8 @@ namespace OSS.Pipeline.Base
     /// <summary>
     ///  管道执行基类（单入类型）
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    public abstract class BaseOneWayPipe<TInContext> : BaseInPipePart<TInContext>,IPipeExecutor<TInContext,TInContext>
+    /// <typeparam name="TContext"></typeparam>
+    public abstract class BaseOneWayPipe<TContext> : BasePipe<TContext, TContext, TContext, TContext>, IPipeExecutor<TContext,TContext>
     {
         /// <inheritdoc />
         protected BaseOneWayPipe(PipeType pipeType) : base(pipeType)
@@ -35,41 +36,27 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<TInContext> Execute(TInContext context)
+        public async Task<TContext> Execute(TContext context)
         {
             return (await InterProcess(context)).result;
         }
-
-
+        
         #endregion
+
+
 
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(TInContext context)
+        internal override async Task<TrafficResult> InterPreCall(TContext context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
             var tRes = await InterProcess(context);
             return tRes.ToResult();
         }
 
-
-        /// <summary>
-        ///  内部管道 -- （2）执行
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal Task<TrafficResult<TInContext, TInContext>> InterProcess(TInContext context)
-        {
-            return InterProcessHandling(context);
-        }
-
-        /// <summary>
-        ///  内部管道 -- （3）执行 - 控制流转
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal async Task<TrafficResult<TInContext, TInContext>> InterProcessHandling(TInContext context)
+        /// <inheritdoc />
+        internal override async Task<TrafficResult<TContext, TContext>> InterProcessHandling(TContext context)
         {
             var trafficRes = await InterProcessPackage(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
@@ -80,40 +67,9 @@ namespace OSS.Pipeline.Base
             }
             return trafficRes;
         }
-
-        /// <summary>
-        ///  内部管道 -- （4）执行 - 组装业务结果
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal abstract Task<TrafficResult<TInContext, TInContext>> InterProcessPackage(TInContext context);
-
-
-        /// <summary>
-        ///  管道堵塞
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="tRes"></param>
-        /// <returns></returns>
-        internal virtual async Task InterBlock(TInContext context, TrafficResult<TInContext, TInContext> tRes)
-        {
-            await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult());
-            await Block(context, tRes);
-        }
-
-        /// <summary>
-        ///  管道堵塞
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="tRes"></param>
-        /// <returns></returns>
-        protected virtual Task Block(TInContext context, TrafficResult<TInContext, TInContext> tRes)
-        {
-            return Task.CompletedTask;
-        }
+        
         #endregion
-
-    
+        
         #region 管道初始化
 
         internal override void InterInitialContainer(IPipeLine flowContainer)
@@ -125,7 +81,8 @@ namespace OSS.Pipeline.Base
         #endregion
 
         #region 管道路由
-        //  消息发布节点本身是一个独立的结束节点
+
+        //  节点本身是一个独立的结束节点
         internal override PipeRoute InterToRoute(bool isFlowSelf = false)
         {
             var pipe = new PipeRoute()
