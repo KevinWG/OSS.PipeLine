@@ -12,67 +12,56 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.InterImpls.Watcher;
+using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
 {
-    // todo 需要扩展上级节点属性后才有价值，否则当前等同于BaseActivity
-    ///// <summary>
-    ///// 流体的多路聚合网关基类
-    ///// the aggregative gate of flow
-    ///// </summary>
-    ///// <typeparam name="TContext"></typeparam>
-    //public abstract class BaseAggregateGateway<TContext>  : BaseStraightPipe<TContext, TContext>
-    //{
-    //    /// <summary>
-    //    ///  流体的多路聚合网关基类构造函数
-    //    /// </summary>
-    //    protected BaseAggregateGateway() : base(PipeType.AggregateGateway)
-    //    {
-    //    }
+    /// <summary>
+    /// 流体的多路聚合网关基类
+    /// the aggregative gate of flow
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    public abstract class BaseAggregateGateway<TContext> : BaseThreeWayPipe<TContext, TContext, TContext>
+    {
+        /// <summary>
+        ///  流体的多路聚合网关基类构造函数
+        /// </summary>
+        protected BaseAggregateGateway() : base(PipeType.AggregateGateway)
+        {
+            _aggregatePipes = new List<IPipe>();
+        }
 
-    //    /// <summary>
-    //    ///  是否触发通过
-    //    /// </summary>
-    //    /// <param name="context"></param>
-    //    /// <returns></returns>
-    //    protected abstract Task<MatchCondition> IfMatchCondition(TContext context);
+        /// <summary>
+        ///  是否触发通过
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="prePipeCode">当前业务上游节点</param>
+        /// <param name="allPrePipes">聚合到当前管道的所有上游节点</param>
+        /// <returns></returns>
+        protected abstract Task<TrafficSignal> Switch(TContext context, string prePipeCode, IList<IPipe> allPrePipes);
 
+        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context,
+            string prePipeCode)
+        {
+            var trafficSignal = await Switch(context, prePipeCode, _aggregatePipes);
+            return new TrafficResult<TContext, TContext>(trafficSignal,
+                trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
+        }
 
-    //    internal override async Task<bool> InterHandling(TContext context)
-    //    {
-    //        var res = await IfMatchCondition(context);
-    //        await Watch(PipeCode, PipeType, WatchActionType.Executed, context, res);
+        private readonly IList<IPipe> _aggregatePipes;
 
-    //        if (res== MatchCondition.MatchAndContinue)
-    //        {
-    //           return await ToNextThrough(context);
-    //        }
-    //        return res == MatchCondition.NotMatchAndWait;//返回false触发block
-    //    }
-    //}
+        private object _lockObj = new object();
 
-    ///// <summary>
-    /////  匹配结果
-    ///// </summary>
-    //public enum MatchCondition
-    //{
-    //    /// <summary>
-    //    ///  匹配且继续
-    //    /// </summary>
-    //    MatchAndContinue=0,
-
-    //    /// <summary>
-    //    ///  不匹配也不继续向后流动
-    //    /// </summary>
-    //    NotMatchAndWait=10,
-
-    //    /// <summary>
-    //    ///  不匹配且触发阻塞
-    //    /// </summary>
-    //    NotMatchAndBlock=20
-    //}
-
+        /// <inheritdoc />
+        internal override void InterAppendTo(IPipe prePipe)
+        {
+            lock (_lockObj)
+            {
+                _aggregatePipes.Add(prePipe);
+            }
+        }
+    }
 }

@@ -25,7 +25,7 @@ namespace OSS.Pipeline.Tests
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
-            var endActivity = new EmptyActivity();
+            var endNode = new EndGateway();
 
             ApplyActivity
                 .Append(AuditActivity)
@@ -37,16 +37,16 @@ namespace OSS.Pipeline.Tests
             PayGateway
                 .Append(EmailConnector)
                 .Append(EmailActivity)
-                .Append(endActivity);
+                .Append(endNode);
 
             // 网关分支- 入库分支
             PayGateway
                 .Append(StockConnector)
                 .Append(StockActivity)
-                .Append(endActivity);
+                .Append(endNode);
 
             // 流体对象
-            TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, endActivity);
+            TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, endNode);
         }
         
         [TestMethod]
