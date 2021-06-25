@@ -66,7 +66,30 @@ namespace OSS.Pipeline
             Func<TOut, Task<TrafficSignal>> exeFunc, string pipeCode = null)
         {
             return pipe.Then(new SimpleActivity<TOut>(exeFunc, pipeCode));
+        }
 
+        /// <summary>
+        ///  追加活动管道
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="exeFunc">
+        /// 执行委托
+        /// 参数：当前活动上下文（会继续传递给下一个节点）
+        /// 结果：
+        ///     TrafficSignal -（活动是否处理成功，业务结果）
+        ///         Green_Pass  - 流体自动流入后续管道
+        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
+        ///         Red_Block - 触发Block，业务流不再向后续管道传递。
+        /// </param>
+        /// <param name="pipeCode"></param>
+        /// <returns></returns>
+        public static IPipelineAppender<TIn, TOut> ThenWithActivity<TIn, TOut, TNextResult>(this IPipelineAppender<TIn, TOut> pipe,
+            Func<TOut, Task<TrafficSignal<TNextResult>>> exeFunc, string pipeCode = null)
+        {
+            return pipe.Then(new SimpleActivity<TOut, TNextResult>(exeFunc, pipeCode));
         }
 
         /// <summary>
@@ -91,7 +114,6 @@ namespace OSS.Pipeline
             Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
             return pipe.Then(new SimpleEffectActivity<TResult>(exeFunc, pipeCode));
-
         }
 
 

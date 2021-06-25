@@ -52,13 +52,13 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
-    /// <typeparam name="TInContext">输入输出上下文</typeparam>
-    public class SimpleActivity<TInContext> : BaseActivity<TInContext>
+    /// <typeparam name="TContext">输入输出上下文</typeparam>
+    public class SimpleActivity<TContext> : BaseActivity<TContext>
     {
-        private readonly Func<TInContext,Task<TrafficSignal>> _exeFunc;
+        private readonly Func<TContext,Task<TrafficSignal>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleActivity(Func<TInContext,Task<TrafficSignal>> exeFunc,string pipeCode = null)
+        public SimpleActivity(Func<TContext,Task<TrafficSignal>> exeFunc,string pipeCode = null)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -68,10 +68,37 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        protected override Task<TrafficSignal> Executing(TInContext contextData)
+        protected override Task<TrafficSignal> Executing(TContext contextData)
         {
             return _exeFunc(contextData);
         }
     }
 
+
+    /// <summary>
+    ///  主动触发执行活动组件基类
+    ///    接收输入上下文，且此上下文继续传递下一个节点
+    /// </summary>
+    /// <typeparam name="TContext">输入输出上下文</typeparam>
+    /// <typeparam name="THandleResult"></typeparam>
+    public class SimpleActivity<TContext, THandleResult> : BaseActivity<TContext, THandleResult>
+    {
+        private readonly Func<TContext, Task<TrafficSignal<THandleResult>>> _exeFunc;
+
+        /// <inheritdoc />
+        public SimpleActivity(Func<TContext, Task<TrafficSignal<THandleResult>>> exeFunc, string pipeCode = null)
+        {
+            if (!string.IsNullOrEmpty(pipeCode))
+            {
+                PipeCode = pipeCode;
+            }
+            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
+        }
+
+        /// <inheritdoc />
+        protected override Task<TrafficSignal<THandleResult>> Executing(TContext para)
+        {
+            return _exeFunc(para);
+        }
+    }
 }
