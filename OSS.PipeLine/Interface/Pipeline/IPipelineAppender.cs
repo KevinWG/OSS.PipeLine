@@ -36,16 +36,4 @@ namespace OSS.Pipeline.Interface
         internal BaseInPipePart<TInContext>     StartPipe   { get; set; }
         internal BaseBranchGateway<TOutContext> EndBranchPipe { get; set; }
     }
-
-    ///// <summary>
-    ///// 
-    ///// </summary>
-    ///// <typeparam name="TInContext"></typeparam>
-    ///// <typeparam name="TOutContext"></typeparam>
-    //public interface IPipelineInterceptAppender<TInContext, TOutContext>
-    //{
-    //    internal BaseInPipePart<TInContext>     StartPipe   { get; set; }
-    //    internal BaseInterceptPipe<TOutContext> EndPipe { get; set; }
-    //}
-
 }

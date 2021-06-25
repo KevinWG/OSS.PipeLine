@@ -61,7 +61,7 @@ namespace OSS.Pipeline.Interface
     /// 
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public interface IPipeLine<in TInContext> : IPipeLine
+    public interface IPipeLineEntry<in TInContext> : IPipeLine
     {
         /// <summary>
         ///  启动执行方法
@@ -69,5 +69,8 @@ namespace OSS.Pipeline.Interface
         /// <returns></returns>
         Task<TrafficResult> Execute(TInContext context);
     }
+
+
+
 
 }

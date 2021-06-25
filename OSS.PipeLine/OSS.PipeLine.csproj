@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.5.9</Version>
-    <PackageReleaseNotes>新增聚合网关</PackageReleaseNotes>
+    <Version>1.6.0</Version>
+    <PackageReleaseNotes>修改目录结构</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Pipeline</RepositoryUrl>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Activity\BaseBufferActivity.cs" />
+    <Compile Remove="Component\Activity\BaseBufferActivity.cs" />
   </ItemGroup>
 
   <ItemGroup>
