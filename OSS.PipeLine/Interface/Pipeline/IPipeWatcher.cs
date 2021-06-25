@@ -28,7 +28,7 @@ namespace OSS.Pipeline.Interface
         /// <summary>
         ///  当前执行完成
         /// </summary>
-        public Task<bool> Processed(string pipeCode, PipeType pipeType, object input, WatchResult watchResult);
+        public Task<bool> Executed(string pipeCode, PipeType pipeType, object input, WatchResult watchResult);
 
         /// <summary>
         ///  管道阻塞

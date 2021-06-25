@@ -38,7 +38,7 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context, string prePipeCode)
         {
-            var nextPipes = FilterNextPipes( context, _branchItems);
+            var nextPipes = SelectNextPipes( context, _branchItems);
             if (nextPipes == null || !nextPipes.Any())
                 return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,context);
 
@@ -58,45 +58,13 @@ namespace OSS.Pipeline
         /// <param name="branchNodePool"></param>
         /// <param name="context"></param>
         /// <returns>如果为空，则触发block</returns>
-        protected virtual IEnumerable<IBranchNodePipe> FilterNextPipes(TContext context,
+        protected virtual IEnumerable<IBranchNodePipe> SelectNextPipes(TContext context,
             List<IBranchNodePipe> branchNodePool)
         {
             return branchNodePool;
         }
 
         #region 管道连接
-        
-        ///// <summary>
-        /////   添加分支       
-        ///// </summary>
-        ///// <param name="pipe"></param>
-        //public BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
-        //    BaseFourWayPipe<TContext, TNextHandlePara, TNextResult, TNextOutContext> pipe)
-        //{
-        //    Add(pipe);
-        //    return pipe;
-        //}
-
-        ///// <summary>
-        /////   添加分支       
-        ///// </summary>
-        ///// <param name="pipe"></param>
-        //public BaseFourWayPipe<Empty, TNextHandlePara, TNextResult, TNextOutContext> AddBranch<TNextHandlePara, TNextResult, TNextOutContext>(
-        //    BaseFourWayPipe<Empty, TNextHandlePara, TNextResult, TNextOutContext> pipe)
-        //{
-        //    Add(pipe);
-        //    return pipe;
-        //}
-
-        ///// <summary>
-        ///// 追加消息发布者管道
-        ///// </summary>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public void AddBranch(BaseOneWayPipe<TContext> nextPipe)
-        //{
-        //    Add(nextPipe);
-        //}
         
         internal override void InterAppend(BaseInPipePart<TContext> nextPipe)
         {

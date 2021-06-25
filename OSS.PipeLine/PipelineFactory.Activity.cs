@@ -31,7 +31,7 @@ namespace OSS.Pipeline
         /// 执行委托，返回的处理结果：
         ///     TrafficSignal -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///         Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </param>
         /// <param name="pipeCode"></param>
@@ -52,7 +52,7 @@ namespace OSS.Pipeline
         /// 结果：
         ///     TrafficSignal -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///         Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </param>
         /// <param name="pipeCode"></param>
@@ -73,7 +73,7 @@ namespace OSS.Pipeline
         /// 结果：
         ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///         Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </param>
         /// <param name="pipeCode"></param>
@@ -99,7 +99,7 @@ namespace OSS.Pipeline
         /// 结果：
         ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///         Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </param>
         /// <param name="pipeCode"></param>
@@ -125,7 +125,7 @@ namespace OSS.Pipeline
         /// 结果：
         ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///         Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </param>
         /// <param name="pipeCode"></param>
@@ -149,7 +149,7 @@ namespace OSS.Pipeline
         /// 结果：
         ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///         Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </param>
         /// <param name="pipeCode"></param>

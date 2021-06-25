@@ -111,8 +111,7 @@ namespace OSS.Pipeline
         /// <param name="executeResult"></param>
         /// <param name="blockedPipeCode"></param>
         /// <param name="msg"></param>
-        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, THandleResult executeResult, TOut nextParas
-           )
+        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, THandleResult executeResult, TOut nextParas)
         {
             next_paras        = nextParas;
             blocked_pipe_code = blockedPipeCode;

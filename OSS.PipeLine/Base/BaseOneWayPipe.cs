@@ -58,8 +58,8 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessHandling(TContext context, string prePipeCode)
         {
-            var trafficRes = await InterProcessPackage(context,prePipeCode);
-            await Watch(PipeCode, PipeType, WatchActionType.Processed, context, trafficRes.ToWatchResult());
+            var trafficRes   = await InterProcessPackage(context,prePipeCode);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
             
             if (trafficRes.signal == SignalFlag.Red_Block)
             {
@@ -67,7 +67,12 @@ namespace OSS.Pipeline.Base
             }
             return trafficRes;
         }
-        
+
+        //internal override Task<TrafficSignal<TContext>> InterBeforProcessing(TContext context)
+        //{
+        //    throw new System.NotImplementedException();
+        //}
+
         #endregion
         
         #region 管道初始化

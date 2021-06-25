@@ -52,8 +52,8 @@ namespace OSS.Pipeline.InterImpls.Watcher
                 {
                     case WatchActionType.PreCall:
                         return await _watcher.PreCall(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
-                    case WatchActionType.Processed:
-                        return await _watcher.Processed(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
+                    case WatchActionType.Executed:
+                        return await _watcher.Executed(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
                     case WatchActionType.Blocked:
                         return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
                 }
@@ -102,7 +102,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
         /// <summary>
         ///  执行完成
         /// </summary>
-        Processed,
+        Executed,
 
         /// <summary>
         ///  堵塞

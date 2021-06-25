@@ -43,9 +43,8 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode)
         {
-
             var trafficRes = await InterProcessPackage(context,prePipeCode);
-            await Watch(PipeCode, PipeType, WatchActionType.Processed, context, trafficRes.ToWatchResult());
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
 
             if (trafficRes.signal == SignalFlag.Green_Pass)
             {
@@ -60,6 +59,7 @@ namespace OSS.Pipeline.Base
             {
                 await InterBlock(context, trafficRes);
             }
+
             return trafficRes;
         }
 

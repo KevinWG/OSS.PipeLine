@@ -54,9 +54,7 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
         internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode);
-
-
-
+        
         /// <summary>
         ///  内部管道 -- （3）执行 - 组装业务处理结果
         /// </summary>
@@ -66,7 +64,7 @@ namespace OSS.Pipeline.Base.Base
         internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context, string prePipeCode);
 
         /// <summary>
-        ///  管道堵塞  --  执行阻塞后调用
+        ///  管道堵塞  --  (4) 执行 - 阻塞后调用
         /// </summary>
         /// <param name="context"></param>
         /// <param name="tRes"></param>
@@ -76,14 +74,13 @@ namespace OSS.Pipeline.Base.Base
             await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult());
             await Block(context, tRes);
         }
-
+        
         #endregion
 
         #region 管道外部扩展
-
-
+        
         /// <summary>
-        ///  管道堵塞
+        ///  管道堵塞（堵塞可能来自本管道，也可能是通知下游管道返回堵塞
         /// </summary>
         /// <param name="context"></param>
         /// <param name="tRes"></param>
@@ -92,8 +89,8 @@ namespace OSS.Pipeline.Base.Base
         {
             return Task.CompletedTask;
         }
-
+        
         #endregion
     }
-    
+
 }

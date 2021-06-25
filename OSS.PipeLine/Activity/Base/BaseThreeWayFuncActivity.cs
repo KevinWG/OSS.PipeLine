@@ -41,7 +41,7 @@ namespace OSS.Pipeline.Activity.Base
         /// traffic_signal：
         /// traffic_signal：     
         ///     Green_Pass  - 流体自动流入后续管道
-        ///     Yellow_Wait - 暂停执行，既不向后流动，也不触发Block。
+        ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
         protected abstract Task<TrafficSignal<THandleResult>> Executing(THandlePara para);
