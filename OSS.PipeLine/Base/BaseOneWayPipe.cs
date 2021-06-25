@@ -50,7 +50,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterPreCall(TContext context, string prePipeCode)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
+            await Watch(PipeCode, PipeType, WatchActionType.PreCall, context);
             var tRes = await InterProcess(context,prePipeCode);
             return tRes.ToResult();
         }
@@ -59,7 +59,7 @@ namespace OSS.Pipeline.Base
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessHandling(TContext context, string prePipeCode)
         {
             var trafficRes = await InterProcessPackage(context,prePipeCode);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
+            await Watch(PipeCode, PipeType, WatchActionType.Processed, context, trafficRes.ToWatchResult());
             
             if (trafficRes.signal == SignalFlag.Red_Block)
             {

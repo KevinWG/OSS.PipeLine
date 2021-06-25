@@ -43,8 +43,9 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode)
         {
+
             var trafficRes = await InterProcessPackage(context,prePipeCode);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
+            await Watch(PipeCode, PipeType, WatchActionType.Processed, context, trafficRes.ToWatchResult());
 
             if (trafficRes.signal == SignalFlag.Green_Pass)
             {
@@ -65,8 +66,7 @@ namespace OSS.Pipeline.Base
         #endregion
         
         #region 管道连接处理
-
-        //private 
+        
         internal BasePipePart NextPipe { get; set; }
 
         internal Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
@@ -82,6 +82,7 @@ namespace OSS.Pipeline.Base
                     return _nextEmptyPipe.InterPreCall(Empty.Default,PipeCode);
                 }
             }
+            // 说明已经是最后一个管道
             return Task.FromResult(TrafficResult.Green);
         }
 

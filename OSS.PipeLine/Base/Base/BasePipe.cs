@@ -55,6 +55,8 @@ namespace OSS.Pipeline.Base.Base
         /// <returns></returns>
         internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode);
 
+
+
         /// <summary>
         ///  内部管道 -- （3）执行 - 组装业务处理结果
         /// </summary>
@@ -77,7 +79,8 @@ namespace OSS.Pipeline.Base.Base
 
         #endregion
 
-        #region 管道阻塞扩展
+        #region 管道外部扩展
+
 
         /// <summary>
         ///  管道堵塞

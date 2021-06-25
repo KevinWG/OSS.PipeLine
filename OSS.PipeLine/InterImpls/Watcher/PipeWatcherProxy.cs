@@ -50,10 +50,10 @@ namespace OSS.Pipeline.InterImpls.Watcher
                 //  避免造成触发队列  Complete 
                 switch (data.ActionType)
                 {
-                    case WatchActionType.Starting:
-                        return await _watcher.Starting(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
-                    case WatchActionType.Executed:
-                        return await _watcher.Excuted(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
+                    case WatchActionType.PreCall:
+                        return await _watcher.PreCall(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
+                    case WatchActionType.Processed:
+                        return await _watcher.Processed(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
                     case WatchActionType.Blocked:
                         return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
                 }
@@ -95,14 +95,14 @@ namespace OSS.Pipeline.InterImpls.Watcher
     internal enum WatchActionType
     {
         /// <summary>
-        ///  开始
+        ///  上游管道调用
         /// </summary>
-        Starting,
+        PreCall,
 
         /// <summary>
         ///  执行完成
         /// </summary>
-        Executed,
+        Processed,
 
         /// <summary>
         ///  堵塞

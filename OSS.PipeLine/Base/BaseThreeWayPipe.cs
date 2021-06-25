@@ -55,7 +55,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
+            await Watch(PipeCode, PipeType, WatchActionType.PreCall, context);
             var tRes = await InterProcess(context,prePipeCode);
             return tRes.ToResult();
         }

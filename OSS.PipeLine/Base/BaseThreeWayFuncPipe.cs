@@ -52,7 +52,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterPreCall(Empty context, string prePipeCode)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Starting, context);
+            await Watch(PipeCode, PipeType, WatchActionType.PreCall, context);
             return  new TrafficResult(SignalFlag.Green_Pass,String.Empty, String.Empty);
         }
         
