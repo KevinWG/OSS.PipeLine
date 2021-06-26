@@ -54,22 +54,7 @@ namespace OSS.Pipeline
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
-
-
-
-        /// <summary>
-        /// 追加拦截类型管道
-        /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static void Append<OutContext>(this IPipeAppender<OutContext> pipe, BaseOneWayPipe<OutContext> nextPipe)
-        {
-            pipe.InterAppend(nextPipe);
-        }
-
-
+        
         /// <summary>
         /// 追加分支管道
         /// </summary>
@@ -82,6 +67,17 @@ namespace OSS.Pipeline
             pipe.InterAppend(nextPipe);
         }
 
+        /// <summary>
+        /// 追加单入类型管道
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void Append<OutContext>(this IPipeAppender<OutContext> pipe, BaseOneWayPipe<OutContext> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+        }
 
 
     }

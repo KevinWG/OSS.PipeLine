@@ -56,7 +56,6 @@ namespace OSS.Pipeline
         {
             return pipe.Set(nextPipe);
         }
-
         
         /// <summary>
         ///  添加下一个节点
@@ -70,8 +69,7 @@ namespace OSS.Pipeline
         {
             return pipe.Set(nextPipe);
         }
-
-
+        
         /// <summary>
         ///  添加第一个节点
         /// </summary>
@@ -91,6 +89,20 @@ namespace OSS.Pipeline
             pipe.EndBranchPipe = null;
 
             return newPipe;
+        }
+
+
+        /// <summary>
+        ///  添加下一个节点
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void Then<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, BaseOneWayPipe<TOut> nextPipe)
+        {
+            pipe.Set(nextPipe);
         }
 
 
