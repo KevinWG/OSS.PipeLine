@@ -72,7 +72,7 @@ namespace OSS.Pipeline
         #region 管道启动
 
         /// <inheritdoc />
-        public Task<TrafficResult> Execute(TInContext context)
+        public new Task Execute(TInContext context)
         {
             return InterPreCall(context,string.Empty);
         }
@@ -152,7 +152,8 @@ namespace OSS.Pipeline
         {
             return WatchProxy;
         }
-        
+
+     
         #endregion
 
     }

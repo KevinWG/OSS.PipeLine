@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿
+using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Interface
 {
@@ -6,12 +7,12 @@ namespace OSS.Pipeline.Interface
     /// 
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public interface IPipeLineEntry<in TInContext> : IPipeLine
+    public interface IPipeLineEntry<in TInContext> : IPipeLine//,IPipeInputExecutor<TInContext>
     {
         /// <summary>
-        ///  启动执行方法
+        ///  执行方法
         /// </summary>
         /// <returns></returns>
-        Task<TrafficResult> Execute(TInContext context);
+        Task Execute(TInContext para);
     }
 }

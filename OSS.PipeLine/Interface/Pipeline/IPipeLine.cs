@@ -27,7 +27,7 @@ namespace OSS.Pipeline.Interface
         internal PipeWatcherProxy GetProxy();
     }
 
-    public interface IPipeLine<in TInContext, TOutContext> : IPipeLine, IPipeLineEntry<TInContext>
+    public interface IPipeLine<TInContext, TOutContext> :  IPipeLineEntry<TInContext>
     {
 
     }
