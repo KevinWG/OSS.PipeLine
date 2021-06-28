@@ -22,8 +22,8 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
-    /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TResult> : BaseThreeWayPipe<Empty,TResult, TResult>, IActivity<TResult>
+    /// <typeparam name="THandleResult"></typeparam>
+    public abstract class BaseEffectActivity<THandleResult> : BaseThreeWayPipe<Empty,THandleResult, THandleResult>, IEffectActivity<THandleResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -38,7 +38,7 @@ namespace OSS.Pipeline
         /// 启动
         /// </summary>
         /// <returns></returns>
-        public Task<TResult> Execute()
+        public Task<THandleResult> Execute()
         {
             return Execute(Empty.Default);
         }
@@ -58,17 +58,17 @@ namespace OSS.Pipeline
         ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<TrafficSignal<TResult>> Executing();
+        protected abstract Task<TrafficSignal<THandleResult>> Executing();
 
         #endregion
 
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TResult, TResult>> InterProcessPackage(Empty context, string prePipeCode)
+        internal override async Task<TrafficResult<THandleResult, THandleResult>> InterProcessPackage(Empty context, string prePipeCode)
         {
             var trafficRes = await Executing();
-            return new TrafficResult<TResult, TResult>(trafficRes,
+            return new TrafficResult<THandleResult, THandleResult>(trafficRes,
                 trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficRes.result);
         }
 
@@ -80,9 +80,9 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///       接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TResult"></typeparam>
-    public abstract class BaseEffectActivity<TInContext, TResult> : BaseThreeWayActivity<TInContext,TResult, TResult>, IActivity<TInContext, TResult>
+    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="THandleResult"></typeparam>
+    public abstract class BaseEffectActivity<TContext, THandleResult> : BaseThreeWayActivity<TContext,THandleResult, THandleResult>, IEffectActivity<TContext, THandleResult>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -94,10 +94,10 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TResult, TResult>> InterProcessPackage(TInContext context, string prePipeCode)
+        internal override async Task<TrafficResult<THandleResult, THandleResult>> InterProcessPackage(TContext context, string prePipeCode)
         {
             var trafficRes = await Executing(context);
-            return new TrafficResult<TResult, TResult>(trafficRes,
+            return new TrafficResult<THandleResult, THandleResult>(trafficRes,
                 trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, trafficRes.result);
         }
 

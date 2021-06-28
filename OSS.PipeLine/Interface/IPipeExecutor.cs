@@ -15,32 +15,23 @@ using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Interface
 {
-   
     /// <summary>
-    /// 管道对外执行接口
+    /// 管道对外执行接口（输入输出）
     /// </summary>
-    public interface IPipeExecutor<in TInContext, THandleResult, TOut> : IPipe
+    public interface IPipeExecutor<in TPara, TResult> : IPipe
     {
         /// <summary>
         ///  执行方法
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        Task<THandleResult> Execute(TInContext para);
-    }
-
-
-    /// <summary>
-    /// 管道对外执行接口
-    /// </summary>
-    public interface IPipeExecutor<in TInContext, TOut> : IPipe, IPipeExecutor<TInContext, TOut, TOut>
-    {
+        Task<TResult> Execute(TPara para);
     }
 
     /// <summary>
-    /// 管道对外执行接口
+    /// 管道对外执行接口（无输入有输出）
     /// </summary>
-    public interface IPipeExecutor<TOut> : IPipe, IPipeExecutor<Empty, TOut>
+    public interface IPipeOutputExecutor<TOut> : IPipeExecutor<Empty, TOut>
     {
         /// <summary>
         ///  执行方法
@@ -49,16 +40,30 @@ namespace OSS.Pipeline.Interface
         Task<TOut> Execute();
     }
 
+
     /// <summary>
-    /// 管道对外执行接口
+    /// 管道对外执行接口（有输入无输出）
     /// </summary>
-    public interface IPipeFuncExecutor<in TFuncPara, TFuncResult> : IPipe
+    public interface IPipeInputExecutor<TIn> : IPipeExecutor<TIn, TIn>
     {
         /// <summary>
         ///  执行方法
         /// </summary>
-        /// <param name="para"></param>
         /// <returns></returns>
-        Task<TFuncResult> Execute(TFuncPara para);
+        new Task Execute(TIn para);
     }
+
+    /// <summary>
+    /// 管道对外执行接口（有输入无输出）
+    /// </summary>
+    public interface IPipeExecutor : IPipeExecutor<Empty, Empty>
+    {
+        /// <summary>
+        ///  执行方法
+        /// </summary>
+        /// <returns></returns>
+        Task Execute();
+    }
+
+
 }

@@ -34,8 +34,6 @@ namespace OSS.Pipeline
         {
         }
         
-      
-
         /// <inheritdoc />
         internal override async Task<TrafficResult<TFuncResult, TFuncPara>> InterProcessPackage(TFuncPara context, string prePipeCode)
         {

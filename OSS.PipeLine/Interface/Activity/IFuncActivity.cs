@@ -18,13 +18,13 @@ namespace OSS.Pipeline.Interface
 
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
-    public interface IFuncActivity<TFuncPara, TFuncResult> : IPipeAppender<TFuncPara>,IPipeFuncExecutor<TFuncPara, TFuncResult>
+    public interface IFuncActivity<TFuncPara, TFuncResult> : IPipeAppender<TFuncPara>,IPipeExecutor<TFuncPara, TFuncResult>
     {
     }
 
     /// <typeparam name="TFuncPara"></typeparam>
     /// <typeparam name="TFuncResult"></typeparam>
-    public interface IFuncEffectActivity<in TFuncPara, TFuncResult> : IPipeAppender<TFuncResult>, IPipeFuncExecutor<TFuncPara, TFuncResult>
+    public interface IFuncEffectActivity<in TFuncPara, TFuncResult> : IPipeAppender<TFuncResult>, IPipeExecutor<TFuncPara, TFuncResult>
     {
     }
 }

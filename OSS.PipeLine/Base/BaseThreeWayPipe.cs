@@ -28,7 +28,7 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TOutContext"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
     public abstract class BaseThreeWayPipe<TInContext, THandleResult, TOutContext> : BaseFourWayPipe<TInContext, TInContext, THandleResult, TOutContext>,
-        IPipeExecutor<TInContext, THandleResult, TOutContext>
+        IPipeExecutor<TInContext, THandleResult>
     {
         /// <inheritdoc />
         protected BaseThreeWayPipe(PipeType pipeType) : base(pipeType)

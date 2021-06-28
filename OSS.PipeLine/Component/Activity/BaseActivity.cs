@@ -21,7 +21,7 @@ namespace OSS.Pipeline
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    public abstract class BaseActivity : BaseThreeWayPipe<Empty,Empty, Empty>, IActivity<Empty,Empty>
+    public abstract class BaseActivity : BaseThreeWayPipe<Empty,Empty, Empty>, IActivity
     {
         /// <summary>
         /// 外部Action活动基类
@@ -49,7 +49,7 @@ namespace OSS.Pipeline
         /// 启动方法
         /// </summary>
         /// <returns></returns>
-        public Task<Empty> Execute()
+        public Task Execute()
         {
             return Execute(Empty.Default);
         }
@@ -74,7 +74,7 @@ namespace OSS.Pipeline
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
     /// <typeparam name="TContext">输入输出上下文</typeparam>
-    public abstract class BaseActivity<TContext> : BaseThreeWayPipe<TContext,TContext, TContext>, IActivity<TContext, TContext>
+    public abstract class BaseActivity<TContext> : BaseThreeWayPipe<TContext,TContext, TContext>, IActivity<TContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -82,6 +82,7 @@ namespace OSS.Pipeline
         protected BaseActivity() : base(PipeType.Activity)
         {
         }
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
@@ -95,6 +96,16 @@ namespace OSS.Pipeline
         /// </returns>
         protected abstract Task<TrafficSignal> Executing(TContext para);
 
+        /// <summary>
+        /// 启动入口
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        public new Task Execute(TContext para)
+        {
+            return base.Execute(para);
+        }
+
         #region 流体内部业务处理
 
         /// <inheritdoc />
@@ -104,7 +115,8 @@ namespace OSS.Pipeline
             return new TrafficResult<TContext, TContext>(trafficRes,
                 trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
         }
-      
+
+   
         #endregion
     }
 
@@ -114,7 +126,8 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TContext">输入输出上下文</typeparam>
     /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseActivity<TContext, THandleResult> : BaseThreeWayActivity<TContext, THandleResult, TContext>, IActivity<TContext, THandleResult, TContext>
+    public abstract class BaseActivity<TContext, THandleResult> : BaseThreeWayActivity<TContext, THandleResult, TContext>
+        , IActivity<TContext, THandleResult>
     {
         /// <summary>
         /// 外部Action活动基类

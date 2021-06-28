@@ -27,7 +27,7 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="THandlePara"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
     public abstract class BaseThreeWayFuncPipe<THandlePara,THandleResult, TOut> :
-       BaseFourWayPipe<Empty, THandlePara, THandleResult, TOut>,IPipeFuncExecutor<THandlePara, THandleResult>
+       BaseFourWayPipe<Empty, THandlePara, THandleResult, TOut>,IPipeExecutor<THandlePara, THandleResult>
     {
         /// <summary>
         /// 外部Action活动基类

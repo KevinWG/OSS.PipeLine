@@ -13,21 +13,42 @@
 
 namespace OSS.Pipeline.Interface
 {
-    /// <typeparam name="TOutContext"></typeparam>
-    public interface IActivity<TOutContext> : IPipeAppender<TOutContext>,IPipeExecutor<TOutContext>
+    
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IActivity : IPipeAppender<Empty>, IPipeExecutor
     {
     }
-    
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
-    public interface IActivity<in TInContext, TOutContext> : IActivity<TInContext, TOutContext, TOutContext>
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TContext"></typeparam>
+    public interface IActivity<TContext> : IPipeAppender<TContext>, IPipeInputExecutor<TContext>
     {
     }
-    
+
     /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
-    public interface IActivity<in TInContext, THandleResult, TOutContext> : IPipeAppender<TOutContext>, IPipeExecutor<TInContext, THandleResult,TOutContext>
+    public interface IActivity<TInContext, THandleResult> : IPipeAppender<TInContext>, IPipeExecutor<TInContext, THandleResult>
+    {
+    }
+    
+
+
+
+
+
+
+    /// <typeparam name="THandleResult"></typeparam>
+    public interface IEffectActivity<THandleResult> : IPipeAppender<THandleResult>, IPipeOutputExecutor<THandleResult>
+    {
+    }
+
+    /// <typeparam name="THandleResult"></typeparam>
+    /// <typeparam name="TContext"></typeparam>
+    public interface IEffectActivity<TContext,THandleResult> : IPipeAppender<THandleResult>, IPipeExecutor<TContext,THandleResult>
     {
     }
     
