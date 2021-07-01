@@ -157,26 +157,4 @@ namespace OSS.Pipeline
         #endregion
 
     }
-
-    /// <inheritdoc />
-    public class EmptyEntryPipeline<TContext> : Pipeline<Empty, TContext>
-    {
-        /// <inheritdoc />
-        public EmptyEntryPipeline(string pipeCode,BaseInPipePart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender) : base(pipeCode,startPipe, endPipeAppender)
-        {
-        }
-
-
-        #region 管道启动
-        /// <summary>
-        ///  启动
-        /// </summary>
-        /// <returns></returns>
-        public Task Execute()
-        {
-            return InterPreCall(Empty.Default, string.Empty);
-        }
-
-        #endregion
-    }
 }

@@ -7,7 +7,7 @@ namespace OSS.Pipeline.Tests
     [TestClass]
     public class BuyFlowTests
     {
-        public readonly ApplyActivity ApplyActivity = new ApplyActivity();
+        public readonly ApplyActivity     ApplyActivity = new ApplyActivity();
         public readonly AutoAuditActivity AuditActivity = new AutoAuditActivity();
 
         public readonly PayActivity PayActivity = new PayActivity();
@@ -15,40 +15,41 @@ namespace OSS.Pipeline.Tests
         public readonly PayGateway PayGateway = new PayGateway();
 
         public readonly StockConnector StockConnector = new StockConnector();
-        public readonly StockActivity StockActivity = new StockActivity();
+        public readonly StockActivity  StockActivity  = new StockActivity();
 
         public readonly PayEmailConnector EmailConnector = new PayEmailConnector();
-        public readonly SendEmailActivity EmailActivity = new SendEmailActivity();
+        public readonly SendEmailActivity EmailActivity  = new SendEmailActivity();
 
 
-        public readonly Pipeline<ApplyContext, Empty> TestPipeline;
+
+        private EndGateway _endNode = new EndGateway();
+
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
-            var endNode = new EndGateway();
+
 
             ApplyActivity
-                .Append(AuditActivity)
+            .Append(AuditActivity)
 
-                .Append(PayActivity)
-                .Append(PayGateway);
+            .Append(PayActivity)
+            .Append(PayGateway);
 
             // 网关分支 - 发送邮件分支
             PayGateway
-                .Append(EmailConnector)
-                .Append(EmailActivity)
-                .Append(endNode);
+            .Append(EmailConnector)
+            .Append(EmailActivity)
+            .Append(_endNode);
 
             // 网关分支- 入库分支
             PayGateway
-                .Append(StockConnector)
-                .Append(StockActivity)
-                .Append(endNode);
+            .Append(StockConnector)
+            .Append(StockActivity)
+            .Append(_endNode);
 
-            // 流体对象
-            TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, endNode);
+
         }
-        
+
         [TestMethod]
         public async Task FlowTest()
         {
@@ -69,7 +70,8 @@ namespace OSS.Pipeline.Tests
         [TestMethod]
         public void RouteTest()
         {
-            // 获取当前的路由信息
+            var TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, _endNode);
+
             var route = TestPipeline.ToRoute();
             Assert.IsTrue(route != null);
         }

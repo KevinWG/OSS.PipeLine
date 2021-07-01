@@ -6,7 +6,6 @@
 由此流程的衔接变成可独立编程的部分，同时向上层提供业务动作的独立扩展，保证业务单元的绝对独立和可复用性，
 目的是可以像搭积木一样来完成不同功能代码的集成，系统向真正的低代码平台过渡。
 
-
 如果将整个业务流当做一个流程管道，结合流程流转的特性，此引擎抽象了三个核心管道组件：
 
     
@@ -24,9 +23,9 @@
 根据 主动/被动 两种情形，同时根据当前活动的业务返回值和下游节点上下文的关系，提供了四类（共七个）基础活动类：
 
 ### 1. BaseActivity，BaseActivity<TContext>，BaseActivity<TContext, THandleResult> - 主动触发活动组件
+常见如自动审核功能，或者支付成功后自动触发邮件发送等，最简单也是最基本的一种跟随动作处理。
+继承此基类，重写Executing方法实现活动内容，同一个流体下实现自动关联执行，执行完毕后自动触发下级节点（传入当前上下文）。
 
-    常见如自动审核功能，或者支付成功后自动触发邮件发送等，最简单也是最基本的一种跟随动作处理。
-    继承此基类，重写Executing方法实现活动内容，同一个流体下实现自动关联执行，执行完毕后自动触发下级节点（传入当前上下文）。
 ```csharp
         /// <summary>
         ///  具体执行扩展方法
@@ -108,26 +107,26 @@
 ## 二. 网关组件
 此组件主要负责逻辑的规则处理，业务的走向逻辑无非分与合，这里给出两个基类：
 
-####1. BaseAggregateGateway<TContext> - 聚合业务分支流程活动组件
-    将多条业务分支聚合到当前网关组件下，由当前网关统一控制是否将业务流程向后传递，只需要继承此基类重写IfMatchCondition 方法即可
+###1. BaseAggregateGateway<TContext> - 聚合业务分支流程活动组件
+将多条业务分支聚合到当前网关组件下，由当前网关统一控制是否将业务流程向后传递，只需要继承此基类重写IfMatchCondition 方法即可
 
-####2. BaseBranchGateway<TContext> - 分支网关组件
-    此组件将业务分流处理，定义流体时通过AddBranchPipe添加多个分支，至于如何分流，只需要继承此基类重写FilterNextPipes方法即可，你也可以在此之上实现BPMN中的几种网关类型（并行，排他，和包含）。
+###2. BaseBranchGateway<TContext> - 分支网关组件
+此组件将业务分流处理，定义流体时通过AddBranchPipe添加多个分支，至于如何分流，只需要继承此基类重写FilterNextPipes方法即可，你也可以在此之上实现BPMN中的几种网关类型（并行，排他，和包含）。
 
 ## 三. 消息流组件
 此组件主要负责消息的传递和转化处理，根据是否需要转化，或者异步定义四个基类如下：
 
-####1. BaseMsgConverter<TInMsg, TOutMsg> - 转化连接组件
-    业务流经过此组件，直接执行Convert方法（自定义实现），转化成对应的下个组件执行参数，自动进入下个组件。
+###1. BaseMsgConverter<TInMsg, TOutMsg> - 转化连接组件
+业务流经过此组件，直接执行Convert方法（自定义实现），转化成对应的下个组件执行参数，自动进入下个组件。
 
-####2. BaseMsgFlow<TMsg> - 异步缓冲数据连接组件（提供默认实现：MsgFlow<TMsg>）
-    （此前组件的流动以【发布/订阅】的方式异步执行，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
+###2. BaseMsgFlow<TMsg> - 异步缓冲数据连接组件（提供默认实现：MsgFlow<TMsg>）
+此前组件的流动以【发布/订阅】的方式异步执行，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
 
-####3. BaseMsgPublisher<TMsg> 消息发布者组件 - （提供默认实现：MsgPublisher<TMsg>）
-    （此前组件提供数据的【发布】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
+###3. BaseMsgPublisher<TMsg> 消息发布者组件 - （提供默认实现：MsgPublisher<TMsg>）
+此前组件提供数据的【发布】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
 
-####4. BaseMsgSubscriber<TMsg> - 消息订阅者组件（提供默认实现：MsgSubscriber<TMsg>）
-    （此前组件提供数据的【订阅】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
+###4. BaseMsgSubscriber<TMsg> - 消息订阅者组件（提供默认实现：MsgSubscriber<TMsg>）
+此前组件提供数据的【订阅】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
 
 
 以上是三个核心的组件部分，以上三个组件任意组合可以组成PipeLine（流体），PipeLine本身又可以作为一个组件加入到一个更大的流体之中，通过流体的 ToRoute() 方法，可以获取对应的内部组件关联路由信息。
