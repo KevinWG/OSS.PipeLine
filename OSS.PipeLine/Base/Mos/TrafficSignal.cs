@@ -29,10 +29,10 @@ namespace OSS.Pipeline
         {
         }
 
-        /// <inheritdoc />
-        public TrafficSignal(SignalFlag signalFlag, string trafficMsg) : this(signalFlag,default, trafficMsg)
-        {
-        }
+        ///// <inheritdoc />
+        //public TrafficSignal(SignalFlag signalFlag, string trafficMsg) : this(signalFlag,default, trafficMsg)
+        //{
+        //}
 
         /// <summary>
         /// 流动信号
@@ -40,7 +40,7 @@ namespace OSS.Pipeline
         /// <param name="signalFlag"></param>
         /// <param name="trafficMsg"></param>
         /// <param name="res"></param>
-        public TrafficSignal(SignalFlag signalFlag, THandleResult res, string trafficMsg)
+        public TrafficSignal(SignalFlag signalFlag, THandleResult res, string trafficMsg=null)
         {
             signal = signalFlag;
             msg    = trafficMsg;
