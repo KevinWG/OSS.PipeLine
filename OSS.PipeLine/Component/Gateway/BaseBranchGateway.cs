@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.InterImpls;
 using OSS.Pipeline.InterImpls.GateWay;
 
 namespace OSS.Pipeline
@@ -65,6 +66,12 @@ namespace OSS.Pipeline
         }
 
         #region 管道连接
+
+        // 分支网关的下级处理由自己控制
+        internal override Task<TrafficResult> ToNextThrough(TContext nextInContext)
+        {
+            return InterUtil.GreenTrafficResultTask;
+        }
         
         internal override void InterAppend(BaseInPipePart<TContext> nextPipe)
         {

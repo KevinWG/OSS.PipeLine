@@ -16,6 +16,7 @@ using OSS.Pipeline.Base.Base;
 using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.InterImpls.Watcher;
+using OSS.Pipeline.InterImpls;
 
 namespace OSS.Pipeline.Base
 {
@@ -69,7 +70,7 @@ namespace OSS.Pipeline.Base
         
         internal BasePipePart NextPipe { get; set; }
 
-        internal Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
+        internal virtual Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
         {
             if (NextPipe != null)
             {
@@ -83,7 +84,7 @@ namespace OSS.Pipeline.Base
                 }
             }
             // 说明已经是最后一个管道
-            return Task.FromResult(TrafficResult.Green);
+            return  InterUtil.GreenTrafficResultTask; 
         }
 
 
