@@ -51,9 +51,9 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="subscribeFunc"></param>
         /// <param name="option"></param>
-        /// <param name="flowKey"></param>
+        /// <param name="pipeDataKey"></param>
         /// <returns></returns>
-        protected abstract void ReceiveSubscriber(string flowKey, IDataSubscriber<TMsg> subscribeFunc,
+        protected abstract void ReceiveSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscribeFunc,
             DataFlowOption option);
 
         /// <summary>

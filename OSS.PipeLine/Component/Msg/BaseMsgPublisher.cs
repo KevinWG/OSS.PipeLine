@@ -54,10 +54,10 @@ namespace OSS.Pipeline
         /// <summary>
         ///  创建消息流
         /// </summary>
-        /// <param name="flowKey"></param>
+        /// <param name="pipeDataKey"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher<TMsg> CreatePublisher(string flowKey, DataPublisherOption option);
+        protected abstract IDataPublisher<TMsg> CreatePublisher(string pipeDataKey, DataPublisherOption option);
 
         #endregion
 

@@ -27,7 +27,7 @@ namespace OSS.Pipeline
         ///  追加默认消息订阅者管道
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
-        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static IPipelineAppender<Empty,OutContext> StartWithMsgSubscriber<OutContext>( string pipeCode, DataFlowOption option = null)
@@ -42,7 +42,7 @@ namespace OSS.Pipeline
         ///  追加默认消息流管道
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
-        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static IPipelineAppender<OutContext, OutContext> StartWithMsgFlow<OutContext>( string pipeCode, DataFlowOption option = null)

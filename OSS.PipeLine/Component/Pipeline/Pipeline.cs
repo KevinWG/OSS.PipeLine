@@ -72,7 +72,7 @@ namespace OSS.Pipeline
         #region 管道启动
 
         /// <inheritdoc />
-        public new Task Execute(TInContext context)
+        public Task Execute(TInContext context)
         {
             return InterPreCall(context,string.Empty);
         }
@@ -159,11 +159,24 @@ namespace OSS.Pipeline
     }
 
     /// <inheritdoc />
-    public class SimplePipeline<TContext> : Pipeline<Empty, TContext>
+    public class EmptyEntryPipeline<TContext> : Pipeline<Empty, TContext>
     {
         /// <inheritdoc />
-        public SimplePipeline(string pipeCode,BaseInPipePart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender) : base(pipeCode,startPipe, endPipeAppender)
+        public EmptyEntryPipeline(string pipeCode,BaseInPipePart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender) : base(pipeCode,startPipe, endPipeAppender)
         {
         }
+
+
+        #region 管道启动
+        /// <summary>
+        ///  启动
+        /// </summary>
+        /// <returns></returns>
+        public Task Execute()
+        {
+            return InterPreCall(Empty.Default, string.Empty);
+        }
+
+        #endregion
     }
 }

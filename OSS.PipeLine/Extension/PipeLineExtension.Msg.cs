@@ -28,7 +28,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TIn"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static IPipelineAppender<TIn, TOut> ThenWithMsgSubscriber<TIn, TOut>(
@@ -43,7 +43,7 @@ namespace OSS.Pipeline
         ///  追加默认消息流管道
         /// </summary>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode">消息flowKey，默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static IPipelineAppender<TIn, TOut> ThenWithWithMsgFlow<TIn, TOut>(

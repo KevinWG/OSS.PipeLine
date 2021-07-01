@@ -16,7 +16,7 @@ namespace OSS.Pipeline
     /// <summary>
     ///  空值
     /// </summary>
-    public struct Empty
+    public readonly struct Empty
     {
         /// <summary>
         ///  默认空上下文

@@ -39,9 +39,9 @@ namespace OSS.Pipeline
 
 
         /// <inheritdoc />
-        protected override IDataPublisher<TMsg> CreatePublisher(string flowKey, DataPublisherOption option)
+        protected override IDataPublisher<TMsg> CreatePublisher(string pipeDataKey, DataPublisherOption option)
         {
-            return DataFlowFactory.CreatePublisher<TMsg>(flowKey, option);
+            return DataFlowFactory.CreatePublisher<TMsg>(pipeDataKey, option);
         }
     }
 }

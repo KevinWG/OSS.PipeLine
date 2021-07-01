@@ -54,10 +54,9 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="subscriber"></param>
         /// <param name="option"></param>
-        /// <param name="flowKey"></param>
+        /// <param name="pipeDataKey"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher<TMsg> CreateFlow(string flowKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
-
+        protected abstract IDataPublisher<TMsg> CreateFlow(string pipeDataKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
 
         #region 流体内部业务处理
 
@@ -78,8 +77,6 @@ namespace OSS.Pipeline
         }
         
         #endregion
-
-
 
         /// <summary>
         ///  订阅唤起操作

@@ -38,9 +38,9 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        protected override void ReceiveSubscriber(string flowKey, IDataSubscriber<TMsg> subscriber, DataFlowOption option)
+        protected override void ReceiveSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscriber, DataFlowOption option)
         {
-            DataFlowFactory.ReceiveSubscriber(flowKey, subscriber, option);
+            DataFlowFactory.ReceiveSubscriber(pipeDataKey, subscriber, option);
         }
     }
 }
