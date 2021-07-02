@@ -23,13 +23,6 @@ namespace OSS.Pipeline.Interface
         /// <returns></returns>
         PipeRoute ToRoute();
         
-
         internal PipeWatcherProxy GetProxy();
     }
-
-    public interface IPipeLine<TInContext, TOutContext> :  IPipeLineEntry<TInContext>
-    {
-
-    }
-
 }

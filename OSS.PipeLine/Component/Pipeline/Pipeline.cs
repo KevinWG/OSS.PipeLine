@@ -25,8 +25,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
     public class Pipeline<TInContext, TOutContext> : 
-        BaseFourWayPipe<TInContext, TInContext, TOutContext, TOutContext>,
-        IPipeLine<TInContext, TOutContext>
+        BaseFourWayPipe<TInContext, TInContext, TOutContext, TOutContext>, IPipeLineEntry<TInContext> 
     {
         private readonly BaseInPipePart<TInContext>    _startPipe;
         private readonly IPipeAppender<TOutContext> _endPipe;
@@ -54,7 +53,7 @@ namespace OSS.Pipeline
         {
             if (startPipe == null || endPipeAppender == null||string.IsNullOrEmpty(pipeCode))
             {
-                throw new ArgumentNullException("未发现流体的起始截止管道！");
+                throw new ArgumentNullException("未发现流体的起始截止管道和管道编码！");
             }
 
             PipeCode   = pipeCode;
