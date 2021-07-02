@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.6.2</Version>
-    <PackageReleaseNotes>添加枚举迭代消息（循环</PackageReleaseNotes>
+    <Version>1.6.2.1</Version>
+    <PackageReleaseNotes></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Pipeline</RepositoryUrl>
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Component\Activity\BaseBufferActivity.cs" />
+    <Compile Remove="Activity\BaseBufferActivity.cs" />
   </ItemGroup>
 
   <ItemGroup>

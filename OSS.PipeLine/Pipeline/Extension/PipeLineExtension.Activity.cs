@@ -28,7 +28,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TIn"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托，返回的处理结果：
         ///     TrafficSignal -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
@@ -39,9 +39,9 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineAppender<TIn, Empty> ThenWithActivity<TIn, TOut>(
             this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
-            Func<Task<TrafficSignal>> exePassive)
+            Func<Task<TrafficSignal>> exeFunc)
         {
-            return pipe.Then(new SimpleActivity(pipeCode, exePassive));
+            return pipe.Then(new SimpleActivity(pipeCode, exeFunc));
         }
 
 
@@ -51,7 +51,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TIn"></typeparam>
         /// <typeparam name="TOut"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -63,9 +63,9 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static IPipelineAppender<TIn, TOut> ThenWithActivity<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
-            Func<TOut, Task<TrafficSignal>> exePassive)
+            Func<TOut, Task<TrafficSignal>> exeFunc)
         {
-            return pipe.Then(new SimpleActivity<TOut>(pipeCode,exePassive));
+            return pipe.Then(new SimpleActivity<TOut>(pipeCode,exeFunc));
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TNextResult"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -87,9 +87,9 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static IPipelineAppender<TIn, TOut> ThenWithActivity<TIn, TOut, TNextResult>(this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
-            Func<TOut, Task<TrafficSignal<TNextResult>>> exePassive)
+            Func<TOut, Task<TrafficSignal<TNextResult>>> exeFunc)
         {
-            return pipe.Then(new SimpleActivity<TOut, TNextResult>(pipeCode,exePassive));
+            return pipe.Then(new SimpleActivity<TOut, TNextResult>(pipeCode,exeFunc));
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TIn"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 结果：
         ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
@@ -111,9 +111,9 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineAppender<TIn, TResult> ThenWithEffectActivity<TIn, TOut, TResult>(
             this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
-            Func<Task<TrafficSignal<TResult>>> exePassive)
+            Func<Task<TrafficSignal<TResult>>> exeFunc)
         {
-            return pipe.Then(new SimpleEffectActivity<TResult>(pipeCode,exePassive));
+            return pipe.Then(new SimpleEffectActivity<TResult>(pipeCode,exeFunc));
         }
 
 
@@ -124,7 +124,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TResult"></typeparam>
         /// <typeparam name="TIn"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：
         ///     当前活动上下文信息
@@ -138,9 +138,9 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineAppender<TIn, TResult> ThenWithEffectActivity<TIn, TPassivePara, TResult>(
             this IPipelineAppender<TIn, TPassivePara> pipe, string pipeCode,
-            Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
+            Func<TPassivePara, Task<TrafficSignal<TResult>>> exeFunc)
         {
-            return pipe.Then(new SimpleEffectActivity<TPassivePara, TResult>(pipeCode,exePassive));
+            return pipe.Then(new SimpleEffectActivity<TPassivePara, TResult>(pipeCode,exeFunc));
         }
 
         //===  被动模式一般需要显示调用，简化隐藏
@@ -153,7 +153,7 @@ namespace OSS.Pipeline
         /////  <typeparam name="TIn"></typeparam>
         /////  <typeparam name="TOut"></typeparam>
         /////  <param name="pipe"></param>
-        /////  <param name="exePassive">
+        /////  <param name="exeFunc">
         ///// 执行委托
         /////  参数：
         /////      当前活动上下文信息
@@ -167,9 +167,9 @@ namespace OSS.Pipeline
         /////  <returns></returns>
         //public static IPipelineAppender<TIn, TPassivePara> ThenWithPassiveActivity<TIn, TOut, TPassivePara, TResult>(
         //    this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
-        //    Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
+        //    Func<TPassivePara, Task<TrafficSignal<TResult>>> exeFunc)
         //{
-        //    return pipe.Then(new SimplePassiveActivity<TPassivePara, TResult>(pipeCode,exePassive));
+        //    return pipe.Then(new SimplePassiveActivity<TPassivePara, TResult>(pipeCode,exeFunc));
         //}
 
 
@@ -181,7 +181,7 @@ namespace OSS.Pipeline
         /////  <typeparam name="TIn"></typeparam>
         /////  <typeparam name="TOut"></typeparam>
         /////  <param name="pipe"></param>
-        /////  <param name="exePassive">
+        /////  <param name="exeFunc">
         ///// 执行委托
         /////  参数：当前活动上下文信息
         /////  结果：
@@ -194,9 +194,9 @@ namespace OSS.Pipeline
         /////  <returns></returns>
         //public static IPipelineAppender<TIn, TResult> ThenWithPassiveEffectActivity<TIn, TOut, TPassivePara, TResult>(
         //    this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
-        //    Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
+        //    Func<TPassivePara, Task<TrafficSignal<TResult>>> exeFunc)
         //{
-        //    return pipe.Then(new SimplePassiveEffectActivity<TPassivePara, TResult>(pipeCode,exePassive));
+        //    return pipe.Then(new SimplePassiveEffectActivity<TPassivePara, TResult>(pipeCode,exeFunc));
         //}
     }
 }

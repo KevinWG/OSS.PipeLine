@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using OSS.Pipeline.InterImpls.GateWay;
+using OSS.Pipeline.Gateway.InterImpls;
 using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems

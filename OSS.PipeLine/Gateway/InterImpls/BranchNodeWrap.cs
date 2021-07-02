@@ -2,7 +2,7 @@
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 
-namespace OSS.Pipeline.InterImpls.GateWay
+namespace OSS.Pipeline.Gateway.InterImpls
 {
     /// <summary>
     ///  分支子节点管道

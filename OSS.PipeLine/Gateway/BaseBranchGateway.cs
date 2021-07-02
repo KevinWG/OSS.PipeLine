@@ -17,8 +17,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.Gateway.InterImpls;
 using OSS.Pipeline.InterImpls;
-using OSS.Pipeline.InterImpls.GateWay;
 
 namespace OSS.Pipeline
 {
