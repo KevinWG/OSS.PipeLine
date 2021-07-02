@@ -21,7 +21,7 @@ namespace OSS.Pipeline
     /// <summary>
     ///  pipeline 生成器
     /// </summary>
-    public static partial class PipelineFactory
+    public static partial class PipelineBuilder
     {
         /// <summary>
         ///  追加活动管道
@@ -133,54 +133,54 @@ namespace OSS.Pipeline
         
         }
 
+        //===  被动模式一般需要显示调用，简化隐藏
+
+        ///// <summary>
+        /////  追加活动管道
+        ///// </summary>
+        ///// <typeparam name="TPassivePara"></typeparam>
+        ///// <typeparam name="TResult"></typeparam>
+        ///// <param name="exePassive">
+        /////执行委托
+        ///// 参数：
+        /////     当前活动上下文信息
+        ///// 结果：
+        /////     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
+        /////         Green_Pass  - 流体自动流入后续管道
+        /////         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
+        /////         Red_Block - 触发Block，业务流不再向后续管道传递。
+        ///// </param>
+        ///// <param name="pipeCode"></param>
+        ///// <returns></returns>
+        //public static IPipelineAppender<Empty, TPassivePara> StartWithPassiveActivity<TPassivePara, TResult>(string pipeCode,
+        //    Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
+        //{
+        //    return Start(new SimplePassiveActivity<TPassivePara, TResult>(pipeCode,exePassive));
+
+        //}
 
 
-        /// <summary>
-        ///  追加活动管道
-        /// </summary>
-        /// <typeparam name="TPassivePara"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="exePassive">
-        ///执行委托
-        /// 参数：
-        ///     当前活动上下文信息
-        /// 结果：
-        ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
-        ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
-        ///         Red_Block - 触发Block，业务流不再向后续管道传递。
-        /// </param>
-        /// <param name="pipeCode"></param>
-        /// <returns></returns>
-        public static IPipelineAppender<Empty, TPassivePara> StartWithPassiveActivity<TPassivePara, TResult>(string pipeCode,
-            Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
-        {
-            return Start(new SimplePassiveActivity<TPassivePara, TResult>(pipeCode,exePassive));
-       
-        }
-
-
-        /// <summary>
-        ///  追加活动管道
-        /// </summary>
-        /// <typeparam name="TPassivePara"></typeparam>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="exePassive">
-        ///执行委托
-        /// 参数：当前活动上下文信息
-        /// 结果：
-        ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
-        ///         Green_Pass  - 流体自动流入后续管道
-        ///         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
-        ///         Red_Block - 触发Block，业务流不再向后续管道传递。
-        /// </param>
-        /// <param name="pipeCode"></param>
-        /// <returns></returns>
-        public static IPipelineAppender<Empty, TResult> StartWithPassiveEffectActivity<TPassivePara, TResult>(string pipeCode,
-            Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
-        {
-            return Start(new SimplePassiveEffectActivity<TPassivePara, TResult>(pipeCode,exePassive));
-        }
+        ///// <summary>
+        /////  追加活动管道
+        ///// </summary>
+        ///// <typeparam name="TPassivePara"></typeparam>
+        ///// <typeparam name="TResult"></typeparam>
+        ///// <param name="exePassive">
+        /////执行委托
+        ///// 参数：当前活动上下文信息
+        ///// 结果：
+        /////     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
+        /////         Green_Pass  - 流体自动流入后续管道
+        /////         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
+        /////         Red_Block - 触发Block，业务流不再向后续管道传递。
+        ///// </param>
+        ///// <param name="pipeCode"></param>
+        ///// <returns></returns>
+        //public static IPipelineAppender<Empty, TResult> StartWithPassiveEffectActivity<TPassivePara, TResult>(string pipeCode,
+        //    Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
+        //{
+        //    return Start(new SimplePassiveEffectActivity<TPassivePara, TResult>(pipeCode,exePassive));
+        //}
 
 
     }

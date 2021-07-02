@@ -25,7 +25,8 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加活动管道
         /// </summary>
-        /// <typeparam name="TOut"></typeparam>
+        /// <typeparam name="TMsgEnumerable"></typeparam>
+        /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="exePassive">
         /// 执行委托
@@ -50,8 +51,9 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加活动管道
         /// </summary>
-        /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="TMsgEnumerable"></typeparam>
+        /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="exePassive">
         /// 执行委托
@@ -72,33 +74,5 @@ namespace OSS.Pipeline
             pipe.InterSetIterator(nextPipe);
             return pipe;
         }
-
-
-        ///// <summary>
-        /////  追加活动管道
-        ///// </summary>
-        ///// <typeparam name="TPassivePara"></typeparam>
-        ///// <typeparam name="TResult"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="exePassive">
-        ///// 执行委托
-        ///// 参数：
-        /////     当前活动上下文信息
-        ///// 结果：
-        /////     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
-        /////         Green_Pass  - 流体自动流入后续管道
-        /////         Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
-        /////         Red_Block - 触发Block，业务流不再向后续管道传递。
-        ///// </param>
-        ///// <param name="pipeCode"></param>
-        ///// <returns></returns>
-        //public static MsgEnumerator<TPassivePara> AppendEffectActivity<TPassivePara, TResult>(
-        //    this MsgEnumerator<TPassivePara> pipe, string pipeCode,
-        //    Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
-        //{
-        //    var nextPipe = new SimpleEffectActivity<TPassivePara, TResult>(pipeCode,exePassive);
-        //    pipe.InterSetIterator(nextPipe);
-        //    return pipe;
-        //}
     }
 }

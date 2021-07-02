@@ -28,6 +28,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TNextOutContext"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
         /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TMsgEnumerable"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>

@@ -22,7 +22,7 @@ namespace OSS.Pipeline
     /// <summary>
     ///  pipeline 生成器
     /// </summary>
-    public static partial class PipelineFactory
+    public static partial class PipelineBuilder
     {
         /// <summary>
         ///  追加默认消息订阅者管道
