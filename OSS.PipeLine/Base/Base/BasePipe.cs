@@ -29,8 +29,9 @@ namespace OSS.Pipeline.Base.Base
         /// <summary>
         ///  构造函数
         /// </summary>
+        /// <param name="pipeCode"></param>
         /// <param name="pipeType"></param>
-        protected BasePipe(PipeType pipeType) : base(pipeType)
+        protected BasePipe(string pipeCode, PipeType pipeType) : base(pipeCode, pipeType)
         {
         }
 

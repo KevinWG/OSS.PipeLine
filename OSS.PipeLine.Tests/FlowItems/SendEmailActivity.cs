@@ -6,9 +6,8 @@ namespace OSS.Pipeline.Tests.FlowItems
 {
     public class SendEmailActivity : BaseActivity<SendEmailContext>
     {
-        public SendEmailActivity()
+        public SendEmailActivity():base("SendEmailActivity")
         {
-            PipeCode = "SendEmailActivity";
         }
        
         protected override Task<TrafficSignal> Executing(SendEmailContext data)
@@ -25,9 +24,8 @@ namespace OSS.Pipeline.Tests.FlowItems
 
     public class PayEmailConnector : BaseMsgConverter<PayContext, SendEmailContext>
     {
-        public PayEmailConnector()
+        public PayEmailConnector():base("PayEmailConnector")
         {
-            PipeCode = "PayEmailConnector";
         }
         protected override SendEmailContext Convert(PayContext inContextData)
         {

@@ -26,7 +26,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseActivity() : base(PipeType.Activity)
+        protected BaseActivity(string pipeCode=null) : base(pipeCode, PipeType.Activity)
         {
         }
 
@@ -79,7 +79,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseActivity() : base(PipeType.Activity)
+        protected BaseActivity(string pipeCode = null) : base(pipeCode,PipeType.Activity)
         {
         }
 
@@ -132,7 +132,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseActivity() : base(PipeType.Activity)
+        protected BaseActivity(string pipeCode = null) : base(pipeCode,PipeType.Activity)
         {
         }
   

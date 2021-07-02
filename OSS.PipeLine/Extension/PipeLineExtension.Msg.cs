@@ -10,7 +10,10 @@
 *****************************************************************************/
 
 #endregion
+
+
 using System;
+using System.Collections.Generic;
 using OSS.DataFlow;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
@@ -46,7 +49,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> ThenWithWithMsgFlow<TIn, TOut>(
+        public static IPipelineAppender<TIn, TOut> ThenWithMsgFlow<TIn, TOut>(
             this IPipelineAppender<TIn, TOut> pipe, 
             string pipeCode, DataFlowOption option = null)
         {
@@ -62,17 +65,27 @@ namespace OSS.Pipeline
         /// <param name="convertFunc"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> ThenWithWithMsgConverter<TIn, TOut, TNextOut>(
+        public static IPipelineAppender<TIn, TNextOut> ThenWithMsgConverter<TIn, TOut, TNextOut>(
             this IPipelineAppender<TIn, TOut> pipe, 
             Func<TOut, TNextOut> convertFunc, string pipeCode = null)
         {
-            var nextPipe = new InterMsgConvertor<TOut, TNextOut>(convertFunc, pipeCode);
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
+            var nextPipe = new InterMsgConvertor<TOut, TNextOut>(pipeCode, convertFunc);
             return pipe.Then(nextPipe);
         }
 
+
+        /// <summary>
+        ///  追加消息枚举器
+        /// </summary>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <returns></returns>
+        public static IPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg> ThenWithMsgEnumerator<TIn, TMsgEnumerable, TMsg>(
+            this IPipelineAppender<TIn, TMsgEnumerable> pipe, string pipeCode=null)
+            where TMsgEnumerable : IEnumerable<TMsg>
+        {
+            var nextPipe = new BaseMsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
+            return pipe.Then(nextPipe);
+        }
     }
 }

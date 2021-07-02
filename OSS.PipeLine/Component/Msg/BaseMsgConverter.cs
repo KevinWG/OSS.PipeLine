@@ -27,7 +27,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 消息转化基类
         /// </summary>
-        protected BaseMsgConverter() : base(PipeType.MsgConverter)
+        protected BaseMsgConverter(string pipeCode = null) : base(pipeCode, PipeType.MsgConverter)
         {
         }
 

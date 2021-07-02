@@ -34,8 +34,9 @@ namespace OSS.Pipeline.Base
         /// <summary>
         ///  构造函数
         /// </summary>
+        /// <param name="pipeCode"></param>
         /// <param name="pipeType"></param>
-        protected BaseFourWayPipe(PipeType pipeType) : base(pipeType)
+        protected BaseFourWayPipe(string pipeCode, PipeType pipeType) : base(pipeCode, pipeType)
         {
         }
 

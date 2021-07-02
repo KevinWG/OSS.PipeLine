@@ -21,16 +21,12 @@ namespace OSS.Pipeline
     /// </summary>
     public class SimpleActivity: BaseActivity //: BaseStraightPipe<EmptyContext, EmptyContext>
     {
-        private readonly Func<Task<TrafficSignal>> _exeFunc;
+        private readonly Func<Task<TrafficSignal>> _exePassive;
 
         /// <inheritdoc />
-        public SimpleActivity(Func<Task<TrafficSignal>> exeFunc,string pipeCode = null)
+        public SimpleActivity(string pipeCode, Func<Task<TrafficSignal>> exePassive):base(pipeCode)
         {
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                PipeCode = pipeCode;
-            }
-            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
+            _exePassive = exePassive ?? throw new ArgumentNullException(nameof(exePassive), "执行方法不能为空!");
         }
 
         /// <summary>
@@ -43,7 +39,7 @@ namespace OSS.Pipeline
         /// </returns>
         protected override Task<TrafficSignal> Executing()
         {
-            return _exeFunc();
+            return _exePassive();
         }
 
     }
@@ -55,22 +51,23 @@ namespace OSS.Pipeline
     /// <typeparam name="TContext">输入输出上下文</typeparam>
     public class SimpleActivity<TContext> : BaseActivity<TContext>
     {
-        private readonly Func<TContext,Task<TrafficSignal>> _exeFunc;
+        private readonly Func<TContext,Task<TrafficSignal>> _exePassive;
+        
 
         /// <inheritdoc />
-        public SimpleActivity(Func<TContext,Task<TrafficSignal>> exeFunc,string pipeCode = null)
+        public SimpleActivity(string pipeCode, Func<TContext,Task<TrafficSignal>> exePassive):base(pipeCode)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
                 PipeCode = pipeCode;
             }
-            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
+            _exePassive = exePassive ?? throw new ArgumentNullException(nameof(exePassive), "执行方法不能为空!");
         }
 
         /// <inheritdoc />
         protected override Task<TrafficSignal> Executing(TContext contextData)
         {
-            return _exeFunc(contextData);
+            return _exePassive(contextData);
         }
     }
 
@@ -83,22 +80,22 @@ namespace OSS.Pipeline
     /// <typeparam name="THandleResult"></typeparam>
     public class SimpleActivity<TContext, THandleResult> : BaseActivity<TContext, THandleResult>
     {
-        private readonly Func<TContext, Task<TrafficSignal<THandleResult>>> _exeFunc;
+        private readonly Func<TContext, Task<TrafficSignal<THandleResult>>> _exePassive;
 
         /// <inheritdoc />
-        public SimpleActivity(Func<TContext, Task<TrafficSignal<THandleResult>>> exeFunc, string pipeCode = null)
+        public SimpleActivity(string pipeCode,Func<TContext, Task<TrafficSignal<THandleResult>>> exePassive):base(pipeCode)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
                 PipeCode = pipeCode;
             }
-            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
+            _exePassive = exePassive ?? throw new ArgumentNullException(nameof(exePassive), "执行方法不能为空!");
         }
 
         /// <inheritdoc />
         protected override Task<TrafficSignal<THandleResult>> Executing(TContext para)
         {
-            return _exeFunc(para);
+            return _exePassive(para);
         }
     }
 }

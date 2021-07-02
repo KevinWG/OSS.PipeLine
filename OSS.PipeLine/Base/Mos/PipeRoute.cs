@@ -36,13 +36,18 @@ namespace OSS.Pipeline
         public PipeRoute next { get; set; }
 
         /// <summary>
+        ///  消息枚举器的循环迭代管道
+        /// </summary>
+        public PipeRoute iterator { get; set; }
+
+        /// <summary>
         ///  分支网关的所有子分支节点( PipeType.BranchGateway 
         /// </summary>
         public IList<PipeRoute> nexts { get; set; }
 
         /// <summary>
-        ///  流水线下内部子管道( PipeType.Flow 
+        ///  流水线下内部子管道 
         /// </summary>
-        public PipeRoute inter_pipe { get; set; }
+        public PipeRoute flow_sub_pipe { get; set; }
     }
 }

@@ -6,9 +6,8 @@ namespace OSS.Pipeline.Tests.FlowItems
 {
     public class PayGateway : BaseBranchGateway<PayContext>
     {
-        public PayGateway()
+        public PayGateway():base("PayGateway")
         {
-            PipeCode = "PayGateway";
         }
 
         protected override IEnumerable<IBranchNodePipe> SelectNextPipes( PayContext context, List<IBranchNodePipe> branchItems)

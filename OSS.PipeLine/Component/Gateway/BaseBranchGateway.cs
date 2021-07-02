@@ -32,7 +32,7 @@ namespace OSS.Pipeline
         ///  流体的分支网关基类
         ///    所有分支都失败会触发block
         /// </summary>
-        protected BaseBranchGateway() : base(PipeType.BranchGateway)
+        protected BaseBranchGateway(string pipeCode = null) : base(pipeCode,PipeType.BranchGateway)
         {
         }
 

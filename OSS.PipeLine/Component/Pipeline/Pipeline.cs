@@ -50,7 +50,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode,BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(PipeType.Pipeline)
+        public Pipeline(string pipeCode,BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(pipeCode,PipeType.Pipeline)
         {
             if (startPipe == null || endPipeAppender == null||string.IsNullOrEmpty(pipeCode))
             {
@@ -132,7 +132,7 @@ namespace OSS.Pipeline
         {
             var pipe = new PipeRoute
             {
-                pipe_code = PipeCode, pipe_type = PipeType, inter_pipe = _startPipe.InterToRoute()
+                pipe_code = PipeCode, pipe_type = PipeType, flow_sub_pipe = _startPipe.InterToRoute()
             };
 
             if (isFlowSelf || NextPipe == null|| Equals(LineContainer.EndPipe))

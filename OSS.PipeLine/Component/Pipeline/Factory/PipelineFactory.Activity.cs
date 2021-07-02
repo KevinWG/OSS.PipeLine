@@ -27,7 +27,7 @@ namespace OSS.Pipeline
         ///  追加活动管道
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
-        /// <param name="exeFunc">
+        /// <param name="exePassive">
         /// 执行委托，返回的处理结果：
         ///     TrafficSignal -（活动是否处理成功，业务结果）
         ///         Green_Pass  - 流体自动流入后续管道
@@ -36,17 +36,17 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, Empty> StartWithActivity<OutContext>(
-            Func<Task<TrafficSignal>> exeFunc, string pipeCode = null)
+        public static IPipelineAppender<Empty, Empty> StartWithActivity<OutContext>(string pipeCode,
+            Func<Task<TrafficSignal>> exePassive)
         {
-            return  Start(new SimpleActivity(exeFunc, pipeCode));
+            return  Start(new SimpleActivity(pipeCode,exePassive));
         }
         
         /// <summary>
         ///  追加活动管道
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
-        /// <param name="exeFunc">
+        /// <param name="exePassive">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -57,10 +57,10 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<OutContext, OutContext> StartWithActivity<OutContext>(
-            Func<OutContext, Task<TrafficSignal>> exeFunc, string pipeCode = null)
+        public static IPipelineAppender<OutContext, OutContext> StartWithActivity<OutContext>(string pipeCode,
+            Func<OutContext, Task<TrafficSignal>> exePassive)
         {
-            return Start(new SimpleActivity<OutContext>(exeFunc, pipeCode));
+            return Start(new SimpleActivity<OutContext>(pipeCode,exePassive));
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
         /// <typeparam name="TNextResult"></typeparam>
-        /// <param name="exeFunc">
+        /// <param name="exePassive">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -79,10 +79,10 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<OutContext, OutContext> StartWithActivity<OutContext,TNextResult>(
-            Func<OutContext, Task<TrafficSignal<TNextResult>>> exeFunc, string pipeCode = null)
+        public static IPipelineAppender<OutContext, OutContext> StartWithActivity<OutContext,TNextResult>(string pipeCode,
+            Func<OutContext,  Task<TrafficSignal<TNextResult>>> exePassive)
         {
-            return Start(new SimpleActivity<OutContext, TNextResult>(exeFunc, pipeCode));
+            return Start(new SimpleActivity<OutContext, TNextResult>(pipeCode,exePassive ));
         }
 
 
@@ -91,7 +91,7 @@ namespace OSS.Pipeline
         ///  追加活动管道
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="exeFunc">
+        /// <param name="exePassive">
         /// 执行委托
         /// 结果：
         ///     TrafficSignal &lt;TResult &gt; -（活动是否处理成功，业务结果）
@@ -101,10 +101,10 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, TResult> StartWithEffectActivity<TResult>(
-            Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
+        public static IPipelineAppender<Empty, TResult> StartWithEffectActivity<TResult>( string pipeCode,
+            Func<Task<TrafficSignal<TResult>>> exePassive)
         {
-            return Start(new SimpleEffectActivity<TResult>(exeFunc, pipeCode));
+            return Start(new SimpleEffectActivity<TResult>(pipeCode,exePassive));
         }
 
 
@@ -112,9 +112,9 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加活动管道
         /// </summary>
-        /// <typeparam name="TFuncPara"></typeparam>
+        /// <typeparam name="TPassivePara"></typeparam>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="exeFunc">
+        /// <param name="exePassive">
         /// 执行委托
         /// 参数：
         ///     当前活动上下文信息
@@ -126,10 +126,10 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TFuncPara, TResult> StartWithEffectActivity<TFuncPara, TResult>(
-            Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
+        public static IPipelineAppender<TPassivePara, TResult> StartWithEffectActivity<TPassivePara, TResult>(string pipeCode,
+            Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
         {
-            return Start(new SimpleEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode));
+            return Start(new SimpleEffectActivity<TPassivePara, TResult>(pipeCode,exePassive));
         
         }
 
@@ -138,9 +138,9 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加活动管道
         /// </summary>
-        /// <typeparam name="TFuncPara"></typeparam>
+        /// <typeparam name="TPassivePara"></typeparam>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="exeFunc">
+        /// <param name="exePassive">
         ///执行委托
         /// 参数：
         ///     当前活动上下文信息
@@ -152,10 +152,10 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, TFuncPara> StartWithFuncActivity<TFuncPara, TResult>(
-            Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
+        public static IPipelineAppender<Empty, TPassivePara> StartWithPassiveActivity<TPassivePara, TResult>(string pipeCode,
+            Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
         {
-            return Start(new SimpleFuncActivity<TFuncPara, TResult>(exeFunc, pipeCode));
+            return Start(new SimplePassiveActivity<TPassivePara, TResult>(pipeCode,exePassive));
        
         }
 
@@ -163,9 +163,9 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加活动管道
         /// </summary>
-        /// <typeparam name="TFuncPara"></typeparam>
+        /// <typeparam name="TPassivePara"></typeparam>
         /// <typeparam name="TResult"></typeparam>
-        /// <param name="exeFunc">
+        /// <param name="exePassive">
         ///执行委托
         /// 参数：当前活动上下文信息
         /// 结果：
@@ -176,10 +176,10 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, TResult> StartWithFuncEffectActivity<TFuncPara, TResult>(
-            Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
+        public static IPipelineAppender<Empty, TResult> StartWithPassiveEffectActivity<TPassivePara, TResult>(string pipeCode,
+            Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
         {
-            return Start(new SimpleFuncEffectActivity<TFuncPara, TResult>(exeFunc, pipeCode));
+            return Start(new SimplePassiveEffectActivity<TPassivePara, TResult>(pipeCode,exePassive));
         }
 
 

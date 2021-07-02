@@ -25,11 +25,12 @@ namespace OSS.Pipeline.Base
         /// <summary>
         /// 构造函数
         /// </summary>
+        /// <param name="pipeCode"></param>
         /// <param name="pipeType"></param>
-        protected BasePipePart(PipeType pipeType)
+        protected BasePipePart(string pipeCode, PipeType pipeType)
         {
             PipeType = pipeType;
-            PipeCode = GetType().Name;
+            PipeCode = string.IsNullOrEmpty(pipeCode)? GetType().Name:pipeCode;
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace OSS.Pipeline.Base
     public abstract class BaseInPipePart<TInContext> : BasePipePart
     {
         /// <inheritdoc />
-        protected BaseInPipePart(PipeType pipeType) : base(pipeType)
+        protected BaseInPipePart(string pipeCode, PipeType pipeType) : base(pipeCode, pipeType)
         {
         }
         
@@ -113,6 +114,7 @@ namespace OSS.Pipeline.Base
         ///  内部管道 -- 唤起
         /// </summary>
         /// <param name="context"></param>
+        /// <param name="prePipeCode"></param>
         /// <returns></returns>
         internal abstract Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode);
 

@@ -18,14 +18,14 @@ namespace OSS.Pipeline.Activity.Base
 {
     /// <summary>
     ///  被动触发执行活动组件基类
-    ///      传入TFuncPara类型参数，且此参数作为后续上下文传递给下一个节点，自身返回处理结果但无影响
+    ///      传入TPassivePara类型参数，且此参数作为后续上下文传递给下一个节点，自身返回处理结果但无影响
     /// </summary>
-    public abstract class BaseThreeWayFuncActivity<THandlePara, THandleResult, TOut> : BaseThreeWayFuncPipe<THandlePara, THandleResult, TOut>
+    public abstract class BaseThreeWayPassiveActivity<THandlePara, THandleResult, TOut> : BaseThreeWayPassivePipe<THandlePara, THandleResult, TOut>
     {
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseThreeWayFuncActivity(PipeType pipeType) : base(pipeType)
+        protected BaseThreeWayPassiveActivity(string pipeCode, PipeType pipeType) : base(pipeCode,pipeType)
         {
         }
 

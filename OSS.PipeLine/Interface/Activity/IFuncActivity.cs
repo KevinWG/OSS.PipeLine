@@ -16,15 +16,15 @@ using System.Threading.Tasks;
 namespace OSS.Pipeline.Interface
 {
 
-    /// <typeparam name="TFuncPara"></typeparam>
-    /// <typeparam name="TFuncResult"></typeparam>
-    public interface IFuncActivity<TFuncPara, TFuncResult> : IPipeAppender<TFuncPara>,IPipeExecutor<TFuncPara, TFuncResult>
+    /// <typeparam name="TPassivePara"></typeparam>
+    /// <typeparam name="TPassiveResult"></typeparam>
+    public interface IPassiveActivity<TPassivePara, TPassiveResult> : IPipeAppender<TPassivePara>,IPipeExecutor<TPassivePara, TPassiveResult>
     {
     }
 
-    /// <typeparam name="TFuncPara"></typeparam>
-    /// <typeparam name="TFuncResult"></typeparam>
-    public interface IFuncEffectActivity<in TFuncPara, TFuncResult> : IPipeAppender<TFuncResult>, IPipeExecutor<TFuncPara, TFuncResult>
+    /// <typeparam name="TPassivePara"></typeparam>
+    /// <typeparam name="TPassiveResult"></typeparam>
+    public interface IPassiveEffectActivity<in TPassivePara, TPassiveResult> : IPipeAppender<TPassiveResult>, IPipeExecutor<TPassivePara, TPassiveResult>
     {
     }
 }

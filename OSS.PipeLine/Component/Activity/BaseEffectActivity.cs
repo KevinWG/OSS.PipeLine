@@ -28,7 +28,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseEffectActivity() : base(PipeType.EffectActivity)
+        protected BaseEffectActivity( string pipeCode = null) : base(pipeCode,PipeType.EffectActivity)
         {
         }
 
@@ -87,7 +87,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseEffectActivity() : base(PipeType.EffectActivity)
+        protected BaseEffectActivity(string pipeCode = null) : base(pipeCode,PipeType.EffectActivity)
         {
         }
         

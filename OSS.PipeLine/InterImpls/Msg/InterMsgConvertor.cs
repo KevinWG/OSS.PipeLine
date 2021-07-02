@@ -22,8 +22,11 @@ namespace OSS.Pipeline.InterImpls.Msg
     internal class InterMsgConvertor<TInContext, TOutContext> : BaseMsgConverter<TInContext, TOutContext>
     {
         private readonly Func<TInContext, TOutContext> _convert;
+
+        
+
         /// <inheritdoc/>
-        public InterMsgConvertor(Func<TInContext, TOutContext> convertFunc,string pipeCode)
+        public InterMsgConvertor( string pipeCode,Func<TInContext, TOutContext> convertFunc):base(pipeCode)
         {
             _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc), "转换方法必须传入！");
         }

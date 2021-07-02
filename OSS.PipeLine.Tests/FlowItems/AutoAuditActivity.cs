@@ -5,9 +5,8 @@ namespace OSS.Pipeline.Tests.FlowItems
 {
     public class AutoAuditActivity : BaseEffectActivity<long,bool>
     {
-        public AutoAuditActivity()
+        public AutoAuditActivity():base("AuditActivity")
         {
-            PipeCode = "AuditActivity";
         }
         
      

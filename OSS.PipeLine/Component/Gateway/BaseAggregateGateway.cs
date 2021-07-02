@@ -29,7 +29,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///  流体的多路聚合网关基类构造函数
         /// </summary>
-        protected BaseAggregateGateway() : base(PipeType.AggregateGateway)
+        protected BaseAggregateGateway(string pipeCode = null) : base(pipeCode,PipeType.AggregateGateway)
         {
             _aggregatePipes = new List<IPipe>();
         }

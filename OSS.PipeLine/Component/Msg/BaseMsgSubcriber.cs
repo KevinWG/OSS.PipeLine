@@ -22,13 +22,13 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgSubscriber<TMsg> : BaseThreeWayFuncPipe<TMsg, TMsg, TMsg>, IDataSubscriber<TMsg>
+    public abstract class BaseMsgSubscriber<TMsg> : BaseThreeWayPassivePipe<TMsg, TMsg, TMsg>, IDataSubscriber<TMsg>
     {
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgSubscriber(string pipeCode) : this(pipeCode, null)
+        protected BaseMsgSubscriber(string pipeCode = null) : this(pipeCode, null)
         {
         }
 
@@ -37,7 +37,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option">数据流配置信息</param>
-        protected BaseMsgSubscriber(string pipeCode, DataFlowOption option) : base(PipeType.MsgSubscriber)
+        protected BaseMsgSubscriber(string pipeCode, DataFlowOption option) : base(pipeCode, PipeType.MsgSubscriber)
         {
             if (string.IsNullOrEmpty(pipeCode))
             {
@@ -49,11 +49,11 @@ namespace OSS.Pipeline
         /// <summary>
         ///  创建消息流
         /// </summary>
-        /// <param name="subscribeFunc"></param>
+        /// <param name="subscribePassive"></param>
         /// <param name="option"></param>
         /// <param name="pipeDataKey"></param>
         /// <returns></returns>
-        protected abstract void ReceiveSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscribeFunc,
+        protected abstract void ReceiveSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscribePassive,
             DataFlowOption option);
 
         /// <summary>

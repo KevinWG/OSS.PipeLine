@@ -14,7 +14,7 @@ namespace OSS.Pipeline.Activity.Base
     public abstract class BaseThreeWayActivity<TInContext, THandleResult, TOutContext> : BaseThreeWayPipe<TInContext,  THandleResult, TOutContext>
     {
         /// <inheritdoc />
-        protected BaseThreeWayActivity(PipeType pipeType) : base(pipeType)
+        protected BaseThreeWayActivity(string pipeCode,PipeType pipeType) : base(pipeCode,pipeType)
         {
         }
 

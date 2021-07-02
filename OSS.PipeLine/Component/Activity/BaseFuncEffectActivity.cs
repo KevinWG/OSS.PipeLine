@@ -19,24 +19,24 @@ namespace OSS.Pipeline
 {
     /// <summary>
     ///  被动触发执行活动组件基类
-    ///      传入TFuncPara类型参数，自身返回处理结果，且结果作为上下文传递给下一个节点
+    ///      传入TPassivePara类型参数，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
-    /// <typeparam name="TFuncPara"></typeparam>
-    /// <typeparam name="TFuncResult"></typeparam>
-    public abstract class BaseFuncEffectActivity<TFuncPara, TFuncResult> :
-        BaseThreeWayFuncActivity<TFuncPara, TFuncResult, TFuncResult>, IFuncEffectActivity<TFuncPara, TFuncResult>
+    /// <typeparam name="TPassivePara"></typeparam>
+    /// <typeparam name="TPassiveResult"></typeparam>
+    public abstract class BasePassiveEffectActivity<TPassivePara, TPassiveResult> :
+        BaseThreeWayPassiveActivity<TPassivePara, TPassiveResult, TPassiveResult>, IPassiveEffectActivity<TPassivePara, TPassiveResult>
     {
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseFuncEffectActivity() : base(PipeType.FuncEffectActivity)
+        protected BasePassiveEffectActivity(string pipeCode = null) : base(pipeCode, PipeType.PassiveEffectActivity)
         {
         }
         
-        internal override async Task<TrafficResult<TFuncResult, TFuncResult>> InterProcessPackage(TFuncPara context, string prePipeCode)
+        internal override async Task<TrafficResult<TPassiveResult, TPassiveResult>> InterProcessPackage(TPassivePara context, string prePipeCode)
         {
             var tSignal = await Executing(context);
-            return new TrafficResult<TFuncResult, TFuncResult>(tSignal,
+            return new TrafficResult<TPassiveResult, TPassiveResult>(tSignal,
                 tSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, tSignal.result);
         }
     }

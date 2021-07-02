@@ -5,9 +5,8 @@ namespace OSS.Pipeline.Tests.FlowItems
 {
     public class StockActivity : BaseActivity<StockContext>
     {
-        public StockActivity()
+        public StockActivity():base("StockActivity")
         {
-            PipeCode = "StockActivity";
         }
 
         protected override Task<TrafficSignal> Executing(StockContext data)
@@ -24,9 +23,8 @@ namespace OSS.Pipeline.Tests.FlowItems
 
     public class StockConnector : BaseMsgConverter<PayContext, StockContext>
     {
-        public StockConnector()
+        public StockConnector():base("StockConnector")
         {
-            PipeCode = "StockConnector";
         }
 
         protected override StockContext Convert(PayContext inContextData)

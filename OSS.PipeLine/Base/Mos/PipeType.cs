@@ -31,12 +31,12 @@ namespace OSS.Pipeline
         /// <summary>
         ///   独立Action活动
         /// </summary>
-        FuncActivity = 120,
+        PassiveActivity = 120,
 
         /// <summary>
         ///   独立Action活动
         /// </summary>
-        FuncEffectActivity = 130,
+        PassiveEffectActivity = 130,
 
 
         /// <summary>
@@ -69,6 +69,11 @@ namespace OSS.Pipeline
         ///  消息订阅者
         /// </summary>
         MsgConverter = 350,
+
+        /// <summary>
+        ///  消息枚举器（循环处理
+        /// </summary>
+        MsgEnumerator = 350,
 
         /// <summary>
         /// 组合管道线

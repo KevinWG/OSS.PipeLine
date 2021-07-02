@@ -11,6 +11,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 
@@ -53,6 +54,27 @@ namespace OSS.Pipeline.InterImpls.Pipeline
 
         BaseInPipePart<TInContext> IPipelineBranchAppender<TInContext, TOutContext>.    StartPipe   { get; set; }
         BaseBranchGateway<TOutContext> IPipelineBranchAppender<TInContext, TOutContext>.EndBranchPipe { get; set; }
+    }
+
+
+    internal class
+        InterPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg> : IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>
+            where TMsgEnumerable:IEnumerable<TMsg> 
+    {
+        public InterPipelineMsgEnumerableAppender(BaseInPipePart<TInContext> startPipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
+        {
+            Initial(this, startPipe, endPipe);
+        }
+
+        private static void Initial(IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg> pipelineAppender,
+            BaseInPipePart<TInContext> startPipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
+        {
+            pipelineAppender.StartPipe = startPipe;
+            pipelineAppender.EndPipe   = endPipe;
+        }
+
+        BaseInPipePart<TInContext> IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>.    StartPipe     { get; set; }
+        BaseMsgEnumerator<TMsgEnumerable, TMsg> IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>.EndPipe { get; set; }
     }
 
     //internal class

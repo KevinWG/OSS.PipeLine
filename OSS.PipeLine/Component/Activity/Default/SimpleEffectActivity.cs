@@ -8,51 +8,47 @@ namespace OSS.Pipeline
     /// <inheritdoc />
     public class SimpleEffectActivity<TResult> : BaseEffectActivity<TResult>
     {
-        private readonly Func<Task<TrafficSignal<TResult>>> _exeFunc;
+        private readonly Func<Task<TrafficSignal<TResult>>> _exePassive;
 
         /// <inheritdoc />
-        public SimpleEffectActivity(Func<Task<TrafficSignal<TResult>>> exeFunc, string pipeCode=null)
+        public SimpleEffectActivity(string pipeCode, Func<Task<TrafficSignal<TResult>>> exePassive):base(pipeCode)
         {
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                PipeCode = pipeCode;
-            }
-            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
+            _exePassive = exePassive ?? throw new ArgumentNullException(nameof(exePassive), "执行方法不能为空!");
         }
 
         /// <inheritdoc />
         protected override Task<TrafficSignal<TResult>> Executing()
         {
-            return _exeFunc();
+            return _exePassive();
         }
     }
 
 
     /// <inheritdoc />
-    public class SimpleEffectActivity<TFuncPara, TResult>: BaseEffectActivity<TFuncPara, TResult>// : BaseStraightPipe<TFuncPara, TResult>
+    public class SimpleEffectActivity<TPassivePara, TResult>: BaseEffectActivity<TPassivePara, TResult>// : BaseStraightPipe<TPassivePara, TResult>
     {
-        private readonly Func<TFuncPara, Task<TrafficSignal<TResult>>> _exeFunc;
+        private readonly Func<TPassivePara, Task<TrafficSignal<TResult>>> _exePassive;
 
         /// <inheritdoc />
-        public SimpleEffectActivity(Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc,string pipeCode = null)
+        public SimpleEffectActivity( string pipeCode,Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive):base(pipeCode)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
                 PipeCode = pipeCode;
             }
-            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
+            _exePassive = exePassive ?? throw new ArgumentNullException(nameof(exePassive), "执行方法不能为空!");
         }
 
         /// <inheritdoc />
-        protected override Task<TrafficSignal<TResult>> Executing(TFuncPara para)
+        protected override Task<TrafficSignal<TResult>> Executing(TPassivePara para)
         {
-            return _exeFunc(para);
+            return _exePassive(para);
         }
 
         ///// <inheritdoc />
-        //protected override Task<(TrafficSignal traffic_signal, TResult result)> Executing(TFuncPara contextData)
+        //protected override Task<(TrafficSignal traffic_signal, TResult result)> Executing(TPassivePara contextData)
         //{
-        //    return _exeFunc(contextData);
+        //    return _exePassive(contextData);
         //}
     }
 

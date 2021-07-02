@@ -31,7 +31,7 @@ namespace OSS.Pipeline
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="pipeCode"> 作为缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgFlow(string pipeCode) : this(pipeCode, null)
+        protected BaseMsgFlow(string pipeCode = null) : this(pipeCode, null)
         {
         }
 
@@ -40,12 +40,13 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgFlow(string pipeCode, DataFlowOption option) : base(PipeType.MsgFlow)
+        protected BaseMsgFlow(string pipeCode, DataFlowOption option) : base(pipeCode,PipeType.MsgFlow)
         {
             if (string.IsNullOrEmpty(pipeCode))
             {
                 throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
             }
+
             _pusher = CreateFlow(pipeCode, this, option);
         }
         

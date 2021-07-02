@@ -31,7 +31,7 @@ namespace OSS.Pipeline.Base
         IPipeExecutor<TInContext, THandleResult>
     {
         /// <inheritdoc />
-        protected BaseThreeWayPipe(PipeType pipeType) : base(pipeType)
+        protected BaseThreeWayPipe(string pipeCode, PipeType pipeType) : base(pipeCode, pipeType)
         {
         }
 

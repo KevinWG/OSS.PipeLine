@@ -10,6 +10,10 @@ namespace OSS.Pipeline.Tests.FlowItems
     /// </summary>
     public class EndGateway : BaseAggregateGateway<Empty>
     {
+        public EndGateway() : base(nameof(EndGateway))
+        {
+        }
+
         protected override Task<TrafficSignal> Switch(Empty context, string prePipeCode, IList<IPipe> allPrePipes)
         {
             LogHelper.Info($"通过 {prePipeCode} 管道进入结束网关！");

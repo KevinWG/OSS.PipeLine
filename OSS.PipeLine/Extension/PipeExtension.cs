@@ -11,6 +11,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 
@@ -55,6 +56,24 @@ namespace OSS.Pipeline
             return nextPipe;
         }
         
+    
+
+        /// <summary>
+        /// 追加单入类型管道
+        /// </summary>
+        /// <typeparam name="OutContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void Append<OutContext>(this IPipeAppender<OutContext> pipe, BaseOneWayPipe<OutContext> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+        }
+
+
+
+        #region 特定类型指定
+
         /// <summary>
         /// 追加分支管道
         /// </summary>
@@ -68,16 +87,21 @@ namespace OSS.Pipeline
         }
 
         /// <summary>
-        /// 追加单入类型管道
+        /// 追加枚举器
         /// </summary>
         /// <typeparam name="OutContext"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static void Append<OutContext>(this IPipeAppender<OutContext> pipe, BaseOneWayPipe<OutContext> nextPipe)
+        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> Append<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
+            where TMsgEnumerable : IEnumerable<TMsg>
         {
             pipe.InterAppend(nextPipe);
+            return nextPipe;
         }
+
+
+        #endregion
 
 
     }

@@ -11,6 +11,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline.Interface
@@ -35,5 +36,18 @@ namespace OSS.Pipeline.Interface
     {
         internal BaseInPipePart<TInContext>     StartPipe   { get; set; }
         internal BaseBranchGateway<TOutContext> EndBranchPipe { get; set; }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="TInContext"></typeparam>
+    /// <typeparam name="TOutContext"></typeparam>
+    public interface IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>
+        where TMsgEnumerable : IEnumerable<TMsg>
+    {
+        internal BaseInPipePart<TInContext>              StartPipe { get; set; }
+        internal BaseMsgEnumerator<TMsgEnumerable, TMsg> EndPipe   { get; set; }
     }
 }

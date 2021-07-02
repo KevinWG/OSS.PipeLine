@@ -26,13 +26,13 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TOut"></typeparam>
     /// <typeparam name="THandlePara"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseThreeWayFuncPipe<THandlePara,THandleResult, TOut> :
+    public abstract class BaseThreeWayPassivePipe<THandlePara,THandleResult, TOut> :
        BaseFourWayPipe<Empty, THandlePara, THandleResult, TOut>,IPipeExecutor<THandlePara, THandleResult>
     {
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseThreeWayFuncPipe(PipeType pipeType) : base(pipeType)
+        protected BaseThreeWayPassivePipe(string pipeCode,PipeType pipeType) : base(pipeCode,pipeType)
         {
         }
 

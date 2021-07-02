@@ -5,9 +5,8 @@ namespace OSS.Pipeline.Tests.FlowItems
 {
     public class ApplyActivity : BaseEffectActivity<ApplyContext, long>
     {
-        public ApplyActivity()
+        public ApplyActivity():base("ApplyActivity")
         {
-            PipeCode = "ApplyActivity";
         }
         
         protected override Task<TrafficSignal<long>> Executing(ApplyContext para)

@@ -4,25 +4,25 @@ using System.Threading.Tasks;
 namespace OSS.Pipeline
 {
     /// <inheritdoc />
-    public class SimpleFuncEffectActivity<TFuncPara, TResult> :BaseFuncEffectActivity<TFuncPara, TResult> 
+    public class SimplePassiveEffectActivity<TPassivePara, TResult> :BasePassiveEffectActivity<TPassivePara, TResult> 
     {
-        private readonly Func<TFuncPara, Task<TrafficSignal<TResult>>> _exeFunc;
+        private readonly Func<TPassivePara, Task<TrafficSignal<TResult>>> _exePassive;
 
         /// <inheritdoc />
-        public SimpleFuncEffectActivity(Func<TFuncPara, Task<TrafficSignal<TResult>>> exeFunc,string pipeCode = null)
+        public SimplePassiveEffectActivity(string pipeCode,Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive):base(pipeCode)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
                 PipeCode = pipeCode;
             }
-            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
+            _exePassive = exePassive ?? throw new ArgumentNullException(nameof(exePassive), "执行方法不能为空!");
         }
 
 
         /// <inheritdoc />
-        protected override Task<TrafficSignal<TResult>> Executing(TFuncPara contextData)
+        protected override Task<TrafficSignal<TResult>> Executing(TPassivePara contextData)
         {
-            return _exeFunc(contextData);
+            return _exePassive(contextData);
         }
     }
 }

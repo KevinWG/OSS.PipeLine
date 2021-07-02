@@ -12,6 +12,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using OSS.DataFlow;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
@@ -62,11 +63,21 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineAppender<OutContext, NextOutContext> StartWithMsgConverter<OutContext, NextOutContext>( Func<OutContext, NextOutContext> convertFunc, string pipeCode = null)
         {
-            var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(convertFunc, pipeCode);
-            if (!string.IsNullOrEmpty(pipeCode))
-            {
-                nextPipe.PipeCode = pipeCode;
-            }
+            var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(pipeCode,convertFunc);
+            return Start(nextPipe);
+        }
+
+
+
+        /// <summary>
+        ///  追加消息枚举器
+        /// </summary>
+        /// <param name="pipeCode"></param>
+        /// <returns></returns>
+        public static IPipelineMsgEnumerableAppender<TMsgEnumerable,TMsgEnumerable, TMsg> StartWithMsgEnumerator<TMsgEnumerable,TMsg>(string pipeCode=null)
+            where TMsgEnumerable : IEnumerable<TMsg>
+        {
+            var nextPipe = new BaseMsgEnumerator<TMsgEnumerable,TMsg>(pipeCode);
             return Start(nextPipe);
         }
 

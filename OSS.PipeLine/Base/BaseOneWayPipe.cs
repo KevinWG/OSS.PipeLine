@@ -25,7 +25,7 @@ namespace OSS.Pipeline.Base
     public abstract class BaseOneWayPipe<TContext> : BasePipe<TContext, TContext, TContext, TContext>, IPipeExecutor<TContext,TContext>
     {
         /// <inheritdoc />
-        protected BaseOneWayPipe(PipeType pipeType) : base(pipeType)
+        protected BaseOneWayPipe(string pipeCode, PipeType pipeType) : base(pipeCode,pipeType)
         {
         }
         

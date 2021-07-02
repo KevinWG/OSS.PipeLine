@@ -14,6 +14,7 @@
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Pipeline;
+using System.Collections.Generic;
 
 namespace OSS.Pipeline
 {
@@ -60,6 +61,19 @@ namespace OSS.Pipeline
             return new InterPipelineBranchAppender<TIn, TIn>( startPipe, startPipe);
         }
 
+
+        /// <summary>
+        ///  添加第一个节点
+        /// ( 消息枚举器
+        /// </summary>
+        /// <typeparam name="TMsg"></typeparam>
+        /// <param name="startPipe"></param>
+        /// <returns></returns>
+        public static IPipelineMsgEnumerableAppender<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(BaseMsgEnumerator<TMsgEnumerable,TMsg> startPipe)
+            where TMsgEnumerable : IEnumerable<TMsg>
+        {
+            return new InterPipelineMsgEnumerableAppender<TMsgEnumerable, TMsgEnumerable, TMsg>(startPipe, startPipe);
+        }
 
 
 

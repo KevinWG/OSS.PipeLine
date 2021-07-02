@@ -31,7 +31,7 @@ namespace OSS.Pipeline
         ///  异步缓冲连接器
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgPublisher(string pipeCode) : this(pipeCode, null)
+        protected BaseMsgPublisher(string pipeCode = null) : this(pipeCode, null)
         {
         }
 
@@ -40,7 +40,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgPublisher(string pipeCode, DataPublisherOption option) : base(PipeType.MsgPublisher)
+        protected BaseMsgPublisher(string pipeCode, DataPublisherOption option) : base(pipeCode, PipeType.MsgPublisher)
         {
             if (string.IsNullOrEmpty(pipeCode))
             {
@@ -50,6 +50,9 @@ namespace OSS.Pipeline
         }
 
         #region 扩展
+
+        //protected virtual string 
+
 
         /// <summary>
         ///  创建消息流

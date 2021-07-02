@@ -3,11 +3,10 @@ using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems
 {
-    public class PayActivity : BaseFuncActivity<PayContext, bool>
+    public class PayActivity : BasePassiveActivity<PayContext, bool>
     {
-        public PayActivity()
+        public PayActivity():base("PayActivity")
         {
-            PipeCode = "PayActivity";
         }
 
 

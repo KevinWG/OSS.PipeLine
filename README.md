@@ -60,10 +60,10 @@
 ```
 
 
-### 3. BaseFuncActivity<TFuncPara, TFuncResult>  -  被动触发执行活动组件（如需用户参与）
+### 3. BasePassiveActivity<TPassivePara, TPassiveResult>  -  被动触发执行活动组件（如需用户参与）
 
 当业务流流入当前组件，业务流动停止，被动等待调用节点的 Execute 方法，外部调用后流程继续向后流动执行（Execute传入的参数作为后续的上下文）。
-继承此基类（含Func），重写Executing方法实现具体业务逻辑内容。
+继承此基类（含Passive），重写Executing方法实现具体业务逻辑内容。
 
 ```csharp
         /// <summary>
@@ -81,10 +81,10 @@
         protected abstract Task<TrafficSignal<THandleResult>> Executing(THandlePara para);        
 ```
 
-### 4. BaseFuncEffectActivity<TFuncPara, TFuncResult>  -  被动触发（受影响上下文）执行活动组件
+### 4. BasePassiveEffectActivity<TPassivePara, TPassiveResult>  -  被动触发（受影响上下文）执行活动组件
 
 同主动触发活动组件一样，当前活动处理业务结果作为下游节点的上下文。
-继承此基类（含Func和Effect），重写Executing方法实现具体业务逻辑内容。
+继承此基类（含Passive和Effect），重写Executing方法实现具体业务逻辑内容。
 
 ```csharp
         /// <summary>
