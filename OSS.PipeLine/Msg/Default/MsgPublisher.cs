@@ -10,6 +10,8 @@
 *****************************************************************************/
 
 #endregion
+
+using System;
 using OSS.DataFlow;
 
 namespace OSS.Pipeline
@@ -20,28 +22,41 @@ namespace OSS.Pipeline
     /// <typeparam name="TMsg"></typeparam>
     public class MsgPublisher<TMsg> : BaseMsgPublisher<TMsg>
     {
-        /// <summary>
-        ///  消息发布者
-        /// </summary>
-        /// <param name="pipeCode"></param>
-        public MsgPublisher(string pipeCode) : this(pipeCode, null)
-        {
-        }
+        private readonly Func<TMsg, string> _pushKeySelector;
 
         /// <summary>
         ///  消息发布者
         /// </summary>
         /// <param name="pipeCode"></param>
         /// <param name="option"></param>
-        public MsgPublisher(string pipeCode, DataPublisherOption option) : base(pipeCode, option)
+        public MsgPublisher(string pipeCode, Func<TMsg, string> pushKeyCreator, DataPublisherOption option) : base(
+            pipeCode, option)
+        {
+            _pushKeySelector = pushKeyCreator;
+        }
+
+        /// <inheritdoc />
+        public MsgPublisher(string pipeCode, DataPublisherOption option = null) : this(pipeCode, null, option)
         {
         }
 
 
         /// <inheritdoc />
-        protected override IDataPublisher<TMsg> CreatePublisher(string pipeDataKey, DataPublisherOption option)
+        public MsgPublisher(string pipeCode, Func<TMsg, string> pushKeyCreator = null) : this(pipeCode, pushKeyCreator,
+            null)
         {
-            return DataFlowFactory.CreatePublisher<TMsg>(pipeDataKey, option);
+        }
+
+        /// <inheritdoc />
+        protected override string GeneratePushKey(TMsg msg)
+        {
+            return _pushKeySelector?.Invoke(msg) ?? PipeCode;
+        }
+
+        /// <inheritdoc />
+        protected override IDataPublisher<TMsg> CreatePublisher(DataPublisherOption option)
+        {
+            return DataFlowFactory.CreatePublisher<TMsg>(option);
         }
     }
 }

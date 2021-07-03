@@ -24,12 +24,14 @@ namespace OSS.Pipeline.InterImpls.Watcher
         private readonly IPipeWatcher                  _watcher;
         private readonly IDataPublisher<WatchDataItem> _publisher;
         private readonly ActionBlock<WatchDataItem>    _watchDataQueue;
+        private readonly string                        _dataFlowKey;
 
         public PipeWatcherProxy(IPipeWatcher watcher, string dataFlowKey, DataFlowOption option)
         {
             if (!string.IsNullOrEmpty(dataFlowKey))
             {
-                _publisher = DataFlowFactory.CreateFlow<WatchDataItem>(dataFlowKey, WatchCallBack, option);
+                _dataFlowKey = dataFlowKey;
+                _publisher   = DataFlowFactory.CreateFlow<WatchDataItem>(dataFlowKey, WatchCallBack, option);
             }
             else
             {
@@ -69,7 +71,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
         {
             if (_publisher != null)
             {
-                return _publisher.Publish(data);
+                return _publisher.Publish(_dataFlowKey,data);
             }
 
             _watchDataQueue.Post(data);

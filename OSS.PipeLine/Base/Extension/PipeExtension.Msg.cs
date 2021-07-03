@@ -33,9 +33,10 @@ namespace OSS.Pipeline
         /// <param name="option"></param>
         /// <returns></returns>
         public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
+            Func<TMsg, string> pushKeyCreator = null,
             DataPublisherOption option = null)
         {
-            var nextPipe = new MsgPublisher<TMsg>(pipeCode, option);
+            var nextPipe = new MsgPublisher<TMsg>(pipeCode,pushKeyCreator, option);
             pipe.InterAppend(nextPipe);
         }
 

@@ -64,7 +64,7 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterPreCall(TMsg context,string prePipeCode)
         {
-            var pushRes = await _pusher.Publish(context);
+            var pushRes = await _pusher.Publish(PipeCode,context);
             return pushRes
                 ? new TrafficResult(SignalFlag.Green_Pass, string.Empty, string.Empty)
                 : new TrafficResult(SignalFlag.Red_Block, PipeCode, $"({this.GetType().Name})推送消息失败!");

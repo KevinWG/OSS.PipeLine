@@ -11,7 +11,6 @@
 
 #endregion
 
-using System;
 using System.Threading.Tasks;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
@@ -19,7 +18,7 @@ using OSS.Pipeline.Base;
 namespace OSS.Pipeline
 {
     /// <summary>
-    ///  消息流基类
+    ///  消息发布者基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
     public abstract class BaseMsgPublisher<TMsg> : BaseOneWayPipe<TMsg>
@@ -28,30 +27,28 @@ namespace OSS.Pipeline
         private readonly IDataPublisher<TMsg> _pusher;
 
         /// <summary>
-        ///  异步缓冲连接器
-        /// </summary>
-        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgPublisher(string pipeCode = null) : this(pipeCode, null)
-        {
-        }
-
-        /// <summary>
-        ///  异步缓冲连接器
+        ///  消息发布者
         /// </summary>
         /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgPublisher(string pipeCode, DataPublisherOption option) : base(pipeCode, PipeType.MsgPublisher)
+        protected BaseMsgPublisher(string pipeCode, DataPublisherOption option = null) : base(pipeCode,
+            PipeType.MsgPublisher)
         {
-            if (string.IsNullOrEmpty(pipeCode))
-            {
-                throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
-            }
-            _pusher = CreatePublisher(pipeCode, option);
+            _pusher = CreatePublisher(option);
         }
 
         #region 扩展
 
-        //protected virtual string 
+        /// <summary>
+        ///  生成推送消息对应的key值
+        ///     默认使用PipeCode
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns>默认返回PipeCode</returns>
+        protected virtual string GeneratePushKey(TMsg msg)
+        {
+            return PipeCode;
+        }
 
 
         /// <summary>
@@ -60,7 +57,7 @@ namespace OSS.Pipeline
         /// <param name="pipeDataKey"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher<TMsg> CreatePublisher(string pipeDataKey, DataPublisherOption option);
+        protected abstract IDataPublisher<TMsg> CreatePublisher(DataPublisherOption option);
 
         #endregion
 
@@ -68,14 +65,15 @@ namespace OSS.Pipeline
 
         internal override async Task<TrafficResult<TMsg, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
         {
-            return (await _pusher.Publish(context))
-                ? new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass,string.Empty,string.Empty,context,context)
-                : new TrafficResult<TMsg, TMsg>(SignalFlag.Red_Block,PipeCode, $"{this.GetType().Name}发布消息失败!", context, context);
+            return (await _pusher.Publish(GeneratePushKey(context), context))
+                ? new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, context, context)
+                : new TrafficResult<TMsg, TMsg>(SignalFlag.Red_Block, PipeCode, $"{this.GetType().Name}发布消息失败!",
+                    context, context);
         }
-      
+
         #endregion
 
-    
+
 
     }
 

@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using OSS.DataFlow;
 
@@ -31,10 +32,11 @@ namespace OSS.Pipeline
         /// <param name="option"></param>
         /// <returns></returns>
         public static BaseMsgEnumerator<TMsgEnumerable,TMsg> SetMsgPublisherIterator<TMsgEnumerable, TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, string pipeCode,
+            Func<TMsg,string> pushKeyCreator=null,
             DataPublisherOption option = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new MsgPublisher<TMsg>(pipeCode, option);
+            var nextPipe = new MsgPublisher<TMsg>(pipeCode, pushKeyCreator, option);
             pipe.InterSetIterator(nextPipe);
             return pipe;
         }

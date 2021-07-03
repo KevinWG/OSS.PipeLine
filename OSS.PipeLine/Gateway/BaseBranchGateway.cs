@@ -88,7 +88,7 @@ namespace OSS.Pipeline
 
         private List<IBranchNodePipe> _branchItems;
 
-        private void Add(BaseInPipePart<TContext> pipe)
+        protected void Add(BaseInPipePart<TContext> pipe)
         {
             if (pipe == null)
             {
@@ -101,7 +101,7 @@ namespace OSS.Pipeline
         }
 
 
-        private void Add(BaseInPipePart<Empty> pipe)
+        protected void Add(BaseInPipePart<Empty> pipe)
         {
             if (pipe == null)
             {
