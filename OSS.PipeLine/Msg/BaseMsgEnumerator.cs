@@ -25,6 +25,7 @@ namespace OSS.Pipeline
     /// 消息转化基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
+    /// <typeparam name="TMsgEnumerable"></typeparam>
     public class BaseMsgEnumerator<TMsgEnumerable, TMsg> : BaseThreeWayPipe<TMsgEnumerable, Empty, TMsgEnumerable>
         where TMsgEnumerable : IEnumerable<TMsg>
     {

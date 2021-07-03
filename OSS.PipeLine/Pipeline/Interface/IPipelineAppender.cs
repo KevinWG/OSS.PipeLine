@@ -42,8 +42,6 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     /// 
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
     public interface IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>
         where TMsgEnumerable : IEnumerable<TMsg>
     {
