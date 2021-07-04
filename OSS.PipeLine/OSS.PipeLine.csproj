@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.6.2.2</Version>
-    <PackageReleaseNotes>优化消息发布者</PackageReleaseNotes>
+    <Version>1.7</Version>
+    <PackageReleaseNotes>添加简化版SimplePipeline</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Pipeline</RepositoryUrl>

@@ -12,168 +12,108 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Base.Base;
 using OSS.Pipeline.Interface;
-using OSS.Pipeline.InterImpls.Pipeline;
+using OSS.Pipeline.SimplePipeline;
+using OSS.Pipeline.SimplePipeline.InterImpls.Connector;
+using OSS.Pipeline.SimplePipeline.InterImpls.Connector.Extension;
 
 namespace OSS.Pipeline
 {
     /// <summary>
-    /// 简单流生成
+    /// EventFlow 创建工厂
     /// </summary>
-    public static partial class SimplePipeLineExtension
+    public static partial class SimplePipelineExtension
     {
-        ///// <summary>
-        /////  追加下一个节点
-        ///// </summary>
-        ///// <typeparam name="TIn"></typeparam>
-        ///// <typeparam name="TOut"></typeparam>
-        ///// <typeparam name="TNextPara"></typeparam>
-        ///// <typeparam name="TNextOut"></typeparam>
-        ///// <typeparam name="TNextResult"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public static IPipelineAppender<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
-        //    BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
-        //{
-        //    return pipe.Set(nextPipe);
-        //}
-
-        ///// <summary>
-        /////  追加下一个节点
-        ///// </summary>
-        ///// <typeparam name="TIn"></typeparam>
-        ///// <typeparam name="TOut"></typeparam>
-        ///// <typeparam name="TNextPara"></typeparam>
-        ///// <typeparam name="TNextOut"></typeparam>
-        ///// <typeparam name="TNextResult"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public static IPipelineAppender<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
-        //    BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
-        //{
-        //    return pipe.Set(nextPipe);
-        //}
+        /// <summary>
+        ///  追加下一个节点
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static ISimplePipelineConnector<TContext> Then<TContext, TNextResult>(this ISimplePipelineConnector<TContext> pipe,
+            BaseFourWayPipe<TContext, TContext, TNextResult, TContext> nextPipe)
+        {
+            return pipe.Set(nextPipe);
+        }
 
 
 
-        ///// <summary>
-        /////  添加下一个节点
-        ///// </summary>
-        ///// <typeparam name="TIn"></typeparam>
-        ///// <typeparam name="TOut"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public static void Then<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, BaseOneWayPipe<TOut> nextPipe)
-        //{
-        //    pipe.Set(nextPipe);
-        //}
+
+        /// <summary>
+        ///  添加下一个节点
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void Then<TContext>(this ISimplePipelineConnector<TContext> pipe, BaseOneWayPipe<TContext> nextPipe)
+        {
+            pipe.Set(nextPipe);
+        }
 
 
 
-        //#region 分支
+        #region 分支
 
 
 
-        ///// <summary>
-        /////  添加下一个节点
-        ///// </summary>
-        ///// <typeparam name="TIn"></typeparam>
-        ///// <typeparam name="TOut"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public static IPipelineBranchAppender<TIn, TOut> Then<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, BaseBranchGateway<TOut> nextPipe)
-        //{
-        //    return pipe.Set(nextPipe);
-        //}
+        /// <summary>
+        ///  添加下一个节点
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static ISimplePipelineBranchConnector<TContext> Then<TContext>(this ISimplePipelineConnector<TContext> pipe, BaseBranchGateway<TContext> nextPipe)
+        {
+            return pipe.Set(nextPipe);
+        }
 
-        ///// <summary>
-        /////  添加第一个节点
-        ///// </summary>
-        ///// <typeparam name="TIn"></typeparam>
-        ///// <typeparam name="TOut"></typeparam>
-        ///// <typeparam name="TNextOut"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="branchGather">
-        /////     扩展分支方法，并汇聚返回最终节点到主流程
-        ///// </param>
-        ///// <returns></returns>
-        //public static IPipelineAppender<TIn, TNextOut> WithBranchBox<TIn, TOut, TNextOut>(this IPipelineBranchAppender<TIn, TOut> pipe, Func<BaseBranchGateway<TOut>, IPipeAppender<TNextOut>> branchGather)
-        //{
-        //    var newPipe = new InterPipelineAppender<TIn, TNextOut>(pipe.StartPipe, branchGather(pipe.EndBranchPipe));
+        /// <summary>
+        ///  添加第一个节点
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="branchGather">
+        ///     扩展分支方法，并汇聚返回最终节点到主流程
+        /// </param>
+        /// <returns></returns>
+        public static ISimplePipelineConnector<TContext> WithBranchBox<TContext>(this ISimplePipelineBranchConnector<TContext> pipe, Func<BaseBranchGateway<TContext>, IPipeAppender<TContext>> branchGather)
+        {
+            var newPipe = new InterSimplePipelineConnector<TContext>(pipe.StartPipe, branchGather(pipe.EndBranchPipe));
 
-        //    pipe.StartPipe = null;
-        //    pipe.EndBranchPipe = null;
+            pipe.StartPipe     = null;
+            pipe.EndBranchPipe = null;
 
-        //    return newPipe;
-        //}
+            return newPipe;
+        }
 
 
-        //#endregion
-        
+        #endregion
 
-        //internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-        //    BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
-        //{
-        //    oldAppender.EndAppender.Append(endPipe);
-        //    IPipelineAppender<TIn, TNextOut> pipelineAppender = new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
+        #region 生成Pipeline
 
-        //    oldAppender.StartPipe = null;
-        //    oldAppender.EndAppender = null;
-        //    return pipelineAppender;
-        //}
-
-
-        //internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-        //    BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> endPipe)
-        //{
-        //    oldAppender.EndAppender.Append(endPipe);
-        //    IPipelineAppender<TIn, TNextOut> appender =
-        //        new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
-
-        //    oldAppender.StartPipe = null;
-        //    oldAppender.EndAppender = null;
-        //    return appender;
-        //}
-
-        //internal static void Set<TIn, TOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-        //    BaseOneWayPipe<TOut> endPipe)
-        //{
-        //    oldAppender.EndAppender.Append(endPipe);
-
-        //    oldAppender.StartPipe = null;
-        //    oldAppender.EndAppender = null;
-        //}
+        /// <summary>
+        ///  根据当前连接信息创建Pipeline
+        /// </summary>
+        /// <typeparam name="TContext"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static SimplePipeline<TContext> AsPipeline<TContext>(this ISimplePipelineConnector<TContext> pipe, string pipeCode, PipeLineOption option = null)
+        {
+            var newPipe = new SimplePipeline<TContext>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
+            pipe.StartPipe   = null;
+            pipe.EndAppender = null;
+            return newPipe;
+        }
 
 
-        //internal static IPipelineBranchAppender<TIn, TOut> Set<TIn, TOut>(this IPipelineAppender<TIn, TOut> oldAppender,
-        //    BaseBranchGateway<TOut> endPipe)
-        //{
-        //    oldAppender.EndAppender.Append(endPipe);
-        //    IPipelineBranchAppender<TIn, TOut> appender =
-        //        new InterPipelineBranchAppender<TIn, TOut>(oldAppender.StartPipe, endPipe);
+        #endregion
 
-        //    return appender;
-        //}
-
-
-        //internal static IPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg> Set<TIn, TMsgEnumerable, TMsg>(
-        //    this IPipelineAppender<TIn, TMsgEnumerable> oldAppender,
-        //    BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
-        //    where TMsgEnumerable : IEnumerable<TMsg>
-        //{
-        //    oldAppender.EndAppender.Append(endPipe);
-
-        //    var appender =
-        //        new InterPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg>(oldAppender.StartPipe, endPipe);
-
-        //    return appender;
-        //}
     }
 }

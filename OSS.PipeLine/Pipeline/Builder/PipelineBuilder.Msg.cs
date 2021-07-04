@@ -27,13 +27,13 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加默认消息订阅者管道
         /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
+        /// <typeparam name="TContext"></typeparam>
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineConnector<Empty, OutContext> StartWithMsgSubscriber<OutContext>(string pipeCode, DataFlowOption option = null)
+        public static IPipelineConnector<Empty, TContext> StartWithMsgSubscriber<TContext>(string pipeCode, DataFlowOption option = null)
         {
-            var nextPipe = new MsgSubscriber<OutContext>(pipeCode, option);
+            var nextPipe = new MsgSubscriber<TContext>(pipeCode, option);
 
             return Start(nextPipe);
         }
@@ -42,13 +42,13 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加默认消息流管道
         /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
+        /// <typeparam name="TContext"></typeparam>
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineConnector<OutContext, OutContext> StartWithMsgFlow<OutContext>(string pipeCode, DataFlowOption option = null)
+        public static IPipelineConnector<TContext, TContext> StartWithMsgFlow<TContext>(string pipeCode, DataFlowOption option = null)
         {
-            var nextPipe = new MsgFlow<OutContext>(pipeCode, option);
+            var nextPipe = new MsgFlow<TContext>(pipeCode, option);
 
             return Start(nextPipe);
         }
@@ -56,14 +56,14 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加默认消息转换管道
         /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
-        /// <typeparam name="NextOutContext"></typeparam>
+        /// <typeparam name="TContext"></typeparam>
+        /// <typeparam name="NextTContext"></typeparam>
         /// <param name="convertFunc"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineConnector<OutContext, NextOutContext> StartWithMsgConverter<OutContext, NextOutContext>(Func<OutContext, NextOutContext> convertFunc, string pipeCode = null)
+        public static IPipelineConnector<TContext, NextTContext> StartWithMsgConverter<TContext, NextTContext>(Func<TContext, NextTContext> convertFunc, string pipeCode = null)
         {
-            var nextPipe = new InterMsgConvertor<OutContext, NextOutContext>(pipeCode, convertFunc);
+            var nextPipe = new InterMsgConvertor<TContext, NextTContext>(pipeCode, convertFunc);
             return Start(nextPipe);
         }
 
