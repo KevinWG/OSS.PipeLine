@@ -34,8 +34,8 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> ThenWithMsgSubscriber<TIn, TOut>(
-            this IPipelineAppender<TIn, TOut> pipe,
+        public static IPipelineConnector<TIn, TOut> ThenWithMsgSubscriber<TIn, TOut>(
+            this IPipelineConnector<TIn, TOut> pipe,
             string pipeCode, DataFlowOption option = null)
         {
             return pipe.Then(new MsgSubscriber<TOut>(pipeCode, option));
@@ -49,8 +49,8 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> ThenWithMsgFlow<TIn, TOut>(
-            this IPipelineAppender<TIn, TOut> pipe, 
+        public static IPipelineConnector<TIn, TOut> ThenWithMsgFlow<TIn, TOut>(
+            this IPipelineConnector<TIn, TOut> pipe, 
             string pipeCode, DataFlowOption option = null)
         {
             var nextPipe = new MsgFlow<TOut>(pipeCode, option);
@@ -65,8 +65,8 @@ namespace OSS.Pipeline
         /// <param name="convertFunc"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> ThenWithMsgConverter<TIn, TOut, TNextOut>(
-            this IPipelineAppender<TIn, TOut> pipe, 
+        public static IPipelineConnector<TIn, TNextOut> ThenWithMsgConverter<TIn, TOut, TNextOut>(
+            this IPipelineConnector<TIn, TOut> pipe, 
             Func<TOut, TNextOut> convertFunc, string pipeCode = null)
         {
             var nextPipe = new InterMsgConvertor<TOut, TNextOut>(pipeCode, convertFunc);
@@ -83,8 +83,8 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <typeparam name="TIn"></typeparam>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg> ThenWithMsgEnumerator<TIn, TMsgEnumerable, TMsg>(
-            this IPipelineAppender<TIn, TMsgEnumerable> pipe, string pipeCode=null)
+        public static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> ThenWithMsgEnumerator<TIn, TMsgEnumerable, TMsg>(
+            this IPipelineConnector<TIn, TMsgEnumerable> pipe, string pipeCode=null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             var nextPipe = new BaseMsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);

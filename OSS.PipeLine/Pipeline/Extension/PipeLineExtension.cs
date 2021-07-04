@@ -36,7 +36,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
+        public static IPipelineConnector<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
             BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
         {
             return pipe.Set(nextPipe);
@@ -53,7 +53,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> pipe,
+        public static IPipelineConnector<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
             BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
         {
             return pipe.Set(nextPipe);
@@ -69,7 +69,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static void Then<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, BaseOneWayPipe<TOut> nextPipe)
+        public static void Then<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, BaseOneWayPipe<TOut> nextPipe)
         {
             pipe.Set(nextPipe);
         }
@@ -88,7 +88,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipelineBranchAppender<TIn, TOut> Then<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, BaseBranchGateway<TOut> nextPipe)
+        public static IPipelineBranchConnector<TIn, TOut> Then<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, BaseBranchGateway<TOut> nextPipe)
         {
             return pipe.Set(nextPipe);
         }
@@ -104,7 +104,7 @@ namespace OSS.Pipeline
         ///     扩展分支方法，并汇聚返回最终节点到主流程
         /// </param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TNextOut> WithBranchBox<TIn, TOut, TNextOut>(this IPipelineBranchAppender<TIn, TOut> pipe, Func<BaseBranchGateway<TOut>, IPipeAppender<TNextOut>> branchGather)
+        public static IPipelineConnector<TIn, TNextOut> WithBranchBox<TIn, TOut, TNextOut>(this IPipelineBranchConnector<TIn, TOut> pipe, Func<BaseBranchGateway<TOut>, IPipeAppender<TNextOut>> branchGather)
         {
             var newPipe = new InterPipelineAppender<TIn, TNextOut>(pipe.StartPipe, branchGather(pipe.EndBranchPipe));
 
@@ -129,7 +129,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg> Then<TIn, TMsgEnumerable, TMsg>(this IPipelineAppender<TIn, TMsgEnumerable> pipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
+        public static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Then<TIn, TMsgEnumerable, TMsg>(this IPipelineConnector<TIn, TMsgEnumerable> pipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             return pipe.Set(nextPipe);
@@ -147,7 +147,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="iteratorPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TMsgEnumerable> WithIterator<TIn, TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this IPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg> pipe, 
+        public static IPipelineConnector<TIn, TMsgEnumerable> WithIterator<TIn, TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> pipe, 
             BasePipe<TMsg, TNextPara, TNextResult, TNextOutContext> iteratorPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
@@ -158,11 +158,11 @@ namespace OSS.Pipeline
         #endregion
 
         
-        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> oldAppender,
             BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
-            IPipelineAppender<TIn, TNextOut> pipelineAppender = new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
+            IPipelineConnector<TIn, TNextOut> pipelineAppender = new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
 
             oldAppender.StartPipe   = null;
             oldAppender.EndAppender = null;
@@ -170,11 +170,11 @@ namespace OSS.Pipeline
         }
 
 
-        internal static IPipelineAppender<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> oldAppender,
             BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
-            IPipelineAppender<TIn, TNextOut> appender =
+            IPipelineConnector<TIn, TNextOut> appender =
                 new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
 
             oldAppender.StartPipe   = null;
@@ -182,7 +182,7 @@ namespace OSS.Pipeline
             return appender;
         }
 
-        internal static void Set<TIn, TOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+        internal static void Set<TIn, TOut>(this IPipelineConnector<TIn, TOut> oldAppender,
             BaseOneWayPipe<TOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
@@ -192,19 +192,19 @@ namespace OSS.Pipeline
         }
 
 
-        internal static IPipelineBranchAppender<TIn, TOut> Set<TIn, TOut>(this IPipelineAppender<TIn, TOut> oldAppender,
+        internal static IPipelineBranchConnector<TIn, TOut> Set<TIn, TOut>(this IPipelineConnector<TIn, TOut> oldAppender,
             BaseBranchGateway<TOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
-            IPipelineBranchAppender<TIn, TOut> appender =
+            IPipelineBranchConnector<TIn, TOut> appender =
                 new InterPipelineBranchAppender<TIn, TOut>(oldAppender.StartPipe, endPipe);
 
             return appender;
         }
 
 
-        internal static IPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg> Set<TIn, TMsgEnumerable, TMsg>(
-            this IPipelineAppender<TIn, TMsgEnumerable> oldAppender,
+        internal static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Set<TIn, TMsgEnumerable, TMsg>(
+            this IPipelineConnector<TIn, TMsgEnumerable> oldAppender,
             BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {

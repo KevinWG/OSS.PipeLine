@@ -17,7 +17,7 @@ using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline.InterImpls.Pipeline
 {
-    internal class InterPipelineAppender<TInContext, TOutContext> : IPipelineAppender<TInContext, TOutContext>
+    internal class InterPipelineAppender<TInContext, TOutContext> : IPipelineConnector<TInContext, TOutContext>
     {
 
         public InterPipelineAppender(BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipe)
@@ -25,40 +25,40 @@ namespace OSS.Pipeline.InterImpls.Pipeline
             Initial(this, startPipe, endPipe);
         }
         
-        private static void Initial(IPipelineAppender<TInContext, TOutContext> pipelineAppender,
+        private static void Initial(IPipelineConnector<TInContext, TOutContext> pipelineAppender,
             BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipe)
         {
             pipelineAppender.StartPipe   = startPipe;
             pipelineAppender.EndAppender = endPipe;
         }
 
-        BaseInPipePart<TInContext> IPipelineAppender<TInContext, TOutContext>.StartPipe { get; set; }
+        BaseInPipePart<TInContext> IPipelineConnector<TInContext, TOutContext>.StartPipe { get; set; }
 
-        IPipeAppender<TOutContext> IPipelineAppender<TInContext, TOutContext>.EndAppender { get; set; }
+        IPipeAppender<TOutContext> IPipelineConnector<TInContext, TOutContext>.EndAppender { get; set; }
     }
 
     internal class
-        InterPipelineBranchAppender<TInContext, TOutContext> : IPipelineBranchAppender<TInContext, TOutContext>
+        InterPipelineBranchAppender<TInContext, TOutContext> : IPipelineBranchConnector<TInContext, TOutContext>
     {
         public InterPipelineBranchAppender(BaseInPipePart<TInContext> startPipe, BaseBranchGateway<TOutContext> endPipe)
         {
             Initial(this, startPipe, endPipe);
         }
 
-        private static void Initial(IPipelineBranchAppender<TInContext, TOutContext> pipelineAppender,
+        private static void Initial(IPipelineBranchConnector<TInContext, TOutContext> pipelineAppender,
             BaseInPipePart<TInContext> startPipe, BaseBranchGateway<TOutContext> endPipe)
         {
             pipelineAppender.StartPipe     = startPipe;
             pipelineAppender.EndBranchPipe = endPipe;
         }
 
-        BaseInPipePart<TInContext> IPipelineBranchAppender<TInContext, TOutContext>.    StartPipe   { get; set; }
-        BaseBranchGateway<TOutContext> IPipelineBranchAppender<TInContext, TOutContext>.EndBranchPipe { get; set; }
+        BaseInPipePart<TInContext> IPipelineBranchConnector<TInContext, TOutContext>.    StartPipe   { get; set; }
+        BaseBranchGateway<TOutContext> IPipelineBranchConnector<TInContext, TOutContext>.EndBranchPipe { get; set; }
     }
 
 
     internal class
-        InterPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg> : IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>
+        InterPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg> : IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>
             where TMsgEnumerable:IEnumerable<TMsg> 
     {
         public InterPipelineMsgEnumerableAppender(BaseInPipePart<TInContext> startPipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
@@ -66,15 +66,15 @@ namespace OSS.Pipeline.InterImpls.Pipeline
             Initial(this, startPipe, endPipe);
         }
 
-        private static void Initial(IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg> pipelineAppender,
+        private static void Initial(IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg> pipelineAppender,
             BaseInPipePart<TInContext> startPipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
         {
             pipelineAppender.StartPipe = startPipe;
             pipelineAppender.EndPipe   = endPipe;
         }
 
-        BaseInPipePart<TInContext> IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>.    StartPipe     { get; set; }
-        BaseMsgEnumerator<TMsgEnumerable, TMsg> IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>.EndPipe { get; set; }
+        BaseInPipePart<TInContext> IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>.    StartPipe     { get; set; }
+        BaseMsgEnumerator<TMsgEnumerable, TMsg> IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>.EndPipe { get; set; }
     }
 
     //internal class

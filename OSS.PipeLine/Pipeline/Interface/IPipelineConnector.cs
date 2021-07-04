@@ -21,7 +21,7 @@ namespace OSS.Pipeline.Interface
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IPipelineAppender<TInContext,TOutContext>
+    public interface IPipelineConnector<TInContext,TOutContext>
     {
        internal BaseInPipePart<TInContext>    StartPipe   { get; set; }
        internal IPipeAppender<TOutContext> EndAppender { get; set; }
@@ -32,7 +32,7 @@ namespace OSS.Pipeline.Interface
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IPipelineBranchAppender<TInContext, TOutContext>
+    public interface IPipelineBranchConnector<TInContext, TOutContext>
     {
         internal BaseInPipePart<TInContext>     StartPipe   { get; set; }
         internal BaseBranchGateway<TOutContext> EndBranchPipe { get; set; }
@@ -45,7 +45,7 @@ namespace OSS.Pipeline.Interface
     /// <typeparam name="TMsg">消息具体类型</typeparam>
     /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
     /// <typeparam name="TInContext"></typeparam>
-    public interface IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>
+    public interface IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>
         where TMsgEnumerable : IEnumerable<TMsg>
     {
         internal BaseInPipePart<TInContext>              StartPipe { get; set; }

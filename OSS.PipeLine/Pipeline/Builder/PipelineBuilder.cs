@@ -32,7 +32,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TResult"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> Start<TIn, TPara, TResult, TOut>(BaseFourWayPipe<TIn, TPara,TResult, TOut> startPipe)
+        public static IPipelineConnector<TIn, TOut> Start<TIn, TPara, TResult, TOut>(BaseFourWayPipe<TIn, TPara,TResult, TOut> startPipe)
         {
             return new InterPipelineAppender<TIn, TOut>( startPipe, startPipe);
         }
@@ -45,7 +45,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TResult"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, TOut> Start< TPara, TResult, TOut>(BaseFourWayPipe<Empty, TPara, TResult, TOut> startPipe)
+        public static IPipelineConnector<Empty, TOut> Start< TPara, TResult, TOut>(BaseFourWayPipe<Empty, TPara, TResult, TOut> startPipe)
         {
             return new InterPipelineAppender<Empty, TOut>( startPipe, startPipe);
         }
@@ -56,7 +56,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TIn"></typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineBranchAppender<TIn, TIn> Start<TIn>(BaseBranchGateway<TIn> startPipe)
+        public static IPipelineBranchConnector<TIn, TIn> Start<TIn>(BaseBranchGateway<TIn> startPipe)
         {
             return new InterPipelineBranchAppender<TIn, TIn>( startPipe, startPipe);
         }
@@ -70,7 +70,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableAppender<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(BaseMsgEnumerator<TMsgEnumerable,TMsg> startPipe)
+        public static IPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(BaseMsgEnumerator<TMsgEnumerable,TMsg> startPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             return new InterPipelineMsgEnumerableAppender<TMsgEnumerable, TMsgEnumerable, TMsg>(startPipe, startPipe);
@@ -105,7 +105,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, string pipeCode, PipeLineOption option = null)
+        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode, PipeLineOption option = null)
         {
             var newPipe = new Pipeline<TIn, TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
             pipe.StartPipe   = null;

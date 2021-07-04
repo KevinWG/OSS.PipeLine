@@ -36,7 +36,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, Empty> StartWithActivity<OutContext>(string pipeCode,
+        public static IPipelineConnector<Empty, Empty> StartWithActivity<OutContext>(string pipeCode,
             Func<Task<TrafficSignal>> exePassive)
         {
             return  Start(new SimpleActivity(pipeCode,exePassive));
@@ -57,7 +57,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<OutContext, OutContext> StartWithActivity<OutContext>(string pipeCode,
+        public static IPipelineConnector<OutContext, OutContext> StartWithActivity<OutContext>(string pipeCode,
             Func<OutContext, Task<TrafficSignal>> exePassive)
         {
             return Start(new SimpleActivity<OutContext>(pipeCode,exePassive));
@@ -79,7 +79,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<OutContext, OutContext> StartWithActivity<OutContext,TNextResult>(string pipeCode,
+        public static IPipelineConnector<OutContext, OutContext> StartWithActivity<OutContext,TNextResult>(string pipeCode,
             Func<OutContext,  Task<TrafficSignal<TNextResult>>> exePassive)
         {
             return Start(new SimpleActivity<OutContext, TNextResult>(pipeCode,exePassive ));
@@ -101,7 +101,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<Empty, TResult> StartWithEffectActivity<TResult>( string pipeCode,
+        public static IPipelineConnector<Empty, TResult> StartWithEffectActivity<TResult>( string pipeCode,
             Func<Task<TrafficSignal<TResult>>> exePassive)
         {
             return Start(new SimpleEffectActivity<TResult>(pipeCode,exePassive));
@@ -126,7 +126,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TPassivePara, TResult> StartWithEffectActivity<TPassivePara, TResult>(string pipeCode,
+        public static IPipelineConnector<TPassivePara, TResult> StartWithEffectActivity<TPassivePara, TResult>(string pipeCode,
             Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive)
         {
             return Start(new SimpleEffectActivity<TPassivePara, TResult>(pipeCode,exePassive));

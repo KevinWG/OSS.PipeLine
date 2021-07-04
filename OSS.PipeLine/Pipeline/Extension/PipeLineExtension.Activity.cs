@@ -37,8 +37,8 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, Empty> ThenWithActivity<TIn, TOut>(
-            this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
+        public static IPipelineConnector<TIn, Empty> ThenWithActivity<TIn, TOut>(
+            this IPipelineConnector<TIn, TOut> pipe, string pipeCode,
             Func<Task<TrafficSignal>> exeFunc)
         {
             return pipe.Then(new SimpleActivity(pipeCode, exeFunc));
@@ -62,7 +62,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> ThenWithActivity<TIn, TOut>(this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
+        public static IPipelineConnector<TIn, TOut> ThenWithActivity<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode,
             Func<TOut, Task<TrafficSignal>> exeFunc)
         {
             return pipe.Then(new SimpleActivity<TOut>(pipeCode,exeFunc));
@@ -86,7 +86,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TOut> ThenWithActivity<TIn, TOut, TNextResult>(this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
+        public static IPipelineConnector<TIn, TOut> ThenWithActivity<TIn, TOut, TNextResult>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode,
             Func<TOut, Task<TrafficSignal<TNextResult>>> exeFunc)
         {
             return pipe.Then(new SimpleActivity<TOut, TNextResult>(pipeCode,exeFunc));
@@ -109,8 +109,8 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TResult> ThenWithEffectActivity<TIn, TOut, TResult>(
-            this IPipelineAppender<TIn, TOut> pipe, string pipeCode,
+        public static IPipelineConnector<TIn, TResult> ThenWithEffectActivity<TIn, TOut, TResult>(
+            this IPipelineConnector<TIn, TOut> pipe, string pipeCode,
             Func<Task<TrafficSignal<TResult>>> exeFunc)
         {
             return pipe.Then(new SimpleEffectActivity<TResult>(pipeCode,exeFunc));
@@ -136,8 +136,8 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineAppender<TIn, TResult> ThenWithEffectActivity<TIn, TPassivePara, TResult>(
-            this IPipelineAppender<TIn, TPassivePara> pipe, string pipeCode,
+        public static IPipelineConnector<TIn, TResult> ThenWithEffectActivity<TIn, TPassivePara, TResult>(
+            this IPipelineConnector<TIn, TPassivePara> pipe, string pipeCode,
             Func<TPassivePara, Task<TrafficSignal<TResult>>> exeFunc)
         {
             return pipe.Then(new SimpleEffectActivity<TPassivePara, TResult>(pipeCode,exeFunc));
