@@ -12,8 +12,6 @@
 #endregion
 
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Interface;
-using OSS.Pipeline.InterImpls.Pipeline;
 using System.Collections.Generic;
 using OSS.Pipeline.Pipeline.InterImpls.Connector;
 

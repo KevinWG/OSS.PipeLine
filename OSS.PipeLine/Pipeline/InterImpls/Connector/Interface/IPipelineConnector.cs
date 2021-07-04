@@ -17,7 +17,7 @@ using OSS.Pipeline.Interface;
 namespace OSS.Pipeline.Pipeline.InterImpls.Connector
 {
     /// <summary>
-    /// 
+    ///  pipeline 连接器
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
@@ -26,4 +26,5 @@ namespace OSS.Pipeline.Pipeline.InterImpls.Connector
         internal BaseInPipePart<TInContext> StartPipe   { get; set; }
         internal IPipeAppender<TOutContext> EndAppender { get; set; }
     }
+
 }
