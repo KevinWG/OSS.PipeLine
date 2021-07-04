@@ -15,8 +15,10 @@
 using System;
 using System.Collections.Generic;
 using OSS.DataFlow;
+using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
+using OSS.Pipeline.Pipeline.InterImpls.Connector;
 
 namespace OSS.Pipeline
 {

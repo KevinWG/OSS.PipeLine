@@ -15,6 +15,7 @@ using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Pipeline;
 using System.Collections.Generic;
+using OSS.Pipeline.Pipeline.InterImpls.Connector;
 
 namespace OSS.Pipeline
 {
@@ -75,39 +76,5 @@ namespace OSS.Pipeline
         {
             return new InterPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg>(startPipe, startPipe);
         }
-
-        /// <summary>
-        /// 根据首位两个管道建立流体
-        /// </summary>
-        /// <typeparam name="InFlowContext"></typeparam>
-        /// <typeparam name="OutFlowContext"></typeparam>
-        /// <param name="startPipe"></param>
-        /// <param name="endPipeAppender"></param>
-        /// <param name="flowPipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static Pipeline<InFlowContext, OutFlowContext> AsPipelineStartAndEndWith<InFlowContext, OutFlowContext>(this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
-            string flowPipeCode, PipeLineOption option = null)
-        {
-            return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
-        }
-
-        /// <summary>
-        ///  追加下一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode, PipeLineOption option = null)
-        {
-            var newPipe = new Pipeline<TIn, TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
-            pipe.StartPipe   = null;
-            pipe.EndAppender = null;
-            return newPipe;
-        }
-
     }
 }

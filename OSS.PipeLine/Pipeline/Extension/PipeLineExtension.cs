@@ -16,7 +16,8 @@ using System.Collections.Generic;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Base.Base;
 using OSS.Pipeline.Interface;
-using OSS.Pipeline.InterImpls.Pipeline;
+using OSS.Pipeline.Pipeline.InterImpls.Connector;
+using OSS.Pipeline.Pipeline.InterImpls.Connector.Extension;
 
 namespace OSS.Pipeline
 {
@@ -157,63 +158,64 @@ namespace OSS.Pipeline
 
         #endregion
 
+
+
+
+        #region 生成Pipeline
         
-        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> oldAppender,
-            BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
+        /// <summary>
+        /// 根据首位两个管道建立流体
+        /// </summary>
+        /// <typeparam name="InFlowContext"></typeparam>
+        /// <typeparam name="OutFlowContext"></typeparam>
+        /// <param name="startPipe"></param>
+        /// <param name="endPipeAppender"></param>
+        /// <param name="flowPipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static Pipeline<InFlowContext, OutFlowContext> AsPipelineStartAndEndWith<InFlowContext, OutFlowContext>(this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
+            string flowPipeCode, PipeLineOption option = null)
         {
-            oldAppender.EndAppender.Append(endPipe);
-            IPipelineConnector<TIn, TNextOut> pipelineAppender = new InterPipelineConnector<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
-
-            oldAppender.StartPipe   = null;
-            oldAppender.EndAppender = null;
-            return pipelineAppender;
+            return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
         }
 
 
-        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> oldAppender,
-            BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> endPipe)
+        /// <summary>
+        ///  根据当前连接信息创建Pipeline
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode, PipeLineOption option = null)
         {
-            oldAppender.EndAppender.Append(endPipe);
-            IPipelineConnector<TIn, TNextOut> appender =
-                new InterPipelineConnector<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
-
-            oldAppender.StartPipe   = null;
-            oldAppender.EndAppender = null;
-            return appender;
-        }
-
-        internal static void Set<TIn, TOut>(this IPipelineConnector<TIn, TOut> oldAppender,
-            BaseOneWayPipe<TOut> endPipe)
-        {
-            oldAppender.EndAppender.Append(endPipe);
-
-            oldAppender.StartPipe   = null;
-            oldAppender.EndAppender = null;
+            var newPipe = new Pipeline<TIn, TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
+            pipe.StartPipe   = null;
+            pipe.EndAppender = null;
+            return newPipe;
         }
 
 
-        internal static IPipelineBranchConnector<TIn, TOut> Set<TIn, TOut>(this IPipelineConnector<TIn, TOut> oldAppender,
-            BaseBranchGateway<TOut> endPipe)
-        {
-            oldAppender.EndAppender.Append(endPipe);
-            IPipelineBranchConnector<TIn, TOut> appender =
-                new InterPipelineBranchConnector<TIn, TOut>(oldAppender.StartPipe, endPipe);
 
-            return appender;
+        /// <summary>
+        ///  根据当前连接信息创建Pipeline
+        /// </summary>
+        /// <typeparam name="TOut"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static EmptyEntryPipeline<TOut> AsPipeline< TOut>(this IPipelineConnector<Empty, TOut> pipe, string pipeCode, PipeLineOption option = null)
+        {
+            var newPipe = new EmptyEntryPipeline<TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
+            pipe.StartPipe   = null;
+            pipe.EndAppender = null;
+            return newPipe;
         }
 
+        #endregion
 
-        internal static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Set<TIn, TMsgEnumerable, TMsg>(
-            this IPipelineConnector<TIn, TMsgEnumerable> oldAppender,
-            BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
-            where TMsgEnumerable : IEnumerable<TMsg>
-        {
-            oldAppender.EndAppender.Append(endPipe);
-
-            var appender =
-                new InterPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg>(oldAppender.StartPipe, endPipe);
-
-            return appender;
-        }
     }
 }

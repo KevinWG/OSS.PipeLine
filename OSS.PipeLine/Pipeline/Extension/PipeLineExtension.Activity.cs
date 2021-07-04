@@ -14,6 +14,7 @@
 using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
+using OSS.Pipeline.Pipeline.InterImpls.Connector;
 
 namespace OSS.Pipeline
 {
