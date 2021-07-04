@@ -38,10 +38,7 @@ namespace OSS.Pipeline
         {
             return pipe.Set(nextPipe);
         }
-
-
-
-
+        
         /// <summary>
         ///  添加下一个节点
         /// </summary>
@@ -54,12 +51,9 @@ namespace OSS.Pipeline
             pipe.Set(nextPipe);
         }
 
-
-
+        
         #region 分支
-
-
-
+        
         /// <summary>
         ///  添加下一个节点
         /// </summary>
@@ -90,8 +84,7 @@ namespace OSS.Pipeline
 
             return newPipe;
         }
-
-
+        
         #endregion
 
         #region 生成Pipeline
@@ -104,7 +97,7 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static SimplePipeline<TContext> AsPipeline<TContext>(this ISimplePipelineConnector<TContext> pipe, string pipeCode, PipeLineOption option = null)
+        public static ISimplePipeline<TContext> AsPipeline<TContext>(this ISimplePipelineConnector<TContext> pipe, string pipeCode, PipeLineOption option = null)
         {
             var newPipe = new SimplePipeline<TContext>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
             pipe.StartPipe   = null;

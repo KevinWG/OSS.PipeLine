@@ -25,7 +25,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
     public class Pipeline<TInContext, TOutContext> : 
-        BaseFourWayPipe<TInContext, TInContext, TOutContext, TOutContext>, IPipeLineEntry<TInContext> 
+        BaseFourWayPipe<TInContext, TInContext, TOutContext, TOutContext>, IPipeLine<TInContext, TOutContext>
     {
         private readonly BaseInPipePart<TInContext>    _startPipe;
         private readonly IPipeAppender<TOutContext> _endPipe;

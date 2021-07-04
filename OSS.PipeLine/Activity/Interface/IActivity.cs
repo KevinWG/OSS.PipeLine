@@ -25,7 +25,7 @@ namespace OSS.Pipeline.Interface
     /// 
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public interface IActivity<TContext> : IPipeAppender<TContext>, IPipeInputExecutor<TContext>
+    public interface IActivity<TContext> : IPipeAppender<TContext>, IPipeInputOnlyExecutor<TContext> , IPipeExecutor<TContext, TContext>
     {
     }
 

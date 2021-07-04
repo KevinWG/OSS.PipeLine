@@ -25,4 +25,14 @@ namespace OSS.Pipeline.Interface
         
         internal PipeWatcherProxy GetProxy();
     }
+
+    /// <summary>
+    ///  Pipeline管道
+    /// </summary>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    public interface IPipeLine<in TIn, TOut> : IPipeLine, IPipeLineEntry<TIn>
+    {
+    }
+
 }

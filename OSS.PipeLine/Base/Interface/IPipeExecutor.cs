@@ -41,17 +41,6 @@ namespace OSS.Pipeline.Interface
     }
 
 
-    /// <summary>
-    /// 管道对外执行接口（有输入无输出）
-    /// </summary>
-    public interface IPipeInputExecutor<TIn> : IPipeExecutor<TIn, TIn>
-    {
-        /// <summary>
-        ///  执行方法
-        /// </summary>
-        /// <returns></returns>
-        new Task Execute(TIn para);
-    }
 
     /// <summary>
     /// 管道对外执行接口（有输入无输出）
@@ -66,4 +55,15 @@ namespace OSS.Pipeline.Interface
     }
 
 
+    /// <summary>
+    /// 管道对外执行接口（有输入无输出）
+    /// </summary>
+    public interface IPipeInputOnlyExecutor<in TIn>
+    {
+        /// <summary>
+        ///  执行方法
+        /// </summary>
+        /// <returns></returns>
+        Task Execute(TIn para);
+    }
 }
