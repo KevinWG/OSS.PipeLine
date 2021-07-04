@@ -22,17 +22,18 @@ namespace OSS.Pipeline
     /// <typeparam name="TMsg"></typeparam>
     public class MsgPublisher<TMsg> : BaseMsgPublisher<TMsg>
     {
-        private readonly Func<TMsg, string> _pushKeySelector;
+        private readonly Func<TMsg, string> _pushKeyGenerator;
 
         /// <summary>
         ///  消息发布者
         /// </summary>
         /// <param name="pipeCode"></param>
+        /// <param name="pushKeyGenerator"></param>
         /// <param name="option"></param>
-        public MsgPublisher(string pipeCode, Func<TMsg, string> pushKeyCreator, DataPublisherOption option) : base(
+        public MsgPublisher(string pipeCode, Func<TMsg, string> pushKeyGenerator, DataPublisherOption option) : base(
             pipeCode, option)
         {
-            _pushKeySelector = pushKeyCreator;
+            _pushKeyGenerator = pushKeyGenerator;
         }
 
         /// <inheritdoc />
@@ -50,7 +51,7 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         protected override string GeneratePushKey(TMsg msg)
         {
-            return _pushKeySelector?.Invoke(msg) ?? PipeCode;
+            return _pushKeyGenerator?.Invoke(msg) ?? PipeCode;
         }
 
         /// <inheritdoc />

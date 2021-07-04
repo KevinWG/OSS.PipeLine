@@ -24,8 +24,8 @@ namespace OSS.Pipeline
     /// <summary>
     /// 消息转化基类
     /// </summary>
-    /// <typeparam name="TMsg"></typeparam>
-    /// <typeparam name="TMsgEnumerable"></typeparam>
+    /// <typeparam name="TMsg">消息具体类型</typeparam>
+    /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
     public class BaseMsgEnumerator<TMsgEnumerable, TMsg> : BaseThreeWayPipe<TMsgEnumerable, Empty, TMsgEnumerable>
         where TMsgEnumerable : IEnumerable<TMsg>
     {
@@ -47,6 +47,7 @@ namespace OSS.Pipeline
         }
 
 
+        /// <inheritdoc />
         internal override async Task<TrafficResult<Empty, TMsgEnumerable>> InterProcessPackage(TMsgEnumerable msgs,
             string prePipeCode)
         {

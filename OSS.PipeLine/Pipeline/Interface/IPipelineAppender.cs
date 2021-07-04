@@ -42,6 +42,9 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     /// 
     /// </summary>
+    /// <typeparam name="TMsg">消息具体类型</typeparam>
+    /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
+    /// <typeparam name="TInContext"></typeparam>
     public interface IPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg>
         where TMsgEnumerable : IEnumerable<TMsg>
     {

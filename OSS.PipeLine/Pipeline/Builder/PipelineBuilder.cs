@@ -66,7 +66,8 @@ namespace OSS.Pipeline
         ///  添加第一个节点
         /// ( 消息枚举器
         /// </summary>
-        /// <typeparam name="TMsg"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
         public static IPipelineMsgEnumerableAppender<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(BaseMsgEnumerator<TMsgEnumerable,TMsg> startPipe)

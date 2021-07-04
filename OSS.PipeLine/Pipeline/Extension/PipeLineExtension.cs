@@ -124,7 +124,8 @@ namespace OSS.Pipeline
         ///  添加下一个节点
         /// </summary>
         /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TMsg"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
@@ -138,12 +139,13 @@ namespace OSS.Pipeline
         ///  添加第一个节点
         /// </summary>
         /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TMsg"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TNextPara"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="iteratorAppender">
-        ///     循环迭代器的迭代管道,枚举器将循环执行此管道
-        /// </param>
+        /// <param name="iteratorPipe"></param>
         /// <returns></returns>
         public static IPipelineAppender<TIn, TMsgEnumerable> WithIterator<TIn, TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this IPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg> pipe, 
             BasePipe<TMsg, TNextPara, TNextResult, TNextOutContext> iteratorPipe)

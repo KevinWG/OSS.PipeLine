@@ -30,13 +30,13 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
+        /// <param name="pushKeyGenerator">消息key生成器,为空则使用pipeCode作为发布消息key</param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
-            Func<TMsg, string> pushKeyCreator = null,
-            DataPublisherOption option = null)
+            Func<TMsg, string> pushKeyGenerator = null, DataPublisherOption option = null)
         {
-            var nextPipe = new MsgPublisher<TMsg>(pipeCode,pushKeyCreator, option);
+            var nextPipe = new MsgPublisher<TMsg>(pipeCode,pushKeyGenerator, option);
             pipe.InterAppend(nextPipe);
         }
 
@@ -92,11 +92,12 @@ namespace OSS.Pipeline
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
-        
+
         /// <summary>
         ///  追加消息迭代器
         /// </summary>
-        /// <typeparam name="TMsg"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>

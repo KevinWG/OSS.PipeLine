@@ -73,6 +73,8 @@ namespace OSS.Pipeline
         ///  追加消息枚举器
         /// </summary>
         /// <param name="pipeCode"></param>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <returns></returns>
         public static IPipelineMsgEnumerableAppender<TMsgEnumerable,TMsgEnumerable, TMsg> StartWithMsgEnumerator<TMsgEnumerable,TMsg>(string pipeCode=null)
             where TMsgEnumerable : IEnumerable<TMsg>

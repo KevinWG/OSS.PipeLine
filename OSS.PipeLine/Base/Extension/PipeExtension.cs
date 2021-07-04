@@ -32,7 +32,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseFourWayPipe<TOutContext, TNextPara, TNextResult, TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
+        public static IPipeAppender<TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
             this IPipeAppender<TOutContext> pipe, BaseFourWayPipe<TOutContext, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
@@ -49,7 +49,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseFourWayPipe<Empty, TNextPara,TNextResult, TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
+        public static IPipeAppender<TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
             this IPipeAppender<TOutContext> pipe, BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
@@ -89,7 +89,8 @@ namespace OSS.Pipeline
         /// <summary>
         /// 追加枚举器
         /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>

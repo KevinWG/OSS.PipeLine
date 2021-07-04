@@ -24,11 +24,11 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加普通管道
         /// </summary>
-        /// <typeparam name="TMsg"></typeparam>
         /// <typeparam name="TNextOutContext"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
         /// <typeparam name="TNextResult"></typeparam>
-        /// <typeparam name="TMsgEnumerable"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
