@@ -34,7 +34,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineConnector<TIn, TOut> Start<TIn, TPara, TResult, TOut>(BaseFourWayPipe<TIn, TPara,TResult, TOut> startPipe)
         {
-            return new InterPipelineAppender<TIn, TOut>( startPipe, startPipe);
+            return new InterPipelineConnector<TIn, TOut>( startPipe, startPipe);
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineConnector<Empty, TOut> Start< TPara, TResult, TOut>(BaseFourWayPipe<Empty, TPara, TResult, TOut> startPipe)
         {
-            return new InterPipelineAppender<Empty, TOut>( startPipe, startPipe);
+            return new InterPipelineConnector<Empty, TOut>( startPipe, startPipe);
         }
         
         /// <summary>
@@ -58,7 +58,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineBranchConnector<TIn, TIn> Start<TIn>(BaseBranchGateway<TIn> startPipe)
         {
-            return new InterPipelineBranchAppender<TIn, TIn>( startPipe, startPipe);
+            return new InterPipelineBranchConnector<TIn, TIn>( startPipe, startPipe);
         }
 
 
@@ -73,12 +73,8 @@ namespace OSS.Pipeline
         public static IPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(BaseMsgEnumerator<TMsgEnumerable,TMsg> startPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            return new InterPipelineMsgEnumerableAppender<TMsgEnumerable, TMsgEnumerable, TMsg>(startPipe, startPipe);
+            return new InterPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg>(startPipe, startPipe);
         }
-
-
-
-
 
         /// <summary>
         /// 根据首位两个管道建立流体

@@ -106,7 +106,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineConnector<TIn, TNextOut> WithBranchBox<TIn, TOut, TNextOut>(this IPipelineBranchConnector<TIn, TOut> pipe, Func<BaseBranchGateway<TOut>, IPipeAppender<TNextOut>> branchGather)
         {
-            var newPipe = new InterPipelineAppender<TIn, TNextOut>(pipe.StartPipe, branchGather(pipe.EndBranchPipe));
+            var newPipe = new InterPipelineConnector<TIn, TNextOut>(pipe.StartPipe, branchGather(pipe.EndBranchPipe));
 
             pipe.StartPipe     = null;
             pipe.EndBranchPipe = null;
@@ -152,7 +152,7 @@ namespace OSS.Pipeline
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             pipe.EndPipe.SetIterator(iteratorPipe);
-            return new InterPipelineAppender<TIn, TMsgEnumerable>(pipe.StartPipe,pipe.EndPipe);
+            return new InterPipelineConnector<TIn, TMsgEnumerable>(pipe.StartPipe,pipe.EndPipe);
         }
 
         #endregion
@@ -162,7 +162,7 @@ namespace OSS.Pipeline
             BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldAppender.EndAppender.Append(endPipe);
-            IPipelineConnector<TIn, TNextOut> pipelineAppender = new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
+            IPipelineConnector<TIn, TNextOut> pipelineAppender = new InterPipelineConnector<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
 
             oldAppender.StartPipe   = null;
             oldAppender.EndAppender = null;
@@ -175,7 +175,7 @@ namespace OSS.Pipeline
         {
             oldAppender.EndAppender.Append(endPipe);
             IPipelineConnector<TIn, TNextOut> appender =
-                new InterPipelineAppender<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
+                new InterPipelineConnector<TIn, TNextOut>(oldAppender.StartPipe, endPipe);
 
             oldAppender.StartPipe   = null;
             oldAppender.EndAppender = null;
@@ -197,7 +197,7 @@ namespace OSS.Pipeline
         {
             oldAppender.EndAppender.Append(endPipe);
             IPipelineBranchConnector<TIn, TOut> appender =
-                new InterPipelineBranchAppender<TIn, TOut>(oldAppender.StartPipe, endPipe);
+                new InterPipelineBranchConnector<TIn, TOut>(oldAppender.StartPipe, endPipe);
 
             return appender;
         }
@@ -211,7 +211,7 @@ namespace OSS.Pipeline
             oldAppender.EndAppender.Append(endPipe);
 
             var appender =
-                new InterPipelineMsgEnumerableAppender<TIn, TMsgEnumerable, TMsg>(oldAppender.StartPipe, endPipe);
+                new InterPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg>(oldAppender.StartPipe, endPipe);
 
             return appender;
         }

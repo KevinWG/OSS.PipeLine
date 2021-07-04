@@ -17,10 +17,10 @@ using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline.InterImpls.Pipeline
 {
-    internal class InterPipelineAppender<TInContext, TOutContext> : IPipelineConnector<TInContext, TOutContext>
+    internal class InterPipelineConnector<TInContext, TOutContext> : IPipelineConnector<TInContext, TOutContext>
     {
 
-        public InterPipelineAppender(BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipe)
+        public InterPipelineConnector(BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipe)
         {
             Initial(this, startPipe, endPipe);
         }
@@ -38,9 +38,9 @@ namespace OSS.Pipeline.InterImpls.Pipeline
     }
 
     internal class
-        InterPipelineBranchAppender<TInContext, TOutContext> : IPipelineBranchConnector<TInContext, TOutContext>
+        InterPipelineBranchConnector<TInContext, TOutContext> : IPipelineBranchConnector<TInContext, TOutContext>
     {
-        public InterPipelineBranchAppender(BaseInPipePart<TInContext> startPipe, BaseBranchGateway<TOutContext> endPipe)
+        public InterPipelineBranchConnector(BaseInPipePart<TInContext> startPipe, BaseBranchGateway<TOutContext> endPipe)
         {
             Initial(this, startPipe, endPipe);
         }
@@ -58,10 +58,10 @@ namespace OSS.Pipeline.InterImpls.Pipeline
 
 
     internal class
-        InterPipelineMsgEnumerableAppender<TInContext, TMsgEnumerable, TMsg> : IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>
+        InterPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg> : IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>
             where TMsgEnumerable:IEnumerable<TMsg> 
     {
-        public InterPipelineMsgEnumerableAppender(BaseInPipePart<TInContext> startPipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
+        public InterPipelineMsgEnumerableConnector(BaseInPipePart<TInContext> startPipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
         {
             Initial(this, startPipe, endPipe);
         }
@@ -76,22 +76,4 @@ namespace OSS.Pipeline.InterImpls.Pipeline
         BaseInPipePart<TInContext> IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>.    StartPipe     { get; set; }
         BaseMsgEnumerator<TMsgEnumerable, TMsg> IPipelineMsgEnumerableConnector<TInContext, TMsgEnumerable, TMsg>.EndPipe { get; set; }
     }
-
-    //internal class
-    //    InterPipelineInterceptAppender<TInContext, TOutContext> : IPipelineInterceptAppender<TInContext, TOutContext>
-    //{
-    //    public InterPipelineInterceptAppender(BaseInPipePart<TInContext> startPipe, BaseInterceptPipe<TOutContext> endPipe)
-    //    {
-    //        Initial(this, startPipe, endPipe);
-    //    }
-
-    //    private static void Initial(IPipelineInterceptAppender<TInContext, TOutContext> pipelineAppender,
-    //        BaseInPipePart<TInContext> startPipe, BaseInterceptPipe<TOutContext> endPipe)
-    //    {
-    //        pipelineAppender.StartPipe = startPipe;
-    //        pipelineAppender.EndPipe   = endPipe;
-    //    }
-    //    BaseInPipePart<TInContext> IPipelineInterceptAppender<TInContext, TOutContext>.    StartPipe     { get; set; }
-    //    BaseInterceptPipe<TOutContext> IPipelineInterceptAppender<TInContext, TOutContext>.EndPipe { get; set; }
-    //}
 }

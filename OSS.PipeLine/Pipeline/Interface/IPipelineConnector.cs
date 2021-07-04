@@ -21,10 +21,10 @@ namespace OSS.Pipeline.Interface
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IPipelineConnector<TInContext,TOutContext>
+    public interface IPipelineConnector<TInContext, TOutContext>
     {
-       internal BaseInPipePart<TInContext>    StartPipe   { get; set; }
-       internal IPipeAppender<TOutContext> EndAppender { get; set; }
+        internal BaseInPipePart<TInContext> StartPipe   { get; set; }
+        internal IPipeAppender<TOutContext> EndAppender { get; set; }
     }
 
     /// <summary>
