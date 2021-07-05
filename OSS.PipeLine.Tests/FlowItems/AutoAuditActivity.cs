@@ -13,7 +13,7 @@ namespace OSS.Pipeline.Tests.FlowItems
 
         protected override Task<TrafficSignal<bool>> Executing(long id)
         {
-            LogHelper.Info($"自动审核通过申请（编号：{id}）");
+            LogHelper.Info($"通过{PipeCode} 自动审核通过申请（编号：{id}）");
             return Task.FromResult(new TrafficSignal<bool>(true));
         }
     }

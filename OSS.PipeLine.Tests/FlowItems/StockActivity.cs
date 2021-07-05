@@ -11,7 +11,7 @@ namespace OSS.Pipeline.Tests.FlowItems
 
         protected override Task<TrafficSignal> Executing(StockContext data)
         {
-            LogHelper.Info("分流-2.增加库存，数量：" + data.count);
+            LogHelper.Info($"分流-2（{PipeCode}）增加库存，数量：" + data.count);
             return Task.FromResult(TrafficSignal.GreenSignal);
         }
     }

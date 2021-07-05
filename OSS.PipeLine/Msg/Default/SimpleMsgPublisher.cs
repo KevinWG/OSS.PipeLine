@@ -20,7 +20,7 @@ namespace OSS.Pipeline
     ///  消息发布者
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public class MsgPublisher<TMsg> : BaseMsgPublisher<TMsg>
+    public class SimpleMsgPublisher<TMsg> : BaseMsgPublisher<TMsg>
     {
         private readonly Func<TMsg, string> _pushKeyGenerator;
 
@@ -30,20 +30,20 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <param name="pushKeyGenerator"></param>
         /// <param name="option"></param>
-        public MsgPublisher(string pipeCode, Func<TMsg, string> pushKeyGenerator, DataPublisherOption option) : base(
+        public SimpleMsgPublisher(string pipeCode, Func<TMsg, string> pushKeyGenerator, DataPublisherOption option) : base(
             pipeCode, option)
         {
             _pushKeyGenerator = pushKeyGenerator;
         }
 
         /// <inheritdoc />
-        public MsgPublisher(string pipeCode, DataPublisherOption option = null) : this(pipeCode, null, option)
+        public SimpleMsgPublisher(string pipeCode, DataPublisherOption option = null) : this(pipeCode, null, option)
         {
         }
 
 
         /// <inheritdoc />
-        public MsgPublisher(string pipeCode, Func<TMsg, string> pushKeyCreator = null) : this(pipeCode, pushKeyCreator,
+        public SimpleMsgPublisher(string pipeCode, Func<TMsg, string> pushKeyCreator = null) : this(pipeCode, pushKeyCreator,
             null)
         {
         }

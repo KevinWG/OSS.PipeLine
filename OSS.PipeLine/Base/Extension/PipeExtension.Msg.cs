@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using OSS.DataFlow;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
+using OSS.PipeLine.Msg.Default;
 
 namespace OSS.Pipeline
 {
@@ -36,7 +37,7 @@ namespace OSS.Pipeline
         public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
             Func<TMsg, string> pushKeyGenerator = null, DataPublisherOption option = null)
         {
-            var nextPipe = new MsgPublisher<TMsg>(pipeCode,pushKeyGenerator, option);
+            var nextPipe = new SimpleMsgPublisher<TMsg>(pipeCode,pushKeyGenerator, option);
             pipe.InterAppend(nextPipe);
         }
 
@@ -51,7 +52,7 @@ namespace OSS.Pipeline
         public static BaseMsgSubscriber<TMsg> AppendMsgSubscriber<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
             DataFlowOption option = null)
         {
-            var nextPipe = new MsgSubscriber<TMsg>(pipeCode, option);
+            var nextPipe = new SimpleMsgSubscriber<TMsg>(pipeCode, option);
 
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -69,7 +70,7 @@ namespace OSS.Pipeline
         public static BaseMsgFlow<TMsg> AppendMsgFlow<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
             DataFlowOption option = null)
         {
-            var nextPipe = new MsgFlow<TMsg>(pipeCode, option);
+            var nextPipe = new SimpleMsgFlow<TMsg>(pipeCode, option);
 
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -101,10 +102,10 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable,TMsg> AppendMsgEnumerator<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, string pipeCode=null)
+        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> AppendMsgEnumerator<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, string pipeCode = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new BaseMsgEnumerator<TMsgEnumerable,TMsg>(pipeCode);
+            var nextPipe = new BaseMsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }

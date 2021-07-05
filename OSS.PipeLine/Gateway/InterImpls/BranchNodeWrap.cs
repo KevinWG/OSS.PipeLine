@@ -7,9 +7,11 @@ namespace OSS.Pipeline.Gateway.InterImpls
     /// <summary>
     ///  分支子节点管道
     /// </summary>
-    public interface IBranchNodePipe:IPipe
+    public interface IBranchWrap //: IPipe
     {
         internal Task<TrafficResult> InterPreCall(object context, string prePipeCode);
+
+        public IPipe Pipe { get;  }
 
         /// <summary>
         ///  内部处理流容器初始化赋值
@@ -24,64 +26,66 @@ namespace OSS.Pipeline.Gateway.InterImpls
         internal abstract PipeRoute InterToRoute(bool isFlowSelf );
     }
 
-    internal  class BranchNodeWrap<TContext>: IBranchNodePipe
+    internal  class BranchNodeWrap<TContext>: IBranchWrap
     {
-        public PipeType                 PipeType { get; }
-        public string                   PipeCode { get; set; }
-        
+
+        public IPipe Pipe
+        {
+            get => _pipePart;
+        }
+
+
+        //public PipeType PipeType { get; }
+        //public string   PipeCode { get; set; }
+
         public BaseInPipePart<TContext> _pipePart;
 
         public BranchNodeWrap(BaseInPipePart<TContext> pipePart)
         {
-            PipeType = pipePart.PipeType;
-            PipeCode = pipePart.PipeCode;
-
             _pipePart = pipePart;
         }
 
-        Task<TrafficResult> IBranchNodePipe.InterPreCall(object context,string prePipeCode)
+        Task<TrafficResult> IBranchWrap.InterPreCall(object context,string prePipeCode)
         {
             return _pipePart.InterPreCall((TContext) context,prePipeCode);
         }
 
-        void IBranchNodePipe.InterInitialContainer(IPipeLine containerFlow)
+        void IBranchWrap.InterInitialContainer(IPipeLine containerFlow)
         {
             _pipePart.InterInitialContainer(containerFlow);
         }
 
-        PipeRoute IBranchNodePipe.InterToRoute(bool isFlowSelf)
+        PipeRoute IBranchWrap.InterToRoute(bool isFlowSelf)
         {
             return _pipePart.InterToRoute(isFlowSelf);
         }
     }
 
-    internal class BranchNodeWrap : IBranchNodePipe
+    internal class BranchNodeWrap : IBranchWrap
     {
-
-        public PipeType PipeType { get; }
-        public string   PipeCode { get; set; }
-
+        public IPipe Pipe
+        {
+            get => _pipePart;
+        }
+        
         public BaseInPipePart<Empty> _pipePart;
 
         public BranchNodeWrap(BaseInPipePart<Empty> pipePart)
         {
-            PipeType = pipePart.PipeType;
-            PipeCode = pipePart.PipeCode;
-
             _pipePart = pipePart;
         }
 
-        Task<TrafficResult> IBranchNodePipe.InterPreCall(object context, string prePipeCode)
+        Task<TrafficResult> IBranchWrap.InterPreCall(object context, string prePipeCode)
         {
             return _pipePart.InterPreCall(Empty.Default,prePipeCode);
         }
 
-        void IBranchNodePipe.InterInitialContainer(IPipeLine containerFlow)
+        void IBranchWrap.InterInitialContainer(IPipeLine containerFlow)
         {
             _pipePart.InterInitialContainer(containerFlow);
         }
 
-        PipeRoute IBranchNodePipe.InterToRoute(bool isFlowSelf)
+        PipeRoute IBranchWrap.InterToRoute(bool isFlowSelf)
         {
             return _pipePart.InterToRoute(isFlowSelf);
         }

@@ -19,13 +19,13 @@ namespace OSS.Pipeline
     /// 消息订阅者
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public class MsgSubscriber<TMsg>:BaseMsgSubscriber<TMsg>
+    public class SimpleMsgSubscriber<TMsg>:BaseMsgSubscriber<TMsg>
     {
         /// <summary>
         /// 消息订阅者
         /// </summary>
         /// <param name="pipeCode"></param>
-        public MsgSubscriber(string pipeCode) : this(pipeCode, null)
+        public SimpleMsgSubscriber(string pipeCode) : this(pipeCode, null)
         {
         }
         /// <summary>
@@ -33,7 +33,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="pipeCode"></param>
         /// <param name="option"></param>
-        public MsgSubscriber(string pipeCode, DataFlowOption option) : base(pipeCode, option)
+        public SimpleMsgSubscriber(string pipeCode, DataFlowOption option) : base(pipeCode, option)
         {
         }
 

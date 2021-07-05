@@ -57,14 +57,16 @@ namespace OSS.Pipeline.Tests
             {
                 name = "冰箱"
             });
+
+            // 延后一秒，假装有支付操作
             await Task.Delay(1000);
+
             await PayActivity.Execute(new PayContext()
             {
                 count = 10,
                 money = 10000
             });
-
-            await Task.Delay(2000);
+            await Task.Delay(1000);// 等待异步日志执行完成
         }
 
         [TestMethod]

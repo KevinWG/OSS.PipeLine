@@ -30,7 +30,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static ISimplePipelineConnector<TContext> StartWithMsgFlow<TContext>(string pipeCode, DataFlowOption option = null)
         {
-            var nextPipe = new MsgFlow<TContext>(pipeCode, option);
+            var nextPipe = new SimpleMsgFlow<TContext>(pipeCode, option);
 
             return Start(nextPipe);
         }

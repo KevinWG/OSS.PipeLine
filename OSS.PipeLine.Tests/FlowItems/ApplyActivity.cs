@@ -11,7 +11,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         
         protected override Task<TrafficSignal<long>> Executing(ApplyContext para)
         {
-            LogHelper.Info($"发起 [{para.name}] 采购申请");
+            LogHelper.Info($" 通过{PipeCode}发起 [{para.name}] 采购申请");
             return Task.FromResult(new TrafficSignal<long>(100000001L));
         }
     }

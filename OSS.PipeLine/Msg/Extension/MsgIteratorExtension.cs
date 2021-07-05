@@ -13,6 +13,7 @@
 
 using System.Collections.Generic;
 using OSS.Pipeline.Base.Base;
+using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
 {
@@ -32,8 +33,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> SetIterator<TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(
-            this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, BasePipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static IPipeAppender<TMsgEnumerable> SetIterator<TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, BasePipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
         where TMsgEnumerable:IEnumerable<TMsg>
         {
             pipe.InterSetIterator(nextPipe);

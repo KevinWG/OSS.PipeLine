@@ -41,7 +41,7 @@ namespace OSS.Pipeline
         /// <param name="prePipeCode">当前业务上游节点</param>
         /// <param name="allPrePipes">聚合到当前管道的所有上游节点</param>
         /// <returns></returns>
-        protected abstract Task<TrafficSignal> Switch(TContext context, string prePipeCode, IList<IPipe> allPrePipes);
+        protected abstract Task<TrafficSignal> Switch(TContext context, string prePipeCode, IReadOnlyList<IPipe> allPrePipes);
 
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context,
             string prePipeCode)
@@ -51,7 +51,7 @@ namespace OSS.Pipeline
                 trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
         }
 
-        private readonly IList<IPipe> _aggregatePipes;
+        private readonly List<IPipe> _aggregatePipes;
 
         private object _lockObj = new object();
 

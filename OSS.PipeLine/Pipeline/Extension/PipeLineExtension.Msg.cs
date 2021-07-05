@@ -18,6 +18,7 @@ using OSS.DataFlow;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
+using OSS.PipeLine.Msg.Default;
 using OSS.Pipeline.Pipeline.InterImpls.Connector;
 
 namespace OSS.Pipeline
@@ -40,7 +41,7 @@ namespace OSS.Pipeline
             this IPipelineConnector<TIn, TOut> pipe,
             string pipeCode, DataFlowOption option = null)
         {
-            return pipe.Then(new MsgSubscriber<TOut>(pipeCode, option));
+            return pipe.Then(new SimpleMsgSubscriber<TOut>(pipeCode, option));
         }
 
 
@@ -55,7 +56,7 @@ namespace OSS.Pipeline
             this IPipelineConnector<TIn, TOut> pipe, 
             string pipeCode, DataFlowOption option = null)
         {
-            var nextPipe = new MsgFlow<TOut>(pipeCode, option);
+            var nextPipe = new SimpleMsgFlow<TOut>(pipeCode, option);
 
             return pipe.Then(nextPipe);
         }
@@ -77,20 +78,19 @@ namespace OSS.Pipeline
 
 
         /// <summary>
-        ///  追加消息枚举器
+        ///  追加消息迭代器
         /// </summary>
-        /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
         /// <typeparam name="TMsg">消息具体类型</typeparam>
         /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
-        /// <typeparam name="TIn"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> ThenWithMsgEnumerator<TIn, TMsgEnumerable, TMsg>(
-            this IPipelineConnector<TIn, TMsgEnumerable> pipe, string pipeCode=null)
+        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> AppendMsgEnumerator<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, string pipeCode = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             var nextPipe = new BaseMsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
-            return pipe.Then(nextPipe);
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
         }
     }
 }

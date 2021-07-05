@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using OSS.Pipeline.Gateway.InterImpls;
+﻿using OSS.Pipeline.Interface;
 using OSS.Tools.Log;
 
 namespace OSS.Pipeline.Tests.FlowItems
@@ -10,10 +9,12 @@ namespace OSS.Pipeline.Tests.FlowItems
         {
         }
 
-        protected override IEnumerable<IBranchNodePipe> SelectNextPipes( PayContext context, List<IBranchNodePipe> branchItems)
+        protected override bool FilterBranchCondition(PayContext branchContext, IPipe branch, string prePipeCode)
         {
-            LogHelper.Info("这里进行支付通过后的分流");
-            return branchItems;
+            LogHelper.Info($"通过{PipeCode}  判断分支 {branch.PipeCode} 是否满足分流条件！");
+            return base.FilterBranchCondition(branchContext, branch, prePipeCode);
         }
+
+   
     }
 }

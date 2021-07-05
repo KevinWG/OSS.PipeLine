@@ -35,7 +35,7 @@ namespace OSS.Pipeline
         public static ISimplePipelineConnector<TContext> ThenWithMsgFlow<TContext>(this ISimplePipelineConnector<TContext> pipe, 
             string pipeCode, DataFlowOption option = null)
         {
-            var nextPipe = new MsgFlow<TContext>(pipeCode, option);
+            var nextPipe = new SimpleMsgFlow<TContext>(pipeCode, option);
 
             return pipe.Then(nextPipe);
         }

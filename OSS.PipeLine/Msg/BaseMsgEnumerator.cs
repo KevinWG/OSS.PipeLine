@@ -41,7 +41,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="msgs"></param>
         /// <returns></returns>
-        protected virtual IEnumerable<TMsg> FilterMsg(IEnumerable<TMsg> msgs)
+        protected virtual IEnumerable<TMsg> FilterMsg(TMsgEnumerable msgs)
         {
             return msgs;
         }

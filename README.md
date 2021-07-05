@@ -268,20 +268,22 @@
 运行单元测试，结果如下：
 
 ```
-xxxxxx 15:11:01    Detail:发起 [冰箱] 采购申请
+xxxxxx 17:46:15   Detail: 通过ApplyActivity发起 [冰箱] 采购申请
 
-xxxxxx 15:11:01    Detail:自动审核通过申请（编号：100000001）
+xxxxxx 17:46:15   Detail:通过AuditActivity 自动审核通过申请（编号：100000001）
 
-xxxxxx 15:11:02    Detail:支付动作执行,数量：10，金额：10000）
+xxxxxx 17:46:16   Detail:通过PayActivity 支付动作执行,数量：10，金额：10000）
 
-xxxxxx 15:11:02    Detail:这里进行支付通过后的分流
+xxxxxx 17:46:16   Detail:通过PayGateway  判断分支 PayEmailConnector 是否满足分流条件！
 
-xxxxxx 15:11:02    Detail:分流-1.邮件发送，内容： 您成功支付了订单，总额：10000
+xxxxxx 17:46:16   Detail:通过PayGateway  判断分支 StockConnector 是否满足分流条件！
 
-xxxxxx 15:11:02         Detail:通过 SendEmailActivity 管道进入结束网关！
+xxxxxx 17:46:16   Detail:分流-1（SendEmailActivity）邮件发送，内容： 您成功支付了订单，总额：10000
 
-xxxxxx 15:11:02    Detail:分流-2.增加库存，数量：10
+xxxxxx 17:46:17         Detail: 通过 SendEmailActivity 管道进入结束网关！
 
-xxxxxx 15:11:02         Detail:通过 StockActivity 管道进入结束网关！
+xxxxxx 17:46:17   Detail:分流-2（StockActivity）增加库存，数量：10
+
+xxxxxx 17:46:17         Detail: 通过 StockActivity 管道进入结束网关！
 
 ```

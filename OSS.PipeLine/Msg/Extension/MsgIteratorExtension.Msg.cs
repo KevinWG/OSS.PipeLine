@@ -36,7 +36,7 @@ namespace OSS.Pipeline
             Func<TMsg,string> pushKeyGenerator=null, DataPublisherOption option = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new MsgPublisher<TMsg>(pipeCode, pushKeyGenerator, option);
+            var nextPipe = new SimpleMsgPublisher<TMsg>(pipeCode, pushKeyGenerator, option);
             pipe.InterSetIterator(nextPipe);
             return pipe;
         }

@@ -26,44 +26,66 @@ namespace OSS.Pipeline
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBranchGateway<TContext> : BaseThreeWayPipe<TContext,TContext, TContext>
+    public abstract class BaseBranchGateway<TContext> : BaseThreeWayPipe<TContext, TContext, TContext>
     {
         /// <summary>
         ///  流体的分支网关基类
         ///    所有分支都失败会触发block
         /// </summary>
-        protected BaseBranchGateway(string pipeCode = null) : base(pipeCode,PipeType.BranchGateway)
+        protected BaseBranchGateway(string pipeCode = null) : base(pipeCode, PipeType.BranchGateway)
         {
         }
 
-        /// <inheritdoc />
-        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context, string prePipeCode)
+        /// <summary>
+        ///  所有分支管道
+        /// </summary>
+        protected IReadOnlyList<IPipe> BranchPipes
         {
-            var nextPipes = SelectNextPipes( context, _branchItems);
-            if (nextPipes == null || !nextPipes.Any())
-                return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,context);
+            get => _branchItems.Select(bw => bw.Pipe).ToList();
+        }
 
-            var parallelPipes = nextPipes.Select(p => p.InterPreCall(context,PipeCode));
+        /// <summary>
+        ///  条件分支过滤处理
+        /// </summary>
+        /// <param name="branchContext">当前传入分支网关的上下文</param>
+        /// <param name="branch">等待过滤的分支</param>
+        /// <param name="prePipeCode">当前网关分支的上游管道编码</param>
+        /// <returns> True-执行当前分支， False-不执行当前分支 </returns>
+        protected virtual bool FilterBranchCondition(TContext branchContext, IPipe branch, string prePipeCode)
+        {
+            return true;
+        }
+
+
+        #region 管道内部业务处理
+
+        /// <inheritdoc />
+        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context,
+            string prePipeCode)
+        {
+            IList<IBranchWrap> nextPipes = null;
+            if (_branchItems == null
+                || !_branchItems.Any()
+                || !(nextPipes = _branchItems.Where(
+                            bw => FilterBranchCondition(context, bw.Pipe, prePipeCode)).ToList()
+                    ).Any())
+            {
+                return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,
+                    context);
+            }
+
+            var parallelPipes = nextPipes.Select(p => p.InterPreCall(context, PipeCode));
 
             var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficResult<TContext, TContext>(SignalFlag.Green_Pass, string.Empty, string.Empty, context, context)
+                ? new TrafficResult<TContext, TContext>(SignalFlag.Green_Pass, string.Empty, string.Empty, context,
+                    context)
                 : new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", context, context);
 
             return res;
         }
 
-        /// <summary>
-        ///   过滤可分发下路的分支
-        ///   filer available pipes that can go to next during the runtime;
-        /// </summary>
-        /// <param name="branchNodePool"></param>
-        /// <param name="context"></param>
-        /// <returns>如果为空，则触发block</returns>
-        protected virtual IEnumerable<IBranchNodePipe> SelectNextPipes(TContext context,
-            List<IBranchNodePipe> branchNodePool)
-        {
-            return branchNodePool;
-        }
+        #endregion
+
 
         #region 管道连接
 
@@ -72,7 +94,7 @@ namespace OSS.Pipeline
         {
             return InterUtil.GreenTrafficResultTask;
         }
-        
+
         internal override void InterAppend(BaseInPipePart<TContext> nextPipe)
         {
             Add(nextPipe);
@@ -85,8 +107,7 @@ namespace OSS.Pipeline
             nextPipe.InterAppendTo(this);
         }
 
-
-        private List<IBranchNodePipe> _branchItems;
+        private List<IBranchWrap> _branchItems;
 
         protected void Add(BaseInPipePart<TContext> pipe)
         {
@@ -95,7 +116,7 @@ namespace OSS.Pipeline
                 throw new ArgumentNullException(nameof(pipe), " 不能为空！");
             }
 
-            _branchItems ??= new List<IBranchNodePipe>();
+            _branchItems ??= new List<IBranchWrap>();
 
             _branchItems.Add(new BranchNodeWrap<TContext>(pipe));
         }
@@ -108,7 +129,7 @@ namespace OSS.Pipeline
                 throw new ArgumentNullException(nameof(pipe), " 不能为空！");
             }
 
-            _branchItems ??= new List<IBranchNodePipe>();
+            _branchItems ??= new List<IBranchWrap>();
             _branchItems.Add(new BranchNodeWrap(pipe));
         }
 
@@ -132,7 +153,7 @@ namespace OSS.Pipeline
         #endregion
 
         #region 内部路由处理
-        
+
         internal override PipeRoute InterToRoute(bool isFlowSelf = false)
         {
             var pipe = new PipeRoute()
@@ -150,6 +171,7 @@ namespace OSS.Pipeline
             {
                 pipe.nexts = _branchItems.Select(bp => bp.InterToRoute(isFlowSelf)).ToList();
             }
+
             return pipe;
         }
 

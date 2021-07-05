@@ -33,7 +33,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineConnector<Empty, TContext> StartWithMsgSubscriber<TContext>(string pipeCode, DataFlowOption option = null)
         {
-            var nextPipe = new MsgSubscriber<TContext>(pipeCode, option);
+            var nextPipe = new SimpleMsgSubscriber<TContext>(pipeCode, option);
 
             return Start(nextPipe);
         }
@@ -48,7 +48,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public static IPipelineConnector<TContext, TContext> StartWithMsgFlow<TContext>(string pipeCode, DataFlowOption option = null)
         {
-            var nextPipe = new MsgFlow<TContext>(pipeCode, option);
+            var nextPipe = new SimpleMsgFlow<TContext>(pipeCode, option);
 
             return Start(nextPipe);
         }
