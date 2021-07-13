@@ -29,7 +29,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BasePassiveEffectActivity(string pipeCode = null) : base(pipeCode, PipeType.PassiveEffectActivity)
+        protected BasePassiveEffectActivity(string pipeCode = null) : base(pipeCode, PipeType.Activity,true,true)
         {
         }
         

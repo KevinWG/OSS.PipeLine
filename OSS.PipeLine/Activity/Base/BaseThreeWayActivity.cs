@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline.Activity.Base
 {
@@ -11,15 +12,24 @@ namespace OSS.Pipeline.Activity.Base
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseThreeWayActivity<TInContext, THandleResult, TOutContext> : BaseThreeWayPipe<TInContext,  THandleResult, TOutContext>
+    public abstract class BaseThreeWayActivity<TInContext, THandleResult, TOutContext> : BaseThreeWayPipe<TInContext,  THandleResult, TOutContext>,IBasicActivity
     {
         /// <inheritdoc />
-        protected BaseThreeWayActivity(string pipeCode,PipeType pipeType) : base(pipeCode,pipeType)
+        protected BaseThreeWayActivity(string pipeCode,PipeType pipeType,bool isEffect,bool isPassive) : base(pipeCode,pipeType)
         {
+            IsEffected = isEffect;
+            IsPassive  = isPassive;
         }
 
+
+        /// <inheritdoc />
+        public bool IsEffected { get; }
+
+        /// <inheritdoc />
+        public bool IsPassive { get; }
+
         #region 流体外部扩展
-        
+
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>

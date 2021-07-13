@@ -43,7 +43,7 @@ namespace OSS.Pipeline.Interface
 
 
     /// <summary>
-    /// 管道对外执行接口（有输入无输出）
+    /// 管道对外执行接口（无输入无输出）
     /// </summary>
     public interface IPipeExecutor : IPipeExecutor<Empty, Empty>
     {

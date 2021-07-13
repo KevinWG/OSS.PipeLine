@@ -23,20 +23,20 @@ namespace OSS.Pipeline
         /// </summary>
         Activity = 100,
 
-        /// <summary>
-        ///  直接活动
-        /// </summary>
-        EffectActivity = 110,
+        ///// <summary>
+        /////  直接活动
+        ///// </summary>
+        //EffectActivity = 110,
 
-        /// <summary>
-        ///   独立Action活动
-        /// </summary>
-        PassiveActivity = 120,
+        ///// <summary>
+        /////   独立Action活动
+        ///// </summary>
+        //PassiveActivity = 120,
 
-        /// <summary>
-        ///   独立Action活动
-        /// </summary>
-        PassiveEffectActivity = 130,
+        ///// <summary>
+        /////   独立Action活动
+        ///// </summary>
+        //PassiveEffectActivity = 130,
 
 
         /// <summary>

@@ -28,9 +28,15 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseEffectActivity( string pipeCode = null) : base(pipeCode,PipeType.EffectActivity)
+        protected BaseEffectActivity( string pipeCode = null) : base(pipeCode,PipeType.Activity)
         {
         }
+        /// <inheritdoc />
+        public bool IsEffected => true;
+
+        /// <inheritdoc />
+        public bool IsPassive => false;
+
 
         #region 流体业务-启动
 
@@ -87,7 +93,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseEffectActivity(string pipeCode = null) : base(pipeCode,PipeType.EffectActivity)
+        protected BaseEffectActivity(string pipeCode = null) : base(pipeCode,PipeType.Activity,true,false)
         {
         }
         

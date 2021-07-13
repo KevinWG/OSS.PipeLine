@@ -43,7 +43,7 @@ namespace OSS.Pipeline.Base
         ///  默认等于  this.GetType().Name
         /// </summary>
         public string PipeCode { get; set; }
-
+        
         /// <summary>
         ///  流容器
         /// </summary>

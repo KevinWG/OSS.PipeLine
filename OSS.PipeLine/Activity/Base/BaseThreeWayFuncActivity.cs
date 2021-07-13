@@ -13,6 +13,7 @@
 
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
+using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline.Activity.Base
 {
@@ -20,14 +21,23 @@ namespace OSS.Pipeline.Activity.Base
     ///  被动触发执行活动组件基类
     ///      传入TPassivePara类型参数，且此参数作为后续上下文传递给下一个节点，自身返回处理结果但无影响
     /// </summary>
-    public abstract class BaseThreeWayPassiveActivity<THandlePara, THandleResult, TOut> : BaseThreeWayPassivePipe<THandlePara, THandleResult, TOut>
+    public abstract class BaseThreeWayPassiveActivity<THandlePara, THandleResult, TOut> : BaseThreeWayPassivePipe<THandlePara, THandleResult, TOut>, IBasicActivity
     {
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseThreeWayPassiveActivity(string pipeCode, PipeType pipeType) : base(pipeCode,pipeType)
+        protected BaseThreeWayPassiveActivity(string pipeCode, PipeType pipeType, bool isEffect, bool isPassive) : base(pipeCode, pipeType)
         {
+            IsEffected = isEffect;
+            IsPassive  = isPassive;
         }
+
+
+        /// <inheritdoc />
+        public bool IsEffected { get; }
+
+        /// <inheritdoc />
+        public bool IsPassive { get; }
 
 
         #region 外部业务扩展
