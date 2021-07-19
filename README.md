@@ -107,31 +107,32 @@
 ## 二. 网关组件
 此组件主要负责逻辑的规则处理，业务的走向逻辑无非分与合，这里给出两个基类：
 
-###1. BaseAggregateGateway<TContext> - 聚合业务分支流程活动组件
+### 1. BaseAggregateGateway<TContext> - 聚合业务分支流程活动组件
 将多条业务分支聚合到当前网关组件下，由当前网关统一控制是否将业务流程向后传递，只需要继承此基类重写IfMatchCondition 方法即可
 
-###2. BaseBranchGateway<TContext> - 分支网关组件
+### 2. BaseBranchGateway<TContext> - 分支网关组件
 此组件将业务分流处理，定义流体时通过AddBranchPipe添加多个分支，至于如何分流，只需要继承此基类重写FilterNextPipes方法即可，你也可以在此之上实现BPMN中的几种网关类型（并行，排他，和包含）。
 
 ## 三. 消息流组件
 此组件主要负责消息的传递和转化处理，根据是否需要转化，或者异步定义四个基类如下：
 
-###1. BaseMsgConverter<TInMsg, TOutMsg> - 转化连接组件
+### 1. BaseMsgConverter<TInMsg, TOutMsg> - 转化连接组件
 业务流经过此组件，直接执行Convert方法（自定义实现），转化成对应的下个组件执行参数，自动进入下个组件。
 
-###2. BaseMsgFlow<TMsg> - 异步缓冲数据连接组件（提供默认实现：MsgFlow<TMsg>）
+### 2. BaseMsgFlow<TMsg> - 异步缓冲数据连接组件（提供默认实现：MsgFlow<TMsg>）
 此前组件的流动以【发布/订阅】的方式异步执行，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
 
-###3. BaseMsgPublisher<TMsg> 消息发布者组件 - （提供默认实现：MsgPublisher<TMsg>）
+### 3. BaseMsgPublisher<TMsg> 消息发布者组件 - （提供默认实现：MsgPublisher<TMsg>）
 此前组件提供数据的【发布】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
-
-###4. BaseMsgSubscriber<TMsg> - 消息订阅者组件（提供默认实现：MsgSubscriber<TMsg>）
+ 
+### 4. BaseMsgSubscriber<TMsg> - 消息订阅者组件（提供默认实现：MsgSubscriber<TMsg>）
 此前组件提供数据的【订阅】方式，触发来源可以方便的修改为队列或数据库，详情【OSS.DataFlow】[https://github.com/KevinWG/OSS.DataFlow]）
 
 
 以上是三个核心的组件部分，以上三个组件任意组合可以组成PipeLine（流体），PipeLine本身又可以作为一个组件加入到一个更大的流体之中，通过流体的 ToRoute() 方法，可以获取对应的内部组件关联路由信息。
         
 ## 四. 简单示例场景
+
 首先我们假设当前有一个进货管理的场景，需经历  进货申请，申请审批，购买支付，入库（同时邮件通知申请人） 几个环节，每个环节表示一个事件活动，比如申请活动我们定义如下：
 ```csharp
     public class ApplyActivity : BaseEffectActivity<ApplyContext, long>
@@ -148,10 +149,11 @@
         }
     }
 ```
-这里为了方便观察，直接继承 BaseActivity，即多个活动连接后，自动运行。 相同的处理方式我们定义剩下几个环节事件，列表如下：
+
+我们设定申请后审核自动执行，审核成功等待支付（被动类型）。 相同的处理方式我们定义剩下几个环节事件，列表如下：
 ```csharp
     ApplyActivity      - 申请事件    (参数：ApplyContext)
-    AutoAuditActivity  - 审核事件    (参数：ApplyContext)
+    AutoAuditActivity  - 审核事件    (参数：long)
     PayActivity        - 购买事件    (参数：PayContext)
     StockActivity      - 入库事件    (参数：StockContext)
     EmailActivity      - 发送邮件事件    (参数：SendEmailContext)
@@ -165,10 +167,10 @@
             PipeCode = "PayGateway";
         }
 
-        protected override IEnumerable<IBranchNodePipe> SelectNextPipes( PayContext context, List<IBranchNodePipe> branchItems)
+        protected override bool FilterBranchCondition(PayContext branchContext, IPipe branch, string prePipeCode)
         {
-            LogHelper.Info("这里进行支付通过后的分流");
-            return branchItems;
+            LogHelper.Info($"通过{PipeCode}  判断分支 {branch.PipeCode} 是否满足分流条件！");
+            return base.FilterBranchCondition(branchContext, branch, prePipeCode);
         }
     }
 ```
@@ -196,7 +198,7 @@
     [TestClass]
     public class BuyFlowTests
     {
-        public readonly ApplyActivity ApplyActivity = new ApplyActivity();
+        public readonly ApplyActivity     ApplyActivity = new ApplyActivity();
         public readonly AutoAuditActivity AuditActivity = new AutoAuditActivity();
 
         public readonly PayActivity PayActivity = new PayActivity();
@@ -204,40 +206,41 @@
         public readonly PayGateway PayGateway = new PayGateway();
 
         public readonly StockConnector StockConnector = new StockConnector();
-        public readonly StockActivity StockActivity = new StockActivity();
+        public readonly StockActivity  StockActivity  = new StockActivity();
 
         public readonly PayEmailConnector EmailConnector = new PayEmailConnector();
-        public readonly SendEmailActivity EmailActivity = new SendEmailActivity();
+        public readonly SendEmailActivity EmailActivity  = new SendEmailActivity();
 
 
-        public readonly Pipeline<ApplyContext, Empty> TestPipeline;
+
+        private EndGateway _endNode = new EndGateway();
+
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
-            var endNode = new EndGateway();
+
 
             ApplyActivity
-                .Append(AuditActivity)
+            .Append(AuditActivity)
 
-                .Append(PayActivity)
-                .Append(PayGateway);
+            .Append(PayActivity)
+            .Append(PayGateway);
 
             // 网关分支 - 发送邮件分支
             PayGateway
-                .Append(EmailConnector)
-                .Append(EmailActivity)
-                .Append(endNode);
+            .Append(EmailConnector)
+            .Append(EmailActivity)
+            .Append(_endNode);
 
             // 网关分支- 入库分支
             PayGateway
-                .Append(StockConnector)
-                .Append(StockActivity)
-                .Append(endNode);
+            .Append(StockConnector)
+            .Append(StockActivity)
+            .Append(_endNode);
 
-            // 流体对象
-            TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, endNode);
+
         }
-        
+
         [TestMethod]
         public async Task FlowTest()
         {
@@ -245,21 +248,23 @@
             {
                 name = "冰箱"
             });
-            // 延后一秒，模拟支付成功
+
+            // 延后一秒，假装有支付操作
             await Task.Delay(1000);
+
             await PayActivity.Execute(new PayContext()
             {
                 count = 10,
                 money = 10000
             });
-
-            await Task.Delay(2000);
+            await Task.Delay(1000);// 等待异步日志执行完成
         }
 
         [TestMethod]
         public void RouteTest()
         {
-            // 获取当前的路由信息
+            var TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, _endNode);
+
             var route = TestPipeline.ToRoute();
             Assert.IsTrue(route != null);
         }
