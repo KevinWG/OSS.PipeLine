@@ -21,12 +21,12 @@ namespace OSS.Pipeline.InterImpls.Watcher
 {
     internal class PipeWatcherProxy
     {
-        private readonly IPipeWatcher                  _watcher;
+        private readonly IPipeLineWatcher                  _watcher;
         private readonly IDataPublisher<WatchDataItem> _publisher;
         private readonly ActionBlock<WatchDataItem>    _watchDataQueue;
         private readonly string                        _dataFlowKey;
 
-        public PipeWatcherProxy(IPipeWatcher watcher, string dataFlowKey, DataFlowOption option)
+        public PipeWatcherProxy(IPipeLineWatcher watcher, string dataFlowKey, DataFlowOption option)
         {
             if (!string.IsNullOrEmpty(dataFlowKey))
             {
@@ -53,17 +53,21 @@ namespace OSS.Pipeline.InterImpls.Watcher
                 switch (data.ActionType)
                 {
                     case WatchActionType.PreCall:
-                        return await _watcher.PreCall(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
+                         await _watcher.PreCall(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
+                        break;
                     case WatchActionType.Executed:
-                        return await _watcher.Executed(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
+                         await _watcher.Executed(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
+                         break;
                     case WatchActionType.Blocked:
-                        return await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
+                         await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
+                         break;
                 }
             }
             catch 
             {
             }
-            return false;
+
+            return true;
         }
 
 
@@ -80,36 +84,6 @@ namespace OSS.Pipeline.InterImpls.Watcher
 
     }
 
-    internal struct WatchDataItem
-    {
-        public string PipeCode { get; set; }
 
-        public PipeType PipeType { get; set; }
-
-        public WatchActionType ActionType { get; set; }
-
-        public object Para { get; set; }
-
-        public WatchResult Result { get; set; }
-    }
-
-
-    internal enum WatchActionType
-    {
-        /// <summary>
-        ///  上游管道调用
-        /// </summary>
-        PreCall,
-
-        /// <summary>
-        ///  执行完成
-        /// </summary>
-        Executed,
-
-        /// <summary>
-        ///  堵塞
-        /// </summary>
-        Blocked,
-    }
 
 }

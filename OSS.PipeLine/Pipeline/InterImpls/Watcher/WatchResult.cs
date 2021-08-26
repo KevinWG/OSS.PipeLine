@@ -16,7 +16,7 @@ namespace OSS.Pipeline
     /// <summary>
     ///  流动结果
     /// </summary>
-    public readonly struct WatchResult
+    public struct WatchResult
     {
         /// <summary>
         /// 流动结果
@@ -53,7 +53,7 @@ namespace OSS.Pipeline
         public SignalFlag signal { get; }
 
         /// <summary>
-        /// 阻塞的管道PipeCode
+        /// 阻塞发生的管道PipeCode
         /// </summary>
         public string blocked_pipe_code { get; }
 
@@ -63,7 +63,7 @@ namespace OSS.Pipeline
         public string msg { get; }
 
         /// <summary>
-        ///  
+        ///  活动（activity）的执行结果
         /// </summary>
         public object activity_result { get; }
     }
@@ -71,7 +71,6 @@ namespace OSS.Pipeline
     {
         public static WatchResult ToWatchResult<TOut, TActivityResult>(this TrafficResult<TOut, TActivityResult> tRes)
         {
-
             return new WatchResult(tRes.signal, tRes.result, tRes.blocked_pipe_code, tRes.msg);
         }
 

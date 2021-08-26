@@ -91,18 +91,6 @@ namespace OSS.Pipeline
         {
         }
 
-        ///// <summary>
-        ///// 流动结果
-        ///// </summary>
-        ///// <param name="signal"></param>
-        ///// <param name="nextParas"></param>
-        ///// <param name="blockedPipeCode"></param>
-        ///// <param name="msg"></param>
-        //public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, TOut nextParas):
-        //    this(signal, blockedPipeCode, msg, nextParas,default)
-        //{
-        //}
-
         /// <summary>
         /// 流动结果
         /// </summary>
@@ -113,7 +101,7 @@ namespace OSS.Pipeline
         /// <param name="msg"></param>
         public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, THandleResult executeResult, TOut nextParas)
         {
-            next_paras        = nextParas;
+            output_paras        = nextParas;
             blocked_pipe_code = blockedPipeCode;
             result            = executeResult;
 
@@ -140,7 +128,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///  下节管道上下文参数
         /// </summary>
-        public TOut next_paras { get; }
+        public TOut output_paras { get; }
 
         /// <summary>
         ///  活动执行方法结果

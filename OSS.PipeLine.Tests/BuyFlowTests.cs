@@ -19,16 +19,12 @@ namespace OSS.Pipeline.Tests
 
         public readonly PayEmailConnector EmailConnector = new PayEmailConnector();
         public readonly SendEmailActivity EmailActivity  = new SendEmailActivity();
-
-
-
+        
         private EndGateway _endNode = new EndGateway();
 
         //  构造函数内定义流体关联
         public BuyFlowTests()
         {
-
-
             ApplyActivity
             .Append(AuditActivity)
 
@@ -46,8 +42,6 @@ namespace OSS.Pipeline.Tests
             .Append(StockConnector)
             .Append(StockActivity)
             .Append(_endNode);
-
-
         }
 
         [TestMethod]
@@ -72,7 +66,10 @@ namespace OSS.Pipeline.Tests
         [TestMethod]
         public void RouteTest()
         {
-            var TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, _endNode);
+            var TestPipeline = new Pipeline<ApplyContext, Empty>("test-flow", ApplyActivity, _endNode,new PipeLineOption()
+            {
+
+            });
 
             var route = TestPipeline.ToRoute();
             Assert.IsTrue(route != null);

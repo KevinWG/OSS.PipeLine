@@ -15,7 +15,6 @@ using OSS.Pipeline.Interface;
 using OSS.Pipeline.Base.Base;
 using System;
 using System.Threading.Tasks;
-using OSS.Pipeline.InterImpls.Watcher;
 using OSS.Pipeline.InterImpls;
 
 namespace OSS.Pipeline.Base
@@ -50,11 +49,8 @@ namespace OSS.Pipeline.Base
 
             if (trafficRes.signal == SignalFlag.Green_Pass)
             {
-                var nextTrafficRes = await ToNextThrough(trafficRes.next_paras);
-                return new TrafficResult<THandleResult, TOutContext>(
-                    nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg
-                    , trafficRes.result, trafficRes.next_paras
-                );
+                var nextTrafficRes = await ToNextThrough(trafficRes.output_paras);
+                return new TrafficResult<THandleResult, TOutContext>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output_paras);
             }
 
             if (trafficRes.signal == SignalFlag.Red_Block)

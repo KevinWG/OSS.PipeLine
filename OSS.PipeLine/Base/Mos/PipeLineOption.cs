@@ -24,7 +24,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///  监控器
         /// </summary>
-        public IPipeWatcher Watcher { get; set; }
+        public IPipeLineWatcher Watcher { get; set; }
 
         /// <summary>
         ///  监控器使用的消息流
