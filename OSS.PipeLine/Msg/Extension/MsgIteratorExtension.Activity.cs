@@ -28,7 +28,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsg">消息具体类型</typeparam>
         /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -40,10 +40,10 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static BaseMsgEnumerator<TMsgEnumerable, TMsg> SetIteratorActivity<TMsgEnumerable, TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe,
-            Func<TMsg, Task<TrafficSignal>> exePassive, string pipeCode = null)
+            Func<TMsg, Task<TrafficSignal>> exeFunc, string pipeCode = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new SimpleActivity<TMsg>( pipeCode, exePassive);
+            var nextPipe = new SimpleActivity<TMsg>( pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);
             return pipe;
         }
@@ -55,7 +55,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsgEnumerable"></typeparam>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -67,10 +67,10 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static BaseMsgEnumerator<TMsgEnumerable, TMsg> AppendActivity<TMsgEnumerable, TMsg, TResult>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe,
-            Func<TMsg, Task<TrafficSignal<TResult>>> exePassive, string pipeCode = null)
+            Func<TMsg, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new SimpleActivity<TMsg, TResult>( pipeCode, exePassive);
+            var nextPipe = new SimpleActivity<TMsg, TResult>( pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);
             return pipe;
         }

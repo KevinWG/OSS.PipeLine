@@ -29,7 +29,7 @@ namespace OSS.Pipeline
         ///  追加活动管道
         /// </summary>
         /// <typeparam name="TContext"></typeparam>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -41,9 +41,9 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static ISimplePipelineConnector<TContext> StartWithActivity<TContext>(string pipeCode,
-            Func<TContext, Task<TrafficSignal>> exePassive)
+            Func<TContext, Task<TrafficSignal>> exeFunc)
         {
-            return Start(new SimpleActivity<TContext>(pipeCode, exePassive));
+            return Start(new SimpleActivity<TContext>(pipeCode, exeFunc));
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TContext"></typeparam>
         /// <typeparam name="TNextResult"></typeparam>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：当前活动上下文（会继续传递给下一个节点）
         /// 结果：
@@ -63,9 +63,9 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static ISimplePipelineConnector<TContext> StartWithActivity<TContext, TNextResult>(string pipeCode,
-            Func<TContext, Task<TrafficSignal<TNextResult>>> exePassive)
+            Func<TContext, Task<TrafficSignal<TNextResult>>> exeFunc)
         {
-            return Start(new SimpleActivity<TContext, TNextResult>(pipeCode, exePassive));
+            return Start(new SimpleActivity<TContext, TNextResult>(pipeCode, exeFunc));
         }
 
 
@@ -73,7 +73,7 @@ namespace OSS.Pipeline
         ///  追加活动管道
         /// </summary>
         /// <typeparam name="TContext"></typeparam>
-        /// <param name="exePassive">
+        /// <param name="exeFunc">
         /// 执行委托
         /// 参数：
         ///     当前活动上下文信息
@@ -86,9 +86,9 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static ISimplePipelineConnector<TContext> StartWithEffectActivity<TContext>(string pipeCode,
-            Func<TContext, Task<TrafficSignal<TContext>>> exePassive)
+            Func<TContext, Task<TrafficSignal<TContext>>> exeFunc)
         {
-            return Start(new SimpleEffectActivity<TContext, TContext>(pipeCode, exePassive));
+            return Start(new SimpleEffectActivity<TContext, TContext>(pipeCode, exeFunc));
         }
     }
 }

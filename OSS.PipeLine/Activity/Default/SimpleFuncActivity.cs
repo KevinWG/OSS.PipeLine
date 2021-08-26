@@ -21,23 +21,23 @@ namespace OSS.Pipeline
     /// <inheritdoc />
     public class SimplePassiveActivity<TPassivePara, TResult> : BasePassiveActivity<TPassivePara, TResult>
     {
-        private readonly Func<TPassivePara, Task<TrafficSignal<TResult>>> _exePassive;
+        private readonly Func<TPassivePara, Task<TrafficSignal<TResult>>> _exeFunc;
 
         /// <inheritdoc />
-        public SimplePassiveActivity(string pipeCode,Func<TPassivePara, Task<TrafficSignal<TResult>>> exePassive):base(pipeCode)
+        public SimplePassiveActivity(string pipeCode,Func<TPassivePara, Task<TrafficSignal<TResult>>> exeFunc):base(pipeCode)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
                 PipeCode = pipeCode;
             }
-            _exePassive = exePassive ?? throw new ArgumentNullException(nameof(exePassive), "执行方法不能为空!");
+            _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
         }
 
 
         /// <inheritdoc />
         protected override Task<TrafficSignal<TResult>> Executing(TPassivePara contextData)
         {
-            return _exePassive(contextData);
+            return _exeFunc(contextData);
         }
     }
 }

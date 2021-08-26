@@ -12,7 +12,6 @@
 #endregion
 
 
-using System;
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Watcher;
