@@ -60,12 +60,21 @@ namespace OSS.Pipeline
             _startPipe = startPipe;
             _endPipe   = endPipeAppender;
 
+            InitialPipes();
+
             if (option?.Watcher!=null)
             {
                 WatchProxy = new PipeWatcherProxy(option.Watcher,option.WatcherDataFlowKey,option.WatcherDataFlowOption);
             }
            
             startPipe.InterInitialContainer(this);
+        }
+
+        /// <summary>
+        ///  初始化节点连接
+        /// </summary>
+        protected virtual void InitialPipes()
+        {
         }
 
         #region 管道启动

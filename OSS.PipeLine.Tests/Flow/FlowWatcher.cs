@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Tools.Log;
 
@@ -21,7 +20,7 @@ namespace OSS.Pipeline.Tests.Flow
 
         public Task Blocked(string pipeCode, PipeType pipeType, object input, WatchResult watchResult)
         {
-            LogHelper.Info($"管道 {pipeCode} 阻塞，阻塞发生管道", "PipeBlocked", "PipelineWatcher");
+            LogHelper.Info($"管道 {pipeCode} 阻塞，阻塞发生管道{watchResult.blocked_pipe_code}", "PipeBlocked", "PipelineWatcher");
             return Task.CompletedTask;
         }
     }

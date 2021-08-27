@@ -5,26 +5,32 @@ namespace OSS.Pipeline.Tests
 {
     public class BuyFlow : Pipeline<ApplyContext, Empty>
     {
-        //
-        public static ApplyActivity     ApplyActivity { get; } = new ApplyActivity();
-        public static AutoAuditActivity AuditActivity { get; } = new AutoAuditActivity();
 
-        public static PayActivity PayActivity { get; } = new PayActivity();
-        public static PayGateway  PayGateway  { get; } = new PayGateway();
-
-        public static StockConnector StockConnector { get; } = new StockConnector();
-        public static StockActivity  StockActivity  { get; } = new StockActivity();
-
-        public static PayEmailConnector EmailConnector { get; } = new PayEmailConnector();
-        public static SendEmailActivity EmailActivity  { get; } = new SendEmailActivity();
-
-        private static EndGateway _endNode = new EndGateway();
-
-        //  构造函数内定义流体关联
-        public BuyFlow() : base("BUY_Flow", ApplyActivity, _endNode,new PipeLineOption()
+        private static readonly ApplyActivity _startNode = new ApplyActivity();
+        private static readonly EndGateway    _endNode   = new EndGateway();
+        
+        public ApplyActivity ApplyActivity
         {
-            Watcher = new FlowWatcher()
-        })
+            get { return _startNode; }
+        }
+
+        public AutoAuditActivity AuditActivity { get; } = new AutoAuditActivity();
+
+        public PayActivity PayActivity { get; } = new PayActivity();
+        public PayGateway  PayGateway  { get; } = new PayGateway();
+
+        public StockConnector StockConnector { get; } = new StockConnector();
+        public StockActivity  StockActivity  { get; } = new StockActivity();
+
+        public PayEmailConnector EmailConnector { get; } = new PayEmailConnector();
+        public SendEmailActivity EmailActivity  { get; } = new SendEmailActivity();
+        
+        //  构造函数内定义流体关联
+        public BuyFlow() : base("Buy_Flow", _startNode, _endNode, new PipeLineOption()  {Watcher = new FlowWatcher()})
+        {
+        }
+
+        protected override void InitialPipes()
         {
             ApplyActivity
                 .Append(AuditActivity)
@@ -44,11 +50,5 @@ namespace OSS.Pipeline.Tests
                 .Append(StockActivity)
                 .Append(_endNode);
         }
-
-
-
-
-
-
     }
 }
