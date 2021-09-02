@@ -58,7 +58,7 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     /// 管道对外执行接口（有输入无输出）
     /// </summary>
-    public interface IPipeInputOnlyExecutor<in TIn>
+    public interface IPipeInputExecutor<in TIn>
     {
         /// <summary>
         ///  执行方法

@@ -71,7 +71,7 @@ namespace OSS.Pipeline.Base.Base
         /// <returns></returns>
         internal virtual async Task InterBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult());
+            await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult()).ConfigureAwait(false);
             await Block(context, tRes);
         }
         

@@ -5,7 +5,7 @@ namespace OSS.Pipeline.Interface
     /// 
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public interface IPipeLineEntry<in TInContext> : IPipeLine,IPipeInputOnlyExecutor<TInContext>
+    public interface IPipeLineEntry<in TInContext> : IPipeLine,IPipeInputExecutor<TInContext>
     {
     }
 }

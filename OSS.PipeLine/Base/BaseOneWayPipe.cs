@@ -14,7 +14,6 @@
 using System.Threading.Tasks;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.Base.Base;
-using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Base
 {
@@ -22,7 +21,7 @@ namespace OSS.Pipeline.Base
     ///  管道执行基类（单入类型）
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseOneWayPipe<TContext> : BasePipe<TContext, TContext, TContext, TContext>, IPipeExecutor<TContext,TContext>
+    public abstract class BaseOneWayPipe<TContext> : BasePipe<TContext, TContext, TContext, TContext>, IPipeInputExecutor<TContext>
     {
         /// <inheritdoc />
         protected BaseOneWayPipe(string pipeCode, PipeType pipeType) : base(pipeCode,pipeType)
@@ -36,9 +35,9 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        public async Task<TContext> Execute(TContext context)
+        public Task Execute(TContext context)
         {
-            return (await InterProcess(context,string.Empty)).result;
+            return  InterProcess(context,string.Empty);
         }
         
         #endregion
@@ -50,7 +49,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterPreCall(TContext context, string prePipeCode)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.PreCall, context);
+            await Watch(PipeCode, PipeType, WatchActionType.PreCall, context).ConfigureAwait(false);
             var tRes = await InterProcess(context,prePipeCode);
             return tRes.ToResult();
         }
@@ -59,7 +58,7 @@ namespace OSS.Pipeline.Base
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessHandling(TContext context, string prePipeCode)
         {
             var trafficRes   = await InterProcessPackage(context,prePipeCode);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult());
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult()).ConfigureAwait(false);
             
             if (trafficRes.signal == SignalFlag.Red_Block)
             {

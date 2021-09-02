@@ -41,7 +41,7 @@ namespace OSS.Pipeline.Interface
     ///   活动接口（有输入无输出）
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public interface IActivity<TContext> : IPipeAppender<TContext>, IPipeInputOnlyExecutor<TContext>, IBasicActivity // , IPipeExecutor<TContext, TContext>
+    public interface IActivity<TContext> : IPipeAppender<TContext>, IPipeInputExecutor<TContext>, IBasicActivity // , IPipeExecutor<TContext, TContext>
     {
     }
 
