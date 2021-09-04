@@ -16,10 +16,9 @@ using System;
 using System.Collections.Generic;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
-using OSS.PipeLine.Msg.Default;
 using OSS.Pipeline.Pipeline.InterImpls.Connector;
+using OSS.Pipeline.Pipeline.InterImpls.Connector.Extension;
 
 namespace OSS.Pipeline
 {
@@ -75,22 +74,67 @@ namespace OSS.Pipeline
             var nextPipe = new InterMsgConvertor<TOut, TNextOut>(pipeCode, convertFunc);
             return pipe.Then(nextPipe);
         }
-
+        
+        #region 枚举器
 
         /// <summary>
-        ///  追加消息迭代器
+        ///  添加枚举迭代器
         /// </summary>
+        /// <typeparam name="TIn"></typeparam>
         /// <typeparam name="TMsg">消息具体类型</typeparam>
         /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
+        /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> AppendMsgEnumerator<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, string pipeCode = null)
+        public static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Then<TIn, TMsgEnumerable, TMsg>(this IPipelineConnector<TIn, TMsgEnumerable> pipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new BaseMsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
-            pipe.InterAppend(nextPipe);
-            return nextPipe;
+            return pipe.Set(nextPipe);
         }
+
+        /// <summary>
+        ///  添加枚举迭代器
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
+        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TNextPara"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="iteratorPipe"></param>
+        /// <returns></returns>
+        public static IPipelineConnector<TIn, TMsgEnumerable> WithIterator<TIn, TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> pipe,
+            BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> iteratorPipe)
+            where TMsgEnumerable : IEnumerable<TMsg>
+        {
+            pipe.EndPipe.SetIterator(iteratorPipe);
+            return new InterPipelineConnector<TIn, TMsgEnumerable>(pipe.StartPipe, pipe.EndPipe);
+        }
+
+        /// <summary>
+        ///  添加枚举迭代器
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
+        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TNextPara"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="iteratorPipe"></param>
+        /// <returns></returns>
+        public static IPipelineConnector<TIn, TMsgEnumerable> WithIterator<TIn, TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> pipe,
+            BaseOneWayPipe<TMsg> iteratorPipe)
+            where TMsgEnumerable : IEnumerable<TMsg>
+        {
+            pipe.EndPipe.SetIterator(iteratorPipe);
+            return new InterPipelineConnector<TIn, TMsgEnumerable>(pipe.StartPipe, pipe.EndPipe);
+        }
+        
+        #endregion
+
+
+
     }
 }

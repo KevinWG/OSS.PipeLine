@@ -39,13 +39,13 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> SetIteratorActivity<TMsgEnumerable, TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe,
+        public static SimpleActivity<TMsg> SetIteratorWithActivity<TMsgEnumerable, TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe,
             Func<TMsg, Task<TrafficSignal>> exeFunc, string pipeCode = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             var nextPipe = new SimpleActivity<TMsg>( pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);
-            return pipe;
+            return nextPipe;
         }
 
         /// <summary>
@@ -66,13 +66,13 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> AppendActivity<TMsgEnumerable, TMsg, TResult>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe,
+        public static SimpleActivity<TMsg, TResult> SetIteratorWithActivity<TMsgEnumerable, TMsg, TResult>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe,
             Func<TMsg, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             var nextPipe = new SimpleActivity<TMsg, TResult>( pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);
-            return pipe;
+            return nextPipe;
         }
     }
 }

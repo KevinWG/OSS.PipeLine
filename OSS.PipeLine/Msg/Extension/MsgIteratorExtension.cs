@@ -12,7 +12,7 @@
 #endregion
 
 using System.Collections.Generic;
-using OSS.Pipeline.Base.Base;
+using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
@@ -23,7 +23,7 @@ namespace OSS.Pipeline
     public static partial class MsgIteratorExtension
     {
         /// <summary>
-        ///  追加普通管道
+        ///  设置枚举迭代器
         /// </summary>
         /// <typeparam name="TNextOutContext"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
@@ -33,11 +33,25 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipeAppender<TMsgEnumerable> SetIterator<TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, BasePipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
-        where TMsgEnumerable:IEnumerable<TMsg>
+        public static IPipeAppender<TNextOutContext> SetIterator<TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
+            where TMsgEnumerable:IEnumerable<TMsg>
         {
             pipe.InterSetIterator(nextPipe);
-            return pipe;
+            return nextPipe;
         }
+        
+        /// <summary>
+        /// 设置枚举迭代器
+        /// </summary>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void SetIterator<TMsgEnumerable,TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseOneWayPipe<TMsg> nextPipe)
+            where TMsgEnumerable : IEnumerable<TMsg>
+        {
+            pipe.InterSetIterator(nextPipe);
+        }
+
+
     }
 }

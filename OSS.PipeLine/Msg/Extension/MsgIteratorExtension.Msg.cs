@@ -32,13 +32,13 @@ namespace OSS.Pipeline
         /// <param name="pushKeyGenerator"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable,TMsg> SetMsgPublisherIterator<TMsgEnumerable, TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, string pipeCode,
+        public static SimpleMsgPublisher<TMsg> SetIteratorWithMsgPublisher<TMsgEnumerable, TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, string pipeCode,
             Func<TMsg,string> pushKeyGenerator=null, DataPublisherOption option = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             var nextPipe = new SimpleMsgPublisher<TMsg>(pipeCode, pushKeyGenerator, option);
             pipe.InterSetIterator(nextPipe);
-            return pipe;
+            return nextPipe;
         }
     }
 }
