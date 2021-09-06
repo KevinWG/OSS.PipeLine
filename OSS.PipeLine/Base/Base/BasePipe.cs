@@ -64,12 +64,12 @@ namespace OSS.Pipeline.Base.Base
         internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context, string prePipeCode);
 
         /// <summary>
-        ///  管道堵塞  --  (4) 执行 - 阻塞后调用
+        ///  管道堵塞  --  (4) 执行 - 阻塞实现
         /// </summary>
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        internal virtual async Task InterBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
+        internal  async Task InterBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult()).ConfigureAwait(false);
             await Block(context, tRes);

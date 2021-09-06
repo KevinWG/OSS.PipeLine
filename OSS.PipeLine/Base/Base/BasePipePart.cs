@@ -20,7 +20,7 @@ namespace OSS.Pipeline.Base
     /// <summary>
     /// 管道组成基类
     /// </summary>
-    public abstract class BasePipePart : IPipe
+    public abstract class BasePipePart : IPipeRoute
     {
         /// <summary>
         /// 构造函数
@@ -87,13 +87,21 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="containerFlow"></param>
         internal abstract void InterInitialContainer(IPipeLine containerFlow);
+        void IPipeRoute.InterInitialContainer(IPipeLine containerFlow)
+        {
+            InterInitialContainer(containerFlow);
+        }
 
         /// <summary>
         ///  内部处理流的路由信息
         /// </summary>
         /// <returns></returns>
-        internal abstract PipeRoute InterToRoute(bool isFlowSelf = false);
-
+        internal abstract PipeRoute InterToRoute(bool isFlowSelf);
+        PipeRoute IPipeRoute.InterToRoute(bool isFlowSelf)
+        {
+            return InterToRoute(isFlowSelf);
+        }
+        
         #endregion
     }
 
@@ -101,7 +109,7 @@ namespace OSS.Pipeline.Base
     /// 管道进口基类
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    public abstract class BaseInPipePart<TInContext> : BasePipePart
+    public abstract class BaseInPipePart<TInContext> : BasePipePart , IPipeInPart<TInContext>
     {
         /// <inheritdoc />
         protected BaseInPipePart(string pipeCode, PipeType pipeType) : base(pipeCode, pipeType)
@@ -117,7 +125,10 @@ namespace OSS.Pipeline.Base
         /// <param name="prePipeCode"></param>
         /// <returns></returns>
         internal abstract Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode);
-
+        Task<TrafficResult> IPipeInPart<TInContext>.InterPreCall(TInContext context, string prePipeCode)
+        {
+            return InterPreCall(context, prePipeCode);
+        }
         #endregion
 
         #region 管道连接
@@ -126,12 +137,22 @@ namespace OSS.Pipeline.Base
         /// 被连接到时执行
         /// </summary>
         /// <param name="prePipe">被追加的上级管道</param>
-        internal virtual void InterAppendTo(IPipe prePipe)
+        internal virtual void InterAppendTo(IPipeMeta prePipe)
         {
         }
-
-
+        void IPipeInPart<TInContext>.InterAppendTo(IPipeMeta prePipe)
+        {
+            InterAppendTo(prePipe);
+        }
         #endregion
+
+
+     
+
+     
     }
+
+
+
 
 }

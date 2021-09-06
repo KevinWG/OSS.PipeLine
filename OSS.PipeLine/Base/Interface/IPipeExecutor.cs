@@ -18,7 +18,7 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     /// 管道对外执行接口（输入输出）
     /// </summary>
-    public interface IPipeExecutor<in TPara, TResult> : IPipe
+    public interface IPipeExecutor<in TPara, TResult> : IPipeMeta
     {
         /// <summary>
         ///  执行方法

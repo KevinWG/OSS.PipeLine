@@ -11,21 +11,16 @@
 
 #endregion
 
-
-using OSS.Pipeline.Base;
-
 namespace OSS.Pipeline.Interface
 {
     /// <summary>
     ///  管道链接器
     /// </summary>
     /// <typeparam name="TOutContext"></typeparam>
-    public interface IPipeAppender<TOutContext> : IPipe
+    public interface IPipeAppender<out TOutContext> : IPipeMeta
     {
-        internal void InterAppend(BaseInPipePart<TOutContext> nextPipe);
+        internal void InterAppend(IPipeInPart<TOutContext> nextPipe);
         
-        internal void InterAppend(BaseInPipePart<Empty> nextPipe);
+        internal void InterAppend(IPipeInPart<Empty> nextPipe);
     }
-
-
 }

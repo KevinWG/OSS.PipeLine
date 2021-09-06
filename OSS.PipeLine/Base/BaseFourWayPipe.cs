@@ -65,8 +65,7 @@ namespace OSS.Pipeline.Base
         
         #region 管道连接处理
         
-        internal BasePipePart NextPipe { get; set; }
-
+        internal IPipeRoute NextPipe { get; set; }
         internal virtual Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
         {
             if (NextPipe != null)
@@ -83,10 +82,9 @@ namespace OSS.Pipeline.Base
             // 说明已经是最后一个管道
             return  InterUtil.GreenTrafficResultTask; 
         }
-
-
-        private BaseInPipePart<TOutContext> _nextPipe { get; set; }
-        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<TOutContext> nextPipe)
+        
+        private IPipeInPart<TOutContext> _nextPipe { get; set; }
+        void IPipeAppender<TOutContext>.InterAppend(IPipeInPart<TOutContext> nextPipe)
         {
             InterAppend(nextPipe);
             nextPipe.InterAppendTo(this);
@@ -96,7 +94,7 @@ namespace OSS.Pipeline.Base
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal virtual void InterAppend(BaseInPipePart<TOutContext> nextPipe)
+        internal virtual void InterAppend(IPipeInPart<TOutContext> nextPipe)
         {
             if (NextPipe != null)
             {
@@ -106,8 +104,8 @@ namespace OSS.Pipeline.Base
         }
 
 
-        private BaseInPipePart<Empty> _nextEmptyPipe { get; set; }
-        void IPipeAppender<TOutContext>.InterAppend(BaseInPipePart<Empty> nextPipe)
+        private IPipeInPart<Empty> _nextEmptyPipe { get; set; }
+        void IPipeAppender<TOutContext>.InterAppend(IPipeInPart<Empty> nextPipe)
         {
             InterAppend(nextPipe);
             nextPipe.InterAppendTo(this);
@@ -116,7 +114,7 @@ namespace OSS.Pipeline.Base
         ///  链接流体内部尾部管道和流体外下一截管道 ( 接收空上下文
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal virtual void InterAppend(BaseInPipePart<Empty> nextPipe)
+        internal virtual void InterAppend(IPipeInPart<Empty> nextPipe)
         {
             if (NextPipe != null)
             {
@@ -124,8 +122,7 @@ namespace OSS.Pipeline.Base
             }
             NextPipe = _nextEmptyPipe = nextPipe;
         }
-
-
+        
         #endregion
 
         #region 管道初始化

@@ -16,7 +16,7 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     ///  管道基础接口
     /// </summary>
-    public interface IPipe
+    public interface IPipeMeta
     {
         /// <summary>
         ///  管道类型

@@ -39,7 +39,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///  所有分支管道
         /// </summary>
-        protected IReadOnlyList<IPipe> BranchPipes
+        protected IReadOnlyList<IPipeMeta> BranchPipes
         {
             get => _branchItems.Select(bw => bw.Pipe).ToList();
         }
@@ -51,7 +51,7 @@ namespace OSS.Pipeline
         /// <param name="branch">等待过滤的分支</param>
         /// <param name="prePipeCode">当前网关分支的上游管道编码</param>
         /// <returns> True-执行当前分支， False-不执行当前分支 </returns>
-        protected virtual bool FilterBranchCondition(TContext branchContext, IPipe branch, string prePipeCode)
+        protected virtual bool FilterBranchCondition(TContext branchContext, IPipeMeta branch, string prePipeCode)
         {
             return true;
         }
@@ -95,13 +95,13 @@ namespace OSS.Pipeline
             return InterUtil.GreenTrafficResultTask;
         }
 
-        internal override void InterAppend(BaseInPipePart<TContext> nextPipe)
+        internal override void InterAppend(IPipeInPart<TContext> nextPipe)
         {
             Add(nextPipe);
             nextPipe.InterAppendTo(this);
         }
 
-        internal override void InterAppend(BaseInPipePart<Empty> nextPipe)
+        internal override void InterAppend(IPipeInPart<Empty> nextPipe)
         {
             Add(nextPipe);
             nextPipe.InterAppendTo(this);
@@ -109,7 +109,7 @@ namespace OSS.Pipeline
 
         private List<IBranchWrap> _branchItems;
 
-        protected void Add(BaseInPipePart<TContext> pipe)
+        internal void Add(IPipeInPart<TContext> pipe)
         {
             if (pipe == null)
             {
@@ -117,12 +117,11 @@ namespace OSS.Pipeline
             }
 
             _branchItems ??= new List<IBranchWrap>();
-
             _branchItems.Add(new BranchNodeWrap<TContext>(pipe));
         }
 
 
-        protected void Add(BaseInPipePart<Empty> pipe)
+        internal void Add(IPipeInPart<Empty> pipe)
         {
             if (pipe == null)
             {

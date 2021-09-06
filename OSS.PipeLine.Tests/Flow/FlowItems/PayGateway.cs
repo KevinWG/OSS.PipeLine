@@ -9,7 +9,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         {
         }
 
-        protected override bool FilterBranchCondition(PayContext branchContext, IPipe branch, string prePipeCode)
+        protected override bool FilterBranchCondition(PayContext branchContext, IPipeMeta branch, string prePipeCode)
         {
             LogHelper.Info($"通过{PipeCode}  判断分支 {branch.PipeCode} 是否满足分流条件！");
             return base.FilterBranchCondition(branchContext, branch, prePipeCode);

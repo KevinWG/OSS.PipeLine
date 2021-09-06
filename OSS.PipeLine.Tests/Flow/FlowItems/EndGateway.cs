@@ -14,7 +14,7 @@ namespace OSS.Pipeline.Tests.FlowItems
         {
         }
         
-        protected override Task<TrafficSignal> Switch(Empty context, string prePipeCode, IReadOnlyList<IPipe> allPrePipes)
+        protected override Task<TrafficSignal> Switch(Empty context, string prePipeCode, IReadOnlyList<IPipeMeta> allPrePipes)
         {
             LogHelper.Info($" 通过 {prePipeCode} 管道进入结束网关！");
             return Task.FromResult(TrafficSignal.GreenSignal);

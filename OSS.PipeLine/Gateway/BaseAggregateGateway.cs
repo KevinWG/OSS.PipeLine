@@ -31,7 +31,7 @@ namespace OSS.Pipeline
         /// </summary>
         protected BaseAggregateGateway(string pipeCode = null) : base(pipeCode,PipeType.AggregateGateway)
         {
-            _aggregatePipes = new List<IPipe>();
+            _aggregatePipes = new List<IPipeMeta>();
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace OSS.Pipeline
         /// <param name="prePipeCode">当前业务上游节点</param>
         /// <param name="allPrePipes">聚合到当前管道的所有上游节点</param>
         /// <returns></returns>
-        protected abstract Task<TrafficSignal> Switch(TContext context, string prePipeCode, IReadOnlyList<IPipe> allPrePipes);
+        protected abstract Task<TrafficSignal> Switch(TContext context, string prePipeCode, IReadOnlyList<IPipeMeta> allPrePipes);
 
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context,
             string prePipeCode)
@@ -51,12 +51,12 @@ namespace OSS.Pipeline
                 trafficSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
         }
 
-        private readonly List<IPipe> _aggregatePipes;
+        private readonly List<IPipeMeta> _aggregatePipes;
 
         private object _lockObj = new object();
 
         /// <inheritdoc />
-        internal override void InterAppendTo(IPipe prePipe)
+        internal override void InterAppendTo(IPipeMeta prePipe)
         {
             lock (_lockObj)
             {

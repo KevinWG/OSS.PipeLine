@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline.Gateway.InterImpls
@@ -11,7 +10,10 @@ namespace OSS.Pipeline.Gateway.InterImpls
     {
         internal Task<TrafficResult> InterPreCall(object context, string prePipeCode);
 
-        public IPipe Pipe { get;  }
+        /// <summary>
+        ///  管道基础信息
+        /// </summary>
+        public IPipeMeta Pipe { get;  }
 
         /// <summary>
         ///  内部处理流容器初始化赋值
@@ -29,7 +31,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
     internal  class BranchNodeWrap<TContext>: IBranchWrap
     {
 
-        public IPipe Pipe
+        public IPipeMeta Pipe
         {
             get => _pipePart;
         }
@@ -38,9 +40,9 @@ namespace OSS.Pipeline.Gateway.InterImpls
         //public PipeType PipeType { get; }
         //public string   PipeCode { get; set; }
 
-        public BaseInPipePart<TContext> _pipePart;
+        public IPipeInPart<TContext> _pipePart;
 
-        public BranchNodeWrap(BaseInPipePart<TContext> pipePart)
+        public BranchNodeWrap(IPipeInPart<TContext> pipePart)
         {
             _pipePart = pipePart;
         }
@@ -63,14 +65,14 @@ namespace OSS.Pipeline.Gateway.InterImpls
 
     internal class BranchNodeWrap : IBranchWrap
     {
-        public IPipe Pipe
+        public IPipeMeta Pipe
         {
             get => _pipePart;
         }
         
-        public BaseInPipePart<Empty> _pipePart;
+        public IPipeInPart<Empty> _pipePart;
 
-        public BranchNodeWrap(BaseInPipePart<Empty> pipePart)
+        public BranchNodeWrap(IPipeInPart<Empty> pipePart)
         {
             _pipePart = pipePart;
         }

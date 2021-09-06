@@ -5,17 +5,17 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     ///  管道基础接口
     /// </summary>
-    public interface IPipeLine : IPipe
+    public interface IPipeLine : IPipeMeta
     {
         /// <summary>
         ///  开始管道
         /// </summary>
-        IPipe StartPipe { get; }
+        IPipeMeta StartPipe { get; }
         
         /// <summary>
         ///  结束管道
         /// </summary>
-        IPipe EndPipe { get; }
+        IPipeMeta EndPipe { get; }
 
         /// <summary>
         ///   获取路由

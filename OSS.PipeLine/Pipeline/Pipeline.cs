@@ -32,12 +32,12 @@ namespace OSS.Pipeline
         /// <summary>
         ///  开始管道
         /// </summary>
-        public IPipe StartPipe => _startPipe;
+        public IPipeMeta StartPipe => _startPipe;
 
         /// <summary>
         ///  结束管道
         /// </summary>
-        public IPipe EndPipe => _endPipe;
+        public IPipeMeta EndPipe => _endPipe;
         
         /// <summary>
         /// 基础流体
@@ -110,12 +110,12 @@ namespace OSS.Pipeline
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal override void InterAppend(BaseInPipePart<TOutContext> nextPipe)
+        internal override void InterAppend(IPipeInPart<TOutContext> nextPipe)
         {
             base.InterAppend(nextPipe);
             _endPipe.InterAppend(nextPipe);
         }
-        internal override void InterAppend(BaseInPipePart<Empty> nextPipe)
+        internal override void InterAppend(IPipeInPart<Empty> nextPipe)
         {
             base.InterAppend(nextPipe);
             _endPipe.InterAppend(nextPipe);
@@ -140,7 +140,7 @@ namespace OSS.Pipeline
         {
             var pipe = new PipeRoute
             {
-                pipe_code = PipeCode, pipe_type = PipeType, flow_sub_pipe = _startPipe.InterToRoute()
+                pipe_code = PipeCode, pipe_type = PipeType, flow_sub_pipe = _startPipe.InterToRoute(false)
             };
 
             if (isFlowSelf || NextPipe == null|| Equals(LineContainer.EndPipe))
