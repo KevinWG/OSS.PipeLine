@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using OSS.DataFlow;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.InterImpls.Msg;
-using OSS.PipeLine.Msg.Default;
 
 namespace OSS.Pipeline
 {
@@ -37,7 +36,7 @@ namespace OSS.Pipeline
         public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
             Func<TMsg, string> pushKeyGenerator = null, DataPublisherOption option = null)
         {
-            var nextPipe = new SimpleMsgPublisher<TMsg>(pipeCode,pushKeyGenerator, option);
+            var nextPipe = new SimpleMsgPublisher<TMsg>(pipeCode, pushKeyGenerator, option);
             pipe.InterAppend(nextPipe);
         }
 
@@ -86,10 +85,10 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static BaseMsgConverter<TMsg, NextOutContext> AppendMsgConverter<TMsg, NextOutContext>(
-            this IPipeAppender<TMsg> pipe,  Func<TMsg, NextOutContext> convertFunc, string pipeCode=null)
+            this IPipeAppender<TMsg> pipe, Func<TMsg, NextOutContext> convertFunc, string pipeCode = null)
         {
             var nextPipe = new InterMsgConvertor<TMsg, NextOutContext>(pipeCode, convertFunc);
-         
+
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
@@ -101,11 +100,31 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="pipeCode"></param>
+        /// <param name="msgFilter">消息过滤器</param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> AppendMsgEnumerator<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, string pipeCode = null)
+        public static MsgEnumerator<TMsgEnumerable, TMsg> AppendMsgEnumerator<TMsgEnumerable, TMsg>(
+            this IPipeAppender<TMsgEnumerable> pipe, string pipeCode = null,
+            Func<TMsgEnumerable, TMsgEnumerable> msgFilter = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new BaseMsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
+            var nextPipe = new MsgEnumerator<TMsgEnumerable, TMsg>(pipeCode, msgFilter);
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
+        }
+
+
+        /// <summary>
+        ///  追加消息迭代器
+        /// </summary>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <param name="msgFilter">消息过滤器</param>
+        /// <returns></returns>
+        public static MsgEnumerator<IList<TMsg>, TMsg> AppendMsgList<TMsg>(this IPipeAppender<IList<TMsg>> pipe,
+            string pipeCode = null, Func<IList<TMsg>, IList<TMsg>> msgFilter = null)
+        {
+            var nextPipe = new MsgEnumerator<IList<TMsg>, TMsg>(pipeCode, msgFilter);
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }

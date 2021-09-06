@@ -76,7 +76,7 @@ namespace OSS.Pipeline
         }
         
         #region 枚举器
-
+        
         /// <summary>
         ///  添加枚举迭代器
         /// </summary>
@@ -86,11 +86,43 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Then<TIn, TMsgEnumerable, TMsg>(this IPipelineConnector<TIn, TMsgEnumerable> pipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
+        public static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Then<TIn, TMsgEnumerable, TMsg>(this IPipelineConnector<TIn, TMsgEnumerable> pipe, MsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             return pipe.Set(nextPipe);
         }
+
+        /// <summary>
+        ///  添加枚举迭代器
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <param name="msgFilter"></param>
+        /// <returns></returns>
+        public static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> ThenWithMsgEnumerator<TIn, TMsgEnumerable, TMsg>(this IPipelineConnector<TIn, TMsgEnumerable> pipe,
+            string pipeCode = null, Func<TMsgEnumerable, TMsgEnumerable> msgFilter = null)
+            where TMsgEnumerable : IEnumerable<TMsg>
+        {
+            return pipe.Set(new MsgEnumerator<TMsgEnumerable, TMsg>(pipeCode, msgFilter));
+        }
+        /// <summary>
+        ///  添加枚举迭代器
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="pipeCode"></param>
+        /// <param name="msgFilter"></param>
+        /// <returns></returns>
+        public static IPipelineMsgEnumerableConnector<TIn, IList<TMsg>, TMsg> ThenWithMsgList<TIn, TMsg>(this IPipelineConnector<TIn, IList<TMsg>> pipe,
+            string pipeCode = null, Func<IList<TMsg>, IList<TMsg>> msgFilter = null)
+        {
+            return pipe.Set(new MsgEnumerator<IList<TMsg>, TMsg>(pipeCode, msgFilter));
+        }
+
 
         /// <summary>
         ///  添加枚举迭代器

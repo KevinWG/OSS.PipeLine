@@ -53,7 +53,7 @@ namespace OSS.Pipeline.Pipeline.InterImpls.Connector.Extension
 
         internal static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Set<TIn, TMsgEnumerable, TMsg>(
             this IPipelineConnector<TIn, TMsgEnumerable> oldConnector,
-            BaseMsgEnumerator<TMsgEnumerable, TMsg> endPipe)
+            MsgEnumerator<TMsgEnumerable, TMsg> endPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             oldConnector.EndAppender.Append(endPipe);

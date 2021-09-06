@@ -69,7 +69,7 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(BaseMsgEnumerator<TMsgEnumerable,TMsg> startPipe)
+        public static IPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(MsgEnumerator<TMsgEnumerable,TMsg> startPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             return new InterPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg>(startPipe, startPipe);

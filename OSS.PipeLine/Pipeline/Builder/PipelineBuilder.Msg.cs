@@ -79,7 +79,7 @@ namespace OSS.Pipeline
         public static IPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg> StartWithMsgEnumerator<TMsgEnumerable, TMsg>(string pipeCode = null)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
-            var nextPipe = new BaseMsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
+            var nextPipe = new MsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
             return Start(nextPipe);
         }
 

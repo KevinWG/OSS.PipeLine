@@ -13,6 +13,6 @@ namespace OSS.Pipeline.Pipeline.InterImpls.Connector
         where TMsgEnumerable : IEnumerable<TMsg>
     {
         internal BaseInPipePart<TInContext>              StartPipe { get; set; }
-        internal BaseMsgEnumerator<TMsgEnumerable, TMsg> EndPipe   { get; set; }
+        internal MsgEnumerator<TMsgEnumerable, TMsg> EndPipe   { get; set; }
     }
 }

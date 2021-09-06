@@ -92,7 +92,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseMsgEnumerator<TMsgEnumerable, TMsg> Append<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, BaseMsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
+        public static MsgEnumerator<TMsgEnumerable, TMsg> Append<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, MsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             pipe.InterAppend(nextPipe);

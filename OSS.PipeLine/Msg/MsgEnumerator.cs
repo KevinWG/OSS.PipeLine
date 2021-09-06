@@ -26,16 +26,18 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TMsg">消息具体类型</typeparam>
     /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
-    public class BaseMsgEnumerator<TMsgEnumerable, TMsg> : BaseThreeWayPipe<TMsgEnumerable, Empty, TMsgEnumerable>
+    public class MsgEnumerator<TMsgEnumerable, TMsg> : BaseThreeWayPipe<TMsgEnumerable, Empty, TMsgEnumerable>
         where TMsgEnumerable : IEnumerable<TMsg>
     {
+        private readonly Func<TMsgEnumerable, TMsgEnumerable> _msgFilter = null;
         /// <summary>
         /// 消息转化基类 
         /// </summary>
-        public BaseMsgEnumerator(string pipeCode = null) : base(pipeCode, PipeType.MsgEnumerator)
+        public MsgEnumerator(string pipeCode = null, Func<TMsgEnumerable, TMsgEnumerable>  msgFilter=null) : base(pipeCode, PipeType.MsgEnumerator)
         {
+            _msgFilter = msgFilter;
         }
-
+        
         /// <summary>
         ///  过滤处理消息
         /// </summary>
@@ -43,7 +45,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         protected virtual IEnumerable<TMsg> FilterMsg(TMsgEnumerable msgs)
         {
-            return msgs;
+            return _msgFilter != null ? _msgFilter(msgs)  : msgs;
         }
 
 

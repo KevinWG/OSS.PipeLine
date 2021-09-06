@@ -33,7 +33,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipeAppender<TNextOutContext> SetIterator<TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static IPipeAppender<TNextOutContext> SetIterator<TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this MsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
             where TMsgEnumerable:IEnumerable<TMsg>
         {
             pipe.InterSetIterator(nextPipe);
@@ -46,7 +46,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static void SetIterator<TMsgEnumerable,TMsg>(this BaseMsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseOneWayPipe<TMsg> nextPipe)
+        public static void SetIterator<TMsgEnumerable,TMsg>(this MsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseOneWayPipe<TMsg> nextPipe)
             where TMsgEnumerable : IEnumerable<TMsg>
         {
             pipe.InterSetIterator(nextPipe);

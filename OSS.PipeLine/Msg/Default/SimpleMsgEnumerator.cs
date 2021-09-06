@@ -17,19 +17,20 @@ using OSS.Pipeline;
 
 namespace OSS.PipeLine.Msg.Default
 {
-    public class SimpleMsgEnumerator<TMsg> : BaseMsgEnumerator<IList<TMsg>, TMsg>
+    /// <summary>
+    ///  简单消息枚举器（继承至 IList
+    /// </summary>
+    /// <typeparam name="TMsg"></typeparam>
+    public class SimpleMsgList<TMsg> : MsgEnumerator<IList<TMsg>, TMsg>
     {
-        private readonly Func<IList<TMsg>, IEnumerable<TMsg>> _msgFilter;
-
-        public SimpleMsgEnumerator(string pipeCode = null, Func<IList<TMsg>, IEnumerable<TMsg>> msgFilter = null) :
-            base(pipeCode)
+        /// <summary>
+        /// 简单消息枚举器（继承至 IList
+        /// </summary>
+        /// <param name="pipeCode"></param>
+        /// <param name="msgFilter"></param>
+        public SimpleMsgList(string pipeCode = null, Func<IList<TMsg>, IList<TMsg>> msgFilter = null) :
+            base(pipeCode, msgFilter)
         {
-            _msgFilter = msgFilter;
-        }
-
-        protected override IEnumerable<TMsg> FilterMsg(IList<TMsg> msgs)
-        {
-            return _msgFilter?.Invoke(msgs) ?? msgs;
         }
     }
 }

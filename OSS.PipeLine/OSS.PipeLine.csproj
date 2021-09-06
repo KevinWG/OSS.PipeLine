@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Compile Remove="Activity\BaseBufferActivity.cs" />
+    <Compile Remove="Msg\Default\SimpleMsgEnumerator.cs" />
   </ItemGroup>
 
   <ItemGroup>
