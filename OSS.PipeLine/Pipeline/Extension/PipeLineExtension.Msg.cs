@@ -11,7 +11,6 @@
 
 #endregion
 
-
 using System;
 using System.Collections.Generic;
 using OSS.DataFlow;
@@ -74,8 +73,6 @@ namespace OSS.Pipeline
             var nextPipe = new InterMsgConvertor<TOut, TNextOut>(pipeCode, convertFunc);
             return pipe.Then(nextPipe);
         }
-
-        #region 枚举器
 
         /// <summary>
         ///  添加枚举迭代器
@@ -145,7 +142,5 @@ namespace OSS.Pipeline
             pipe.EndPipe.SetIterator(iteratorPipe);
             return new InterPipelineConnector<TIn, IEnumerable<TMsg>>(pipe.StartPipe, pipe.EndPipe);
         }
-
-        #endregion
     }
 }

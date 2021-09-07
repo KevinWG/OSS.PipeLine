@@ -25,6 +25,19 @@ namespace OSS.Pipeline
     public static partial class PipeExtension
     {
         /// <summary>
+        /// 追加枚举器
+        /// </summary>
+        /// <typeparam name="TMsg">消息具体类型</typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static MsgEnumerator<TMsg> Append<TMsg>(this IPipeAppender<IEnumerable<TMsg>> pipe, MsgEnumerator<TMsg> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+            return nextPipe;
+        }
+        
+        /// <summary>
         ///  追加默认消息发布者管道
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
@@ -56,8 +69,7 @@ namespace OSS.Pipeline
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
-
-
+        
         /// <summary>
         ///  追加默认消息流管道
         /// </summary>
@@ -109,6 +121,5 @@ namespace OSS.Pipeline
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
-
     }
 }

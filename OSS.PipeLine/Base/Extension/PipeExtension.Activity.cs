@@ -151,7 +151,6 @@ namespace OSS.Pipeline
             return nextPipe;
         }
 
-
         //===  被动模式一般需要显示调用，简化隐藏
 
         /////  <summary>

@@ -58,9 +58,7 @@ namespace OSS.Pipeline
         {
             return pipe.Set(nextPipe);
         }
-
-
-
+        
         /// <summary>
         ///  添加下一个节点
         /// </summary>
@@ -74,48 +72,6 @@ namespace OSS.Pipeline
             pipe.Set(nextPipe);
         }
 
-
-
-        #region 分支
-
-
-
-        /// <summary>
-        ///  添加下一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static IPipelineBranchConnector<TIn, TOut> Then<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, BaseBranchGateway<TOut> nextPipe)
-        {
-            return pipe.Set(nextPipe);
-        }
-
-        /// <summary>
-        ///  添加第一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <typeparam name="TNextOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="branchGather">
-        ///     扩展分支方法，并汇聚返回最终节点到主流程
-        /// </param>
-        /// <returns></returns>
-        public static IPipelineConnector<TIn, TNextOut> WithBranchBox<TIn, TOut, TNextOut>(this IPipelineBranchConnector<TIn, TOut> pipe, Func<BaseBranchGateway<TOut>, IPipeAppender<TNextOut>> branchGather)
-        {
-            var newPipe = new InterPipelineConnector<TIn, TNextOut>(pipe.StartPipe, branchGather(pipe.EndBranchPipe));
-
-            pipe.StartPipe     = null;
-            pipe.EndBranchPipe = null;
-
-            return newPipe;
-        }
-
-
-        #endregion
 
         #region 生成Pipeline
         
