@@ -24,21 +24,7 @@ namespace OSS.Pipeline
     /// </summary>
     public static partial class PipelineExtension
     {
-        /// <summary>
-        ///  添加下一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
-        /// <param name="_conditionFilter"></param>
-        /// <returns></returns>
-        public static IPipelineBranchConnector<TIn, TOut> ThenWithBranch<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode = "",
-            Func<TOut, IPipeMeta, string, bool> _conditionFilter = null)
-        {
-            return pipe.Set(new SimpleBranchGateway<TOut>(pipeCode, _conditionFilter));
-        }
-
+    
 
         /// <summary>
         ///  添加下一个节点
@@ -74,6 +60,22 @@ namespace OSS.Pipeline
             return newPipe;
         }
 
-    
+        ///// <summary>
+        /////  添加下一个节点
+        ///// </summary>
+        ///// <typeparam name="TIn"></typeparam>
+        ///// <typeparam name="TOut"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="pipeCode"></param>
+        ///// <param name="_conditionFilter"></param>
+        ///// <returns></returns>
+        //public static IPipelineBranchConnector<TIn, TOut> ThenWithBranch<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode = "",
+        //    Func<TOut, IPipeMeta, string, bool> _conditionFilter = null)
+        //{
+        //    return pipe.Set(new SimpleBranchGateway<TOut>(pipeCode, _conditionFilter));
+        //}
+
+
+
     }
 }
