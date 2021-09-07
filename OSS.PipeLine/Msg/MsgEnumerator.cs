@@ -45,34 +45,25 @@ namespace OSS.Pipeline
         {
             return _msgFilter != null ? _msgFilter(msgs)  : msgs;
         }
-
-
+        
         /// <inheritdoc />
         internal override async Task<TrafficResult<Empty, IEnumerable<TMsg>>> InterProcessPackage(IEnumerable<TMsg> msgs,
             string prePipeCode)
         {
             if (_iterator == null)
-            {
                 throw new NullReferenceException($"{GetType().Name}枚举器的迭代执行程序未赋值!");
-            }
 
             var parallelPipes = msgs.Select(m => _iterator.InterPreCall(m, PipeCode));
 
-            var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Green_Pass, string.Empty, string.Empty,
-                    Empty.Default, msgs)
-                : new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default,
-                    msgs);
-
-            return res;
-
+            return (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
+                ? new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, msgs)
+                : new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default, msgs);
         }
 
 
         #region 管道处理
 
         private BaseInPipePart<TMsg> _iterator;
-
         internal void InterSetIterator(BaseInPipePart<TMsg> iterator)
         {
             _iterator = iterator;
@@ -86,10 +77,8 @@ namespace OSS.Pipeline
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
             if (_iterator == null)
-            {
                 throw new NullReferenceException($"{GetType().Name}枚举器的迭代执行程序未赋值!");
-            }
-
+            
             base.InterInitialContainer(flowContainer);
             _iterator.InterInitialContainer(flowContainer);
         }
@@ -104,7 +93,9 @@ namespace OSS.Pipeline
             pipe.iterator = new PipeRoute()
             {
                 pipe_code = _iterator.PipeCode,
-                pipe_type = _iterator.PipeType
+                pipe_type = _iterator.PipeType,
+
+                next = _iterator.InterToRoute(isFlowSelf)
             };
             return pipe;
         }
