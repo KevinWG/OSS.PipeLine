@@ -29,12 +29,10 @@ namespace OSS.Pipeline
         /// <typeparam name="TNextPara"></typeparam>
         /// <typeparam name="TNextResult"></typeparam>
         /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipeAppender<TNextOutContext> SetIterator<TMsgEnumerable, TMsg, TNextPara, TNextResult, TNextOutContext>(this MsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
-            where TMsgEnumerable:IEnumerable<TMsg>
+        public static IPipeAppender<TNextOutContext> SetIterator< TMsg, TNextPara, TNextResult, TNextOutContext>(this MsgEnumerator<TMsg> pipe, BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterSetIterator(nextPipe);
             return nextPipe;
@@ -46,8 +44,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static void SetIterator<TMsgEnumerable,TMsg>(this MsgEnumerator<TMsgEnumerable, TMsg> pipe, BaseOneWayPipe<TMsg> nextPipe)
-            where TMsgEnumerable : IEnumerable<TMsg>
+        public static void SetIterator<TMsg>(this MsgEnumerator< TMsg> pipe, BaseOneWayPipe<TMsg> nextPipe)
         {
             pipe.InterSetIterator(nextPipe);
         }

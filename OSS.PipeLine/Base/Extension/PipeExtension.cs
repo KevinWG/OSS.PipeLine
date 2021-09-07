@@ -88,12 +88,10 @@ namespace OSS.Pipeline
         /// 追加枚举器
         /// </summary>
         /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static MsgEnumerator<TMsgEnumerable, TMsg> Append<TMsgEnumerable, TMsg>(this IPipeAppender<TMsgEnumerable> pipe, MsgEnumerator<TMsgEnumerable, TMsg> nextPipe)
-            where TMsgEnumerable : IEnumerable<TMsg>
+        public static MsgEnumerator<TMsg> Append< TMsg>(this IPipeAppender<IEnumerable<TMsg>> pipe, MsgEnumerator< TMsg> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;

@@ -31,7 +31,8 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineConnector<Empty, TContext> StartWithMsgSubscriber<TContext>(string pipeCode, DataFlowOption option = null)
+        public static IPipelineConnector<Empty, TContext> StartWithMsgSubscriber<TContext>(string pipeCode,
+            DataFlowOption option = null)
         {
             var nextPipe = new SimpleMsgSubscriber<TContext>(pipeCode, option);
 
@@ -46,7 +47,8 @@ namespace OSS.Pipeline
         /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipelineConnector<TContext, TContext> StartWithMsgFlow<TContext>(string pipeCode, DataFlowOption option = null)
+        public static IPipelineConnector<TContext, TContext> StartWithMsgFlow<TContext>(string pipeCode,
+            DataFlowOption option = null)
         {
             var nextPipe = new SimpleMsgFlow<TContext>(pipeCode, option);
 
@@ -61,7 +63,8 @@ namespace OSS.Pipeline
         /// <param name="convertFunc"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static IPipelineConnector<TContext, NextTContext> StartWithMsgConverter<TContext, NextTContext>(Func<TContext, NextTContext> convertFunc, string pipeCode = null)
+        public static IPipelineConnector<TContext, NextTContext> StartWithMsgConverter<TContext, NextTContext>(
+            Func<TContext, NextTContext> convertFunc, string pipeCode = null)
         {
             var nextPipe = new InterMsgConvertor<TContext, NextTContext>(pipeCode, convertFunc);
             return Start(nextPipe);
@@ -74,12 +77,11 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="pipeCode"></param>
         /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg> StartWithMsgEnumerator<TMsgEnumerable, TMsg>(string pipeCode = null)
-            where TMsgEnumerable : IEnumerable<TMsg>
+        public static IPipelineMsgEnumerableConnector<IEnumerable<TMsg>, TMsg> StartWithMsgEnumerator<TMsg>(
+            string pipeCode = null)
         {
-            var nextPipe = new MsgEnumerator<TMsgEnumerable, TMsg>(pipeCode);
+            var nextPipe = new MsgEnumerator<TMsg>(pipeCode);
             return Start(nextPipe);
         }
 

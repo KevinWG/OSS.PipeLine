@@ -59,20 +59,17 @@ namespace OSS.Pipeline
         {
             return new InterPipelineBranchConnector<TIn, TIn>( startPipe, startPipe);
         }
-
-
+        
         /// <summary>
         ///  添加第一个节点
         /// ( 消息枚举器
         /// </summary>
         /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="startPipe"></param>
         /// <returns></returns>
-        public static IPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg> Start<TMsgEnumerable,TMsg>(MsgEnumerator<TMsgEnumerable,TMsg> startPipe)
-            where TMsgEnumerable : IEnumerable<TMsg>
+        public static IPipelineMsgEnumerableConnector<IEnumerable<TMsg>, TMsg> Start<TMsg>(MsgEnumerator<TMsg> startPipe)
         {
-            return new InterPipelineMsgEnumerableConnector<TMsgEnumerable, TMsgEnumerable, TMsg>(startPipe, startPipe);
+            return new InterPipelineMsgEnumerableConnector<IEnumerable<TMsg>,  TMsg>(startPipe, startPipe);
         }
     }
 }

@@ -26,7 +26,6 @@ namespace OSS.Pipeline
         ///  追加活动管道
         /// </summary>
         /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
         /// <param name="pipe"></param>
         /// <param name="exeFunc">
         /// 执行委托
@@ -39,9 +38,8 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleActivity<TMsg> SetIteratorWithActivity<TMsgEnumerable, TMsg>(this MsgEnumerator<TMsgEnumerable, TMsg> pipe,
+        public static SimpleActivity<TMsg> SetIteratorWithActivity<TMsg>(this MsgEnumerator<TMsg> pipe,
             Func<TMsg, Task<TrafficSignal>> exeFunc, string pipeCode = null)
-            where TMsgEnumerable : IEnumerable<TMsg>
         {
             var nextPipe = new SimpleActivity<TMsg>( pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);
@@ -52,7 +50,6 @@ namespace OSS.Pipeline
         ///  追加活动管道
         /// </summary>
         /// <typeparam name="TResult"></typeparam>
-        /// <typeparam name="TMsgEnumerable"></typeparam>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="exeFunc">
@@ -66,9 +63,8 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleActivity<TMsg, TResult> SetIteratorWithActivity<TMsgEnumerable, TMsg, TResult>(this MsgEnumerator<TMsgEnumerable, TMsg> pipe,
+        public static SimpleActivity<TMsg, TResult> SetIteratorWithActivity<TMsg, TResult>(this MsgEnumerator< TMsg> pipe,
             Func<TMsg, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
-            where TMsgEnumerable : IEnumerable<TMsg>
         {
             var nextPipe = new SimpleActivity<TMsg, TResult>( pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);

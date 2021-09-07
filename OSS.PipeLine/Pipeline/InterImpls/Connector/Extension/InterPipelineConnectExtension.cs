@@ -3,29 +3,32 @@ using OSS.Pipeline.Base;
 
 namespace OSS.Pipeline.Pipeline.InterImpls.Connector.Extension
 {
-   internal  static class InterPipelineConnectExtension
+    internal static class InterPipelineConnectExtension
     {
 
-        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> oldConnector,
+        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(
+            this IPipelineConnector<TIn, TOut> oldConnector,
             BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldConnector.EndAppender.Append(endPipe);
-            IPipelineConnector<TIn, TNextOut> pipelineAppender = new InterPipelineConnector<TIn, TNextOut>(oldConnector.StartPipe, endPipe);
+            IPipelineConnector<TIn, TNextOut> pipelineAppender =
+                new InterPipelineConnector<TIn, TNextOut>(oldConnector.StartPipe, endPipe);
 
-            oldConnector.StartPipe = null;
+            oldConnector.StartPipe   = null;
             oldConnector.EndAppender = null;
             return pipelineAppender;
         }
 
 
-        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> oldConnector,
+        internal static IPipelineConnector<TIn, TNextOut> Set<TIn, TOut, TNextPara, TNextResult, TNextOut>(
+            this IPipelineConnector<TIn, TOut> oldConnector,
             BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> endPipe)
         {
             oldConnector.EndAppender.Append(endPipe);
             IPipelineConnector<TIn, TNextOut> appender =
                 new InterPipelineConnector<TIn, TNextOut>(oldConnector.StartPipe, endPipe);
 
-            oldConnector.StartPipe = null;
+            oldConnector.StartPipe   = null;
             oldConnector.EndAppender = null;
             return appender;
         }
@@ -35,12 +38,13 @@ namespace OSS.Pipeline.Pipeline.InterImpls.Connector.Extension
         {
             oldConnector.EndAppender.Append(endPipe);
 
-            oldConnector.StartPipe = null;
+            oldConnector.StartPipe   = null;
             oldConnector.EndAppender = null;
         }
 
 
-        internal static IPipelineBranchConnector<TIn, TOut> Set<TIn, TOut>(this IPipelineConnector<TIn, TOut> oldConnector,
+        internal static IPipelineBranchConnector<TIn, TOut> Set<TIn, TOut>(
+            this IPipelineConnector<TIn, TOut> oldConnector,
             BaseBranchGateway<TOut> endPipe)
         {
             oldConnector.EndAppender.Append(endPipe);
@@ -51,14 +55,13 @@ namespace OSS.Pipeline.Pipeline.InterImpls.Connector.Extension
         }
 
 
-        internal static IPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg> Set<TIn, TMsgEnumerable, TMsg>(
-            this IPipelineConnector<TIn, TMsgEnumerable> oldConnector,
-            MsgEnumerator<TMsgEnumerable, TMsg> endPipe)
-            where TMsgEnumerable : IEnumerable<TMsg>
+        internal static IPipelineMsgEnumerableConnector<TIn, TMsg> Set<TIn, TMsg>(
+            this IPipelineConnector<TIn, IEnumerable<TMsg>> oldConnector,
+            MsgEnumerator<TMsg> endPipe)
         {
             oldConnector.EndAppender.Append(endPipe);
 
-           return new InterPipelineMsgEnumerableConnector<TIn, TMsgEnumerable, TMsg>(oldConnector.StartPipe, endPipe);
+            return new InterPipelineMsgEnumerableConnector<TIn, TMsg>(oldConnector.StartPipe, endPipe);
         }
     }
 }

@@ -25,15 +25,13 @@ namespace OSS.Pipeline
     /// 消息转化基类
     /// </summary>
     /// <typeparam name="TMsg">消息具体类型</typeparam>
-    /// <typeparam name="TMsgEnumerable">消息的枚举类型如 IList&lt;TMsg&gt;</typeparam>
-    public class MsgEnumerator<TMsgEnumerable, TMsg> : BaseThreeWayPipe<TMsgEnumerable, Empty, TMsgEnumerable>
-        where TMsgEnumerable : IEnumerable<TMsg>
+    public class MsgEnumerator<TMsg> : BaseThreeWayPipe<IEnumerable<TMsg>, Empty, IEnumerable<TMsg>>
     {
-        private readonly Func<TMsgEnumerable, TMsgEnumerable> _msgFilter = null;
+        private readonly Func<IEnumerable<TMsg>, IEnumerable<TMsg>> _msgFilter = null;
         /// <summary>
         /// 消息转化基类 
         /// </summary>
-        public MsgEnumerator(string pipeCode = null, Func<TMsgEnumerable, TMsgEnumerable>  msgFilter=null) : base(pipeCode, PipeType.MsgEnumerator)
+        public MsgEnumerator(string pipeCode = null, Func<IEnumerable<TMsg>, IEnumerable<TMsg>>  msgFilter=null) : base(pipeCode, PipeType.MsgEnumerator)
         {
             _msgFilter = msgFilter;
         }
@@ -43,14 +41,14 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="msgs"></param>
         /// <returns></returns>
-        protected virtual IEnumerable<TMsg> FilterMsg(TMsgEnumerable msgs)
+        protected virtual IEnumerable<TMsg> FilterMsg(IEnumerable<TMsg> msgs)
         {
             return _msgFilter != null ? _msgFilter(msgs)  : msgs;
         }
 
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<Empty, TMsgEnumerable>> InterProcessPackage(TMsgEnumerable msgs,
+        internal override async Task<TrafficResult<Empty, IEnumerable<TMsg>>> InterProcessPackage(IEnumerable<TMsg> msgs,
             string prePipeCode)
         {
             if (_iterator == null)
@@ -61,9 +59,9 @@ namespace OSS.Pipeline
             var parallelPipes = msgs.Select(m => _iterator.InterPreCall(m, PipeCode));
 
             var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficResult<Empty, TMsgEnumerable>(SignalFlag.Green_Pass, string.Empty, string.Empty,
+                ? new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Green_Pass, string.Empty, string.Empty,
                     Empty.Default, msgs)
-                : new TrafficResult<Empty, TMsgEnumerable>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default,
+                : new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default,
                     msgs);
 
             return res;
