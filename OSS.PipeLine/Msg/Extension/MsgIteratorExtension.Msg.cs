@@ -12,7 +12,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using OSS.DataFlow;
 
 namespace OSS.Pipeline
@@ -31,12 +30,13 @@ namespace OSS.Pipeline
         /// <param name="pushKeyGenerator"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static SimpleMsgPublisher<TMsg> SetIteratorWithMsgPublisher< TMsg>(this MsgEnumerator< TMsg> pipe, string pipeCode,
-            Func<TMsg,string> pushKeyGenerator=null, DataPublisherOption option = null)
+        public static MsgEnumerator<TMsg> SetIteratorWithMsgPublisher<TMsg>(this MsgEnumerator<TMsg> pipe,
+            string pipeCode, Func<TMsg, string> pushKeyGenerator = null,
+            DataPublisherOption option = null)
         {
             var nextPipe = new SimpleMsgPublisher<TMsg>(pipeCode, pushKeyGenerator, option);
             pipe.InterSetIterator(nextPipe);
-            return nextPipe;
+            return pipe;
         }
     }
 }

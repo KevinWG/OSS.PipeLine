@@ -12,7 +12,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace OSS.Pipeline
@@ -38,12 +37,12 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleActivity<TMsg> SetIteratorWithActivity<TMsg>(this MsgEnumerator<TMsg> pipe,
+        public static MsgEnumerator<TMsg> SetIteratorWithActivity<TMsg>(this MsgEnumerator<TMsg> pipe,
             Func<TMsg, Task<TrafficSignal>> exeFunc, string pipeCode = null)
         {
-            var nextPipe = new SimpleActivity<TMsg>( pipeCode, exeFunc);
+            var nextPipe = new SimpleActivity<TMsg>(pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);
-            return nextPipe;
+            return pipe;
         }
 
         /// <summary>
@@ -63,12 +62,12 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleActivity<TMsg, TResult> SetIteratorWithActivity<TMsg, TResult>(this MsgEnumerator< TMsg> pipe,
+        public static MsgEnumerator<TMsg> SetIteratorWithActivity<TMsg, TResult>(this MsgEnumerator<TMsg> pipe,
             Func<TMsg, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null)
         {
-            var nextPipe = new SimpleActivity<TMsg, TResult>( pipeCode, exeFunc);
+            var nextPipe = new SimpleActivity<TMsg, TResult>(pipeCode, exeFunc);
             pipe.InterSetIterator(nextPipe);
-            return nextPipe;
+            return pipe;
         }
     }
 }

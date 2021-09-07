@@ -11,9 +11,7 @@
 
 #endregion
 
-using System.Collections.Generic;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
 {
@@ -32,21 +30,23 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipeAppender<TNextOutContext> SetIterator< TMsg, TNextPara, TNextResult, TNextOutContext>(this MsgEnumerator<TMsg> pipe, BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static MsgEnumerator<TMsg> SetIterator<TMsg, TNextPara, TNextResult, TNextOutContext>(
+            this MsgEnumerator<TMsg> pipe, BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterSetIterator(nextPipe);
-            return nextPipe;
+            return pipe;
         }
-        
+
         /// <summary>
         /// 设置枚举迭代器
         /// </summary>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static void SetIterator<TMsg>(this MsgEnumerator< TMsg> pipe, BaseOneWayPipe<TMsg> nextPipe)
+        public static MsgEnumerator<TMsg> SetIterator<TMsg>(this MsgEnumerator<TMsg> pipe, BaseOneWayPipe<TMsg> nextPipe)
         {
             pipe.InterSetIterator(nextPipe);
+            return pipe;
         }
 
 
