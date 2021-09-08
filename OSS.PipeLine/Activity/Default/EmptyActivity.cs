@@ -12,7 +12,7 @@ namespace OSS.Pipeline
         ///  空组件
         /// </summary>
         /// <param name="pipeCode"></param>
-        public EmptyPassiveActivity(string pipeCode) : base(pipeCode)
+        public EmptyPassiveActivity(string pipeCode=null) : base(pipeCode)
         {
         }
 
@@ -30,7 +30,7 @@ namespace OSS.Pipeline
     /// </summary>
     public class EmptyActivity : EmptyActivity<Empty>
     {
-        public EmptyActivity(string pipeCode) : base(pipeCode)
+        public EmptyActivity(string pipeCode=null) : base(pipeCode)
         {
         }
     }
@@ -45,7 +45,7 @@ namespace OSS.Pipeline
         ///  空组件
         /// </summary>
         /// <param name="pipeCode"></param>
-        public EmptyActivity(string pipeCode) : base(pipeCode)
+        public EmptyActivity(string pipeCode=null) : base(pipeCode)
         {
         }
 

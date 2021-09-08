@@ -11,8 +11,6 @@
 
 #endregion
 
-using System;
-using OSS.PipeLine.Gateway.Default;
 using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
