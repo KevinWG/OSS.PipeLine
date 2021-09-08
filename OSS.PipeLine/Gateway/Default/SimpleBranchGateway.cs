@@ -30,8 +30,7 @@ namespace OSS.PipeLine.Gateway.Default
         /// </summary>
         /// <param name="pipeCode"></param>
         /// <param name="branchConditionfilter"></param>
-        public SimpleBranchGateway(string pipeCode = null,
-            Func<TContext, IPipeMeta, string, bool> branchConditionfilter = null) :
+        public SimpleBranchGateway(Func<TContext, IPipeMeta, string, bool> branchConditionfilter = null,string pipeCode = null) :
             base(pipeCode)
         {
             _conditionFilter = branchConditionfilter;
