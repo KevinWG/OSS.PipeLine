@@ -63,12 +63,9 @@ namespace OSS.Pipeline
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context,
             string prePipeCode)
         {
-            IList<IBranchWrap> nextPipes = null;
-            if (_branchItems == null
-                || !_branchItems.Any()
-                || !(nextPipes = _branchItems.Where(
-                            bw => FilterBranchCondition(context, bw.Pipe, prePipeCode)).ToList()
-                    ).Any())
+            IList<IBranchWrap> nextPipes;
+            if (_branchItems == null || !_branchItems.Any()
+                || !(nextPipes = _branchItems.Where(bw => FilterBranchCondition(context, bw.Pipe, prePipeCode)).ToList()).Any())
             {
                 return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,
                     context);

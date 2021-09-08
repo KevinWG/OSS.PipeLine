@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>BPMN 标准的流程业务线管理类库</Description>
-    <Version>1.8.3.3</Version>
-    <PackageReleaseNotes>优化空组件的构造函数</PackageReleaseNotes>
+    <Version>1.8.5</Version>
+    <PackageReleaseNotes>简化枚举器</PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
     <RepositoryUrl>https://github.com/KevinWG/OSS.Pipeline</RepositoryUrl>

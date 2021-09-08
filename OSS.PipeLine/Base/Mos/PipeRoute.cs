@@ -35,10 +35,10 @@ namespace OSS.Pipeline
         /// </summary>
         public PipeRoute next { get; set; }
 
-        /// <summary>
-        ///  消息枚举器的循环迭代管道
-        /// </summary>
-        public PipeRoute iterator { get; set; }
+        ///// <summary>
+        /////  消息枚举器的循环迭代管道
+        ///// </summary>
+        //public PipeRoute iterator { get; set; }
 
         /// <summary>
         ///  分支网关的所有子分支节点( PipeType.BranchGateway 

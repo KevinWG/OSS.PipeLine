@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
 {
@@ -25,7 +24,7 @@ namespace OSS.Pipeline
     /// 消息转化基类
     /// </summary>
     /// <typeparam name="TMsg">消息具体类型</typeparam>
-    public class MsgEnumerator<TMsg> : BaseThreeWayPipe<IEnumerable<TMsg>, Empty, IEnumerable<TMsg>>
+    public class MsgEnumerator<TMsg> : BaseThreeWayPipe<IEnumerable<TMsg>, Empty, TMsg>
     {
         private readonly Func<IEnumerable<TMsg>, IEnumerable<TMsg>> _msgFilter = null;
         /// <summary>
@@ -41,66 +40,49 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="msgs"></param>
         /// <returns></returns>
-        protected virtual IEnumerable<TMsg> FilterMsg(IEnumerable<TMsg> msgs)
+        protected virtual IEnumerable<TMsg> FilterMsgs(IEnumerable<TMsg> msgs)
         {
             return _msgFilter != null ? _msgFilter(msgs)  : msgs;
         }
+
+        #region 管道内部业务处理
         
         /// <inheritdoc />
-        internal override async Task<TrafficResult<Empty, IEnumerable<TMsg>>> InterProcessPackage(IEnumerable<TMsg> msgs,
-            string prePipeCode)
+        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessHandling(IEnumerable<TMsg> msgs, string prePipeCode)
         {
-            if (_iterator == null)
-                throw new NullReferenceException($"{GetType().Name}枚举器的迭代执行程序未赋值!");
+            var filterMsgs = FilterMsgs(msgs);
+            if (filterMsgs==null)
+                throw new ArgumentNullException(nameof(msgs), "消息枚举器列表数据不能为空!");
+            
+            var trafficRes = await InterProcessPackage(filterMsgs, prePipeCode);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, msgs, trafficRes.ToWatchResult()).ConfigureAwait(false);
 
-            var parallelPipes = msgs.Select(m => _iterator.InterPreCall(m, PipeCode));
-
-            return (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, msgs)
-                : new TrafficResult<Empty, IEnumerable<TMsg>>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default, msgs);
+            switch (trafficRes.signal)
+            {
+                case SignalFlag.Green_Pass:
+                {
+                    return new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, trafficRes.result, trafficRes.output_paras);
+                }
+                case SignalFlag.Red_Block:
+                    await InterBlock(filterMsgs, trafficRes);
+                    break;
+            }
+            return trafficRes;
         }
-
-
-        #region 管道处理
-
-        private BaseInPipePart<TMsg> _iterator;
-        internal void InterSetIterator(BaseInPipePart<TMsg> iterator)
-        {
-            _iterator = iterator;
-        }
-
-        #endregion
-
-        #region 初始化
 
         /// <inheritdoc />
-        internal override void InterInitialContainer(IPipeLine flowContainer)
+        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(IEnumerable<TMsg> msgs, string prePipeCode)
         {
-            if (_iterator == null)
-                throw new NullReferenceException($"{GetType().Name}枚举器的迭代执行程序未赋值!");
-            
-            base.InterInitialContainer(flowContainer);
-            _iterator.InterInitialContainer(flowContainer);
+            var parallelPipes = msgs.Select(ToNextThrough);
+
+            return (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
+                ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, default)
+                : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default, default);
         }
+
 
         #endregion
 
-        #region 路由
-
-        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
-        {
-            var pipe = base.InterToRoute(isFlowSelf);
-            pipe.iterator = new PipeRoute()
-            {
-                pipe_code = _iterator.PipeCode,
-                pipe_type = _iterator.PipeType,
-
-                next = _iterator.InterToRoute(isFlowSelf)
-            };
-            return pipe;
-        }
-
-        #endregion
 
     }
 }

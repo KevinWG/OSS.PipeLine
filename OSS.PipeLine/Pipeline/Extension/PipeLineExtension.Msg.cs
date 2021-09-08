@@ -105,42 +105,42 @@ namespace OSS.Pipeline
             return pipe.Set(new MsgEnumerator<TMsg>(pipeCode, msgFilter));
         }
 
-        /// <summary>
-        ///  添加枚举迭代器
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <typeparam name="TNextOutContext"></typeparam>
-        /// <typeparam name="TNextResult"></typeparam>
-        /// <typeparam name="TNextPara"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="iteratorPipe"></param>
-        /// <returns></returns>
-        public static IPipelineConnector<TIn, IEnumerable<TMsg>> WithIterator<TIn, TMsg, TNextPara, TNextResult,
-            TNextOutContext>(this IPipelineMsgEnumerableConnector<TIn, TMsg> pipe,
-            BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> iteratorPipe)
-        {
-            pipe.EndPipe.SetIterator(iteratorPipe);
-            return new InterPipelineConnector<TIn, IEnumerable<TMsg>>(pipe.StartPipe, pipe.EndPipe);
-        }
+        ///// <summary>
+        /////  添加枚举迭代器
+        ///// </summary>
+        ///// <typeparam name="TIn"></typeparam>
+        ///// <typeparam name="TMsg">消息具体类型</typeparam>
+        ///// <typeparam name="TNextOutContext"></typeparam>
+        ///// <typeparam name="TNextResult"></typeparam>
+        ///// <typeparam name="TNextPara"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="iteratorPipe"></param>
+        ///// <returns></returns>
+        //public static IPipelineConnector<TIn, IEnumerable<TMsg>> WithIterator<TIn, TMsg, TNextPara, TNextResult,
+        //    TNextOutContext>(this IPipelineMsgEnumerableConnector<TIn, TMsg> pipe,
+        //    BaseFourWayPipe<TMsg, TNextPara, TNextResult, TNextOutContext> iteratorPipe)
+        //{
+        //    pipe.EndPipe.SetIterator(iteratorPipe);
+        //    return new InterPipelineConnector<TIn, IEnumerable<TMsg>>(pipe.StartPipe, pipe.EndPipe);
+        //}
 
-        /// <summary>
-        ///  添加枚举迭代器
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <typeparam name="TNextOutContext"></typeparam>
-        /// <typeparam name="TNextResult"></typeparam>
-        /// <typeparam name="TNextPara"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="iteratorPipe"></param>
-        /// <returns></returns>
-        public static IPipelineConnector<TIn, IEnumerable<TMsg>> WithIterator<TIn, TMsg, TNextPara, TNextResult,
-            TNextOutContext>(this IPipelineMsgEnumerableConnector<TIn, TMsg> pipe,
-            BaseOneWayPipe<TMsg> iteratorPipe)
-        {
-            pipe.EndPipe.SetIterator(iteratorPipe);
-            return new InterPipelineConnector<TIn, IEnumerable<TMsg>>(pipe.StartPipe, pipe.EndPipe);
-        }
+        ///// <summary>
+        /////  添加枚举迭代器
+        ///// </summary>
+        ///// <typeparam name="TIn"></typeparam>
+        ///// <typeparam name="TMsg">消息具体类型</typeparam>
+        ///// <typeparam name="TNextOutContext"></typeparam>
+        ///// <typeparam name="TNextResult"></typeparam>
+        ///// <typeparam name="TNextPara"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="iteratorPipe"></param>
+        ///// <returns></returns>
+        //public static IPipelineConnector<TIn, IEnumerable<TMsg>> WithIterator<TIn, TMsg, TNextPara, TNextResult,
+        //    TNextOutContext>(this IPipelineMsgEnumerableConnector<TIn, TMsg> pipe,
+        //    BaseOneWayPipe<TMsg> iteratorPipe)
+        //{
+        //    pipe.EndPipe.SetIterator(iteratorPipe);
+        //    return new InterPipelineConnector<TIn, IEnumerable<TMsg>>(pipe.StartPipe, pipe.EndPipe);
+        //}
     }
 }

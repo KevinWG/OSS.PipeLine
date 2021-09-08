@@ -47,17 +47,17 @@ namespace OSS.Pipeline.Base
             var trafficRes = await InterProcessPackage(context,prePipeCode);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult()).ConfigureAwait(false);
 
-            if (trafficRes.signal == SignalFlag.Green_Pass)
+            switch (trafficRes.signal)
             {
-                var nextTrafficRes = await ToNextThrough(trafficRes.output_paras);
-                return new TrafficResult<THandleResult, TOutContext>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output_paras);
+                case SignalFlag.Green_Pass:
+                {
+                    var nextTrafficRes = await ToNextThrough(trafficRes.output_paras);
+                    return new TrafficResult<THandleResult, TOutContext>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output_paras);
+                }
+                case SignalFlag.Red_Block:
+                    await InterBlock(context, trafficRes);
+                    break;
             }
-
-            if (trafficRes.signal == SignalFlag.Red_Block)
-            {
-                await InterBlock(context, trafficRes);
-            }
-
             return trafficRes;
         }
 
