@@ -55,13 +55,5 @@ namespace OSS.Pipeline.Pipeline.InterImpls.Connector.Extension
         }
 
 
-        internal static IPipelineMsgEnumerableConnector<TIn, TMsg> Set<TIn, TMsg>(
-            this IPipelineConnector<TIn, IEnumerable<TMsg>> oldConnector,
-            MsgEnumerator<TMsg> endPipe)
-        {
-            oldConnector.EndAppender.Append(endPipe);
-
-            return new InterPipelineMsgEnumerableConnector<TIn, TMsg>(oldConnector.StartPipe, endPipe);
-        }
     }
 }

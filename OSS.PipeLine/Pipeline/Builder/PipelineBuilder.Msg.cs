@@ -69,21 +69,6 @@ namespace OSS.Pipeline
             var nextPipe = new InterMsgConvertor<TContext, NextTContext>(pipeCode, convertFunc);
             return Start(nextPipe);
         }
-
-
-
-        /// <summary>
-        ///  追加消息枚举器
-        /// </summary>
-        /// <param name="pipeCode"></param>
-        /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <returns></returns>
-        public static IPipelineMsgEnumerableConnector<IEnumerable<TMsg>, TMsg> StartWithMsgEnumerator<TMsg>(
-            string pipeCode = null)
-        {
-            var nextPipe = new MsgEnumerator<TMsg>(pipeCode);
-            return Start(nextPipe);
-        }
-
+        
     }
 }

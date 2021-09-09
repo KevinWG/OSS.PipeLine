@@ -12,7 +12,6 @@
 #endregion
 
 using OSS.Pipeline.Base;
-using System.Collections.Generic;
 using OSS.Pipeline.Pipeline.InterImpls.Connector;
 
 namespace OSS.Pipeline
@@ -58,18 +57,6 @@ namespace OSS.Pipeline
         public static IPipelineBranchConnector<TIn, TIn> Start<TIn>(BaseBranchGateway<TIn> startPipe)
         {
             return new InterPipelineBranchConnector<TIn, TIn>( startPipe, startPipe);
-        }
-        
-        /// <summary>
-        ///  添加第一个节点
-        /// ( 消息枚举器
-        /// </summary>
-        /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <param name="startPipe"></param>
-        /// <returns></returns>
-        public static IPipelineMsgEnumerableConnector<IEnumerable<TMsg>, TMsg> Start<TMsg>(MsgEnumerator<TMsg> startPipe)
-        {
-            return new InterPipelineMsgEnumerableConnector<IEnumerable<TMsg>,  TMsg>(startPipe, startPipe);
         }
     }
 }
