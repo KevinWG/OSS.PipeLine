@@ -90,8 +90,7 @@ namespace OSS.Pipeline
         {
             return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
         }
-
-
+        
         /// <summary>
         ///  根据当前连接信息创建Pipeline
         /// </summary>
@@ -108,8 +107,6 @@ namespace OSS.Pipeline
             pipe.EndAppender = null;
             return newPipe;
         }
-
-
 
         /// <summary>
         ///  根据当前连接信息创建Pipeline

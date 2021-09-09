@@ -73,9 +73,9 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(IEnumerable<TMsg> msgs, string prePipeCode)
         {
-            var parallelPipes = msgs.Select(ToNextThrough);
+            var parallelTasks = msgs.Select(ToNextThrough);
 
-            return (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
+            return (await Task.WhenAll(parallelTasks)).Any(r => r.signal == SignalFlag.Green_Pass)
                 ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, default)
                 : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default, default);
         }

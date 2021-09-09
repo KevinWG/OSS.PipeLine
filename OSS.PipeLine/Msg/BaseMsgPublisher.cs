@@ -29,9 +29,9 @@ namespace OSS.Pipeline
         /// <summary>
         ///  消息发布者
         /// </summary>
-        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="defaultPushMsgKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgPublisher(string pipeCode, DataPublisherOption option = null) : base(pipeCode,
+        protected BaseMsgPublisher(string defaultPushMsgKey, DataPublisherOption option = null) : base(defaultPushMsgKey,
             PipeType.MsgPublisher)
         {
             _pusher = CreatePublisher(option);
@@ -41,7 +41,7 @@ namespace OSS.Pipeline
 
         /// <summary>
         ///  生成推送消息对应的key值
-        ///     默认使用PipeCode
+        ///     默认使用构造函数传入的 defaultPushMsgKey，如果不传则为 PipeCode
         /// </summary>
         /// <param name="msg"></param>
         /// <returns>默认返回PipeCode</returns>
