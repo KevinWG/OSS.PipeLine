@@ -42,14 +42,14 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
+        /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="pushKeyGenerator">消息key生成器,为空则使用pipeCode作为发布消息key</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
+        public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey,
             Func<TMsg, string> pushKeyGenerator = null, DataPublisherOption option = null)
         {
-            var nextPipe = new SimpleMsgPublisher<TMsg>(pipeCode, pushKeyGenerator, option);
+            var nextPipe = new SimpleMsgPublisher<TMsg>(msgDataKey, pushKeyGenerator, option);
             pipe.InterAppend(nextPipe);
         }
 
@@ -58,13 +58,13 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
+        /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgSubscriber<TMsg> AppendMsgSubscriber<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
+        public static BaseMsgSubscriber<TMsg> AppendMsgSubscriber<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey,
             DataFlowOption option = null)
         {
-            var nextPipe = new SimpleMsgSubscriber<TMsg>(pipeCode, option);
+            var nextPipe = new SimpleMsgSubscriber<TMsg>(msgDataKey, option);
 
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -75,13 +75,13 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
+        /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgFlow<TMsg> AppendMsgFlow<TMsg>(this IPipeAppender<TMsg> pipe, string pipeCode,
+        public static BaseMsgFlow<TMsg> AppendMsgFlow<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey,
             DataFlowOption option = null)
         {
-            var nextPipe = new SimpleMsgFlow<TMsg>(pipeCode, option);
+            var nextPipe = new SimpleMsgFlow<TMsg>(msgDataKey, option);
 
             pipe.InterAppend(nextPipe);
             return nextPipe;

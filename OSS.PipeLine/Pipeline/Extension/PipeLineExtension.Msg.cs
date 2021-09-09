@@ -29,29 +29,28 @@ namespace OSS.Pipeline
         /// <typeparam name="TOut"></typeparam>
         /// <typeparam name="TIn"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
+        /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static IPipelineConnector<TIn, TOut> ThenWithMsgSubscriber<TIn, TOut>(
             this IPipelineConnector<TIn, TOut> pipe,
-            string pipeCode, DataFlowOption option = null)
+            string msgDataKey, DataFlowOption option = null)
         {
-            return pipe.Then(new SimpleMsgSubscriber<TOut>(pipeCode, option));
+            return pipe.Then(new SimpleMsgSubscriber<TOut>(msgDataKey, option));
         }
-
-
+        
         /// <summary>
         ///  追加默认消息流管道
         /// </summary>
         /// <param name="pipe"></param>
-        /// <param name="pipeCode">消息pipeDataKey，默认对应的flow是异步线程池</param>
+        /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
         public static IPipelineConnector<TIn, TOut> ThenWithMsgFlow<TIn, TOut>(
             this IPipelineConnector<TIn, TOut> pipe,
-            string pipeCode, DataFlowOption option = null)
+            string msgDataKey, DataFlowOption option = null)
         {
-            var nextPipe = new SimpleMsgFlow<TOut>(pipeCode, option);
+            var nextPipe = new SimpleMsgFlow<TOut>(msgDataKey, option);
 
             return pipe.Then(nextPipe);
         }
