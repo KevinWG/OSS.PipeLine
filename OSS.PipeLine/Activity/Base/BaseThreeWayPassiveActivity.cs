@@ -47,7 +47,7 @@ namespace OSS.Pipeline.Activity.Base
         /// </summary>
         /// <param name="para">当前活动上下文信息</param>
         /// <returns>
-        /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
+        ///  -（活动是否处理成功，业务结果）
         /// traffic_signal：
         /// traffic_signal：     
         ///     Green_Pass  - 流体自动流入后续管道

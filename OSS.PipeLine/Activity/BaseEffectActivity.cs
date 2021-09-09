@@ -57,7 +57,7 @@ namespace OSS.Pipeline
         ///  具体执行扩展方法
         /// </summary>
         /// <returns>
-        /// (bool traffic_signal,TResult result)-（活动是否处理成功，业务结果）
+        ///  -（活动是否处理成功，业务结果）
         /// traffic_signal：
         /// traffic_signal：     
         ///     Green_Pass  - 流体自动流入后续管道
