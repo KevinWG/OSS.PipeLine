@@ -19,42 +19,41 @@ using OSS.Pipeline.Base;
 namespace OSS.Pipeline
 {
     /// <summary>
-    ///  消息流基类
+    ///  消息订阅器
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgSubscriber<TMsg> : BaseThreeWayPassivePipe<TMsg, TMsg, TMsg>, IDataSubscriber<TMsg>
+    public abstract class BaseMsgSubscriber<TMsg> : BaseThreeWayPassivePipe<TMsg, Empty, TMsg>, IDataSubscriber<TMsg>
     {
         /// <summary>
-        ///  异步缓冲连接器
+        ///  消息订阅器
         /// </summary>
-        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgSubscriber(string pipeCode = null) : this(pipeCode, null)
+        /// <param name="pipeDataKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        protected BaseMsgSubscriber(string pipeDataKey = null) : this(pipeDataKey, null)
         {
         }
 
         /// <summary>
-        ///  异步缓冲连接器
+        ///  消息订阅器
         /// </summary>
-        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="pipeDataKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option">数据流配置信息</param>
-        protected BaseMsgSubscriber(string pipeCode, DataFlowOption option) : base(pipeCode, PipeType.MsgSubscriber)
+        protected BaseMsgSubscriber(string pipeDataKey, DataFlowOption option) : base(pipeDataKey, PipeType.MsgSubscriber)
         {
-            if (string.IsNullOrEmpty(pipeCode))
+            if (string.IsNullOrEmpty(pipeDataKey))
             {
-                throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
+                throw new ArgumentNullException(nameof(pipeDataKey), "消息类型PipeCode不能为空!");
             }
-            ReceiveSubscriber(pipeCode, this, option);
+            ReceiveSubscriber(pipeDataKey, this, option);
         }
 
         /// <summary>
-        ///  创建消息流
+        ///  接收消息订阅器
         /// </summary>
-        /// <param name="subscribePassive"></param>
-        /// <param name="option"></param>
-        /// <param name="pipeDataKey"></param>
+        /// <param name="subscribeHandler">消息订阅器（引用句柄）</param>
+        /// <param name="option">订阅处理选项</param>
+        /// <param name="pipeDataKey">订阅消息key</param>
         /// <returns></returns>
-        protected abstract void ReceiveSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscribePassive,
-            DataFlowOption option);
+        protected abstract void ReceiveSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscribeHandler, DataFlowOption option);
 
         /// <summary>
         ///  订阅消息的动作实现
@@ -66,9 +65,10 @@ namespace OSS.Pipeline
             return (await InterProcess(data,string.Empty)).signal==SignalFlag.Green_Pass;
         }
 
-        internal override Task<TrafficResult<TMsg, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
+        internal override Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
         {
-            return Task.FromResult(new TrafficResult<TMsg, TMsg>(TrafficSignal.GreenSignal, string.Empty, context,context));
+            return Task.FromResult(new TrafficResult<Empty, TMsg>(TrafficSignal.GreenSignal, string.Empty,
+                Empty.Default, context));
         }
     }
 
