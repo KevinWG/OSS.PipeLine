@@ -61,7 +61,7 @@ namespace OSS.Pipeline
         /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static BaseMsgSubscriber<TMsg> AppendMsgSubscriber<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey,
+        public static BaseMsgSubscriber<TMsg> AppendMsgSubscriber<TMsg>(this IPipeAppender pipe, string msgDataKey,
             DataFlowOption option = null)
         {
             var nextPipe = new SimpleMsgSubscriber<TMsg>(msgDataKey, option);

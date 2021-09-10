@@ -36,8 +36,7 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleActivity AppendActivity<TOut>(this IPipeAppender<TOut> pipe,
-            Func<Task<TrafficSignal>> exeFunc, string pipeCode = null)
+        public static SimpleActivity AppendActivity<TOut>(this IPipeAppender<TOut> pipe, Func<Task<TrafficSignal>> exeFunc, string pipeCode = null)
         {
             var nextPipe = new SimpleActivity(pipeCode,exeFunc);
             pipe.InterAppend(nextPipe);

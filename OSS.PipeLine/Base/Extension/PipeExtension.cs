@@ -41,15 +41,13 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加普通管道
         /// </summary>
-        /// <typeparam name="TOutContext"></typeparam>
         /// <typeparam name="TNextOutContext"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
         /// <typeparam name="TNextResult"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipeAppender<TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
-            this IPipeAppender<TOutContext> pipe, BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static IPipeAppender<TNextOutContext> Append<TNextPara, TNextResult, TNextOutContext>(this IPipeAppender pipe, BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;

@@ -105,7 +105,7 @@ namespace OSS.Pipeline.Base
 
 
         private IPipeInPart<Empty> _nextEmptyPipe { get; set; }
-        void IPipeAppender<TOutContext>.InterAppend(IPipeInPart<Empty> nextPipe)
+        void IPipeAppender.InterAppend(IPipeInPart<Empty> nextPipe)
         {
             InterAppend(nextPipe);
             nextPipe.InterAppendTo(this);
