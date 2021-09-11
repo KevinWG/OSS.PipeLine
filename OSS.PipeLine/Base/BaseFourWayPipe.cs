@@ -83,12 +83,6 @@ namespace OSS.Pipeline.Base
             return  InterUtil.GreenTrafficResultTask; 
         }
         
-        private IPipeInPart<TOutContext> _nextPipe { get; set; }
-        void IPipeAppender<TOutContext>.InterAppend(IPipeInPart<TOutContext> nextPipe)
-        {
-            InterAppend(nextPipe);
-            nextPipe.InterAppendTo(this);
-        }
 
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
@@ -102,14 +96,14 @@ namespace OSS.Pipeline.Base
             }
             NextPipe = _nextPipe = nextPipe;
         }
-
-
-        private IPipeInPart<Empty> _nextEmptyPipe { get; set; }
-        void IPipeAppender.InterAppend(IPipeInPart<Empty> nextPipe)
+        private IPipeInPart<TOutContext> _nextPipe { get; set; }
+        void IPipeAppender<TOutContext>.InterAppend(IPipeInPart<TOutContext> nextPipe)
         {
             InterAppend(nextPipe);
             nextPipe.InterAppendTo(this);
         }
+
+
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道 ( 接收空上下文
         /// </summary>
@@ -122,7 +116,13 @@ namespace OSS.Pipeline.Base
             }
             NextPipe = _nextEmptyPipe = nextPipe;
         }
-        
+        private IPipeInPart<Empty> _nextEmptyPipe { get; set; }
+        void IPipeAppender.InterAppend(IPipeInPart<Empty> nextPipe)
+        {
+            InterAppend(nextPipe);
+            nextPipe.InterAppendTo(this);
+        }
+
         #endregion
 
         #region 管道初始化

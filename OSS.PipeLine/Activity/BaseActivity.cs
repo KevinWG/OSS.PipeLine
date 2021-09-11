@@ -23,18 +23,11 @@ namespace OSS.Pipeline
     /// </summary>
     public abstract class BaseActivity : BaseThreeWayPipe<Empty,Empty, Empty>, IActivity
     {
-        /// <inheritdoc />
-        public bool IsEffected => false;
-
-        /// <inheritdoc />
-        public bool IsPassive => false;
-
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
         protected BaseActivity(string pipeCode=null) : base(pipeCode, PipeType.Activity)
         {
-
         }
 
         /// <summary>
@@ -83,12 +76,6 @@ namespace OSS.Pipeline
     /// <typeparam name="TContext">输入输出上下文</typeparam>
     public abstract class BaseActivity<TContext> : BaseThreeWayPipe<TContext,TContext, TContext>, IActivity<TContext>
     {
-        /// <inheritdoc />
-        public bool IsEffected => false;
-
-        /// <inheritdoc />
-        public bool IsPassive => false;
-
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
@@ -145,7 +132,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BaseActivity(string pipeCode = null) : base(pipeCode,PipeType.Activity,false,false)
+        protected BaseActivity(string pipeCode = null) : base(pipeCode,PipeType.Activity)
         {
         }
   

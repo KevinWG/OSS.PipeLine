@@ -14,25 +14,11 @@
 namespace OSS.Pipeline.Interface
 {
 
-    public interface IBasicActivity
-    {
-
-        /// <summary>
-        /// 受影响的
-        /// </summary>
-        public bool IsEffected { get;  }
-
-        /// <summary>
-        ///  被动的
-        /// </summary>
-        public bool IsPassive { get;  }
-    }
-
 
     /// <summary>
     /// 
     /// </summary>
-    public interface IActivity : IPipeAppender<Empty>, IPipeExecutor, IBasicActivity
+    public interface IActivity : IPipeAppender<Empty>, IPipeExecutor
     {
     }
 
@@ -41,14 +27,14 @@ namespace OSS.Pipeline.Interface
     ///   活动接口（有输入无输出）
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public interface IActivity<TContext> : IPipeAppender<TContext>, IPipeInputExecutor<TContext>, IBasicActivity // , IPipeExecutor<TContext, TContext>
+    public interface IActivity<TContext> : IPipeAppender<TContext>, IPipeInputExecutor<TContext> // , IPipeExecutor<TContext, TContext>
     {
     }
 
 
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="THandleResult"></typeparam>
-    public interface IActivity<TInContext, THandleResult> : IPipeAppender<TInContext>, IPipeExecutor<TInContext, THandleResult>, IBasicActivity
+    public interface IActivity<TInContext, THandleResult> : IPipeAppender<TInContext>, IPipeExecutor<TInContext, THandleResult>
     {
     }
     
@@ -59,13 +45,13 @@ namespace OSS.Pipeline.Interface
 
 
     /// <typeparam name="THandleResult"></typeparam>
-    public interface IEffectActivity<THandleResult> : IPipeAppender<THandleResult>, IPipeOutputExecutor<THandleResult>, IBasicActivity
+    public interface IEffectActivity<THandleResult> : IPipeAppender<THandleResult>, IPipeOutputExecutor<THandleResult>
     {
     }
 
     /// <typeparam name="THandleResult"></typeparam>
     /// <typeparam name="TContext"></typeparam>
-    public interface IEffectActivity<in TContext,THandleResult> : IPipeAppender<THandleResult>, IPipeExecutor<TContext,THandleResult>, IBasicActivity
+    public interface IEffectActivity<in TContext,THandleResult> : IPipeAppender<THandleResult>, IPipeExecutor<TContext,THandleResult>
     {
     }
     
