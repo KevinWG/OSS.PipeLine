@@ -39,17 +39,17 @@ namespace OSS.Pipeline
             return pipe.Set(nextPipe);
         }
         
-        /// <summary>
-        ///  添加下一个节点
-        /// </summary>
-        /// <typeparam name="TContext"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static void Then<TContext>(this ISimplePipelineConnector<TContext> pipe, BaseOneWayPipe<TContext> nextPipe)
-        {
-            pipe.Set(nextPipe);
-        }
+        ///// <summary>
+        /////  添加下一个节点
+        ///// </summary>
+        ///// <typeparam name="TContext"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="nextPipe"></param>
+        ///// <returns></returns>
+        //public static void Then<TContext>(this ISimplePipelineConnector<TContext> pipe, BaseOneWayPipe<TContext> nextPipe)
+        //{
+        //    pipe.Set(nextPipe);
+        //}
 
         
         #region 分支

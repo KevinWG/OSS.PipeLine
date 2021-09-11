@@ -21,7 +21,7 @@ namespace OSS.Pipeline
     ///  消息发布者基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgPublisher<TMsg> : BaseOneWayPipe<TMsg>
+    public abstract class BaseMsgPublisher<TMsg> :   BaseThreeWayPipe<TMsg, Empty, TMsg>
     {
         // 内部异步处理入口
         private readonly IDataPublisher _pusher;
@@ -62,12 +62,11 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override async Task<TrafficResult<TMsg, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
+        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
         {
             return (await _pusher.Publish(GeneratePushKey(context), context))
-                ? new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, context, context)
-                : new TrafficResult<TMsg, TMsg>(SignalFlag.Red_Block, PipeCode, $"{this.GetType().Name}发布消息失败!",
-                    context, context);
+                ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, context)
+                : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block, PipeCode, $"{this.GetType().Name}发布消息失败!", Empty.Default, context);
         }
 
         #endregion

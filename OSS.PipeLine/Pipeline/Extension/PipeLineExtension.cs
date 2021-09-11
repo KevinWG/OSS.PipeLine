@@ -11,8 +11,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
+
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 using OSS.Pipeline.Pipeline.InterImpls.Connector;
@@ -59,18 +58,18 @@ namespace OSS.Pipeline
             return pipe.Set(nextPipe);
         }
         
-        /// <summary>
-        ///  添加下一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static void Then<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, BaseOneWayPipe<TOut> nextPipe)
-        {
-            pipe.Set(nextPipe);
-        }
+        ///// <summary>
+        /////  添加下一个节点
+        ///// </summary>
+        ///// <typeparam name="TIn"></typeparam>
+        ///// <typeparam name="TOut"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="nextPipe"></param>
+        ///// <returns></returns>
+        //public static void Then<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, BaseOneWayPipe<TOut> nextPipe)
+        //{
+        //    pipe.Set(nextPipe);
+        //}
 
 
         #region 生成Pipeline
