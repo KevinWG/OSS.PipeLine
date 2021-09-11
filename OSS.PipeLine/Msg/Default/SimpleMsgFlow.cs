@@ -39,7 +39,7 @@ namespace OSS.Pipeline
         {
         }
 
-        protected override IDataPublisher<TContext> CreateFlow(string pipeDataKey, IDataSubscriber<TContext> subscriber, DataFlowOption option)
+        protected override IDataPublisher CreateFlow(string pipeDataKey, IDataSubscriber<TContext> subscriber, DataFlowOption option)
         {
             return DataFlowFactory.CreateFlow(pipeDataKey, subscriber, option);
         }

@@ -24,7 +24,7 @@ namespace OSS.Pipeline
     public abstract class BaseMsgPublisher<TMsg> : BaseOneWayPipe<TMsg>
     {
         // 内部异步处理入口
-        private readonly IDataPublisher<TMsg> _pusher;
+        private readonly IDataPublisher _pusher;
 
         /// <summary>
         ///  消息发布者
@@ -56,7 +56,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="option"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher<TMsg> CreatePublisher(DataPublisherOption option);
+        protected abstract IDataPublisher CreatePublisher(DataPublisherOption option);
 
         #endregion
 

@@ -25,7 +25,7 @@ namespace OSS.Pipeline
     public abstract class BaseMsgFlow<TMsg> : BaseThreeWayPipe<TMsg, TMsg, TMsg>,IDataSubscriber<TMsg>
     {
         // 内部异步处理入口
-        private readonly IDataPublisher<TMsg> _pusher;
+        private readonly IDataPublisher _pusher;
 
         /// <summary>
         ///  异步缓冲连接器
@@ -57,7 +57,7 @@ namespace OSS.Pipeline
         /// <param name="option"></param>
         /// <param name="pipeDataKey"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher<TMsg> CreateFlow(string pipeDataKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
+        protected abstract IDataPublisher CreateFlow(string pipeDataKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
 
         #region 流体内部业务处理
 

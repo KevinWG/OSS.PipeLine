@@ -22,7 +22,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
     internal class PipeWatcherProxy
     {
         private readonly IPipeLineWatcher                  _watcher;
-        private readonly IDataPublisher<WatchDataItem> _publisher;
+        private readonly IDataPublisher _publisher;
         private readonly ActionBlock<WatchDataItem>    _watchDataQueue;
         private readonly string                        _dataFlowKey;
 
