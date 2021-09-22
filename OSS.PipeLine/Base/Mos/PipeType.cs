@@ -11,57 +11,68 @@
 
 #endregion
 
+using System;
+
 namespace OSS.Pipeline
 {
     /// <summary>
     ///   管道类型
     /// </summary>
+   [Flags]
     public enum PipeType
     {
         /// <summary>
-        ///  直接活动
+        ///  活动
         /// </summary>
-        Activity = 100,
+        Activity = 1,
+        /// <summary>
+        ///  受控活动
+        /// </summary>
+        EffectActivity = 2,
+
+        /// <summary>
+        ///  被动活动
+        /// </summary>
+        PassiveActivity = 4,
 
         /// <summary>
         ///  聚合网关
         /// </summary>
-        AggregateGateway = 200,
-
+        AggregateGateway = 8,
+        
         /// <summary>
         ///  分支网关
         /// </summary>
-        BranchGateway = 210,
-
+        BranchGateway = 16,
 
         /// <summary>
         ///  消息流
         /// </summary>
-        MsgFlow = 300,
+        MsgFlow = 32,
         
         /// <summary>
         ///  消息发布者
         /// </summary>
-        MsgPublisher = 310,
+        MsgPublisher = 64,
 
         /// <summary>
         ///  消息订阅者
         /// </summary>
-        MsgSubscriber = 320,
+        MsgSubscriber = 128,
 
         /// <summary>
         ///  消息订阅者
         /// </summary>
-        MsgConverter = 350,
+        MsgConverter = 256,
 
         /// <summary>
         ///  消息枚举器（循环处理
         /// </summary>
-        MsgEnumerator = 350,
+        MsgEnumerator = 512,
 
         /// <summary>
         /// 组合管道线
         /// </summary>
-        Pipeline = 1000
+        Pipeline = 1024
     }
 }

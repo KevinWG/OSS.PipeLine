@@ -33,14 +33,14 @@ namespace OSS.Pipeline.Pipeline.InterImpls.Connector.Extension
             return appender;
         }
 
-        internal static void Set<TIn, TOut>(this IPipelineConnector<TIn, TOut> oldConnector,
-            BaseOneWayPipe<TOut> endPipe)
-        {
-            oldConnector.EndAppender.Append(endPipe);
+        //internal static void Set<TIn, TOut>(this IPipelineConnector<TIn, TOut> oldConnector,
+        //    BaseOneWayPipe<TOut> endPipe)
+        //{
+        //    oldConnector.EndAppender.Append(endPipe);
 
-            oldConnector.StartPipe   = null;
-            oldConnector.EndAppender = null;
-        }
+        //    oldConnector.StartPipe   = null;
+        //    oldConnector.EndAppender = null;
+        //}
 
 
         internal static IPipelineBranchConnector<TIn, TOut> Set<TIn, TOut>(

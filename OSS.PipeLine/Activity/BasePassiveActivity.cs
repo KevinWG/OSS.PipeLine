@@ -30,7 +30,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 外部Action活动基类
         /// </summary>
-        protected BasePassiveActivity(string pipeCode = null) : base(pipeCode,PipeType.Activity,false,true)
+        protected BasePassiveActivity(string pipeCode = null) : base(pipeCode,PipeType.PassiveActivity)
         {
         }
         

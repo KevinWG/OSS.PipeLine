@@ -22,7 +22,7 @@ namespace OSS.Pipeline
     ///  消息流基类
     /// </summary>
     /// <typeparam name="TMsg"></typeparam>
-    public abstract class BaseMsgFlow<TMsg> : BaseThreeWayPipe<TMsg, TMsg, TMsg>,IDataSubscriber<TMsg>
+    public abstract class BaseMsgFlow<TMsg> : BaseThreeWayPipe<TMsg, Empty, TMsg>,IDataSubscriber<TMsg>
     {
         // 内部异步处理入口
         private readonly IDataPublisher _pusher;
@@ -71,10 +71,10 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<TMsg, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
+        internal override Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
         {
-            return Task.FromResult(new TrafficResult<TMsg, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty,
-                context,context));
+            return Task.FromResult(new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty,
+                Empty.Default, context));
         }
         
         #endregion

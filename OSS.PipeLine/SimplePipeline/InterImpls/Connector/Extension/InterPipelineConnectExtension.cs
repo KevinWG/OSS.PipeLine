@@ -13,11 +13,11 @@ namespace OSS.Pipeline.SimplePipeline.InterImpls.Connector.Extension
             return connector;
         }
         
-        internal static void Set<TContext>(this ISimplePipelineConnector<TContext> connector,
-            BaseOneWayPipe<TContext> endPipe)
-        {
-            connector.EndAppender.Append(endPipe);
-        }
+        //internal static void Set<TContext>(this ISimplePipelineConnector<TContext> connector,
+        //    BaseOneWayPipe<TContext> endPipe)
+        //{
+        //    connector.EndAppender.Append(endPipe);
+        //}
 
 
         internal static ISimplePipelineBranchConnector<TContext> Set<TContext>(this ISimplePipelineConnector<TContext> connector,
