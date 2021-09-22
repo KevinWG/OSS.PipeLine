@@ -42,14 +42,26 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
-        /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
+        /// <param name="msgDataKey">消息pipeDataKey，默认消息实现对应的flow是异步线程池</param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey, DataPublisherOption option = null)
+        {
+            var nextPipe = new SimpleMsgPublisher<TMsg>(msgDataKey, null, option);
+            pipe.InterAppend(nextPipe);
+        }
+
+        /// <summary>
+        ///  追加默认消息发布者管道
+        /// </summary>
+        /// <typeparam name="TMsg"></typeparam>
+        /// <param name="pipe"></param>
         /// <param name="pushKeyGenerator">消息key生成器,为空则使用pipeCode作为发布消息key</param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey,
-            Func<TMsg, string> pushKeyGenerator = null, DataPublisherOption option = null)
+        public static void AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, Func<TMsg, string> pushKeyGenerator, DataPublisherOption option = null)
         {
-            var nextPipe = new SimpleMsgPublisher<TMsg>(msgDataKey, pushKeyGenerator, option);
+            var nextPipe = new SimpleMsgPublisher<TMsg>(string.Empty, pushKeyGenerator, option);
             pipe.InterAppend(nextPipe);
         }
 
