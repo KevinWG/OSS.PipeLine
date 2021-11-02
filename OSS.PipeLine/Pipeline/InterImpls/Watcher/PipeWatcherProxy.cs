@@ -31,7 +31,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
             if (!string.IsNullOrEmpty(dataFlowKey))
             {
                 _dataFlowKey = dataFlowKey;
-                _publisher   = DataFlowFactory.CreateFlow<WatchDataItem>(dataFlowKey, WatchCallBack, option);
+                _publisher   = DataFlowFactory.RegisterFlow<WatchDataItem>(dataFlowKey, WatchCallBack, option);
             }
             else
             {

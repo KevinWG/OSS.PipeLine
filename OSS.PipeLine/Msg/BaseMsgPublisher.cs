@@ -29,19 +29,19 @@ namespace OSS.Pipeline
         /// <summary>
         ///  消息发布者
         /// </summary>
-        /// <param name="defaultPushMsgKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="defaultPushMsgKey">缓冲DataFlow 对应的消息Key   默认对应的flow实现是异步线程池</param>
         /// <param name="option"></param>
         protected BaseMsgPublisher(string defaultPushMsgKey, DataPublisherOption option = null) : base(defaultPushMsgKey,
             PipeType.MsgPublisher)
         {
-            _pusher = CreatePublisher(option);
+            _pusher = RegisterPublisher(option);
         }
 
         #region 扩展
 
         /// <summary>
-        ///  生成推送消息对应的key值
-        ///     默认使用构造函数传入的 defaultPushMsgKey，如果不传则为 PipeCode
+        ///  生成推送消息对应的key值，默认为 PipeCode（即构造函数中传入的 defaultPushMsgKey）
+        ///    返回空，则 对应消息跳过发布，不做处理
         /// </summary>
         /// <param name="msg"></param>
         /// <returns>默认返回PipeCode</returns>
@@ -56,7 +56,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="option"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher CreatePublisher(DataPublisherOption option);
+        protected abstract IDataPublisher RegisterPublisher(DataPublisherOption option);
 
         #endregion
 
@@ -64,7 +64,13 @@ namespace OSS.Pipeline
 
         internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
         {
-            return (await _pusher.Publish(GeneratePushKey(context), context))
+            var msgKey = GeneratePushKey(context);
+            if (string.IsNullOrEmpty(msgKey))
+            {
+                return new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default,
+                    context);
+            }
+            return (await _pusher.Publish(msgKey, context))
                 ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, context)
                 : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block, PipeCode, $"{this.GetType().Name}发布消息失败!", Empty.Default, context);
         }

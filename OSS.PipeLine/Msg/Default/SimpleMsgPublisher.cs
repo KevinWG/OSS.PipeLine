@@ -51,13 +51,13 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         protected override string GeneratePushKey(TMsg msg)
         {
-            return _pushKeyGenerator?.Invoke(msg) ?? PipeCode;
+            return _pushKeyGenerator!=null ? _pushKeyGenerator?.Invoke(msg) : base.GeneratePushKey(msg);
         }
 
         /// <inheritdoc />
-        protected override IDataPublisher CreatePublisher(DataPublisherOption option)
+        protected override IDataPublisher RegisterPublisher(DataPublisherOption option)
         {
-            return DataFlowFactory.CreatePublisher<TMsg>(option);
+            return DataFlowFactory.RegisterPublisher<TMsg>(option);
         }
     }
 }
