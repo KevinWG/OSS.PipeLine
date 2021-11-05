@@ -54,8 +54,7 @@ namespace OSS.Pipeline
             if (filterMsgs==null)
                 throw new ArgumentNullException(nameof(msgs), "消息枚举器列表数据不能为空!");
             
-            var trafficRes = await InterProcessPackage(filterMsgs, prePipeCode);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, msgs, trafficRes.ToWatchResult()).ConfigureAwait(false);
+            var trafficRes = await InterWatchProcessPackage(filterMsgs, prePipeCode);
 
             switch (trafficRes.signal)
             {

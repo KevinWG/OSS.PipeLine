@@ -125,9 +125,11 @@ namespace OSS.Pipeline.Base
         /// <param name="prePipeCode"></param>
         /// <returns></returns>
         internal abstract Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode);
-        Task<TrafficResult> IPipeInPart<TInContext>.InterPreCall(TInContext context, string prePipeCode)
+
+        async Task<TrafficResult> IPipeInPart<TInContext>.InterWatchPreCall(TInContext context, string prePipeCode)
         {
-            return InterPreCall(context, prePipeCode);
+            await Watch(PipeCode, PipeType, WatchActionType.PreCall, context).ConfigureAwait(false);
+            return await InterPreCall(context, prePipeCode);
         }
         #endregion
 

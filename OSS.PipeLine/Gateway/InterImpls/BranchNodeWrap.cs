@@ -49,7 +49,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
 
         Task<TrafficResult> IBranchWrap.InterPreCall(object context,string prePipeCode)
         {
-            return _pipePart.InterPreCall((TContext) context,prePipeCode);
+            return _pipePart.InterWatchPreCall((TContext) context,prePipeCode);
         }
 
         void IBranchWrap.InterInitialContainer(IPipeLine containerFlow)
@@ -79,7 +79,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
 
         Task<TrafficResult> IBranchWrap.InterPreCall(object context, string prePipeCode)
         {
-            return _pipePart.InterPreCall(Empty.Default,prePipeCode);
+            return _pipePart.InterWatchPreCall(Empty.Default,prePipeCode);
         }
 
         void IBranchWrap.InterInitialContainer(IPipeLine containerFlow)

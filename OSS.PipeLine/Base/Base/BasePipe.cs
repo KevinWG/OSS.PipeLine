@@ -12,6 +12,8 @@
 #endregion
 
 using System.Threading.Tasks;
+using OSS.DataFlow.Event;
+using OSS.PipeLine.Base.Base.InterImpls;
 
 namespace OSS.Pipeline.Base.Base
 {
@@ -36,7 +38,17 @@ namespace OSS.Pipeline.Base.Base
 
         #region 重试实现
 
-        //internal 
+        private PipeRetryEventProcessor<THandlePara, TrafficResult<THandleResult, TOutContext>> _retryProcessor;
+        internal void SetErrorRetry(FlowEventOption option)
+        {
+            _retryProcessor =
+                new PipeRetryEventProcessor<THandlePara, TrafficResult<THandleResult, TOutContext>>(
+                    InterRetryProcessHandling, option);
+        }
+        private Task<TrafficResult<THandleResult, TOutContext>> InterRetryProcessHandling(RetryEventMsg<THandlePara> eMsg)
+        {
+            return InterProcessHandling(eMsg.para, eMsg.pre_pipe_code);
+        }
 
         #endregion
 
@@ -50,6 +62,10 @@ namespace OSS.Pipeline.Base.Base
         /// <returns></returns>
         internal Task<TrafficResult<THandleResult,TOutContext>> InterProcess(THandlePara context,string prePipeCode)
         {
+            if (_retryProcessor!=null)
+            {
+                return _retryProcessor.Process(new RetryEventMsg<THandlePara>(context, prePipeCode));
+            }
             return InterProcessHandling(context,prePipeCode);
         }
 
@@ -84,12 +100,13 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        internal  async Task InterWatchBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
+        internal async Task InterWatchBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult()).ConfigureAwait(false);
+            await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult())
+                .ConfigureAwait(false);
             await Block(context, tRes);
         }
-        
+
         #endregion
 
         #region 管道外部扩展

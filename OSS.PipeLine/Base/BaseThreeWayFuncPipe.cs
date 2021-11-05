@@ -49,10 +49,9 @@ namespace OSS.Pipeline.Base
         #region 内部的业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(Empty context, string prePipeCode)
+        internal override  Task<TrafficResult> InterPreCall(Empty context, string prePipeCode)
         {
-            await Watch(PipeCode, PipeType, WatchActionType.PreCall, context).ConfigureAwait(false);
-            return  new TrafficResult(SignalFlag.Green_Pass,String.Empty, String.Empty);
+            return Task.FromResult( new TrafficResult(SignalFlag.Green_Pass,String.Empty, String.Empty));
         }
         
         #endregion

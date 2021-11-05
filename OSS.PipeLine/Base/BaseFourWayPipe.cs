@@ -71,11 +71,11 @@ namespace OSS.Pipeline.Base
             {
                 if (_nextPipe != null)
                 {
-                    return _nextPipe.InterPreCall(nextInContext,PipeCode);
+                    return _nextPipe.InterWatchPreCall(nextInContext,PipeCode);
                 }
                 else
                 {
-                    return _nextEmptyPipe.InterPreCall(Empty.Default,PipeCode);
+                    return _nextEmptyPipe.InterWatchPreCall(Empty.Default,PipeCode);
                 }
             }
             // 说明已经是最后一个管道

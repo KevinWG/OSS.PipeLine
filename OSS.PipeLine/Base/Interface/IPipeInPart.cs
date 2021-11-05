@@ -44,7 +44,7 @@ namespace OSS.Pipeline.Interface
         /// <param name="context"></param>
         /// <param name="prePipeCode"></param>
         /// <returns></returns>
-        internal  Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode);
+        internal  Task<TrafficResult> InterWatchPreCall(TInContext context, string prePipeCode);
 
         /// <summary>
         /// 被连接到时执行
