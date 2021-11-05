@@ -23,6 +23,7 @@ namespace OSS.Pipeline.Interface
         /// <returns></returns>
         PipeRoute ToRoute();
         
+
         internal PipeWatcherProxy GetProxy();
     }
 

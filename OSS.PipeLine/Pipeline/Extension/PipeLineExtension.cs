@@ -13,8 +13,6 @@
 
 
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Pipeline.InterImpls.Connector;
-using OSS.Pipeline.Pipeline.InterImpls.Connector.Extension;
 
 namespace OSS.Pipeline
 {
@@ -23,39 +21,39 @@ namespace OSS.Pipeline
     /// </summary>
     public static partial class PipelineExtension
     {
-        /// <summary>
-        ///  追加下一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <typeparam name="TNextPara"></typeparam>
-        /// <typeparam name="TNextOut"></typeparam>
-        /// <typeparam name="TNextResult"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static IPipelineConnector<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
-            BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
-        {
-            return pipe.Set(nextPipe);
-        }
+        ///// <summary>
+        /////  追加下一个节点
+        ///// </summary>
+        ///// <typeparam name="TIn"></typeparam>
+        ///// <typeparam name="TOut"></typeparam>
+        ///// <typeparam name="TNextPara"></typeparam>
+        ///// <typeparam name="TNextOut"></typeparam>
+        ///// <typeparam name="TNextResult"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="nextPipe"></param>
+        ///// <returns></returns>
+        //public static IPipelineConnector<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
+        //    BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
+        //{
+        //    return pipe.Set(nextPipe);
+        //}
 
-        /// <summary>
-        ///  追加下一个节点
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <typeparam name="TNextPara"></typeparam>
-        /// <typeparam name="TNextOut"></typeparam>
-        /// <typeparam name="TNextResult"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static IPipelineConnector<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
-            BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
-        {
-            return pipe.Set(nextPipe);
-        }
+        ///// <summary>
+        /////  追加下一个节点
+        ///// </summary>
+        ///// <typeparam name="TIn"></typeparam>
+        ///// <typeparam name="TOut"></typeparam>
+        ///// <typeparam name="TNextPara"></typeparam>
+        ///// <typeparam name="TNextOut"></typeparam>
+        ///// <typeparam name="TNextResult"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="nextPipe"></param>
+        ///// <returns></returns>
+        //public static IPipelineConnector<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
+        //    BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
+        //{
+        //    return pipe.Set(nextPipe);
+        //}
         
         #region 生成Pipeline
         
@@ -91,42 +89,39 @@ namespace OSS.Pipeline
             return new EmptyEntryPipeline<TEndOut>(flowPipeCode, startPipe, endPipe, option);
         }
 
+        ///// <summary>
+        /////  根据当前连接信息创建Pipeline
+        ///// </summary>
+        ///// <typeparam name="TIn"></typeparam>
+        ///// <typeparam name="TOut"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="pipeCode"></param>
+        ///// <param name="option"></param>
+        ///// <returns></returns>
+        //public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe,
+        //    string pipeCode, PipeLineOption option = null)
+        //{
+        //    var newPipe = new Pipeline<TIn, TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
+        //    pipe.StartPipe   = null;
+        //    pipe.EndAppender = null;
+        //    return newPipe;
+        //}
 
-
-
-        /// <summary>
-        ///  根据当前连接信息创建Pipeline
-        /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe,
-            string pipeCode, PipeLineOption option = null)
-        {
-            var newPipe = new Pipeline<TIn, TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
-            pipe.StartPipe   = null;
-            pipe.EndAppender = null;
-            return newPipe;
-        }
-
-        /// <summary>
-        ///  根据当前连接信息创建Pipeline
-        /// </summary>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
-        /// <param name="option"></param>
-        /// <returns></returns>
-        public static EmptyEntryPipeline<TOut> AsPipeline< TOut>(this IPipelineConnector<Empty, TOut> pipe, string pipeCode, PipeLineOption option = null)
-        {
-            var newPipe = new EmptyEntryPipeline<TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
-            pipe.StartPipe   = null;
-            pipe.EndAppender = null;
-            return newPipe;
-        }
+        ///// <summary>
+        /////  根据当前连接信息创建Pipeline
+        ///// </summary>
+        ///// <typeparam name="TOut"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="pipeCode"></param>
+        ///// <param name="option"></param>
+        ///// <returns></returns>
+        //public static EmptyEntryPipeline<TOut> AsPipeline< TOut>(this IPipelineConnector<Empty, TOut> pipe, string pipeCode, PipeLineOption option = null)
+        //{
+        //    var newPipe = new EmptyEntryPipeline<TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
+        //    pipe.StartPipe   = null;
+        //    pipe.EndAppender = null;
+        //    return newPipe;
+        //}
 
         #endregion
 
