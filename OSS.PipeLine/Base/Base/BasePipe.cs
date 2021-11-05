@@ -41,8 +41,7 @@ namespace OSS.Pipeline.Base.Base
         private PipeRetryEventProcessor<THandlePara, TrafficResult<THandleResult, TOutContext>> _retryProcessor;
         internal void SetErrorRetry(FlowEventOption option)
         {
-            _retryProcessor =
-                new PipeRetryEventProcessor<THandlePara, TrafficResult<THandleResult, TOutContext>>(
+            _retryProcessor = new PipeRetryEventProcessor<THandlePara, TrafficResult<THandleResult, TOutContext>>(
                     InterRetryProcessHandling, option);
         }
         private Task<TrafficResult<THandleResult, TOutContext>> InterRetryProcessHandling(RetryEventMsg<THandlePara> eMsg)

@@ -13,7 +13,6 @@
 
 
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Interface;
 using OSS.Pipeline.Pipeline.InterImpls.Connector;
 using OSS.Pipeline.Pipeline.InterImpls.Connector.Extension;
 
@@ -58,38 +57,43 @@ namespace OSS.Pipeline
             return pipe.Set(nextPipe);
         }
         
-        ///// <summary>
-        /////  添加下一个节点
-        ///// </summary>
-        ///// <typeparam name="TIn"></typeparam>
-        ///// <typeparam name="TOut"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public static void Then<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, BaseOneWayPipe<TOut> nextPipe)
-        //{
-        //    pipe.Set(nextPipe);
-        //}
-
-
         #region 生成Pipeline
         
         /// <summary>
         /// 根据首位两个管道建立流体
         /// </summary>
-        /// <typeparam name="InFlowContext"></typeparam>
-        /// <typeparam name="OutFlowContext"></typeparam>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
         /// <param name="startPipe"></param>
-        /// <param name="endPipeAppender"></param>
         /// <param name="flowPipeCode"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static Pipeline<InFlowContext, OutFlowContext> AsPipelineStartAndEndWith<InFlowContext, OutFlowContext>(this BaseInPipePart<InFlowContext> startPipe, IPipeAppender<OutFlowContext> endPipeAppender,
+        public static Pipeline<TIn, TEndOut> AsPipeline<TIn, TEndIn, TEndPara, TEndResult, TEndOut>(this BaseInPipePart<TIn> startPipe,
+            BaseFourWayPipe<TEndIn, TEndPara, TEndResult, TEndOut> endPipe, string flowPipeCode, PipeLineOption option = null)
+        {
+            return new Pipeline<TIn, TEndOut>(flowPipeCode, startPipe, endPipe, option);
+        }
+
+        /// <summary>
+        /// 根据首位两个管道建立流体
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <param name="startPipe"></param>
+        /// <param name="endPipe"></param>
+        /// <param name="flowPipeCode"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static EmptyEntryPipeline<TEndOut> AsPipeline<TEndIn, TEndPara, TEndResult, TEndOut>(this BaseInPipePart<Empty> startPipe,
+            BaseFourWayPipe<TEndIn, TEndPara, TEndResult, TEndOut> endPipe,
             string flowPipeCode, PipeLineOption option = null)
         {
-            return new Pipeline<InFlowContext, OutFlowContext>(flowPipeCode, startPipe, endPipeAppender, option);
+            return new EmptyEntryPipeline<TEndOut>(flowPipeCode, startPipe, endPipe, option);
         }
-        
+
+
+
+
         /// <summary>
         ///  根据当前连接信息创建Pipeline
         /// </summary>
@@ -99,7 +103,8 @@ namespace OSS.Pipeline
         /// <param name="pipeCode"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe, string pipeCode, PipeLineOption option = null)
+        public static Pipeline<TIn, TOut> AsPipeline<TIn, TOut>(this IPipelineConnector<TIn, TOut> pipe,
+            string pipeCode, PipeLineOption option = null)
         {
             var newPipe = new Pipeline<TIn, TOut>(pipeCode, pipe.StartPipe, pipe.EndAppender, option);
             pipe.StartPipe   = null;

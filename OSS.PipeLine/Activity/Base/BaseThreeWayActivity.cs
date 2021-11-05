@@ -18,7 +18,6 @@ namespace OSS.Pipeline.Activity.Base
         {
         }
         
-
         #region 流体外部扩展
 
         /// <summary>

@@ -31,8 +31,9 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipeAppender<TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
-            this IPipeAppender<TOutContext> pipe, BaseFourWayPipe<TOutContext, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static BaseFourWayPipe<TOutContext, TNextPara, TNextResult, TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
+            this IPipeAppender<TOutContext> pipe, 
+            BaseFourWayPipe<TOutContext, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -47,22 +48,28 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipeAppender<TNextOutContext> Append<TNextPara, TNextResult, TNextOutContext>(this IPipeAppender pipe, BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> Append<TNextPara, TNextResult, TNextOutContext>(this IPipeAppender pipe,
+            BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }
 
-        ///// <summary>
-        ///// 追加单入类型管道
-        ///// </summary>
-        ///// <typeparam name="OutContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public static void Append<OutContext>(this IPipeAppender<OutContext> pipe, BaseOneWayPipe<OutContext> nextPipe)
-        //{
-        //    pipe.InterAppend(nextPipe);
-        //}
+
+        /// <summary>
+        ///  追加发布消息管道
+        /// </summary>
+        /// <typeparam name="TOutContext"></typeparam>
+        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextPara"></typeparam>
+        /// <typeparam name="TNextResult"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="nextPipe"></param>
+        /// <returns></returns>
+        public static void Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(this IPipeAppender<TOutContext> pipe, 
+            BaseMsgPublisher<TOutContext> nextPipe)
+        {
+            pipe.InterAppend(nextPipe);
+        }
     }
 }

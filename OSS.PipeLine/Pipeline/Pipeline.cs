@@ -29,6 +29,7 @@ namespace OSS.Pipeline
     {
         private readonly BaseInPipePart<TInContext>    _startPipe;
         private readonly IPipeAppender<TOutContext> _endPipe;
+
         /// <summary>
         ///  开始管道
         /// </summary>
@@ -94,7 +95,6 @@ namespace OSS.Pipeline
         {
            return _startPipe.InterPreCall(context,prePipeCode);
         }
-
 
         /// <inheritdoc />
         internal override Task<TrafficResult<TOutContext, TOutContext>> InterProcessPackage(TInContext context, string prePipeCode)
