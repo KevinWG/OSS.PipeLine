@@ -20,8 +20,4 @@
     <PackageReference Include="OSS.Tools.Log" Version="1.1.2.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\OSS.Pipeline\OSS.Pipeline.csproj" />
-  </ItemGroup>
-
 </Project>
