@@ -34,6 +34,12 @@ namespace OSS.Pipeline.Base.Base
         {
         }
 
+        #region 重试实现
+
+        //internal 
+
+        #endregion
+
         #region 管道内部业务流转处理
 
         /// <summary>
@@ -54,13 +60,22 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
         internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode);
-        
+
         /// <summary>
         ///  内部管道 -- （3）执行 - 组装业务处理结果
         /// </summary>
         /// <param name="context"></param>
         /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
+        internal async Task<TrafficResult<THandleResult, TOutContext>> InterWatchProcessPackage(THandlePara context,
+            string prePipeCode)
+        {
+            var trafficRes = await InterProcessPackage(context, prePipeCode);
+            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult()).ConfigureAwait(false);
+
+            return trafficRes;
+        }
+
         internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context, string prePipeCode);
 
         /// <summary>
@@ -69,7 +84,7 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        internal  async Task InterBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
+        internal  async Task InterWatchBlock(THandlePara context, TrafficResult<THandleResult, TOutContext> tRes)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult()).ConfigureAwait(false);
             await Block(context, tRes);

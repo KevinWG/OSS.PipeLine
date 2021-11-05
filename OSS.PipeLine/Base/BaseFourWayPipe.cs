@@ -44,8 +44,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode)
         {
-            var trafficRes = await InterProcessPackage(context,prePipeCode);
-            await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult()).ConfigureAwait(false);
+            var trafficRes = await InterWatchProcessPackage(context,prePipeCode);
 
             switch (trafficRes.signal)
             {
@@ -55,7 +54,7 @@ namespace OSS.Pipeline.Base
                     return new TrafficResult<THandleResult, TOutContext>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output_paras);
                 }
                 case SignalFlag.Red_Block:
-                    await InterBlock(context, trafficRes);
+                    await InterWatchBlock(context, trafficRes);
                     break;
             }
             return trafficRes;

@@ -64,7 +64,7 @@ namespace OSS.Pipeline
                     return new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, trafficRes.result, trafficRes.output_paras);
                 }
                 case SignalFlag.Red_Block:
-                    await InterBlock(filterMsgs, trafficRes);
+                    await InterWatchBlock(filterMsgs, trafficRes);
                     break;
             }
             return trafficRes;
