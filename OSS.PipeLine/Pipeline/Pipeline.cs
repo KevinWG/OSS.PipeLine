@@ -27,6 +27,8 @@ namespace OSS.Pipeline
     public class Pipeline<TInContext, TOutContext> :
         BaseFourWayPipe<TInContext, TInContext, TOutContext, TOutContext>, IPipeLine<TInContext, TOutContext>
     {
+        #region 首尾节点定义
+
         private readonly BaseInPipePart<TInContext> _startPipe;
         private readonly IPipeAppender<TOutContext> _endPipe;
 
@@ -39,6 +41,10 @@ namespace OSS.Pipeline
         ///  结束管道
         /// </summary>
         public IPipeMeta EndPipe => _endPipe;
+
+        #endregion
+        
+        #region 构造函数
 
         /// <summary>
         /// 基础流体
@@ -75,6 +81,10 @@ namespace OSS.Pipeline
         }
 
 
+        #endregion
+        
+        #region 管道的业务处理
+
 
         #region 管道业务启动
 
@@ -85,8 +95,6 @@ namespace OSS.Pipeline
         }
 
         #endregion
-
-        #region 管道的业务处理
 
         /// <inheritdoc />
         internal override Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode)
@@ -103,7 +111,7 @@ namespace OSS.Pipeline
 
         #endregion
 
-        #region 管道连接处理
+        #region 管道连接重写处理
 
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
@@ -123,7 +131,7 @@ namespace OSS.Pipeline
 
         #endregion
 
-        #region 路由处理
+        #region Pipeline 路由 管理
 
         private PipeRoute _route;
 
@@ -154,12 +162,10 @@ namespace OSS.Pipeline
 
         #endregion
 
-        #region 监控对象处理
+        #region 管道 内部监控代理器
 
-        PipeWatcherProxy IPipeLine.GetProxy()
-        {
-            return WatchProxy;
-        }
+        /// <inheritdoc />
+        PipeWatcherProxy IPipeLine.GetWatchProxy() => WatchProxy;
 
         #endregion
 

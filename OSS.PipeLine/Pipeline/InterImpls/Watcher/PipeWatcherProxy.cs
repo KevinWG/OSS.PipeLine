@@ -21,10 +21,11 @@ namespace OSS.Pipeline.InterImpls.Watcher
 {
     internal class PipeWatcherProxy
     {
-        private readonly IPipeLineWatcher                  _watcher;
-        private readonly IDataPublisher _publisher;
-        private readonly ActionBlock<WatchDataItem>    _watchDataQueue;
-        private readonly string                        _dataFlowKey;
+        private readonly string           _dataFlowKey;
+        private readonly IPipeLineWatcher _watcher;
+        private readonly IDataPublisher   _publisher;
+
+        private readonly ActionBlock<WatchDataItem> _watchDataQueue;
 
         public PipeWatcherProxy(IPipeLineWatcher watcher, string dataFlowKey, DataFlowOption option)
         {
@@ -41,6 +42,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
                         MaxDegreeOfParallelism = 4
                     });
             }
+
             _watcher = watcher;
         }
 
@@ -53,17 +55,19 @@ namespace OSS.Pipeline.InterImpls.Watcher
                 switch (data.ActionType)
                 {
                     case WatchActionType.PreCall:
-                         await _watcher.PreCall(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
+                        await _watcher.PreCall(data.PipeCode, data.PipeType, data.Para).ConfigureAwait(false);
                         break;
                     case WatchActionType.Executed:
-                         await _watcher.Executed(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
-                         break;
+                        await _watcher.Executed(data.PipeCode, data.PipeType, data.Para, data.Result)
+                            .ConfigureAwait(false);
+                        break;
                     case WatchActionType.Blocked:
-                         await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para, data.Result).ConfigureAwait(false);
-                         break;
+                        await _watcher.Blocked(data.PipeCode, data.PipeType, data.Para, data.Result)
+                            .ConfigureAwait(false);
+                        break;
                 }
             }
-            catch 
+            catch
             {
             }
 
@@ -75,7 +79,7 @@ namespace OSS.Pipeline.InterImpls.Watcher
         {
             if (_publisher != null)
             {
-                return _publisher.Publish(_dataFlowKey,data);
+                return _publisher.Publish(_dataFlowKey, data);
             }
 
             _watchDataQueue.Post(data);

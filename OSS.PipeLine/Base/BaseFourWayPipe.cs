@@ -130,7 +130,7 @@ namespace OSS.Pipeline.Base
         internal override void InterInitialContainer(IPipeLine flowContainer)
         {
             LineContainer = flowContainer;
-            WatchProxy=flowContainer.GetProxy();
+            WatchProxy=flowContainer.GetWatchProxy();
 
             if (this.Equals(flowContainer.EndPipe))
                 return;

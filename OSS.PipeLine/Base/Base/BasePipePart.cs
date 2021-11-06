@@ -54,8 +54,7 @@ namespace OSS.Pipeline.Base
         #region 管道监控
 
         internal PipeWatcherProxy WatchProxy { get; set; }
-
-
+        
         internal Task Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object para,
             WatchResult res)
         {

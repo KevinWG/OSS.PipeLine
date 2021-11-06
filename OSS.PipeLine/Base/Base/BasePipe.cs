@@ -36,7 +36,7 @@ namespace OSS.Pipeline.Base.Base
         {
         }
 
-        #region 重试实现
+        #region 业务重试实现
 
         private PipeRetryEventProcessor<THandlePara, TrafficResult<THandleResult, TOutContext>> _retryProcessor;
         internal void SetErrorRetry(FlowEventOption option)

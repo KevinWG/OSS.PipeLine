@@ -23,8 +23,11 @@ namespace OSS.Pipeline.Interface
         /// <returns></returns>
         PipeRoute ToRoute();
         
-
-        internal PipeWatcherProxy GetProxy();
+        /// <summary>
+        /// 获取内部监控代理器
+        /// </summary>
+        /// <returns></returns>
+        internal PipeWatcherProxy GetWatchProxy();
     }
 
     /// <summary>
@@ -35,5 +38,4 @@ namespace OSS.Pipeline.Interface
     public interface IPipeLine<in TIn, TOut> : IPipeLine, IPipeLineEntry<TIn>
     {
     }
-
 }
