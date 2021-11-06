@@ -49,6 +49,8 @@ namespace OSS.Pipeline.Base
         /// </summary>
         protected IPipeLine LineContainer { get; set; }
         
+
+
         #region 管道监控
 
         internal PipeWatcherProxy WatchProxy { get; set; }
@@ -80,7 +82,7 @@ namespace OSS.Pipeline.Base
 
         #endregion
 
-        #region 内部扩散方法
+        #region 内部初始化和路由方法
 
         /// <summary>
         ///  内部处理流容器初始化赋值

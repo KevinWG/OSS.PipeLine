@@ -24,10 +24,10 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
     /// <typeparam name="TOutContext"></typeparam>
-    public class Pipeline<TInContext, TOutContext> : 
+    public class Pipeline<TInContext, TOutContext> :
         BaseFourWayPipe<TInContext, TInContext, TOutContext, TOutContext>, IPipeLine<TInContext, TOutContext>
     {
-        private readonly BaseInPipePart<TInContext>    _startPipe;
+        private readonly BaseInPipePart<TInContext> _startPipe;
         private readonly IPipeAppender<TOutContext> _endPipe;
 
         /// <summary>
@@ -39,20 +39,22 @@ namespace OSS.Pipeline
         ///  结束管道
         /// </summary>
         public IPipeMeta EndPipe => _endPipe;
-        
+
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode, BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender) : this(pipeCode,startPipe, endPipeAppender,null)
+        public Pipeline(string pipeCode, BaseInPipePart<TInContext> startPipe,
+            IPipeAppender<TOutContext> endPipeAppender) : this(pipeCode, startPipe, endPipeAppender, null)
         {
         }
 
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode,BaseInPipePart<TInContext> startPipe, IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(pipeCode,PipeType.Pipeline)
+        public Pipeline(string pipeCode, BaseInPipePart<TInContext> startPipe,
+            IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(pipeCode, PipeType.Pipeline)
         {
-            if (startPipe == null || endPipeAppender == null||string.IsNullOrEmpty(pipeCode))
+            if (startPipe == null || endPipeAppender == null || string.IsNullOrEmpty(pipeCode))
             {
                 throw new ArgumentNullException("未发现流体的起始截止管道和管道编码！");
             }
@@ -61,29 +63,25 @@ namespace OSS.Pipeline
             _startPipe = startPipe;
             _endPipe   = endPipeAppender;
 
-            InitialPipes();
+            //InitialPipes();
 
-            if (option?.Watcher!=null)
+            if (option?.Watcher != null)
             {
-                WatchProxy = new PipeWatcherProxy(option.Watcher,option.WatcherDataFlowKey,option.WatcherDataFlowOption);
+                WatchProxy = new PipeWatcherProxy(option.Watcher, option.WatcherDataFlowKey,
+                    option.WatcherDataFlowOption);
             }
-           
+
             startPipe.InterInitialContainer(this);
         }
 
-        /// <summary>
-        ///  初始化节点连接
-        /// </summary>
-        protected virtual void InitialPipes()
-        {
-        }
 
-        #region 管道启动
+
+        #region 管道业务启动
 
         /// <inheritdoc />
         public Task Execute(TInContext context)
         {
-            return InterPreCall(context,string.Empty);
+            return InterPreCall(context, string.Empty);
         }
 
         #endregion
@@ -93,11 +91,12 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         internal override Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode)
         {
-           return _startPipe.InterPreCall(context,prePipeCode);
+            return _startPipe.InterPreCall(context, prePipeCode);
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<TOutContext, TOutContext>> InterProcessPackage(TInContext context, string prePipeCode)
+        internal override Task<TrafficResult<TOutContext, TOutContext>> InterProcessPackage(TInContext context,
+            string prePipeCode)
         {
             throw new Exception("不应该执行到此方法!");
         }
@@ -105,26 +104,27 @@ namespace OSS.Pipeline
         #endregion
 
         #region 管道连接处理
-        
+
         /// <summary>
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
         internal override void InterAppend(IPipeInPart<TOutContext> nextPipe)
         {
-            base.InterAppend(nextPipe);
-            _endPipe.InterAppend(nextPipe);
+            base.InterAppend(nextPipe);     // 保证路由初始化，本身next节点不会被执行
+            _endPipe.InterAppend(nextPipe); // 保证业务执行
         }
+
         internal override void InterAppend(IPipeInPart<Empty> nextPipe)
         {
-            base.InterAppend(nextPipe);
-            _endPipe.InterAppend(nextPipe);
+            base.InterAppend(nextPipe);     // 保证路由初始化，本身next节点不会被执行
+            _endPipe.InterAppend(nextPipe); // 保证业务执行
         }
 
         #endregion
 
         #region 路由处理
-        
+
         private PipeRoute _route;
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace OSS.Pipeline
                 pipe_code = PipeCode, pipe_type = PipeType, flow_sub_pipe = _startPipe.InterToRoute(false)
             };
 
-            if (isFlowSelf || NextPipe == null|| Equals(LineContainer.EndPipe))
+            if (isFlowSelf || NextPipe == null || Equals(LineContainer.EndPipe))
             {
                 return pipe;
             }
@@ -151,7 +151,7 @@ namespace OSS.Pipeline
             pipe.next = NextPipe.InterToRoute();
             return pipe;
         }
-        
+
         #endregion
 
         #region 监控对象处理
@@ -161,7 +161,6 @@ namespace OSS.Pipeline
             return WatchProxy;
         }
 
-     
         #endregion
 
     }
