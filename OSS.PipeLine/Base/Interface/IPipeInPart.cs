@@ -23,7 +23,7 @@ namespace OSS.Pipeline.Interface
         ///  内部处理流的路由信息
         /// </summary>
         /// <returns></returns>
-        internal void InterInitialLink(string prePipeCode,bool isSelf);
+        internal void InterFormatLink(string prePipeCode,bool isSelf);
 
         /// <summary>
         ///  内部处理流容器初始化赋值

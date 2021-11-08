@@ -71,7 +71,7 @@ namespace OSS.Pipeline
             _startPipe = startPipe;
             _endPipe   = endPipeAppender;
 
-            //InitialPipes();
+            InitialPipes();
 
             if (option?.Watcher != null)
             {
@@ -82,9 +82,18 @@ namespace OSS.Pipeline
             startPipe.InterInitialContainer(this);
         }
 
+        /// <summary>
+        /// 初始化节点关系
+        /// （构造函数中会调用
+        /// </summary>
+        protected virtual void InitialPipes()
+        {
+            
+        }
+
 
         #endregion
-        
+
         #region 管道的业务处理
 
 
@@ -153,20 +162,20 @@ namespace OSS.Pipeline
         {
             if (_linkDics==null)
             {
-                InterInitialLink(string.Empty,true);
+                InterFormatLink(string.Empty,true);
             }
             return _linkDics.Select(x=>x.Value).ToList();
         }
 
-        internal override void InterInitialLink(string prePipeCode, bool isSelf = false)
+        internal override void InterFormatLink(string prePipeCode, bool isSelf = false)
         {
             if (isSelf)
             {
-                _startPipe.InterInitialLink(string.Empty);
+                _startPipe.InterFormatLink(string.Empty);
             }
             else
             {
-                base.InterInitialLink(prePipeCode);
+                base.InterFormatLink(prePipeCode);
             }
         }
 

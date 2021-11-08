@@ -25,7 +25,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
         ///  内部处理流的路由信息
         /// </summary>
         /// <returns></returns>
-        internal abstract void InterInitialLink(string prePipeCode, bool isSelf );
+        internal abstract void InterFormatLink(string prePipeCode, bool isSelf );
     }
 
     internal  class BranchNodeWrap<TContext>: IBranchWrap
@@ -54,9 +54,9 @@ namespace OSS.Pipeline.Gateway.InterImpls
             _pipePart.InterInitialContainer(containerFlow);
         }
 
-        void IBranchWrap.InterInitialLink(string prePipeCode, bool isSelf )
+        void IBranchWrap.InterFormatLink(string prePipeCode, bool isSelf )
         { 
-            _pipePart.InterInitialLink(prePipeCode,isSelf);
+            _pipePart.InterFormatLink(prePipeCode,isSelf);
         }
     }
 
@@ -84,9 +84,9 @@ namespace OSS.Pipeline.Gateway.InterImpls
             _pipePart.InterInitialContainer(containerFlow);
         }
 
-        void IBranchWrap.InterInitialLink(string prePipeCode, bool isSelf)
+        void IBranchWrap.InterFormatLink(string prePipeCode, bool isSelf)
         {
-            _pipePart.InterInitialLink(prePipeCode, isSelf);
+            _pipePart.InterFormatLink(prePipeCode, isSelf);
         }
     }
 }

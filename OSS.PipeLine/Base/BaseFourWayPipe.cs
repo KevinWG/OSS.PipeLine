@@ -147,7 +147,7 @@ namespace OSS.Pipeline.Base
         #region 管道路由
 
 
-        internal override void InterInitialLink(string prePipeCode, bool isSelf = false)
+        internal override void InterFormatLink(string prePipeCode, bool isSelf = false)
         {
             if (!string.IsNullOrEmpty(prePipeCode))
             {
@@ -168,7 +168,7 @@ namespace OSS.Pipeline.Base
             if (NextPipe == null || Equals(LineContainer.EndPipe))
                 return ;
 
-            NextPipe.InterInitialLink(prePipeCode,false);
+            NextPipe.InterFormatLink(PipeCode,false);
         }
 
 

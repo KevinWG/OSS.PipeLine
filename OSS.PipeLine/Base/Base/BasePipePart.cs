@@ -98,11 +98,11 @@ namespace OSS.Pipeline.Base
         ///  内部处理流的路由信息
         /// </summary>
         /// <returns></returns>
-        internal abstract void InterInitialLink(string prePipeCode, bool isSelf = false);
+        internal abstract void InterFormatLink(string prePipeCode, bool isSelf = false);
 
-        void IPipeInitiator.InterInitialLink(string prePipeCode, bool isSelf)
+        void IPipeInitiator.InterFormatLink(string prePipeCode, bool isSelf)
         {
-            InterInitialLink(prePipeCode, isSelf);
+            InterFormatLink(prePipeCode, isSelf);
         }
 
         #endregion

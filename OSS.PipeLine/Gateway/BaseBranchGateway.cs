@@ -153,10 +153,10 @@ namespace OSS.Pipeline
 
         #region 内部路由处理
 
-        internal override void InterInitialLink(string prePipeCode, bool isSelf = false)
+        internal override void InterFormatLink(string prePipeCode, bool isSelf = false)
         {
-            base.InterInitialLink(prePipeCode, isSelf);
-            _branchItems.ForEach(b => b.InterInitialLink(prePipeCode, isSelf));
+            base.InterFormatLink(prePipeCode, isSelf);
+            _branchItems.ForEach(b => b.InterFormatLink(prePipeCode, isSelf));
         }
 
         #endregion
