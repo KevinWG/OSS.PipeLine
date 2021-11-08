@@ -12,6 +12,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
@@ -133,31 +135,50 @@ namespace OSS.Pipeline
 
         #region Pipeline 路由 管理
 
-        private PipeRoute _route;
+        private Dictionary<string ,PipeLink> _linkDics;
+        Dictionary<string, PipeLink> IPipeLine.GetLinkDics()
+        {
+            if (_linkDics==null)
+            {
+                _linkDics = new Dictionary<string, PipeLink>();
+            }
+            return _linkDics;
+        }
 
         /// <summary>
         ///  生成路径
         /// </summary>
         /// <returns></returns>
-        public PipeRoute ToRoute()
+        public List<PipeLink> ToRoute()
         {
-            return _route ??= InterToRoute(true);
+            if (_linkDics==null)
+            {
+                InterInitialLink(string.Empty,true);
+            }
+            return _linkDics.Select(x=>x.Value).ToList();
         }
 
-        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
+        internal override void InterInitialLink(string prePipeCode, bool isSelf = false)
         {
-            var pipe = new PipeRoute
+            if (isSelf)
             {
-                pipe_code = PipeCode, pipe_type = PipeType, flow_sub_pipe = _startPipe.InterToRoute(false)
-            };
-
-            if (isFlowSelf || NextPipe == null || Equals(LineContainer.EndPipe))
-            {
-                return pipe;
+                _startPipe.InterInitialLink(string.Empty);
             }
+            else
+            {
+                base.InterInitialLink(prePipeCode);
+            }
+        }
 
-            pipe.next = NextPipe.InterToRoute();
-            return pipe;
+        #endregion
+
+        #region 管道初始化
+
+        /// <inheritdoc />
+        internal override void InterInitialContainer(IPipeLine flowContainer)
+        {
+            base.InterInitialContainer(flowContainer);
+            _startPipe.InterInitialContainer(this);
         }
 
         #endregion

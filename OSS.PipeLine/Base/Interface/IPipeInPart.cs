@@ -17,13 +17,13 @@ using System.Threading.Tasks;
 namespace OSS.Pipeline.Interface
 {
 
-    internal interface IPipeRoute : IPipeMeta
+    internal interface IPipeInitiator : IPipeMeta
     {
         /// <summary>
         ///  内部处理流的路由信息
         /// </summary>
         /// <returns></returns>
-        internal PipeRoute InterToRoute(bool isFlowSelf = false);
+        internal void InterInitialLink(string prePipeCode,bool isSelf);
 
         /// <summary>
         ///  内部处理流容器初始化赋值
@@ -36,7 +36,7 @@ namespace OSS.Pipeline.Interface
     ///   管道入口
     /// </summary>
     /// <typeparam name="TInContext"></typeparam>
-    internal interface IPipeInPart<in TInContext> : IPipeRoute
+    internal interface IPipeInPart<in TInContext> : IPipeInitiator
     {
         /// <summary>
         ///  内部管道 -- 唤起

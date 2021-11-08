@@ -1,4 +1,5 @@
-﻿using OSS.Pipeline.InterImpls.Watcher;
+﻿using System.Collections.Generic;
+using OSS.Pipeline.InterImpls.Watcher;
 
 namespace OSS.Pipeline.Interface
 {
@@ -21,13 +22,14 @@ namespace OSS.Pipeline.Interface
         ///   获取路由
         /// </summary>
         /// <returns></returns>
-        PipeRoute ToRoute();
-        
-        /// <summary>
-        /// 获取内部监控代理器
-        /// </summary>
-        /// <returns></returns>
+        List<PipeLink> ToRoute();
+
+        // 获取内部监控代理器
         internal PipeWatcherProxy GetWatchProxy();
+
+        // 获取内部路由字典
+        internal Dictionary<string, PipeLink> GetLinkDics();
+
     }
 
     /// <summary>

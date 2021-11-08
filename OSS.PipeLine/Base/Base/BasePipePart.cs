@@ -20,7 +20,7 @@ namespace OSS.Pipeline.Base
     /// <summary>
     /// 管道组成基类
     /// </summary>
-    public abstract class BasePipePart : IPipeRoute
+    public abstract class BasePipePart : IPipeInitiator
     {
         /// <summary>
         /// 构造函数
@@ -30,7 +30,7 @@ namespace OSS.Pipeline.Base
         protected BasePipePart(string pipeCode, PipeType pipeType)
         {
             PipeType = pipeType;
-            PipeCode = string.IsNullOrEmpty(pipeCode)? GetType().Name:pipeCode;
+            PipeCode = string.IsNullOrEmpty(pipeCode) ? GetType().Name : pipeCode;
         }
 
         /// <summary>
@@ -43,18 +43,18 @@ namespace OSS.Pipeline.Base
         ///  默认等于  this.GetType().Name
         /// </summary>
         public string PipeCode { get; set; }
-        
+
         /// <summary>
         ///  流容器
         /// </summary>
         protected IPipeLine LineContainer { get; set; }
-        
+
 
 
         #region 管道监控
 
         internal PipeWatcherProxy WatchProxy { get; set; }
-        
+
         internal Task Watch(string pipeCode, PipeType pipeType, WatchActionType actionType, object para,
             WatchResult res)
         {
@@ -81,14 +81,15 @@ namespace OSS.Pipeline.Base
 
         #endregion
 
-        #region 内部初始化和路由方法
+        #region 内部初始化(容器和路由)
 
         /// <summary>
         ///  内部处理流容器初始化赋值
         /// </summary>
         /// <param name="containerFlow"></param>
         internal abstract void InterInitialContainer(IPipeLine containerFlow);
-        void IPipeRoute.InterInitialContainer(IPipeLine containerFlow)
+
+        void IPipeInitiator.InterInitialContainer(IPipeLine containerFlow)
         {
             InterInitialContainer(containerFlow);
         }
@@ -97,12 +98,13 @@ namespace OSS.Pipeline.Base
         ///  内部处理流的路由信息
         /// </summary>
         /// <returns></returns>
-        internal abstract PipeRoute InterToRoute(bool isFlowSelf);
-        PipeRoute IPipeRoute.InterToRoute(bool isFlowSelf)
+        internal abstract void InterInitialLink(string prePipeCode, bool isSelf = false);
+
+        void IPipeInitiator.InterInitialLink(string prePipeCode, bool isSelf)
         {
-            return InterToRoute(isFlowSelf);
+            InterInitialLink(prePipeCode, isSelf);
         }
-        
+
         #endregion
     }
 
@@ -148,11 +150,6 @@ namespace OSS.Pipeline.Base
             InterAppendTo(prePipe);
         }
         #endregion
-
-
-     
-
-     
     }
 
 

@@ -65,7 +65,10 @@ namespace OSS.Pipeline
         {
             IList<IBranchWrap> nextPipes;
             if (_branchItems == null || !_branchItems.Any()
-                || !(nextPipes = _branchItems.Where(bw => FilterBranchCondition(context, bw.Pipe, prePipeCode)).ToList()).Any())
+                                     || !(nextPipes = _branchItems
+                                             .Where(bw => FilterBranchCondition(context, bw.Pipe, prePipeCode))
+                                             .ToList())
+                                         .Any())
             {
                 return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,
                     context);
@@ -150,25 +153,10 @@ namespace OSS.Pipeline
 
         #region 内部路由处理
 
-        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
+        internal override void InterInitialLink(string prePipeCode, bool isSelf = false)
         {
-            var pipe = new PipeRoute()
-            {
-                pipe_code = PipeCode,
-                pipe_type = PipeType
-            };
-
-            if (Equals(LineContainer.EndPipe))
-            {
-                return pipe;
-            }
-
-            if (_branchItems.Any())
-            {
-                pipe.nexts = _branchItems.Select(bp => bp.InterToRoute(isFlowSelf)).ToList();
-            }
-
-            return pipe;
+            base.InterInitialLink(prePipeCode, isSelf);
+            _branchItems.ForEach(b => b.InterInitialLink(prePipeCode, isSelf));
         }
 
         #endregion

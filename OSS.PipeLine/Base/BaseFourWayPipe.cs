@@ -64,7 +64,7 @@ namespace OSS.Pipeline.Base
         
         #region 管道连接处理
         
-        internal IPipeRoute NextPipe { get; set; }
+        internal IPipeInitiator NextPipe { get; set; }
         internal virtual Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
         {
             if (NextPipe != null)
@@ -147,19 +147,28 @@ namespace OSS.Pipeline.Base
         #region 管道路由
 
 
-        internal override PipeRoute InterToRoute(bool isFlowSelf = false)
+        internal override void InterInitialLink(string prePipeCode, bool isSelf = false)
         {
-            var pipe = new PipeRoute()
+            if (!string.IsNullOrEmpty(prePipeCode))
             {
-                pipe_code = PipeCode,
-                pipe_type = PipeType
-            };
+                var links   = LineContainer.GetLinkDics();
+                var linkKey = string.Concat(prePipeCode, "_", PipeCode);
 
+                if (links.ContainsKey(linkKey))
+                {
+                    return;
+                }
+                links.Add(linkKey,new PipeLink()
+                {
+                    pre_pipe_code = prePipeCode,
+                    pipe_code = PipeCode
+                });
+            }
+           
             if (NextPipe == null || Equals(LineContainer.EndPipe))
-                return pipe;
+                return ;
 
-            pipe.next = NextPipe.InterToRoute();
-            return pipe;
+            NextPipe.InterInitialLink(prePipeCode,false);
         }
 
 

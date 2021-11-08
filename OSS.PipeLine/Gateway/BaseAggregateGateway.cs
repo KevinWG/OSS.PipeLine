@@ -52,8 +52,7 @@ namespace OSS.Pipeline
         }
 
         private readonly List<IPipeMeta> _aggregatePipes;
-
-        private object _lockObj = new object();
+        private readonly object          _lockObj = new object();
 
         /// <inheritdoc />
         internal override void InterAppendTo(IPipeMeta prePipe)
