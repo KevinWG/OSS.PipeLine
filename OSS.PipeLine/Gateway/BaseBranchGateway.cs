@@ -51,7 +51,7 @@ namespace OSS.Pipeline
         /// <param name="branch">等待过滤的分支</param>
         /// <param name="prePipeCode">当前网关分支的上游管道编码</param>
         /// <returns> True-执行当前分支， False-不执行当前分支 </returns>
-        protected virtual bool FilterBranchCondition(TContext branchContext, IPipeMeta branch, string prePipeCode)
+        protected virtual bool FilterBranchCondition(TContext branchContext, IPipeMeta branch)
         {
             return true;
         }
@@ -60,13 +60,12 @@ namespace OSS.Pipeline
         #region 管道内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context,
-            string prePipeCode)
+        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context)
         {
             IList<IBranchWrap> nextPipes;
             if (_branchItems == null || !_branchItems.Any()
                                      || !(nextPipes = _branchItems
-                                             .Where(bw => FilterBranchCondition(context, bw.Pipe, prePipeCode))
+                                             .Where(bw => FilterBranchCondition(context, bw.Pipe))
                                              .ToList())
                                          .Any())
             {
@@ -74,7 +73,7 @@ namespace OSS.Pipeline
                     context);
             }
 
-            var parallelPipes = nextPipes.Select(p => p.InterPreCall(context, PipeCode));
+            var parallelPipes = nextPipes.Select(p => p.InterPreCall(context));
 
             var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
                 ? new TrafficResult<TContext, TContext>(SignalFlag.Green_Pass, string.Empty, string.Empty, context,
@@ -98,13 +97,11 @@ namespace OSS.Pipeline
         internal override void InterAppend(IPipeInPart<TContext> nextPipe)
         {
             Add(nextPipe);
-            nextPipe.InterAppendTo(this);
         }
 
         internal override void InterAppend(IPipeInPart<Empty> nextPipe)
         {
             Add(nextPipe);
-            nextPipe.InterAppendTo(this);
         }
 
         private List<IBranchWrap> _branchItems;

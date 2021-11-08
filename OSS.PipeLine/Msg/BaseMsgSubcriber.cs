@@ -62,10 +62,10 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<bool> Subscribe(TMsg data)
         {
-            return (await InterProcess(data,string.Empty)).signal==SignalFlag.Green_Pass;
+            return (await InterProcess(data)).signal==SignalFlag.Green_Pass;
         }
 
-        internal override Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
+        internal override Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context)
         {
             return Task.FromResult(new TrafficResult<Empty, TMsg>(TrafficSignal.GreenSignal, string.Empty,
                 Empty.Default, context));

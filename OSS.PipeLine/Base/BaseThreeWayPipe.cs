@@ -42,7 +42,7 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         public async Task<THandleResult> Execute(TInContext para)
         {
-            return (await InterProcess(para, string.Empty)).result;
+            return (await InterProcess(para)).result;
         }
         
         #endregion
@@ -51,9 +51,9 @@ namespace OSS.Pipeline.Base
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode)
+        internal override async Task<TrafficResult> InterPreCall(TInContext context)
         {
-            var tRes = await InterProcess(context,prePipeCode);
+            var tRes = await InterProcess(context);
             return tRes.ToResult();
         }
 

@@ -41,13 +41,13 @@ namespace OSS.PipeLine.Base.Base.InterImpls
 
     internal readonly struct RetryEventMsg<TPara>
     {
-        public RetryEventMsg(TPara para,string prePipeCode)
+        public RetryEventMsg(TPara para)
         {
-            pre_pipe_code = prePipeCode;
+            //pre_pipe_code = prePipeCode;
             this.para          = para;
         }
 
-        public string pre_pipe_code { get; }
+        //public string pre_pipe_code { get; }
 
         public TPara para { get;  }
     }

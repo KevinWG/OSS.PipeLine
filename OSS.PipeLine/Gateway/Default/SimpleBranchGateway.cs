@@ -23,23 +23,23 @@ namespace OSS.PipeLine.Gateway.Default
     /// <typeparam name="TContext"></typeparam>
     public class SimpleBranchGateway<TContext> : BaseBranchGateway<TContext>
     {
-        private readonly Func<TContext, IPipeMeta, string, bool> _conditionFilter;
+        private readonly Func<TContext, IPipeMeta,  bool> _conditionFilter;
 
         /// <summary>
         /// 简单分支
         /// </summary>
         /// <param name="pipeCode"></param>
         /// <param name="branchConditionfilter"></param>
-        public SimpleBranchGateway(Func<TContext, IPipeMeta, string, bool> branchConditionfilter = null,string pipeCode = null) :
+        public SimpleBranchGateway(Func<TContext, IPipeMeta,  bool> branchConditionfilter = null,string pipeCode = null) :
             base(pipeCode)
         {
             _conditionFilter = branchConditionfilter;
         }
         
         /// <inheritdoc />
-        protected override bool FilterBranchCondition(TContext branchContext, IPipeMeta branch, string prePipeCode)
+        protected override bool FilterBranchCondition(TContext branchContext, IPipeMeta branch)
         {
-            return _conditionFilter?.Invoke(branchContext, branch, prePipeCode) ?? true;
+            return _conditionFilter?.Invoke(branchContext, branch) ?? true;
         }
     }
 }

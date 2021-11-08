@@ -7,7 +7,7 @@ namespace OSS.Pipeline.Tests
     {
 
         private static readonly ApplyActivity _startNode = new ApplyActivity();
-        private static readonly EndGateway    _endNode   = new EndGateway();
+        private static readonly EmptyActivity  _endNode   = new EmptyActivity();
         
         public ApplyActivity ApplyActivity
         {

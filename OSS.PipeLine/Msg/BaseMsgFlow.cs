@@ -62,7 +62,7 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(TMsg context,string prePipeCode)
+        internal override async Task<TrafficResult> InterPreCall(TMsg context)
         {
             var pushRes = await _pusher.Publish(PipeCode,context);
             return pushRes
@@ -71,7 +71,7 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
+        internal override Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context)
         {
             return Task.FromResult(new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty,
                 Empty.Default, context));
@@ -86,7 +86,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public async Task<bool> Subscribe(TMsg data)
         {
-            return (await InterProcess(data,string.Empty)).signal==SignalFlag.Green_Pass;
+            return (await InterProcess(data)).signal==SignalFlag.Green_Pass;
         }
     }
 

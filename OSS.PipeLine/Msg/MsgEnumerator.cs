@@ -48,13 +48,13 @@ namespace OSS.Pipeline
         #region 管道内部业务处理
         
         /// <inheritdoc />
-        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessHandling(IEnumerable<TMsg> msgs, string prePipeCode)
+        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessHandling(IEnumerable<TMsg> msgs)
         {
             var filterMsgs = FilterMsgs(msgs);
             if (filterMsgs==null)
                 throw new ArgumentNullException(nameof(msgs), "消息枚举器列表数据不能为空!");
             
-            var trafficRes = await InterWatchProcessPackage(filterMsgs, prePipeCode);
+            var trafficRes = await InterWatchProcessPackage(filterMsgs);
 
             switch (trafficRes.signal)
             {
@@ -70,7 +70,7 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(IEnumerable<TMsg> msgs, string prePipeCode)
+        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(IEnumerable<TMsg> msgs)
         {
             var parallelTasks = msgs.Select(ToNextThrough);
 

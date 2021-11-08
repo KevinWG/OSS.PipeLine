@@ -39,7 +39,7 @@ namespace OSS.Pipeline
         protected abstract TOutMsg Convert(TInMsg inContextData);
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<TOutMsg, TOutMsg>> InterProcessPackage(TInMsg context, string prePipeCode)
+        internal override Task<TrafficResult<TOutMsg, TOutMsg>> InterProcessPackage(TInMsg context)
         {
             var outContext = Convert(context);
             return Task.FromResult(new TrafficResult<TOutMsg, TOutMsg>(SignalFlag.Green_Pass, string.Empty,

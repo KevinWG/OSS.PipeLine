@@ -44,12 +44,7 @@ namespace OSS.Pipeline.Interface
         /// <param name="context"></param>
         /// <param name="prePipeCode"></param>
         /// <returns></returns>
-        internal  Task<TrafficResult> InterWatchPreCall(TInContext context, string prePipeCode);
+        internal Task<TrafficResult> InterWatchPreCall(TInContext context);
 
-        /// <summary>
-        /// 被连接到时执行
-        /// </summary>
-        /// <param name="prePipe">被追加的上级管道</param>
-        internal void InterAppendTo(IPipeMeta prePipe);
     }
 }

@@ -66,7 +66,7 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<THandleResult, THandleResult>> InterProcessPackage(Empty context, string prePipeCode)
+        internal override async Task<TrafficResult<THandleResult, THandleResult>> InterProcessPackage(Empty context)
         {
             var trafficRes = await Executing();
             return new TrafficResult<THandleResult, THandleResult>(trafficRes,
@@ -95,7 +95,7 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<THandleResult, THandleResult>> InterProcessPackage(TContext context, string prePipeCode)
+        internal override async Task<TrafficResult<THandleResult, THandleResult>> InterProcessPackage(TContext context)
         {
             var trafficRes = await Executing(context);
             return new TrafficResult<THandleResult, THandleResult>(trafficRes,

@@ -127,29 +127,16 @@ namespace OSS.Pipeline.Base
         /// <param name="context"></param>
         /// <param name="prePipeCode"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode);
+        internal abstract Task<TrafficResult> InterPreCall(TInContext context);
 
-        async Task<TrafficResult> IPipeInPart<TInContext>.InterWatchPreCall(TInContext context, string prePipeCode)
+        async Task<TrafficResult> IPipeInPart<TInContext>.InterWatchPreCall(TInContext context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.PreCall, context).ConfigureAwait(false);
-            return await InterPreCall(context, prePipeCode);
+            return await InterPreCall(context);
         }
         #endregion
 
-        #region 管道连接
-
-        /// <summary>
-        /// 被连接到时执行
-        /// </summary>
-        /// <param name="prePipe">被追加的上级管道</param>
-        internal virtual void InterAppendTo(IPipeMeta prePipe)
-        {
-        }
-        void IPipeInPart<TInContext>.InterAppendTo(IPipeMeta prePipe)
-        {
-            InterAppendTo(prePipe);
-        }
-        #endregion
+ 
     }
 
 

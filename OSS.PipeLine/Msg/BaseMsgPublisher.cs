@@ -62,7 +62,7 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context, string prePipeCode)
+        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context)
         {
             var msgKey = GeneratePushKey(context);
             if (string.IsNullOrEmpty(msgKey))

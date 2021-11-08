@@ -25,10 +25,15 @@ namespace OSS.Pipeline
     /// <summary>
     ///  空组件(多用于开始结尾)
     /// </summary>
-    public class EmptyActivity : EmptyActivity<Empty>
+    public class EmptyActivity : BaseActivity
     {
         public EmptyActivity(string pipeCode = null) : base(pipeCode)
         {
+        }
+        private static readonly Task<TrafficSignal> _result = Task.FromResult(TrafficSignal.GreenSignal);
+        protected override Task<TrafficSignal> Executing()
+        {
+            return _result;
         }
     }
 

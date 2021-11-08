@@ -33,7 +33,7 @@ namespace OSS.Pipeline
         {
         }
         
-        internal override async Task<TrafficResult<TPassiveResult, TPassiveResult>> InterProcessPackage(TPassivePara context, string prePipeCode)
+        internal override async Task<TrafficResult<TPassiveResult, TPassiveResult>> InterProcessPackage(TPassivePara context)
         {
             var tSignal = await Executing(context);
             return new TrafficResult<TPassiveResult, TPassiveResult>(tSignal,

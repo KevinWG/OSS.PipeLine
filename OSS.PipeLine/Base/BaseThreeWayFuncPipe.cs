@@ -42,16 +42,16 @@ namespace OSS.Pipeline.Base
         /// <returns></returns>
         public async Task<THandleResult> Execute(THandlePara para)
         {
-            var trafficRes = await InterProcess(para, string.Empty);
+            var trafficRes = await InterProcess(para);
             return trafficRes.result;
         }
         
         #region 内部的业务处理
 
         /// <inheritdoc />
-        internal override  Task<TrafficResult> InterPreCall(Empty context, string prePipeCode)
+        internal override  Task<TrafficResult> InterPreCall(Empty context)
         {
-            return Task.FromResult( new TrafficResult(SignalFlag.Green_Pass,String.Empty, String.Empty));
+            return Task.FromResult(new TrafficResult(SignalFlag.Green_Pass, string.Empty, string.Empty));
         }
         
         #endregion

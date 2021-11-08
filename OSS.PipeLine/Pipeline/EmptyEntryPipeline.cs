@@ -27,7 +27,7 @@ namespace OSS.Pipeline
         /// <returns></returns>
         public Task Execute()
         {
-            return InterPreCall(Empty.Default, string.Empty);
+            return InterPreCall(Empty.Default);
         }
 
         #endregion

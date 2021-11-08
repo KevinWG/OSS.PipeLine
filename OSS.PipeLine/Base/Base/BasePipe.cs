@@ -46,7 +46,7 @@ namespace OSS.Pipeline.Base.Base
         }
         private Task<TrafficResult<THandleResult, TOutContext>> InterRetryProcessHandling(RetryEventMsg<THandlePara> eMsg)
         {
-            return InterProcessHandling(eMsg.para, eMsg.pre_pipe_code);
+            return InterProcessHandling(eMsg.para);
         }
 
         #endregion
@@ -59,13 +59,13 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="context"></param>
         /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
-        internal Task<TrafficResult<THandleResult,TOutContext>> InterProcess(THandlePara context,string prePipeCode)
+        internal Task<TrafficResult<THandleResult,TOutContext>> InterProcess(THandlePara context)
         {
             if (_retryProcessor!=null)
             {
-                return _retryProcessor.Process(new RetryEventMsg<THandlePara>(context, prePipeCode));
+                return _retryProcessor.Process(new RetryEventMsg<THandlePara>(context));
             }
-            return InterProcessHandling(context,prePipeCode);
+            return InterProcessHandling(context);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="context"></param>
         /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode);
+        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context);
 
         /// <summary>
         ///  内部管道 -- （3）执行 - 组装业务处理结果
@@ -82,16 +82,15 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="context"></param>
         /// <param name="prePipeCode">上游节点PipeCode</param>
         /// <returns></returns>
-        internal async Task<TrafficResult<THandleResult, TOutContext>> InterWatchProcessPackage(THandlePara context,
-            string prePipeCode)
+        internal async Task<TrafficResult<THandleResult, TOutContext>> InterWatchProcessPackage(THandlePara context)
         {
-            var trafficRes = await InterProcessPackage(context, prePipeCode);
+            var trafficRes = await InterProcessPackage(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult()).ConfigureAwait(false);
 
             return trafficRes;
         }
 
-        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context, string prePipeCode);
+        internal abstract Task<TrafficResult<THandleResult, TOutContext>> InterProcessPackage(THandlePara context);
 
         /// <summary>
         ///  管道堵塞  --  (4) 执行 - 阻塞实现

@@ -102,20 +102,19 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         public Task Execute(TInContext context)
         {
-            return InterPreCall(context, string.Empty);
+            return InterPreCall(context);
         }
 
         #endregion
 
         /// <inheritdoc />
-        internal override Task<TrafficResult> InterPreCall(TInContext context, string prePipeCode)
+        internal override Task<TrafficResult> InterPreCall(TInContext context)
         {
-            return _startPipe.InterPreCall(context, prePipeCode);
+            return _startPipe.InterPreCall(context);
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<TOutContext, TOutContext>> InterProcessPackage(TInContext context,
-            string prePipeCode)
+        internal override Task<TrafficResult<TOutContext, TOutContext>> InterProcessPackage(TInContext context)
         {
             throw new Exception("不应该执行到此方法!");
         }

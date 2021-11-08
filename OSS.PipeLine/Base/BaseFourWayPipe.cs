@@ -42,9 +42,9 @@ namespace OSS.Pipeline.Base
         #region 管道内部业务流转处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context, string prePipeCode)
+        internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context)
         {
-            var trafficRes = await InterWatchProcessPackage(context,prePipeCode);
+            var trafficRes = await InterWatchProcessPackage(context);
 
             switch (trafficRes.signal)
             {
@@ -71,11 +71,11 @@ namespace OSS.Pipeline.Base
             {
                 if (_nextPipe != null)
                 {
-                    return _nextPipe.InterWatchPreCall(nextInContext,PipeCode);
+                    return _nextPipe.InterWatchPreCall(nextInContext);
                 }
                 else
                 {
-                    return _nextEmptyPipe.InterWatchPreCall(Empty.Default,PipeCode);
+                    return _nextEmptyPipe.InterWatchPreCall(Empty.Default);
                 }
             }
             // 说明已经是最后一个管道
@@ -99,7 +99,6 @@ namespace OSS.Pipeline.Base
         void IPipeAppender<TOutContext>.InterAppend(IPipeInPart<TOutContext> nextPipe)
         {
             InterAppend(nextPipe);
-            nextPipe.InterAppendTo(this);
         }
 
 
@@ -119,7 +118,6 @@ namespace OSS.Pipeline.Base
         void IPipeAppender.InterAppend(IPipeInPart<Empty> nextPipe)
         {
             InterAppend(nextPipe);
-            nextPipe.InterAppendTo(this);
         }
 
         #endregion
