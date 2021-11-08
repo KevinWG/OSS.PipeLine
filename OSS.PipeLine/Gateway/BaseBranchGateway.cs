@@ -63,22 +63,22 @@ namespace OSS.Pipeline
         internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context)
         {
             IList<IBranchWrap> nextPipes;
-            if (_branchItems == null || !_branchItems.Any()
-                                     || !(nextPipes = _branchItems
-                                             .Where(bw => FilterBranchCondition(context, bw.Pipe))
-                                             .ToList())
-                                         .Any())
+            if (_branchItems == null
+                || !_branchItems.Any()
+                || !(nextPipes = _branchItems
+                        .Where(bw => FilterBranchCondition(context, bw.Pipe))
+                        .ToList())
+                    .Any())
             {
-                return new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "未能找到可执行的后续节点!", context,
+                return new TrafficResult<TContext, TContext>(SignalFlag.Yellow_Wait, PipeCode, "未能找到可执行的后续节点!", context,
                     context);
             }
 
             var parallelPipes = nextPipes.Select(p => p.InterPreCall(context));
 
-            var res = (await Task.WhenAll(parallelPipes)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficResult<TContext, TContext>(SignalFlag.Green_Pass, string.Empty, string.Empty, context,
-                    context)
-                : new TrafficResult<TContext, TContext>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", context, context);
+            var res = (await Task.WhenAll(parallelPipes)).All(r => r.signal == SignalFlag.Green_Pass)
+                ? new TrafficResult<TContext, TContext>(SignalFlag.Green_Pass, string.Empty, string.Empty, context, context)
+                : new TrafficResult<TContext, TContext>(SignalFlag.Yellow_Wait, PipeCode, "分支子节点并未全部成功！", context, context);
 
             return res;
         }
