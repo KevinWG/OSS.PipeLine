@@ -34,7 +34,7 @@ namespace OSS.Pipeline
         protected BaseMsgPublisher(string defaultPushMsgKey, DataPublisherOption option = null) : base(defaultPushMsgKey,
             PipeType.MsgPublisher)
         {
-            _pusher = RegisterPublisher(option);
+            _pusher = CreatePublisher(option);
         }
 
         #region 扩展
@@ -56,7 +56,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="option"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher RegisterPublisher(DataPublisherOption option);
+        protected abstract IDataPublisher CreatePublisher(DataPublisherOption option);
 
         #endregion
 

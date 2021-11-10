@@ -25,22 +25,15 @@ namespace OSS.Pipeline
         /// 消息订阅者
         /// </summary>
         /// <param name="pipeCode"></param>
-        public SimpleMsgSubscriber(string pipeCode) : this(pipeCode, null)
+        public SimpleMsgSubscriber(string pipeCode) : base(pipeCode)
         {
         }
-        /// <summary>
-        /// 消息订阅者
-        /// </summary>
-        /// <param name="pipeCode"></param>
-        /// <param name="option"></param>
-        public SimpleMsgSubscriber(string pipeCode, DataFlowOption option) : base(pipeCode, option)
-        {
-        }
+   
 
         /// <inheritdoc />
-        protected override void ReceiveSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscriber, DataFlowOption option)
+        protected override void RegisterSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscriber)
         {
-            DataFlowFactory.RegisterSubscriber(pipeDataKey, subscriber, option);
+            DataFlowFactory.RegisterSubscriber(pipeDataKey, subscriber);
         }
     }
 }

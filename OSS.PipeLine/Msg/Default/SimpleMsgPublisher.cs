@@ -55,9 +55,9 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        protected override IDataPublisher RegisterPublisher(DataPublisherOption option)
+        protected override IDataPublisher CreatePublisher(DataPublisherOption option)
         {
-            return DataFlowFactory.RegisterPublisher<TMsg>(option);
+            return DataFlowFactory.CreatePublisher<TMsg>(option);
         }
     }
 }
