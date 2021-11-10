@@ -67,7 +67,7 @@ namespace OSS.Pipeline
     /// <summary>
     ///  流动结果（附带其他结果）
     /// </summary>
-    public readonly struct TrafficResult<THandleResult, TOut>
+    public readonly struct TrafficResult<TRes, TOut>
     {
         /// <summary>
         /// 流动结果
@@ -76,7 +76,7 @@ namespace OSS.Pipeline
         /// <param name="nextParas"></param>
         /// <param name="blockedPipeCode"></param>
         /// <param name="res"></param>
-        public TrafficResult(TrafficSignal trafficSignal, string blockedPipeCode, THandleResult res, TOut nextParas)
+        public TrafficResult(TrafficSignal trafficSignal, string blockedPipeCode, TRes res, TOut nextParas)
             : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, res, nextParas)
         {
         }
@@ -86,7 +86,7 @@ namespace OSS.Pipeline
         /// <param name="trafficSignal"></param>
         /// <param name="nextParas"></param>
         /// <param name="blockedPipeCode"></param>
-        public TrafficResult(TrafficSignal<THandleResult> trafficSignal, string blockedPipeCode, TOut nextParas)
+        public TrafficResult(TrafficSignal<TRes> trafficSignal, string blockedPipeCode, TOut nextParas)
             : this(trafficSignal.signal, blockedPipeCode, trafficSignal.msg, trafficSignal.result, nextParas)
         {
         }
@@ -99,7 +99,7 @@ namespace OSS.Pipeline
         /// <param name="executeResult"></param>
         /// <param name="blockedPipeCode"></param>
         /// <param name="msg"></param>
-        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, THandleResult executeResult, TOut nextParas)
+        public TrafficResult(SignalFlag signal, string blockedPipeCode, string msg, TRes executeResult, TOut nextParas)
         {
             output_paras        = nextParas;
             blocked_pipe_code = blockedPipeCode;
@@ -133,7 +133,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///  活动执行方法结果
         /// </summary>
-        public THandleResult result { get; }
+        public TRes result { get; }
     }
 
     public static class TrafficResultMap

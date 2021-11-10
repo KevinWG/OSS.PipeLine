@@ -21,7 +21,7 @@ namespace OSS.Pipeline.Activity.Base
     ///  被动触发执行活动组件基类
     ///      传入TPassivePara类型参数，且此参数作为后续上下文传递给下一个节点，自身返回处理结果但无影响
     /// </summary>
-    public abstract class BaseThreeWayPassiveActivity<THandlePara, THandleResult, TOut> : BaseThreeWayPassivePipe<THandlePara, THandleResult, TOut>
+    public abstract class BaseThreeWayPassiveActivity<TPara, TRes, TOut> : BaseThreeWayPassivePipe<TPara, TRes, TOut>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -44,7 +44,7 @@ namespace OSS.Pipeline.Activity.Base
         ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<TrafficSignal<THandleResult>> Executing(THandlePara para);
+        protected abstract Task<TrafficSignal<TRes>> Executing(TPara para);
 
         #endregion
 

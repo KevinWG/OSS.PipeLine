@@ -22,9 +22,9 @@ namespace OSS.Pipeline
     ///      传入TPassivePara类型参数，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TPassivePara"></typeparam>
-    /// <typeparam name="TPassiveResult"></typeparam>
-    public abstract class BasePassiveEffectActivity<TPassivePara, TPassiveResult> :
-        BaseThreeWayPassiveActivity<TPassivePara, TPassiveResult, TPassiveResult>, IPassiveEffectActivity<TPassivePara, TPassiveResult>
+    /// <typeparam name="TPassiveRes"></typeparam>
+    public abstract class BasePassiveEffectActivity<TPassivePara, TPassiveRes> :
+        BaseThreeWayPassiveActivity<TPassivePara, TPassiveRes, TPassiveRes>, IPassiveEffectActivity<TPassivePara, TPassiveRes>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -33,10 +33,10 @@ namespace OSS.Pipeline
         {
         }
         
-        internal override async Task<TrafficResult<TPassiveResult, TPassiveResult>> InterProcessPackage(TPassivePara context)
+        internal override async Task<TrafficResult<TPassiveRes, TPassiveRes>> InterProcessPackage(TPassivePara context)
         {
             var tSignal = await Executing(context);
-            return new TrafficResult<TPassiveResult, TPassiveResult>(tSignal,
+            return new TrafficResult<TPassiveRes, TPassiveRes>(tSignal,
                 tSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, tSignal.result);
         }
     }

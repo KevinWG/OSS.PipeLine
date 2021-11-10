@@ -35,8 +35,8 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     ///   管道入口
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    internal interface IPipeInPart<in TInContext> : IPipeInitiator
+    /// <typeparam name="TIn"></typeparam>
+    internal interface IPipeInPart<in TIn> : IPipeInitiator
     {
         /// <summary>
         ///  内部管道 -- 唤起
@@ -44,7 +44,7 @@ namespace OSS.Pipeline.Interface
         /// <param name="context"></param>
         /// <param name="prePipeCode"></param>
         /// <returns></returns>
-        internal Task<TrafficResult> InterWatchPreCall(TInContext context);
+        internal Task<TrafficResult> InterWatchPreCall(TIn context);
 
     }
 }

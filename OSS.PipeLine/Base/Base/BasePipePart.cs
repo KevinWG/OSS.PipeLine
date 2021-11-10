@@ -111,8 +111,8 @@ namespace OSS.Pipeline.Base
     /// <summary>
     /// 管道进口基类
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    public abstract class BaseInPipePart<TInContext> : BasePipePart , IPipeInPart<TInContext>
+    /// <typeparam name="TIn"></typeparam>
+    public abstract class BaseInPipePart<TIn> : BasePipePart , IPipeInPart<TIn>
     {
         /// <inheritdoc />
         protected BaseInPipePart(string pipeCode, PipeType pipeType) : base(pipeCode, pipeType)
@@ -127,9 +127,9 @@ namespace OSS.Pipeline.Base
         /// <param name="context"></param>
         /// <param name="prePipeCode"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult> InterPreCall(TInContext context);
+        internal abstract Task<TrafficResult> InterPreCall(TIn context);
 
-        async Task<TrafficResult> IPipeInPart<TInContext>.InterWatchPreCall(TInContext context)
+        async Task<TrafficResult> IPipeInPart<TIn>.InterWatchPreCall(TIn context)
         {
             await Watch(PipeCode, PipeType, WatchActionType.PreCall, context).ConfigureAwait(false);
             return await InterPreCall(context);

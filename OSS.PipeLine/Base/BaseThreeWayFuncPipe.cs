@@ -23,10 +23,10 @@ namespace OSS.Pipeline.Base
     ///   输出：被动结果输出， 下游上下文参数输出
     /// </summary>
     /// <typeparam name="TOut"></typeparam>
-    /// <typeparam name="THandlePara"></typeparam>
-    /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseThreeWayPassivePipe<THandlePara,THandleResult, TOut> :
-       BaseFourWayPipe<Empty, THandlePara, THandleResult, TOut>,IPipeExecutor<THandlePara, THandleResult>
+    /// <typeparam name="TPara"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
+    public abstract class BaseThreeWayPassivePipe<TPara,TRes, TOut> :
+       BaseFourWayPipe<Empty, TPara, TRes, TOut>,IPipeExecutor<TPara, TRes>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -40,7 +40,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        public async Task<THandleResult> Execute(THandlePara para)
+        public async Task<TRes> Execute(TPara para)
         {
             var trafficRes = await InterProcess(para);
             return trafficRes.result;

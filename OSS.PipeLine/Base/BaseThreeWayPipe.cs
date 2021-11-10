@@ -22,11 +22,11 @@ namespace OSS.Pipeline.Base
     ///   输入：上游传递的上下文
     ///   输出：主动结果输出， 下游上下文参数输出
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
-    /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseThreeWayPipe<TInContext, THandleResult, TOutContext> : BaseFourWayPipe<TInContext, TInContext, THandleResult, TOutContext>,
-        IPipeExecutor<TInContext, THandleResult>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
+    public abstract class BaseThreeWayPipe<TIn, TRes, TOut> : BaseFourWayPipe<TIn, TIn, TRes, TOut>,
+        IPipeExecutor<TIn, TRes>
     {
         /// <inheritdoc />
         protected BaseThreeWayPipe(string pipeCode, PipeType pipeType) : base(pipeCode, pipeType)
@@ -40,7 +40,7 @@ namespace OSS.Pipeline.Base
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        public async Task<THandleResult> Execute(TInContext para)
+        public async Task<TRes> Execute(TIn para)
         {
             return (await InterProcess(para)).result;
         }
@@ -51,7 +51,7 @@ namespace OSS.Pipeline.Base
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(TInContext context)
+        internal override async Task<TrafficResult> InterPreCall(TIn context)
         {
             var tRes = await InterProcess(context);
             return tRes.ToResult();

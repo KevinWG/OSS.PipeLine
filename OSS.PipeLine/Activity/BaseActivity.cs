@@ -125,9 +125,9 @@ namespace OSS.Pipeline
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
     /// <typeparam name="TContext">输入输出上下文</typeparam>
-    /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseActivity<TContext, THandleResult> : BaseThreeWayActivity<TContext, THandleResult, TContext>
-        , IActivity<TContext, THandleResult>
+    /// <typeparam name="TRes"></typeparam>
+    public abstract class BaseActivity<TContext, TRes> : BaseThreeWayActivity<TContext, TRes, TContext>
+        , IActivity<TContext, TRes>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -140,10 +140,10 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<THandleResult, TContext>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficResult<TRes, TContext>> InterProcessPackage(TContext context)
         {
             var trafficRes = await Executing(context);
-            return new TrafficResult<THandleResult, TContext>(trafficRes,
+            return new TrafficResult<TRes, TContext>(trafficRes,
                 trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context);
         }
 

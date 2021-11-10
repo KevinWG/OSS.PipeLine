@@ -8,10 +8,10 @@ namespace OSS.Pipeline.Activity.Base
     ///   输入：上游传递的上下文
     ///   输出：主动结果输出， 下游上下文参数输出
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
-    /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseThreeWayActivity<TInContext, THandleResult, TOutContext> : BaseThreeWayPipe<TInContext,  THandleResult, TOutContext>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
+    public abstract class BaseThreeWayActivity<TIn, TRes, TOut> : BaseThreeWayPipe<TIn,  TRes, TOut>
     {
         /// <inheritdoc />
         protected BaseThreeWayActivity(string pipeCode,PipeType pipeType) : base(pipeCode,pipeType)
@@ -31,7 +31,7 @@ namespace OSS.Pipeline.Activity.Base
         ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
         ///     Red_Block - 触发Block，业务流不再向后续管道传递。
         /// </returns>
-        protected abstract Task<TrafficSignal<THandleResult>> Executing(TInContext para);
+        protected abstract Task<TrafficSignal<TRes>> Executing(TIn para);
 
         #endregion
     }

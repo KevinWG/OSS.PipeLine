@@ -22,13 +22,13 @@ namespace OSS.Pipeline.Base
     /// <summary>
     ///  管道基类 (双入双出类型)
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
-    /// <typeparam name="THandlePara"></typeparam>
-    /// <typeparam name="THandleResult"></typeparam>
-    public abstract class BaseFourWayPipe<TInContext, THandlePara,THandleResult, TOutContext>
-        : BasePipe<TInContext, THandlePara, THandleResult, TOutContext>,
-        IPipeAppender<TOutContext>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    /// <typeparam name="TPara"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
+    public abstract class BaseFourWayPipe<TIn, TPara,TRes, TOut>
+        : BasePipe<TIn, TPara, TRes, TOut>,
+        IPipeAppender<TOut>
     {
         /// <summary>
         ///  构造函数
@@ -42,7 +42,7 @@ namespace OSS.Pipeline.Base
         #region 管道内部业务流转处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<THandleResult, TOutContext>> InterProcessHandling(THandlePara context)
+        internal override async Task<TrafficResult<TRes, TOut>> InterProcessHandling(TPara context)
         {
             var trafficRes = await InterWatchProcessPackage(context);
 
@@ -51,7 +51,7 @@ namespace OSS.Pipeline.Base
                 case SignalFlag.Green_Pass:
                 {
                     var nextTrafficRes = await ToNextThrough(trafficRes.output_paras);
-                    return new TrafficResult<THandleResult, TOutContext>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output_paras);
+                    return new TrafficResult<TRes, TOut>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output_paras);
                 }
                 case SignalFlag.Red_Block:
                     await InterWatchBlock(context, trafficRes);
@@ -65,7 +65,7 @@ namespace OSS.Pipeline.Base
         #region 管道连接处理
         
         internal IPipeInitiator NextPipe { get; set; }
-        internal virtual Task<TrafficResult> ToNextThrough(TOutContext nextInContext)
+        internal virtual Task<TrafficResult> ToNextThrough(TOut nextInContext)
         {
             if (NextPipe != null)
             {
@@ -87,7 +87,7 @@ namespace OSS.Pipeline.Base
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal virtual void InterAppend(IPipeInPart<TOutContext> nextPipe)
+        internal virtual void InterAppend(IPipeInPart<TOut> nextPipe)
         {
             if (NextPipe != null)
             {
@@ -95,8 +95,8 @@ namespace OSS.Pipeline.Base
             }
             NextPipe = _nextPipe = nextPipe;
         }
-        private IPipeInPart<TOutContext> _nextPipe { get; set; }
-        void IPipeAppender<TOutContext>.InterAppend(IPipeInPart<TOutContext> nextPipe)
+        private IPipeInPart<TOut> _nextPipe { get; set; }
+        void IPipeAppender<TOut>.InterAppend(IPipeInPart<TOut> nextPipe)
         {
             InterAppend(nextPipe);
         }

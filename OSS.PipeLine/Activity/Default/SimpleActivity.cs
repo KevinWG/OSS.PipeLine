@@ -77,13 +77,13 @@ namespace OSS.Pipeline
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
     /// <typeparam name="TContext">输入输出上下文</typeparam>
-    /// <typeparam name="THandleResult"></typeparam>
-    public class SimpleActivity<TContext, THandleResult> : BaseActivity<TContext, THandleResult>
+    /// <typeparam name="TRes"></typeparam>
+    public class SimpleActivity<TContext, TRes> : BaseActivity<TContext, TRes>
     {
-        private readonly Func<TContext, Task<TrafficSignal<THandleResult>>> _exeFunc;
+        private readonly Func<TContext, Task<TrafficSignal<TRes>>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleActivity(string pipeCode,Func<TContext, Task<TrafficSignal<THandleResult>>> exeFunc):base(pipeCode)
+        public SimpleActivity(string pipeCode,Func<TContext, Task<TrafficSignal<TRes>>> exeFunc):base(pipeCode)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -93,7 +93,7 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        protected override Task<TrafficSignal<THandleResult>> Executing(TContext para)
+        protected override Task<TrafficSignal<TRes>> Executing(TContext para)
         {
             return _exeFunc(para);
         }

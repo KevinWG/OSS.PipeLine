@@ -17,22 +17,22 @@ namespace OSS.Pipeline.InterImpls.Msg
     /// <summary>
     ///  内部转化连接器的实现
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
-    internal class InterMsgConvertor<TInContext, TOutContext> : BaseMsgConverter<TInContext, TOutContext>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    internal class InterMsgConvertor<TIn, TOut> : BaseMsgConverter<TIn, TOut>
     {
-        private readonly Func<TInContext, TOutContext> _convert;
+        private readonly Func<TIn, TOut> _convert;
 
         
 
         /// <inheritdoc/>
-        public InterMsgConvertor( string pipeCode,Func<TInContext, TOutContext> convertFunc):base(pipeCode)
+        public InterMsgConvertor( string pipeCode,Func<TIn, TOut> convertFunc):base(pipeCode)
         {
             _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc), "转换方法必须传入！");
         }
 
         /// <inheritdoc/>
-        protected override TOutContext Convert(TInContext inContextData)
+        protected override TOut Convert(TIn inContextData)
         {
             return _convert(inContextData);
         }

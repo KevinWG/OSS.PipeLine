@@ -99,7 +99,7 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加活动管道
         /// </summary>
-        /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TNextRes"></typeparam>
         /// <typeparam name="TOut"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="exeFunc">
@@ -112,11 +112,11 @@ namespace OSS.Pipeline
         /// </param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleEffectActivity<TNextResult> AppendEffectActivity<TOut, TNextResult>(
+        public static SimpleEffectActivity<TNextRes> AppendEffectActivity<TOut, TNextRes>(
             this IPipeAppender<TOut> pipe, 
-            Func<Task<TrafficSignal<TNextResult>>> exeFunc, string pipeCode = null)
+            Func<Task<TrafficSignal<TNextRes>>> exeFunc, string pipeCode = null)
         {
-            var nextPipe = new SimpleEffectActivity<TNextResult>(pipeCode,exeFunc);
+            var nextPipe = new SimpleEffectActivity<TNextRes>(pipeCode,exeFunc);
             pipe.InterAppend(nextPipe);
             return nextPipe;
         }

@@ -24,15 +24,15 @@ namespace OSS.Pipeline
     /// <summary>
     /// 基础流体
     /// </summary>
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="TOutContext"></typeparam>
-    public class Pipeline<TInContext, TOutContext> :
-        BaseFourWayPipe<TInContext, TInContext, TOutContext, TOutContext>, IPipeLine<TInContext, TOutContext>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    public class Pipeline<TIn, TOut> :
+        BaseFourWayPipe<TIn, TIn, TOut, TOut>, IPipeLine<TIn, TOut>
     {
         #region 首尾节点定义
 
-        private readonly BaseInPipePart<TInContext> _startPipe;
-        private readonly IPipeAppender<TOutContext> _endPipe;
+        private readonly BaseInPipePart<TIn> _startPipe;
+        private readonly IPipeAppender<TOut> _endPipe;
 
         /// <summary>
         ///  开始管道
@@ -51,16 +51,16 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode, BaseInPipePart<TInContext> startPipe,
-            IPipeAppender<TOutContext> endPipeAppender) : this(pipeCode, startPipe, endPipeAppender, null)
+        public Pipeline(string pipeCode, BaseInPipePart<TIn> startPipe,
+            IPipeAppender<TOut> endPipeAppender) : this(pipeCode, startPipe, endPipeAppender, null)
         {
         }
 
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode, BaseInPipePart<TInContext> startPipe,
-            IPipeAppender<TOutContext> endPipeAppender, PipeLineOption option) : base(pipeCode, PipeType.Pipeline)
+        public Pipeline(string pipeCode, BaseInPipePart<TIn> startPipe,
+            IPipeAppender<TOut> endPipeAppender, PipeLineOption option) : base(pipeCode, PipeType.Pipeline)
         {
             if (startPipe == null || endPipeAppender == null || string.IsNullOrEmpty(pipeCode))
             {
@@ -100,7 +100,7 @@ namespace OSS.Pipeline
         #region 管道业务启动
 
         /// <inheritdoc />
-        public Task Execute(TInContext context)
+        public Task Execute(TIn context)
         {
             return InterPreCall(context);
         }
@@ -108,13 +108,13 @@ namespace OSS.Pipeline
         #endregion
 
         /// <inheritdoc />
-        internal override Task<TrafficResult> InterPreCall(TInContext context)
+        internal override Task<TrafficResult> InterPreCall(TIn context)
         {
             return _startPipe.InterPreCall(context);
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<TOutContext, TOutContext>> InterProcessPackage(TInContext context)
+        internal override Task<TrafficResult<TOut, TOut>> InterProcessPackage(TIn context)
         {
             throw new Exception("不应该执行到此方法!");
         }
@@ -127,7 +127,7 @@ namespace OSS.Pipeline
         ///  链接流体内部尾部管道和流体外下一截管道
         /// </summary>
         /// <param name="nextPipe"></param>
-        internal override void InterAppend(IPipeInPart<TOutContext> nextPipe)
+        internal override void InterAppend(IPipeInPart<TOut> nextPipe)
         {
             base.InterAppend(nextPipe);     // 保证路由初始化，本身next节点不会被执行
             _endPipe.InterAppend(nextPipe); // 保证业务执行

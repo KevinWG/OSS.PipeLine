@@ -16,10 +16,10 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     ///  管道链接器
     /// </summary>
-    /// <typeparam name="TOutContext"></typeparam>
-    public interface IPipeAppender<out TOutContext> : IPipeAppender
+    /// <typeparam name="TOut"></typeparam>
+    public interface IPipeAppender<out TOut> : IPipeAppender
     {
-        internal void InterAppend(IPipeInPart<TOutContext> nextPipe);
+        internal void InterAppend(IPipeInPart<TOut> nextPipe);
     }
 
     /// <summary>

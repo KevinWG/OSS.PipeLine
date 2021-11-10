@@ -17,14 +17,14 @@ namespace OSS.Pipeline.Interface
 {
 
     /// <typeparam name="TPassivePara"></typeparam>
-    /// <typeparam name="TPassiveResult"></typeparam>
-    public interface IPassiveActivity<TPassivePara, TPassiveResult> : IPipeAppender<TPassivePara>,IPipeExecutor<TPassivePara, TPassiveResult>
+    /// <typeparam name="TPassiveRes"></typeparam>
+    public interface IPassiveActivity<TPassivePara, TPassiveRes> : IPipeAppender<TPassivePara>,IPipeExecutor<TPassivePara, TPassiveRes>
     {
     }
 
     /// <typeparam name="TPassivePara"></typeparam>
-    /// <typeparam name="TPassiveResult"></typeparam>
-    public interface IPassiveEffectActivity<in TPassivePara, TPassiveResult> : IPipeAppender<TPassiveResult>, IPipeExecutor<TPassivePara, TPassiveResult>
+    /// <typeparam name="TPassiveRes"></typeparam>
+    public interface IPassiveEffectActivity<in TPassivePara, TPassiveRes> : IPipeAppender<TPassiveRes>, IPipeExecutor<TPassivePara, TPassiveRes>
     {
     }
 }

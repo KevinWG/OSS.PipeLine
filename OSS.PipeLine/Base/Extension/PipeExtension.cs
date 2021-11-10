@@ -11,6 +11,7 @@
 
 #endregion
 
+using OSS.DataFlow.Event;
 using OSS.Pipeline.Base;
 using OSS.Pipeline.Interface;
 
@@ -24,16 +25,16 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加普通管道
         /// </summary>
-        /// <typeparam name="TOutContext"></typeparam>
-        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <typeparam name="TNextOut"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
-        /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TNextRes"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseFourWayPipe<TOutContext, TNextPara, TNextResult, TNextOutContext> Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(
-            this IPipeAppender<TOutContext> pipe, 
-            BaseFourWayPipe<TOutContext, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static BaseFourWayPipe<TOut, TNextPara, TNextRes, TNextOut> Append<TOut, TNextPara, TNextRes, TNextOut>(
+            this IPipeAppender<TOut> pipe, 
+            BaseFourWayPipe<TOut, TNextPara, TNextRes, TNextOut> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -42,14 +43,14 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加普通管道
         /// </summary>
-        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TNextOut"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
-        /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TNextRes"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> Append<TNextPara, TNextResult, TNextOutContext>(this IPipeAppender pipe,
-            BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOutContext> nextPipe)
+        public static BaseFourWayPipe<Empty, TNextPara, TNextRes, TNextOut> Append<TNextPara, TNextRes, TNextOut>(this IPipeAppender pipe,
+            BaseFourWayPipe<Empty, TNextPara, TNextRes, TNextOut> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -59,17 +60,37 @@ namespace OSS.Pipeline
         /// <summary>
         ///  追加发布消息管道
         /// </summary>
-        /// <typeparam name="TOutContext"></typeparam>
-        /// <typeparam name="TNextOutContext"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <typeparam name="TNextOut"></typeparam>
         /// <typeparam name="TNextPara"></typeparam>
-        /// <typeparam name="TNextResult"></typeparam>
+        /// <typeparam name="TNextRes"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static void Append<TOutContext, TNextPara, TNextResult, TNextOutContext>(this IPipeAppender<TOutContext> pipe, 
-            BaseMsgPublisher<TOutContext> nextPipe)
+        public static void Append<TOut, TNextPara, TNextRes, TNextOut>(this IPipeAppender<TOut> pipe, 
+            BaseMsgPublisher<TOut> nextPipe)
         {
             pipe.InterAppend(nextPipe);
         }
+
+
+        /// <summary>
+        /// 绑定异常错误重试
+        /// </summary>
+        /// <typeparam name="TIn"></typeparam>
+        /// <typeparam name="TPara"></typeparam>
+        /// <typeparam name="TResult"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
+        /// <param name="pipe"></param>
+        /// <param name="option"></param>
+        /// <returns></returns>
+        public static BaseFourWayPipe<TIn, TPara, TResult, TOut> ErrorRetry<TIn, TPara, TResult, TOut>(this BaseFourWayPipe<TIn, TPara, TResult, TOut> pipe,FlowEventOption option)
+        {
+            pipe.SetErrorRetry(option);
+            return pipe;
+        }
+
+
+
     }
 }

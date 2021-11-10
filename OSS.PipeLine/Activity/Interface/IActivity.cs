@@ -32,9 +32,9 @@ namespace OSS.Pipeline.Interface
     }
 
 
-    /// <typeparam name="TInContext"></typeparam>
-    /// <typeparam name="THandleResult"></typeparam>
-    public interface IActivity<TInContext, THandleResult> : IPipeAppender<TInContext>, IPipeExecutor<TInContext, THandleResult>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
+    public interface IActivity<TIn, TRes> : IPipeAppender<TIn>, IPipeExecutor<TIn, TRes>
     {
     }
     
@@ -44,14 +44,14 @@ namespace OSS.Pipeline.Interface
 
 
 
-    /// <typeparam name="THandleResult"></typeparam>
-    public interface IEffectActivity<THandleResult> : IPipeAppender<THandleResult>, IPipeOutputExecutor<THandleResult>
+    /// <typeparam name="TRes"></typeparam>
+    public interface IEffectActivity<TRes> : IPipeAppender<TRes>, IPipeOutputExecutor<TRes>
     {
     }
 
-    /// <typeparam name="THandleResult"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
     /// <typeparam name="TContext"></typeparam>
-    public interface IEffectActivity<in TContext,THandleResult> : IPipeAppender<THandleResult>, IPipeExecutor<TContext,THandleResult>
+    public interface IEffectActivity<in TContext,TRes> : IPipeAppender<TRes>, IPipeExecutor<TContext,TRes>
     {
     }
     

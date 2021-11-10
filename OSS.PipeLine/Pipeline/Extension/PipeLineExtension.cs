@@ -28,12 +28,12 @@ namespace OSS.Pipeline
         ///// <typeparam name="TOut"></typeparam>
         ///// <typeparam name="TNextPara"></typeparam>
         ///// <typeparam name="TNextOut"></typeparam>
-        ///// <typeparam name="TNextResult"></typeparam>
+        ///// <typeparam name="TNextRes"></typeparam>
         ///// <param name="pipe"></param>
         ///// <param name="nextPipe"></param>
         ///// <returns></returns>
-        //public static IPipelineConnector<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
-        //    BaseFourWayPipe<TOut, TNextPara, TNextResult, TNextOut> nextPipe)
+        //public static IPipelineConnector<TIn, TNextOut> Then<TIn,  TOut,TNextPara, TNextRes, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
+        //    BaseFourWayPipe<TOut, TNextPara, TNextRes, TNextOut> nextPipe)
         //{
         //    return pipe.Set(nextPipe);
         //}
@@ -45,12 +45,12 @@ namespace OSS.Pipeline
         ///// <typeparam name="TOut"></typeparam>
         ///// <typeparam name="TNextPara"></typeparam>
         ///// <typeparam name="TNextOut"></typeparam>
-        ///// <typeparam name="TNextResult"></typeparam>
+        ///// <typeparam name="TNextRes"></typeparam>
         ///// <param name="pipe"></param>
         ///// <param name="nextPipe"></param>
         ///// <returns></returns>
-        //public static IPipelineConnector<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextResult, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
-        //    BaseFourWayPipe<Empty, TNextPara, TNextResult, TNextOut> nextPipe)
+        //public static IPipelineConnector<TIn, TNextOut> Then<TIn, TOut, TNextPara, TNextRes, TNextOut>(this IPipelineConnector<TIn, TOut> pipe,
+        //    BaseFourWayPipe<Empty, TNextPara, TNextRes, TNextOut> nextPipe)
         //{
         //    return pipe.Set(nextPipe);
         //}
