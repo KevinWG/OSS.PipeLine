@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Description>事件流管理引擎框架，处理事件中的数据传递和协作，可用于搭建 BPMN 标准的流程业务管理</Description>
-    <Version>2.1.1.1</Version>
+    <Version>2.2</Version>
     <PackageReleaseNotes></PackageReleaseNotes>
     <LangVersion>latest</LangVersion>
     <PackageProjectUrl>https://github.com/KevinWG/OSS.Pipeline</PackageProjectUrl>
