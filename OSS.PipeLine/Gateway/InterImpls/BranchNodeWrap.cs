@@ -8,7 +8,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
     /// </summary>
     public interface IBranchWrap //: IPipe
     {
-        internal Task<TrafficResult> InterPreCall(object context);
+        internal Task<TrafficSignal> InterPreCall(object context);
 
         /// <summary>
         ///  管道基础信息
@@ -44,7 +44,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
             _pipePart = pipePart;
         }
 
-        Task<TrafficResult> IBranchWrap.InterPreCall(object context)
+        Task<TrafficSignal> IBranchWrap.InterPreCall(object context)
         {
             return _pipePart.InterWatchPreCall((TContext) context);
         }
@@ -74,7 +74,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
             _pipePart = pipePart;
         }
 
-        Task<TrafficResult> IBranchWrap.InterPreCall(object context)
+        Task<TrafficSignal> IBranchWrap.InterPreCall(object context)
         {
             return _pipePart.InterWatchPreCall(Empty.Default);
         }

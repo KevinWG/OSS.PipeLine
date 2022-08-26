@@ -62,17 +62,16 @@ namespace OSS.Pipeline
 
         #region 管道业务处理
 
-        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context)
+        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessPackage(TMsg context)
         {
             var msgKey = GeneratePushKey(context);
             if (string.IsNullOrEmpty(msgKey))
             {
-                return new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default,
-                    context);
+                return new TrafficSignal<Empty, TMsg>(Empty.Default, context);
             }
             return (await _pusher.Publish(msgKey, context))
-                ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, context)
-                : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block, PipeCode, $"{this.GetType().Name}发布消息失败!", Empty.Default, context);
+                ? new TrafficSignal<Empty, TMsg>( Empty.Default, context)
+                : new TrafficSignal<Empty, TMsg>(SignalFlag.Red_Block, Empty.Default, context, $"{this.GetType().Name}发布消息失败!");
         }
 
         #endregion

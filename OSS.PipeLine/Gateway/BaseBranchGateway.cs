@@ -60,7 +60,7 @@ namespace OSS.Pipeline
         #region 管道内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficSignal<TContext, TContext>> InterProcessPackage(TContext context)
         {
             IList<IBranchWrap> nextPipes;
             if (_branchItems == null
@@ -70,15 +70,15 @@ namespace OSS.Pipeline
                         .ToList())
                     .Any())
             {
-                return new TrafficResult<TContext, TContext>(SignalFlag.Yellow_Wait, PipeCode, "未能找到可执行的后续节点!", context,
-                    context);
+                return new TrafficSignal<TContext, TContext>(SignalFlag.Yellow_Wait, context,
+                    context, "未能找到可执行的后续节点!");
             }
 
             var parallelPipes = nextPipes.Select(p => p.InterPreCall(context));
 
             var res = (await Task.WhenAll(parallelPipes)).All(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficResult<TContext, TContext>(SignalFlag.Green_Pass, string.Empty, string.Empty, context, context)
-                : new TrafficResult<TContext, TContext>(SignalFlag.Yellow_Wait, PipeCode, "分支子节点并未全部成功！", context, context);
+                ? new TrafficSignal<TContext, TContext>(SignalFlag.Green_Pass, context, context)
+                : new TrafficSignal<TContext, TContext>(SignalFlag.Yellow_Wait, context, context, "分支子节点并未全部成功！");
 
             return res;
         }
@@ -89,9 +89,9 @@ namespace OSS.Pipeline
         #region 管道连接
 
         // 分支网关的下级处理由自己控制
-        internal override Task<TrafficResult> ToNextThrough(TContext nextInContext)
+        internal override Task<TrafficSignal> ToNextThrough(TContext nextInContext)
         {
-            return InterUtil.GreenTrafficResultTask;
+            return InterUtil.GreenTrafficSignalTask;
         }
 
         internal override void InterAppend(IPipeInPart<TContext> nextPipe)

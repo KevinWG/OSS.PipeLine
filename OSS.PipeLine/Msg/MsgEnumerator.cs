@@ -48,7 +48,7 @@ namespace OSS.Pipeline
         #region 管道内部业务处理
         
         /// <inheritdoc />
-        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessHandling(IEnumerable<TMsg> msgs)
+        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessHandling(IEnumerable<TMsg> msgs)
         {
             var filterMsgs = FilterMsgs(msgs);
             if (filterMsgs==null)
@@ -58,10 +58,6 @@ namespace OSS.Pipeline
 
             switch (trafficRes.signal)
             {
-                case SignalFlag.Green_Pass:
-                {
-                    return new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, trafficRes.result, trafficRes.output);
-                }
                 case SignalFlag.Red_Block:
                     await InterWatchBlock(filterMsgs, trafficRes);
                     break;
@@ -70,13 +66,13 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<Empty, TMsg>> InterProcessPackage(IEnumerable<TMsg> msgs)
+        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessPackage(IEnumerable<TMsg> msgs)
         {
             var parallelTasks = msgs.Select(ToNextThrough);
 
             return (await Task.WhenAll(parallelTasks)).Any(r => r.signal == SignalFlag.Green_Pass)
-                ? new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, Empty.Default, default)
-                : new TrafficResult<Empty, TMsg>(SignalFlag.Red_Block, PipeCode, "所有分支运行失败！", Empty.Default, default);
+                ? new TrafficSignal<Empty, TMsg>(SignalFlag.Green_Pass,   Empty.Default, default)
+                : new TrafficSignal<Empty, TMsg>(SignalFlag.Red_Block,  Empty.Default, default ,"所有分支运行失败！");
         }
 
 

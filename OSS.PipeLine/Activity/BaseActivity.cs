@@ -58,11 +58,10 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<Empty, Empty>> InterProcessPackage(Empty context)
+        internal override async Task<TrafficSignal<Empty, Empty>> InterProcessPackage(Empty context)
         {
             var trafficRes = await Executing();
-            return new TrafficResult<Empty, Empty>(trafficRes,
-                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
+            return new TrafficSignal<Empty, Empty>(trafficRes.signal, context, context);
         }
 
         #endregion
@@ -108,11 +107,10 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TContext, TContext>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficSignal<TContext, TContext>> InterProcessPackage(TContext context)
         {
             var trafficRes = await Executing(context);
-            return new TrafficResult<TContext, TContext>(trafficRes,
-                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context, context);
+            return new TrafficSignal<TContext, TContext>(trafficRes.signal, context, context);
         }
 
    
@@ -139,11 +137,10 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TRes, TContext>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficSignal<TRes, TContext>> InterProcessPackage(TContext context)
         {
             var trafficRes = await Executing(context);
-            return new TrafficResult<TRes, TContext>(trafficRes,
-                trafficRes.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, context);
+            return new TrafficSignal<TRes, TContext>(trafficRes.signal,trafficRes.result, context,trafficRes.msg);
         }
 
         #endregion

@@ -38,13 +38,13 @@ namespace OSS.Pipeline.Base.Base
 
         #region 业务重试实现
 
-        private PipeRetryEventProcessor<TPara, TrafficResult<TRes, TOut>> _retryProcessor;
+        private PipeRetryEventProcessor<TPara, TrafficSignal<TRes, TOut>> _retryProcessor;
         internal void SetErrorRetry(FlowEventOption option)
         {
-            _retryProcessor = new PipeRetryEventProcessor<TPara, TrafficResult<TRes, TOut>>(
+            _retryProcessor = new PipeRetryEventProcessor<TPara, TrafficSignal<TRes, TOut>>(
                     InterRetryProcessHandling, option);
         }
-        private Task<TrafficResult<TRes, TOut>> InterRetryProcessHandling(RetryEventMsg<TPara> eMsg)
+        private Task<TrafficSignal<TRes, TOut>> InterRetryProcessHandling(RetryEventMsg<TPara> eMsg)
         {
             return InterProcessHandling(eMsg.para);
         }
@@ -58,7 +58,7 @@ namespace OSS.Pipeline.Base.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal Task<TrafficResult<TRes,TOut>> InterProcess(TPara context)
+        internal Task<TrafficSignal<TRes,TOut>> InterProcess(TPara context)
         {
             if (_retryProcessor!=null)
             {
@@ -72,14 +72,14 @@ namespace OSS.Pipeline.Base.Base
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal abstract Task<TrafficResult<TRes, TOut>> InterProcessHandling(TPara context);
+        internal abstract Task<TrafficSignal<TRes, TOut>> InterProcessHandling(TPara context);
 
         /// <summary>
         ///  内部管道 -- （3）执行 - 组装业务处理结果
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal async Task<TrafficResult<TRes, TOut>> InterWatchProcessPackage(TPara context)
+        internal async Task<TrafficSignal<TRes, TOut>> InterWatchProcessPackage(TPara context)
         {
             var trafficRes = await InterProcessPackage(context);
             await Watch(PipeCode, PipeType, WatchActionType.Executed, context, trafficRes.ToWatchResult()).ConfigureAwait(false);
@@ -87,7 +87,7 @@ namespace OSS.Pipeline.Base.Base
             return trafficRes;
         }
 
-        internal abstract Task<TrafficResult<TRes, TOut>> InterProcessPackage(TPara context);
+        internal abstract Task<TrafficSignal<TRes, TOut>> InterProcessPackage(TPara context);
 
         /// <summary>
         ///  管道堵塞  --  (4) 执行 - 阻塞实现
@@ -95,7 +95,7 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        internal async Task InterWatchBlock(TPara context, TrafficResult<TRes, TOut> tRes)
+        internal async Task InterWatchBlock(TPara context, TrafficSignal<TRes, TOut> tRes)
         {
             await Watch(PipeCode, PipeType, WatchActionType.Blocked, context, tRes.ToWatchResult())
                 .ConfigureAwait(false);
@@ -112,7 +112,7 @@ namespace OSS.Pipeline.Base.Base
         /// <param name="context"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
-        protected virtual Task Block(TPara context, TrafficResult<TRes, TOut> tRes)
+        protected virtual Task Block(TPara context, TrafficSignal<TRes, TOut> tRes)
         {
             return Task.CompletedTask;
         }

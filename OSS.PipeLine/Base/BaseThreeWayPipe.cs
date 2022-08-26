@@ -51,7 +51,7 @@ namespace OSS.Pipeline.Base
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(TIn context)
+        internal override async Task<TrafficSignal> InterPreCall(TIn context)
         {
             return await InterProcess(context);
         }

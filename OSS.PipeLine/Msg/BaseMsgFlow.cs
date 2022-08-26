@@ -62,19 +62,18 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult> InterPreCall(TMsg context)
+        internal override async Task<TrafficSignal> InterPreCall(TMsg context)
         {
             var pushRes = await _pusher.Publish(PipeCode,context);
             return pushRes
-                ? new TrafficResult(SignalFlag.Green_Pass, string.Empty, string.Empty)
-                : new TrafficResult(SignalFlag.Red_Block, PipeCode, $"({this.GetType().Name})推送消息失败!");
+                ? TrafficSignal.GreenSignal
+                : new TrafficSignal(SignalFlag.Red_Block, $"({this.GetType().Name})推送消息失败!");
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<Empty, TMsg>> InterProcessPackage(TMsg context)
+        internal override Task<TrafficSignal<Empty, TMsg>> InterProcessPackage(TMsg context)
         {
-            return Task.FromResult(new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty,
-                Empty.Default, context));
+            return Task.FromResult(new TrafficSignal<Empty, TMsg>(SignalFlag.Green_Pass, Empty.Default, context));
         }
         
         #endregion

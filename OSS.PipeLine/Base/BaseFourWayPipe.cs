@@ -42,7 +42,7 @@ namespace OSS.Pipeline.Base
         #region 管道内部业务流转处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficResult<TRes, TOut>> InterProcessHandling(TPara context)
+        internal override async Task<TrafficSignal<TRes, TOut>> InterProcessHandling(TPara context)
         {
             var trafficRes = await InterWatchProcessPackage(context);
 
@@ -50,13 +50,15 @@ namespace OSS.Pipeline.Base
             {
                 case SignalFlag.Green_Pass:
                 {
-                    var nextTrafficRes = await ToNextThrough(trafficRes.output);
-                    return new TrafficResult<TRes, TOut>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output);
+                    //  下一级执行
+                    await ToNextThrough(trafficRes.output);
+                    break;
                 }
                 case SignalFlag.Red_Block:
                     await InterWatchBlock(context, trafficRes);
                     break;
             }
+
             return trafficRes;
         }
 
@@ -65,7 +67,7 @@ namespace OSS.Pipeline.Base
         #region 管道连接处理
         
         internal IPipeInitiator NextPipe { get; set; }
-        internal virtual Task<TrafficResult> ToNextThrough(TOut nextInContext)
+        internal virtual Task<TrafficSignal> ToNextThrough(TOut nextInContext)
         {
             if (NextPipe != null)
             {
@@ -79,7 +81,7 @@ namespace OSS.Pipeline.Base
                 }
             }
             // 说明已经是最后一个管道
-            return  InterUtil.GreenTrafficResultTask; 
+            return  InterUtil.GreenTrafficSignalTask; 
         }
         
 

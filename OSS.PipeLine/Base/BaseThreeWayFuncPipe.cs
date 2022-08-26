@@ -14,6 +14,7 @@
 using OSS.Pipeline.Interface;
 using System;
 using System.Threading.Tasks;
+using OSS.Pipeline.InterImpls;
 
 namespace OSS.Pipeline.Base
 {
@@ -49,9 +50,9 @@ namespace OSS.Pipeline.Base
         #region 内部的业务处理
 
         /// <inheritdoc />
-        internal override  Task<TrafficResult> InterPreCall(Empty context)
+        internal override Task<TrafficSignal> InterPreCall(Empty context)
         {
-            return Task.FromResult(new TrafficResult(SignalFlag.Green_Pass, string.Empty, string.Empty));
+            return InterUtil.GreenTrafficSignalTask;
         }
         
         #endregion

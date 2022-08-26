@@ -43,7 +43,7 @@ namespace OSS.Pipeline.Interface
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        internal Task<TrafficResult> InterWatchPreCall(TIn context);
+        internal Task<TrafficSignal> InterWatchPreCall(TIn context);
 
     }
 }

@@ -32,11 +32,10 @@ namespace OSS.Pipeline
         {
         }
         
-        internal override async Task<TrafficResult<TPassiveRes, TPassiveRes>> InterProcessPackage(TPassivePara context)
+        internal override async Task<TrafficSignal<TPassiveRes, TPassiveRes>> InterProcessPackage(TPassivePara context)
         {
             var tSignal = await Executing(context);
-            return new TrafficResult<TPassiveRes, TPassiveRes>(tSignal,
-                tSignal.signal == SignalFlag.Red_Block ? PipeCode : string.Empty, tSignal.result);
+            return new TrafficSignal<TPassiveRes, TPassiveRes>(tSignal.signal,tSignal.result, tSignal.result, tSignal.msg);
         }
     }
 }

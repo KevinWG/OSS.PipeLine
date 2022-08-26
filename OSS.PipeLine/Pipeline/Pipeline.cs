@@ -108,13 +108,13 @@ namespace OSS.Pipeline
         #endregion
 
         /// <inheritdoc />
-        internal override Task<TrafficResult> InterPreCall(TIn context)
+        internal override Task<TrafficSignal> InterPreCall(TIn context)
         {
             return _startPipe.InterPreCall(context);
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficResult<TOut, TOut>> InterProcessPackage(TIn context)
+        internal override Task<TrafficSignal<TOut, TOut>> InterProcessPackage(TIn context)
         {
             throw new Exception("不应该执行到此方法!");
         }
