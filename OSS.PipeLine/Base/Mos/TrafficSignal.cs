@@ -29,10 +29,6 @@ namespace OSS.Pipeline
         {
         }
 
-        ///// <inheritdoc />
-        //public TrafficSignal(SignalFlag signalFlag, string trafficMsg) : this(signalFlag,default, trafficMsg)
-        //{
-        //}
 
         /// <summary>
         /// 流动信号

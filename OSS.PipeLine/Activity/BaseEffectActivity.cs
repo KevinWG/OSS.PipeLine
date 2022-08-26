@@ -14,7 +14,6 @@
 using System.Threading.Tasks;
 using OSS.Pipeline.Activity.Base;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
 {
@@ -23,7 +22,7 @@ namespace OSS.Pipeline
     ///       不接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
     /// <typeparam name="TRes"></typeparam>
-    public abstract class BaseEffectActivity<TRes> : BaseThreeWayPipe<Empty,TRes, TRes>, IEffectActivity<TRes>
+    public abstract class BaseEffectActivity<TRes> : BaseThreeWayPipe<Empty,TRes, TRes> //, IEffectActivity<TRes>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -31,7 +30,6 @@ namespace OSS.Pipeline
         protected BaseEffectActivity( string pipeCode = null) : base(pipeCode,PipeType.EffectActivity)
         {
         }
-
 
         #region 流体业务-启动
 
@@ -83,7 +81,7 @@ namespace OSS.Pipeline
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
     /// <typeparam name="TRes"></typeparam>
-    public abstract class BaseEffectActivity<TContext, TRes> : BaseThreeWayActivity<TContext,TRes, TRes>, IEffectActivity<TContext, TRes>
+    public abstract class BaseEffectActivity<TContext, TRes> : BaseThreeWayActivity<TContext,TRes, TRes>//, IEffectActivity<TContext, TRes>
     {
         /// <summary>
         /// 外部Action活动基类

@@ -11,17 +11,16 @@
 
 #endregion
 
-using System.Threading.Tasks;
 using OSS.Pipeline.Activity.Base;
 using OSS.Pipeline.Base;
-using OSS.Pipeline.Interface;
+using System.Threading.Tasks;
 
 namespace OSS.Pipeline
 {
     /// <summary>
     /// 主动触发执行活动组件基类(不接收上下文)
     /// </summary>
-    public abstract class BaseActivity : BaseThreeWayPipe<Empty,Empty, Empty>, IActivity
+    public abstract class BaseActivity : BaseThreeWayPipe<Empty,Empty, Empty> //, IActivity
     {
         /// <summary>
         /// 外部Action活动基类
@@ -74,7 +73,7 @@ namespace OSS.Pipeline
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
     /// <typeparam name="TContext">输入输出上下文</typeparam>
-    public abstract class BaseActivity<TContext> : BaseThreeWayPipe<TContext,TContext, TContext>, IActivity<TContext>
+    public abstract class BaseActivity<TContext> : BaseThreeWayPipe<TContext,TContext, TContext> //, IActivity<TContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -127,7 +126,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TContext">输入输出上下文</typeparam>
     /// <typeparam name="TRes"></typeparam>
     public abstract class BaseActivity<TContext, TRes> : BaseThreeWayActivity<TContext, TRes, TContext>
-        , IActivity<TContext, TRes>
+        //, IActivity<TContext, TRes>
     {
         /// <summary>
         /// 外部Action活动基类

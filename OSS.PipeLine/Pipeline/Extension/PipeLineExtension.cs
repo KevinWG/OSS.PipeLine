@@ -56,13 +56,12 @@ namespace OSS.Pipeline
         //}
         
         #region 生成Pipeline
-        
+
         /// <summary>
         /// 根据首位两个管道建立流体
         /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
         /// <param name="startPipe"></param>
+        /// <param name="endPipe"></param>
         /// <param name="flowPipeCode"></param>
         /// <param name="option"></param>
         /// <returns></returns>
@@ -75,8 +74,6 @@ namespace OSS.Pipeline
         /// <summary>
         /// 根据首位两个管道建立流体
         /// </summary>
-        /// <typeparam name="TIn"></typeparam>
-        /// <typeparam name="TOut"></typeparam>
         /// <param name="startPipe"></param>
         /// <param name="endPipe"></param>
         /// <param name="flowPipeCode"></param>

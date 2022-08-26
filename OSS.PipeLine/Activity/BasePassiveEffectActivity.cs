@@ -11,9 +11,8 @@
 
 #endregion
 
-using System.Threading.Tasks;
-using OSS.Pipeline.Interface;
 using OSS.Pipeline.Activity.Base;
+using System.Threading.Tasks;
 
 namespace OSS.Pipeline
 {
@@ -24,7 +23,7 @@ namespace OSS.Pipeline
     /// <typeparam name="TPassivePara"></typeparam>
     /// <typeparam name="TPassiveRes"></typeparam>
     public abstract class BasePassiveEffectActivity<TPassivePara, TPassiveRes> :
-        BaseThreeWayPassiveActivity<TPassivePara, TPassiveRes, TPassiveRes>, IPassiveEffectActivity<TPassivePara, TPassiveRes>
+        BaseThreeWayPassiveActivity<TPassivePara, TPassiveRes, TPassiveRes> //, IPassiveEffectActivity<TPassivePara, TPassiveRes>
     {
         /// <summary>
         /// 外部Action活动基类
