@@ -50,8 +50,8 @@ namespace OSS.Pipeline.Base
             {
                 case SignalFlag.Green_Pass:
                 {
-                    var nextTrafficRes = await ToNextThrough(trafficRes.output_paras);
-                    return new TrafficResult<TRes, TOut>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output_paras);
+                    var nextTrafficRes = await ToNextThrough(trafficRes.output);
+                    return new TrafficResult<TRes, TOut>(nextTrafficRes.signal, nextTrafficRes.blocked_pipe_code, nextTrafficRes.msg, trafficRes.result, trafficRes.output);
                 }
                 case SignalFlag.Red_Block:
                     await InterWatchBlock(context, trafficRes);
@@ -91,7 +91,7 @@ namespace OSS.Pipeline.Base
         {
             if (NextPipe != null)
             {
-                throw new ArgumentException("当前节点已经关联下游节点！");
+                throw new ArgumentException($"当前节点{PipeCode}已经关联下游节点！");
             }
             NextPipe = _nextPipe = nextPipe;
         }

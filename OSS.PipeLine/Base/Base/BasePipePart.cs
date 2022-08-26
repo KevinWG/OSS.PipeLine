@@ -124,9 +124,6 @@ namespace OSS.Pipeline.Base
         /// <summary>
         ///  内部管道 -- 唤起
         /// </summary>
-        /// <param name="context"></param>
-        /// <param name="prePipeCode"></param>
-        /// <returns></returns>
         internal abstract Task<TrafficResult> InterPreCall(TIn context);
 
         async Task<TrafficResult> IPipeInPart<TIn>.InterWatchPreCall(TIn context)

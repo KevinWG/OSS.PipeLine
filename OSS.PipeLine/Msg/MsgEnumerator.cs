@@ -60,7 +60,7 @@ namespace OSS.Pipeline
             {
                 case SignalFlag.Green_Pass:
                 {
-                    return new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, trafficRes.result, trafficRes.output_paras);
+                    return new TrafficResult<Empty, TMsg>(SignalFlag.Green_Pass, string.Empty, string.Empty, trafficRes.result, trafficRes.output);
                 }
                 case SignalFlag.Red_Block:
                     await InterWatchBlock(filterMsgs, trafficRes);

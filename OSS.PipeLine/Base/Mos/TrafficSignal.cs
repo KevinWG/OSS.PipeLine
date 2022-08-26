@@ -11,59 +11,58 @@
 
 #endregion
 
-using System;
 
 namespace OSS.Pipeline
 {
+    /// <inheritdoc />
+    public class TrafficSignal<TRes, TOut> : TrafficSignal<TRes>
+    {
+        /// <summary>
+        ///    输出对象（ 下节管道的输入 ）
+        /// </summary>
+        public TOut output { get; }
+
+        /// <inheritdoc />
+        public TrafficSignal(TRes res, TOut output) : base(res)
+        {
+            this.output = output;
+        }
+    }
+
     /// <summary>
     ///  流动信号
     /// </summary>
-    public readonly struct TrafficSignal<TRes>
+    public class TrafficSignal<TRes>: TrafficSignal
     {
-
         /// <summary>
-        /// 流动通行信号（绿色通行）-附带结果
+        /// 流动通行信号（绿色通行）- 附带结果
         /// </summary>
-        /// <param name="res">结果数据</param>
+        /// <param name="res"> 返回结果 </param>
         public TrafficSignal(TRes res) : this(SignalFlag.Green_Pass, res, string.Empty)
         {
         }
-
-
+        
         /// <summary>
         /// 流动信号
         /// </summary>
         /// <param name="signalFlag"></param>
         /// <param name="trafficMsg"></param>
         /// <param name="res"></param>
-        public TrafficSignal(SignalFlag signalFlag, TRes res, string trafficMsg=null)
+        public TrafficSignal(SignalFlag signalFlag, TRes res, string trafficMsg = null):base(signalFlag, trafficMsg)
         {
-            signal = signalFlag;
-            msg    = trafficMsg;
             result = res;
         }
-
-        /// <summary>
-        ///  信号
-        /// </summary>
-        public SignalFlag signal { get; }
-
-        /// <summary>
-        ///  消息
-        /// </summary>
-        public string msg { get; }
         
         /// <summary>
         ///结果
         /// </summary>
         public TRes result { get; }
     }
-
-
+    
     /// <summary>
     ///  流动信号
     /// </summary>
-    public readonly struct TrafficSignal
+    public class TrafficSignal
     {
         /// <summary>
         /// 默认绿灯信号
@@ -91,27 +90,5 @@ namespace OSS.Pipeline
         ///  消息
         /// </summary>
         public string msg { get; }
-    }
-
-
-    /// <summary>
-    ///  通行信号
-    /// </summary>
-    public enum SignalFlag
-    {
-        /// <summary>
-        ///  正常通过
-        /// </summary>
-        Green_Pass,
-
-        /// <summary>
-        ///  警告等待
-        /// </summary>
-        Yellow_Wait,
-
-        /// <summary>
-        /// 异常阻塞
-        /// </summary>
-        Red_Block
     }
 }

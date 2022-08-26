@@ -53,8 +53,7 @@ namespace OSS.Pipeline.Base
         /// <inheritdoc />
         internal override async Task<TrafficResult> InterPreCall(TIn context)
         {
-            var tRes = await InterProcess(context);
-            return tRes.ToResult();
+            return await InterProcess(context);
         }
 
         #endregion

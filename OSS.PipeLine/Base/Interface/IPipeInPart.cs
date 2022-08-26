@@ -42,7 +42,6 @@ namespace OSS.Pipeline.Interface
         ///  内部管道 -- 唤起
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="prePipeCode"></param>
         /// <returns></returns>
         internal Task<TrafficResult> InterWatchPreCall(TIn context);
 
