@@ -19,6 +19,7 @@ using OSS.Pipeline.InterImpls;
 
 namespace OSS.Pipeline.Base
 {
+
     /// <summary>
     ///  管道基类 (双入双出类型)
     /// </summary>
@@ -42,9 +43,9 @@ namespace OSS.Pipeline.Base
         #region 管道内部业务流转处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<TRes, TOut>> InterProcessHandling(TPara context)
+        internal override async Task<TrafficSignal<TRes, TOut>> InterProcessingAndDistribute(TPara req)
         {
-            var trafficRes = await InterWatchProcessPackage(context);
+            var trafficRes = await InterWatchProcessing(req);
 
             switch (trafficRes.signal)
             {
@@ -55,7 +56,7 @@ namespace OSS.Pipeline.Base
                     break;
                 }
                 case SignalFlag.Red_Block:
-                    await InterWatchBlock(context, trafficRes);
+                    await InterWatchBlock(req, trafficRes);
                     break;
             }
 

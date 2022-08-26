@@ -11,7 +11,7 @@ public enum SignalFlag
     Green_Pass,
 
     /// <summary>
-    ///  警告等待
+    ///  暂时等待
     /// </summary>
     Yellow_Wait,
 

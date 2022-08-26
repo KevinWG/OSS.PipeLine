@@ -11,7 +11,7 @@
 
 #endregion
 
-using OSS.Pipeline.Activity.Base;
+using OSS.Pipeline.Base;
 using System.Threading.Tasks;
 
 namespace OSS.Pipeline
@@ -20,10 +20,9 @@ namespace OSS.Pipeline
     ///  被动触发执行活动组件基类
     ///      传入TPassivePara类型参数，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
-    /// <typeparam name="TPassivePara"></typeparam>
-    /// <typeparam name="TPassiveRes"></typeparam>
-    public abstract class BasePassiveEffectActivity<TPassivePara, TPassiveRes> :
-        BaseThreeWayPassiveActivity<TPassivePara, TPassiveRes, TPassiveRes> //, IPassiveEffectActivity<TPassivePara, TPassiveRes>
+    /// <typeparam name="TPara"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
+    public abstract class BasePassiveEffectActivity<TPara, TRes> : BaseThreeWayPassivePipe<TPara, TRes, TRes> //, IPassiveEffectActivity<TPassivePara, TPassiveRes>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -31,11 +30,28 @@ namespace OSS.Pipeline
         protected BasePassiveEffectActivity(string pipeCode = null) : base(pipeCode, PipeType.EffectActivity | PipeType.EffectActivity)
         {
         }
-        
-        internal override async Task<TrafficSignal<TPassiveRes, TPassiveRes>> InterProcessPackage(TPassivePara context)
+
+
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="para">当前活动上下文信息</param>
+        /// <returns>
+        ///  -（活动是否处理成功，业务结果）
+        /// traffic_signal：
+        /// traffic_signal：
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
+        /// </returns>
+        protected abstract Task<TrafficSignal<TRes>> Executing(TPara para);
+
+
+
+        internal override async Task<TrafficSignal<TRes, TRes>> InterProcessing(TPara req)
         {
-            var tSignal = await Executing(context);
-            return new TrafficSignal<TPassiveRes, TPassiveRes>(tSignal.signal,tSignal.result, tSignal.result, tSignal.msg);
+            var tSignal = await Executing(req);
+            return new TrafficSignal<TRes, TRes>(tSignal.signal,tSignal.result, tSignal.result, tSignal.msg);
         }
     }
 }

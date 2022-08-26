@@ -11,10 +11,8 @@
 
 #endregion
 
-using OSS.Pipeline.Interface;
-using System;
-using System.Threading.Tasks;
 using OSS.Pipeline.InterImpls;
+using System.Threading.Tasks;
 
 namespace OSS.Pipeline.Base
 {
@@ -27,7 +25,7 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TPara"></typeparam>
     /// <typeparam name="TRes"></typeparam>
     public abstract class BaseThreeWayPassivePipe<TPara,TRes, TOut> :
-       BaseFourWayPipe<Empty, TPara, TRes, TOut>,IPipeExecutor<TPara, TRes>
+       BaseFourWayPipe<Empty, TPara, TRes, TOut> //,IPipeExecutor<TPara, TRes>
     {
         /// <summary>
         /// 外部Action活动基类

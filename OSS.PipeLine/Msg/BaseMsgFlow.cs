@@ -71,7 +71,7 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficSignal<Empty, TMsg>> InterProcessPackage(TMsg context)
+        internal override Task<TrafficSignal<Empty, TMsg>> InterProcessing(TMsg context)
         {
             return Task.FromResult(new TrafficSignal<Empty, TMsg>(SignalFlag.Green_Pass, Empty.Default, context));
         }

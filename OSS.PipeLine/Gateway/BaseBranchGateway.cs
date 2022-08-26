@@ -60,7 +60,7 @@ namespace OSS.Pipeline
         #region 管道内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<TContext, TContext>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficSignal<TContext, TContext>> InterProcessing(TContext context)
         {
             IList<IBranchWrap> nextPipes;
             if (_branchItems == null

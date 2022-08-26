@@ -11,9 +11,8 @@
 
 #endregion
 
-using System.Threading.Tasks;
-using OSS.Pipeline.Activity.Base;
 using OSS.Pipeline.Base;
+using System.Threading.Tasks;
 
 namespace OSS.Pipeline
 {
@@ -64,12 +63,11 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<TRes, TRes>> InterProcessPackage(Empty context)
+        internal override async Task<TrafficSignal<TRes, TRes>> InterProcessing(Empty context)
         {
             var trafficRes = await Executing();
             return new TrafficSignal<TRes, TRes>(trafficRes.signal, trafficRes.result, trafficRes.result,trafficRes.msg);
         }
-
 
         #endregion
     }
@@ -78,9 +76,9 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///       接收上下文，自身返回处理结果，且结果作为上下文传递给下一个节点
     /// </summary>
-    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TIn"></typeparam>
     /// <typeparam name="TRes"></typeparam>
-    public abstract class BaseEffectActivity<TContext, TRes> : BaseThreeWayActivity<TContext,TRes, TRes>//, IEffectActivity<TContext, TRes>
+    public abstract class BaseEffectActivity<TIn, TRes> : BaseThreeWayPipe<TIn,TRes, TRes>//, IEffectActivity<TContext, TRes>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -89,12 +87,21 @@ namespace OSS.Pipeline
         {
         }
         
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="para">当前活动上下文（会继续传递给下一个节点）</param>
+        /// <returns>  </returns>
+        protected abstract Task<TrafficSignal<TRes>> Executing(TIn para);
+
+
+
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<TRes, TRes>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficSignal<TRes, TRes>> InterProcessing(TIn req)
         {
-            var trafficRes = await Executing(context);
+            var trafficRes = await Executing(req);
             return new TrafficSignal<TRes, TRes>(trafficRes.signal ,trafficRes.result,trafficRes.result,trafficRes.msg);
         }
 

@@ -114,7 +114,7 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
-        internal override Task<TrafficSignal<TOut, TOut>> InterProcessPackage(TIn context)
+        internal override Task<TrafficSignal<TOut, TOut>> InterProcessing(TIn context)
         {
             throw new Exception("不应该执行到此方法!");
         }

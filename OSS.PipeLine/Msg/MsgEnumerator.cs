@@ -40,7 +40,7 @@ namespace OSS.Pipeline
         /// </summary>
         /// <param name="msgs"></param>
         /// <returns></returns>
-        protected virtual IEnumerable<TMsg> FilterMsgs(IEnumerable<TMsg> msgs)
+        protected virtual IEnumerable<TMsg> Filter(IEnumerable<TMsg> msgs)
         {
             return _msgFilter != null ? _msgFilter(msgs)  : msgs;
         }
@@ -48,25 +48,22 @@ namespace OSS.Pipeline
         #region 管道内部业务处理
         
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessHandling(IEnumerable<TMsg> msgs)
+        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessingAndDistribute(IEnumerable<TMsg> msgs)
         {
-            var filterMsgs = FilterMsgs(msgs);
+            var filterMsgs = Filter(msgs);
             if (filterMsgs==null)
                 throw new ArgumentNullException(nameof(msgs), "消息枚举器列表数据不能为空!");
             
-            var trafficRes = await InterWatchProcessPackage(filterMsgs);
+            var trafficRes = await InterWatchProcessing(filterMsgs);
 
-            switch (trafficRes.signal)
-            {
-                case SignalFlag.Red_Block:
-                    await InterWatchBlock(filterMsgs, trafficRes);
-                    break;
-            }
+            if (trafficRes.signal == SignalFlag.Red_Block) 
+                await InterWatchBlock(filterMsgs, trafficRes);
+
             return trafficRes;
         }
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessPackage(IEnumerable<TMsg> msgs)
+        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessing(IEnumerable<TMsg> msgs)
         {
             var parallelTasks = msgs.Select(ToNextThrough);
 

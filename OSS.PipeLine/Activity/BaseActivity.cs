@@ -11,7 +11,6 @@
 
 #endregion
 
-using OSS.Pipeline.Activity.Base;
 using OSS.Pipeline.Base;
 using System.Threading.Tasks;
 
@@ -29,18 +28,16 @@ namespace OSS.Pipeline
         {
         }
 
+        #region 部具体执行扩展
+        
         /// <summary>
         ///  具体执行扩展方法
         /// </summary>
-        /// <returns>
-        /// 处理结果
-        /// traffic_signal：     
-        ///     Green_Pass  - 流体自动流入后续管道
-        ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
-        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
-        /// </returns>
+        /// <returns></returns>
         protected abstract Task<TrafficSignal> Executing();
-        
+
+        #endregion
+
 
         #region 流体业务-启动
 
@@ -58,7 +55,7 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<Empty, Empty>> InterProcessPackage(Empty context)
+        internal override async Task<TrafficSignal<Empty, Empty>> InterProcessing(Empty context)
         {
             var trafficRes = await Executing();
             return new TrafficSignal<Empty, Empty>(trafficRes.signal, context, context);
@@ -71,8 +68,8 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
-    /// <typeparam name="TContext">输入输出上下文</typeparam>
-    public abstract class BaseActivity<TContext> : BaseThreeWayPipe<TContext,TContext, TContext> //, IActivity<TContext>
+    /// <typeparam name="TIn">输入输出上下文</typeparam>
+    public abstract class BaseActivity<TIn> : BaseThreeWayPipe<TIn,Empty, TIn> //, IActivity<TContext>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -85,21 +82,15 @@ namespace OSS.Pipeline
         ///  具体执行扩展方法
         /// </summary>
         /// <param name="para">当前活动上下文（会继续传递给下一个节点）</param>
-        /// <returns>
-        /// 处理结果
-        /// traffic_signal：     
-        ///     Green_Pass  - 流体自动流入后续管道
-        ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
-        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
-        /// </returns>
-        protected abstract Task<TrafficSignal> Executing(TContext para);
+        /// <returns>  </returns>
+        protected abstract Task<TrafficSignal> Executing(TIn para);
 
         /// <summary>
         /// 启动入口
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
-        public new Task Execute(TContext para)
+        public new Task Execute(TIn para)
         {
             return base.Execute(para);
         }
@@ -107,13 +98,12 @@ namespace OSS.Pipeline
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<TContext, TContext>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficSignal<Empty, TIn>> InterProcessing(TIn req)
         {
-            var trafficRes = await Executing(context);
-            return new TrafficSignal<TContext, TContext>(trafficRes.signal, context, context);
+            var trafficRes = await Executing(req);
+            return new TrafficSignal<Empty, TIn>(trafficRes.signal, Empty.Default, req);
         }
 
-   
         #endregion
     }
 
@@ -121,10 +111,9 @@ namespace OSS.Pipeline
     ///  主动触发执行活动组件基类
     ///    接收输入上下文，且此上下文继续传递下一个节点
     /// </summary>
-    /// <typeparam name="TContext">输入输出上下文</typeparam>
+    /// <typeparam name="TIn">输入输出上下文</typeparam>
     /// <typeparam name="TRes"></typeparam>
-    public abstract class BaseActivity<TContext, TRes> : BaseThreeWayActivity<TContext, TRes, TContext>
-        //, IActivity<TContext, TRes>
+    public abstract class BaseActivity<TIn, TRes> : BaseThreeWayPipe<TIn, TRes, TIn>
     {
         /// <summary>
         /// 外部Action活动基类
@@ -132,15 +121,59 @@ namespace OSS.Pipeline
         protected BaseActivity(string pipeCode = null) : base(pipeCode,PipeType.Activity)
         {
         }
-  
+
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="para">当前活动上下文（会继续传递给下一个节点）</param>
+        /// <returns>  </returns>
+        protected abstract Task<TrafficSignal<TRes>> Executing(TIn para);
+
 
         #region 流体内部业务处理
 
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<TRes, TContext>> InterProcessPackage(TContext context)
+        internal override async Task<TrafficSignal<TRes, TIn>> InterProcessing(TIn req)
         {
-            var trafficRes = await Executing(context);
-            return new TrafficSignal<TRes, TContext>(trafficRes.signal,trafficRes.result, context,trafficRes.msg);
+            var trafficRes = await Executing(req);
+            return new TrafficSignal<TRes, TIn>(trafficRes.signal,trafficRes.result, req, trafficRes.msg);
+        }
+
+        #endregion
+    }
+
+
+    /// <summary>
+    ///  主动触发执行活动组件基类
+    ///    接收输入上下文，且此上下文继续传递下一个节点
+    /// </summary>
+    /// <typeparam name="TIn">输入输出上下文</typeparam>
+    /// <typeparam name="TRes"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    public abstract class BaseActivity<TIn, TRes,TOut> : BaseThreeWayPipe<TIn, TRes, TOut>
+    {
+        /// <summary>
+        /// 外部Action活动基类
+        /// </summary>
+        protected BaseActivity(string pipeCode = null) : base(pipeCode, PipeType.Activity)
+        {
+        }
+
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="para">当前活动上下文（会继续传递给下一个节点）</param>
+        /// <returns>  </returns>
+        protected abstract Task<TrafficSignal<TRes, TOut>> Executing(TIn para);
+
+
+        #region 流体内部业务处理
+
+        /// <inheritdoc />
+        internal override async Task<TrafficSignal<TRes, TOut>> InterProcessing(TIn req)
+        {
+            var trafficRes = await Executing(req);
+            return new TrafficSignal<TRes, TOut>(trafficRes.signal, trafficRes.result, trafficRes.output, trafficRes.msg);
         }
 
         #endregion
