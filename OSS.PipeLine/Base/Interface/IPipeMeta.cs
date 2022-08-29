@@ -11,6 +11,8 @@
 
 #endregion
 
+using OSS.DataFlow.Event;
+
 namespace OSS.Pipeline.Interface
 {
     /// <summary>
@@ -28,4 +30,19 @@ namespace OSS.Pipeline.Interface
         /// </summary>
         string PipeCode { get; set; }
     }
+
+    /// <summary>
+    /// 管道接口
+    /// </summary>
+    /// <typeparam name="TIn"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    public interface IPipe<in TIn, out TOut> : IPipeInPart<TIn>, IPipeAppender<TOut>, IPipeRetry
+    {
+    }
+
+    public interface IPipeRetry
+    {
+        internal void SetErrorRetry(FlowEventOption option);
+    }
+
 }

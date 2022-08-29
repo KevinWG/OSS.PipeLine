@@ -28,8 +28,8 @@ namespace OSS.Pipeline.Base
     /// <typeparam name="TPara"></typeparam>
     /// <typeparam name="TRes"></typeparam>
     public abstract class BaseFourWayPipe<TIn, TPara,TRes, TOut>
-        : BasePipe<TIn, TPara, TRes, TOut>,
-        IPipeAppender<TOut>
+        : BasePipe<TIn, TPara, TRes, TOut>
+          , IPipe<TIn, TOut>
     {
         /// <summary>
         ///  构造函数

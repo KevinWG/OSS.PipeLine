@@ -13,30 +13,37 @@
 
 
 using System.Threading.Tasks;
+using OSS.DataFlow.Event;
 
 namespace OSS.Pipeline.Interface
 {
-
-    internal interface IPipeInitiator : IPipeMeta
+    public interface IPipeInitiator : IPipeMeta
     {
+        #region  容器和路由信息处理
+
         /// <summary>
         ///  内部处理流的路由信息
         /// </summary>
         /// <returns></returns>
-        internal void InterFormatLink(string prePipeCode,bool isSelf);
+        internal void InterFormatLink(string prePipeCode, bool isSelf);
 
         /// <summary>
         ///  内部处理流容器初始化赋值
         /// </summary>
         /// <param name="containerFlow"></param>
         internal abstract void InterInitialContainer(IPipeLine containerFlow);
+
+
+        #endregion
+
+
     }
 
     /// <summary>
     ///   管道入口
     /// </summary>
     /// <typeparam name="TIn"></typeparam>
-    internal interface IPipeInPart<in TIn> : IPipeInitiator
+    public interface IPipeInPart<in TIn> : IPipeInitiator
     {
         /// <summary>
         ///  内部管道 -- 唤起
@@ -46,4 +53,6 @@ namespace OSS.Pipeline.Interface
         internal Task<TrafficSignal> InterWatchPreCall(TIn context);
 
     }
+
+
 }

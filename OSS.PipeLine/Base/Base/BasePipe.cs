@@ -14,6 +14,7 @@
 using System.Threading.Tasks;
 using OSS.DataFlow.Event;
 using OSS.PipeLine.Base.Base.InterImpls;
+using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline.Base.Base
 {
@@ -25,7 +26,7 @@ namespace OSS.Pipeline.Base.Base
     /// <typeparam name="TPara"></typeparam>
     /// <typeparam name="TRes"></typeparam>
     public abstract class BasePipe<TIn, TPara,TRes, TOut>
-        :  BaseInPipePart<TIn>
+        :  BaseInPipePart<TIn>, IPipeRetry
     {
         /// <summary>
         ///  构造函数
@@ -39,7 +40,7 @@ namespace OSS.Pipeline.Base.Base
         #region 业务重试实现
 
         private PipeRetryEventProcessor<TPara, TrafficSignal<TRes, TOut>> _retryProcessor;
-        internal void SetErrorRetry(FlowEventOption option)
+        void IPipeRetry.SetErrorRetry(FlowEventOption option)
         {
             _retryProcessor = new PipeRetryEventProcessor<TPara, TrafficSignal<TRes, TOut>>(
                     InterRetryProcessHandling, option);
