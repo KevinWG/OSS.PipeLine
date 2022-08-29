@@ -29,6 +29,11 @@ namespace OSS.Pipeline
         }
 
         /// <inheritdoc />
+        public TrafficSignal(SignalFlag signalFlag, TRes res,  string trafficMsg = null) : this(signalFlag, res,default, trafficMsg)
+        {
+        }
+
+        /// <inheritdoc />
         public TrafficSignal(SignalFlag signalFlag, TRes res,TOut output, string trafficMsg = null) : base(signalFlag,res, trafficMsg)
         {
             this.output = output;
