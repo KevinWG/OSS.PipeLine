@@ -109,11 +109,11 @@ namespace OSS.Pipeline.Base.Base
         #endregion
 
         #region 管道外部扩展
-        
+
         /// <summary>
         ///  管道堵塞（堵塞可能来自本管道，也可能是通知下游管道返回堵塞
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="req"></param>
         /// <param name="tRes"></param>
         /// <returns></returns>
         protected virtual Task Block(TPara req, TrafficSignal<TRes, TOut> tRes)

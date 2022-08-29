@@ -31,7 +31,7 @@ namespace OSS.Pipeline
     {
         #region 首尾节点定义
 
-        private readonly BaseInPipePart<TIn> _startPipe;
+        private readonly IPipeInPart<TIn>    _startPipe;
         private readonly IPipeAppender<TOut> _endPipe;
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode, BaseInPipePart<TIn> startPipe,
+        public Pipeline(string pipeCode, IPipeInPart<TIn> startPipe,
             IPipeAppender<TOut> endPipeAppender) : this(pipeCode, startPipe, endPipeAppender, null)
         {
         }
@@ -59,7 +59,7 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode, BaseInPipePart<TIn> startPipe,
+        public Pipeline(string pipeCode, IPipeInPart<TIn> startPipe,
             IPipeAppender<TOut> endPipeAppender, PipeLineOption option) : base(pipeCode, PipeType.Pipeline)
         {
             if (startPipe == null || endPipeAppender == null || string.IsNullOrEmpty(pipeCode))
@@ -91,7 +91,6 @@ namespace OSS.Pipeline
             
         }
 
-
         #endregion
 
         #region 管道的业务处理
@@ -102,7 +101,7 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         public Task Execute(TIn context)
         {
-            return InterPreCall(context);
+            return ((IPipeInPart<TIn>)this).InterWatchPreCall(context);
         }
 
         #endregion
@@ -110,7 +109,7 @@ namespace OSS.Pipeline
         /// <inheritdoc />
         internal override Task<TrafficSignal> InterPreCall(TIn context)
         {
-            return _startPipe.InterPreCall(context);
+            return _startPipe.InterWatchPreCall(context);
         }
 
         /// <inheritdoc />
@@ -118,7 +117,7 @@ namespace OSS.Pipeline
         {
             throw new Exception("不应该执行到此方法!");
         }
-
+        
         #endregion
 
         #region 管道连接重写处理
@@ -170,7 +169,7 @@ namespace OSS.Pipeline
         {
             if (isSelf)
             {
-                _startPipe.InterFormatLink(string.Empty);
+                _startPipe.InterFormatLink(string.Empty,false);
             }
             else
             {
