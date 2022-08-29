@@ -6,7 +6,7 @@ namespace OSS.Pipeline.Interface
     /// <summary>
     ///  管道基础接口
     /// </summary>
-    public interface IPipeLine : IPipeMeta
+    internal interface IPipeLine : IPipeMeta
     {
         /// <summary>
         ///  开始管道
@@ -37,7 +37,7 @@ namespace OSS.Pipeline.Interface
     /// </summary>
     /// <typeparam name="TIn"></typeparam>
     /// <typeparam name="TOut"></typeparam>
-    public interface IPipeLine<in TIn, TOut> : IPipeLine //, IPipeLineEntry<TIn>
+    internal interface IPipeLine<in TIn, TOut> : IPipeLine //, IPipeLineEntry<TIn>
     {
     }
 }

@@ -47,7 +47,7 @@ namespace OSS.Pipeline.Base
         /// <summary>
         ///  流容器
         /// </summary>
-        protected IPipeLine LineContainer { get; set; }
+        internal IPipeLine LineContainer { get; set; }
 
 
 
