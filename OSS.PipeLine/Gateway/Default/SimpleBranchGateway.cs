@@ -11,11 +11,10 @@
 
 #endregion
 
-using System;
-using OSS.Pipeline;
 using OSS.Pipeline.Interface;
+using System;
 
-namespace OSS.PipeLine.Gateway.Default
+namespace OSS.Pipeline
 {
     /// <summary>
     ///  简单分支

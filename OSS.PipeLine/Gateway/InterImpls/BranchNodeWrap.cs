@@ -6,7 +6,7 @@ namespace OSS.Pipeline.Gateway.InterImpls
     /// <summary>
     ///  分支子节点管道
     /// </summary>
-    public interface IBranchWrap //: IPipe
+    internal interface IBranchWrap //: IPipe
     {
         internal Task<TrafficSignal> InterPreCall(object context);
 

@@ -39,17 +39,13 @@ namespace OSS.Pipeline
         /// <summary>
         ///  所有分支管道
         /// </summary>
-        protected IReadOnlyList<IPipeMeta> BranchPipes
-        {
-            get => _branchItems.Select(bw => bw.Pipe).ToList();
-        }
+        protected IReadOnlyList<IPipeMeta> BranchPipes => _branchItems.Select(bw => bw.Pipe).ToList();
 
         /// <summary>
         ///  条件分支过滤处理
         /// </summary>
         /// <param name="branchContext">当前传入分支网关的上下文</param>
         /// <param name="branch">等待过滤的分支</param>
-        /// <param name="prePipeCode">当前网关分支的上游管道编码</param>
         /// <returns> True-执行当前分支， False-不执行当前分支 </returns>
         protected virtual bool FilterBranchCondition(TContext branchContext, IPipeMeta branch)
         {
