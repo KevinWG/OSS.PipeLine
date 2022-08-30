@@ -58,7 +58,6 @@ namespace OSS.Pipeline
             return _msgKey;
         }
 
-
         /// <summary>
         ///  创建消息流
         /// </summary>
@@ -83,9 +82,6 @@ namespace OSS.Pipeline
         }
 
         #endregion
-
-
-
     }
 
 }

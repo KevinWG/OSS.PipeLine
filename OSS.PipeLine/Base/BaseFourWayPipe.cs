@@ -72,14 +72,9 @@ namespace OSS.Pipeline.Base
         {
             if (NextPipe != null)
             {
-                if (_nextPipe != null)
-                {
-                    return _nextPipe.InterWatchPreCall(nextInContext);
-                }
-                else
-                {
-                    return _nextEmptyPipe.InterWatchPreCall(Empty.Default);
-                }
+                return _nextPipe != null 
+                    ? _nextPipe.InterWatchPreCall(nextInContext) 
+                    : _nextEmptyPipe.InterWatchPreCall(Empty.Default);
             }
             // 说明已经是最后一个管道
             return  InterUtil.GreenTrafficSignalTask; 

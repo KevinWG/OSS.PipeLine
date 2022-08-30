@@ -9,10 +9,7 @@ namespace OSS.Pipeline.Tests
         private static readonly ApplyActivity _startNode = new ApplyActivity();
         private static readonly EmptyActivity  _endNode   = new EmptyActivity();
         
-        public ApplyActivity ApplyActivity
-        {
-            get { return _startNode; }
-        }
+        public ApplyActivity ApplyActivity => _startNode;
 
         public AutoAuditActivity AuditActivity { get; } = new AutoAuditActivity();
 

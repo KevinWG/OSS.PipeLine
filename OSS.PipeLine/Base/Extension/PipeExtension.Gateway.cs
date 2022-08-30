@@ -23,30 +23,14 @@ namespace OSS.Pipeline
         /// <summary>
         /// 追加分支管道
         /// </summary>
-        /// <typeparam name="OutContext"></typeparam>
+        /// <typeparam name="TOut"></typeparam>
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static void Append<OutContext>(this IPipeAppender<OutContext> pipe, BaseBranchGateway<OutContext> nextPipe)
+        public static void Append<TOut>(this IPipeAppender<TOut> pipe, BaseBranchGateway<TOut> nextPipe)
         {
             pipe.InterAppend(nextPipe);
         }
-        
-        // == 分支需要添加多个子节点，不提供简化方法
-
-        ///// <summary>
-        ///// 追加分支管道
-        ///// </summary>
-        ///// <typeparam name="TContext"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="pipeCode"></param>
-        ///// <param name="_conditionFilter"></param>
-        ///// <returns></returns>
-        //public static void AppendBranch<TContext>(this IPipeAppender<TContext> pipe, string pipeCode="",
-        //    Func<TContext, IPipeMeta, string, bool> _conditionFilter=null)
-        //{
-        //    pipe.InterAppend(new SimpleBranchGateway<TContext>(pipeCode, _conditionFilter));
-        //}
         
     }
 }

@@ -29,8 +29,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="nextPipe"></param>
         /// <returns></returns>
-        public static IPipe<TOut, TNextOut> Append<TOut, TNextOut>(
-            this IPipeAppender<TOut> pipe, IPipe<TOut, TNextOut> nextPipe)
+        public static IPipe<TOut, TNextOut> Append<TOut, TNextOut>(this IPipeAppender<TOut> pipe, IPipe<TOut, TNextOut> nextPipe)
         {
             pipe.InterAppend(nextPipe);
             return nextPipe;
@@ -51,17 +50,17 @@ namespace OSS.Pipeline
         }
 
 
-        /// <summary>
-        ///  追加发布消息管道
-        /// </summary>
-        /// <typeparam name="TOut"></typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="nextPipe"></param>
-        /// <returns></returns>
-        public static void Append<TOut>(this IPipeAppender<TOut> pipe, BaseMsgPublisher<TOut> nextPipe)
-        {
-            pipe.InterAppend(nextPipe);
-        }
+        ///// <summary>
+        /////  追加发布消息管道
+        ///// </summary>
+        ///// <typeparam name="TOut"></typeparam>
+        ///// <param name="pipe"></param>
+        ///// <param name="nextPipe"></param>
+        ///// <returns></returns>
+        //public static void Append<TOut>(this IPipeAppender<TOut> pipe, BaseMsgPublisher<TOut> nextPipe)
+        //{
+        //    pipe.InterAppend(nextPipe);
+        //}
 
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace OSS.Pipeline
         /// <param name="pipe"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static IPipe<TIn, TOut> ErrorRetry<TIn, TOut>(this IPipe<TIn, TOut> pipe, FlowEventOption option)
+        public static IPipe<TIn, TOut> SetErrorRetry<TIn, TOut>(this IPipe<TIn, TOut> pipe, FlowEventOption option)
         {
             pipe.SetErrorRetry(option);
             return pipe;

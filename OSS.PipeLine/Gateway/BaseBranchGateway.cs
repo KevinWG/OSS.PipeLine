@@ -14,6 +14,7 @@
 using OSS.Pipeline.Interface;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using OSS.Pipeline.Base;
@@ -53,18 +54,33 @@ namespace OSS.Pipeline
         }
 
 
+        #region 条件追加处理
+
+        internal Dictionary<IPipeMeta, Func<TContext, bool>> interConditions;
+
+        internal void SetCondition(IPipeMeta pipe, Func<TContext, bool> condition)
+        {
+            if (condition == null )
+                throw new ArgumentNullException(nameof(condition), $"指向 {pipe.PipeCode} 的条件判断不能为空!");
+
+            interConditions ??= new Dictionary<IPipeMeta, Func<TContext, bool>>();
+
+            if (interConditions .ContainsKey(pipe))
+                throw new DuplicateNameException(string.Concat(PipeCode, "分支网关 存在不同条件但相同指向的分支！"));
+            
+            interConditions[pipe] =   condition;
+        }
+        
+        #endregion
+
+
         #region 管道内部业务处理
 
         /// <inheritdoc />
         internal override async Task<TrafficSignal<TContext, TContext>> InterProcessing(TContext context)
         {
-            IList<IBranchWrap> nextPipes;
-            if (_branchItems == null
-                || !_branchItems.Any()
-                || !(nextPipes = _branchItems
-                        .Where(bw => FilterBranchCondition(context, bw.Pipe))
-                        .ToList())
-                    .Any())
+            var nextPipes = FilterUseableBranches(context);
+            if (nextPipes == null || !nextPipes.Any())
             {
                 return new TrafficSignal<TContext, TContext>(SignalFlag.Yellow_Wait, context,
                     context, "未能找到可执行的后续节点!");
@@ -77,6 +93,28 @@ namespace OSS.Pipeline
                 : new TrafficSignal<TContext, TContext>(SignalFlag.Yellow_Wait, context, context, "分支子节点并未全部成功！");
 
             return res;
+        }
+
+        private IList<IBranchWrap> FilterUseableBranches(TContext context)
+        {
+            if (_branchItems == null)
+                return null;
+
+            var nextPipes =new List<IBranchWrap>();
+
+            foreach (var branchItem in _branchItems)
+            {
+                if (!FilterBranchCondition(context, branchItem.Pipe))
+                    continue;
+                
+                if (interConditions!=null 
+                    && interConditions.ContainsKey(branchItem.Pipe) 
+                    && !interConditions[branchItem.Pipe].Invoke(context))
+                    continue;
+                
+                nextPipes.Add(branchItem);
+            }
+            return nextPipes;
         }
 
         #endregion
