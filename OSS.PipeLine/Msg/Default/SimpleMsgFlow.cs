@@ -22,20 +22,13 @@ namespace OSS.Pipeline
     /// <typeparam name="TContext"></typeparam>
     internal class SimpleMsgFlow<TContext> : BaseMsgFlow<TContext>
     {
-        /// <summary>
-        ///  消息流
-        /// </summary>
-        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        public SimpleMsgFlow(string pipeCode) : this(pipeCode, null)
+        /// <inheritdoc />
+        public SimpleMsgFlow(string msgKey, string pipeCode = null) : base(msgKey, pipeCode)
         {
         }
 
-        /// <summary>
-        ///  消息流
-        /// </summary>
-        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        /// <param name="option"></param>
-        public SimpleMsgFlow(string pipeCode, DataFlowOption option) : base(pipeCode, option)
+        /// <inheritdoc />
+        public SimpleMsgFlow(string msgKey, DataFlowOption option, string pipeCode = null) : base(msgKey, option, pipeCode)
         {
         }
 

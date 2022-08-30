@@ -21,19 +21,18 @@ namespace OSS.Pipeline
     /// <typeparam name="TMsg"></typeparam>
     public class SimpleMsgSubscriber<TMsg>:BaseMsgSubscriber<TMsg>
     {
-        /// <summary>
-        /// 消息订阅者
-        /// </summary>
-        /// <param name="pipeCode"></param>
-        public SimpleMsgSubscriber(string pipeCode) : base(pipeCode)
+        /// <inheritdoc />
+        public SimpleMsgSubscriber(string msgKey, string pipeCode = null) : base(msgKey, pipeCode)
         {
         }
-   
+
 
         /// <inheritdoc />
         protected override void RegisterSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscriber)
         {
             DataFlowFactory.RegisterSubscriber(pipeDataKey, subscriber);
         }
+
+     
     }
 }

@@ -27,24 +27,24 @@ namespace OSS.Pipeline
         /// <summary>
         ///  消息订阅器
         /// </summary>
-        /// <param name="pipeDataKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgSubscriber(string pipeDataKey) : base(pipeDataKey, PipeType.MsgSubscriber)
+        /// <param name="msgKey"></param>
+        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        protected BaseMsgSubscriber(string msgKey, string pipeCode=null) : base(pipeCode, PipeType.MsgSubscriber)
         {
-            if (string.IsNullOrEmpty(pipeDataKey))
+            if (string.IsNullOrEmpty(msgKey))
             {
-                throw new ArgumentNullException(nameof(pipeDataKey), "消息类型PipeCode不能为空!");
+                throw new ArgumentNullException(nameof(msgKey), "消息类型PipeCode不能为空!");
             }
-            RegisterSubscriber(pipeDataKey, this);
+            RegisterSubscriber(msgKey, this);
         }
 
         /// <summary>
         ///  接收消息订阅器
         /// </summary>
         /// <param name="subscribeHandler">消息订阅器（引用句柄）</param>
-        /// <param name="option">订阅处理选项</param>
-        /// <param name="pipeDataKey">订阅消息key</param>
+        /// <param name="msgKey">订阅消息key</param>
         /// <returns></returns>
-        protected abstract void RegisterSubscriber(string pipeDataKey, IDataSubscriber<TMsg> subscribeHandler);
+        protected abstract void RegisterSubscriber(string msgKey, IDataSubscriber<TMsg> subscribeHandler);
 
         /// <summary>
         ///  订阅消息的动作实现

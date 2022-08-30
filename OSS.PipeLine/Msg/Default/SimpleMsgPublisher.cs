@@ -24,30 +24,17 @@ namespace OSS.Pipeline
     {
         private readonly Func<TMsg, string> _pushKeyGenerator;
 
-        /// <summary>
-        ///  消息发布者
-        /// </summary>
-        /// <param name="pipeCode"></param>
-        /// <param name="pushKeyGenerator"></param>
-        /// <param name="option"></param>
-        public SimpleMsgPublisher(string pipeCode, Func<TMsg, string> pushKeyGenerator, DataPublisherOption option) : base(
-            pipeCode, option)
+        /// <inheritdoc />
+        public SimpleMsgPublisher(Func<TMsg, string> pushKeyCreator, DataPublisherOption option = null, string pipeCode = null) : this(string.Empty, option, pipeCode)
         {
-            _pushKeyGenerator = pushKeyGenerator;
+            _pushKeyGenerator = pushKeyCreator;
         }
 
         /// <inheritdoc />
-        public SimpleMsgPublisher(string pipeCode, DataPublisherOption option = null) : this(pipeCode, null, option)
+        public SimpleMsgPublisher(string msgKey, DataPublisherOption option = null, string pipeCode = null) : base(msgKey, option, pipeCode)
         {
         }
-
-
-        /// <inheritdoc />
-        public SimpleMsgPublisher(string pipeCode, Func<TMsg, string> pushKeyCreator = null) : this(pipeCode, pushKeyCreator,
-            null)
-        {
-        }
-
+        
         /// <inheritdoc />
         protected override string GeneratePushKey(TMsg msg)
         {

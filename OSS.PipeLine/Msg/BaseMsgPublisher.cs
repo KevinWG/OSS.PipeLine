@@ -11,6 +11,7 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using OSS.DataFlow;
 using OSS.Pipeline.Base;
@@ -25,15 +26,22 @@ namespace OSS.Pipeline
     {
         // 内部异步处理入口
         private readonly IDataPublisher _pusher;
+        private readonly string         _msgKey;
 
         /// <summary>
         ///  消息发布者
         /// </summary>
-        /// <param name="defaultPushMsgKey">缓冲DataFlow 对应的消息Key   默认对应的flow实现是异步线程池</param>
+        /// <param name="msgKey">缓冲DataFlow 对应的消息Key   默认对应的flow实现是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgPublisher(string defaultPushMsgKey, DataPublisherOption option = null) : base(defaultPushMsgKey,
-            PipeType.MsgPublisher)
+        /// <param name="pipeCode"></param>
+        protected BaseMsgPublisher(string msgKey, DataPublisherOption option = null, string pipeCode = null) : base(pipeCode, PipeType.MsgPublisher)
         {
+            if (string.IsNullOrEmpty(msgKey))
+            {
+                throw new ArgumentNullException(nameof(msgKey), "消息类型 msgKey 不能为空!");
+            }
+
+            _msgKey = msgKey; 
             _pusher = CreatePublisher(option);
         }
 
@@ -47,7 +55,7 @@ namespace OSS.Pipeline
         /// <returns>默认返回PipeCode</returns>
         protected virtual string GeneratePushKey(TMsg msg)
         {
-            return PipeCode;
+            return _msgKey;
         }
 
 

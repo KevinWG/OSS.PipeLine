@@ -26,45 +26,50 @@ namespace OSS.Pipeline
     {
         // 内部异步处理入口
         private readonly IDataPublisher _pusher;
+        private readonly string         _msgKey;
 
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="pipeCode"> 作为缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
-        protected BaseMsgFlow(string pipeCode = null) : this(pipeCode, null)
+        /// <param name="msgKey"> 作为缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode"></param>
+        protected BaseMsgFlow(string msgKey,string pipeCode = null) : this(msgKey, null, pipeCode)
         {
         }
 
+
         /// <summary>
         ///  异步缓冲连接器
         /// </summary>
-        /// <param name="pipeCode">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
+        /// <param name="pipeCode"></param>
+        /// <param name="msgKey">缓冲DataFlow 对应的Key   默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
-        protected BaseMsgFlow(string pipeCode, DataFlowOption option) : base(pipeCode,PipeType.MsgFlow)
+        protected BaseMsgFlow(string msgKey, DataFlowOption option, string pipeCode = null) : base(pipeCode, PipeType.MsgFlow)
         {
-            if (string.IsNullOrEmpty(pipeCode))
+            if (string.IsNullOrEmpty(msgKey))
             {
-                throw new ArgumentNullException(nameof(pipeCode), "消息类型PipeCode不能为空!");
+                throw new ArgumentNullException(nameof(msgKey), "消息类型 msgKey 不能为空!");
             }
 
-            _pusher = CreateFlow(pipeCode, this, option);
+            _msgKey = msgKey;
+            _pusher = CreateFlow(msgKey, this, option);
         }
-        
+
         /// <summary>
         ///  创建消息流
         /// </summary>
+        /// <param name="msgKey"></param>
         /// <param name="subscriber"></param>
         /// <param name="option"></param>
-        /// <param name="pipeDataKey"></param>
         /// <returns></returns>
-        protected abstract IDataPublisher CreateFlow(string pipeDataKey,IDataSubscriber<TMsg> subscriber, DataFlowOption option);
+        protected abstract IDataPublisher CreateFlow(string msgKey, IDataSubscriber<TMsg> subscriber, DataFlowOption option);
 
         #region 流体内部业务处理
 
         /// <inheritdoc />
         internal override async Task<TrafficSignal> InterPreCall(TMsg context)
         {
-            var pushRes = await _pusher.Publish(PipeCode,context);
+            var pushRes = await _pusher.Publish(_msgKey, context);
             return pushRes
                 ? TrafficSignal.GreenSignal
                 : new TrafficSignal(SignalFlag.Red_Block, $"({this.GetType().Name})推送消息失败!");

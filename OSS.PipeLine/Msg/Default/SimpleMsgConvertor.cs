@@ -12,19 +12,19 @@
 #endregion
 using System;
 
-namespace OSS.Pipeline.InterImpls.Msg
+namespace OSS.Pipeline
 {
     /// <summary>
     ///  内部转化连接器的实现
     /// </summary>
     /// <typeparam name="TIn"></typeparam>
     /// <typeparam name="TOut"></typeparam>
-    internal class InterMsgConvertor<TIn, TOut> : BaseMsgConverter<TIn, TOut>
+    public class SimpleMsgConvertor<TIn, TOut> : BaseMsgConverter<TIn, TOut>
     {
         private readonly Func<TIn, TOut> _convert;
         
         /// <inheritdoc/>
-        public InterMsgConvertor( string pipeCode,Func<TIn, TOut> convertFunc):base(pipeCode)
+        public SimpleMsgConvertor(Func<TIn, TOut> convertFunc,string pipeCode = null) :base(pipeCode)
         {
             _convert = convertFunc ?? throw new ArgumentNullException(nameof(convertFunc), "转换方法必须传入！");
         }
