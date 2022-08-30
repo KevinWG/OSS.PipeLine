@@ -30,7 +30,7 @@ public static class BranchExtension
     /// <param name="nextPipe"></param>
     /// <param name="branchCondition"></param>
     /// <returns></returns>
-    public static IPipe<Empty, TNextOut> Append<TOut,TNextOut>(this BaseBranchGateway<TOut> pipe, Func<TOut, bool> branchCondition, IPipe<Empty, TNextOut> nextPipe)
+    public static IPipe<Empty, TNextOut> AppendCondition<TOut,TNextOut>(this BaseBranchGateway<TOut> pipe, Func<TOut, bool> branchCondition, IPipe<Empty, TNextOut> nextPipe)
     {
         pipe.SetCondition(nextPipe, branchCondition);
         pipe.InterAppend(nextPipe);
