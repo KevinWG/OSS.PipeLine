@@ -38,26 +38,26 @@ namespace OSS.Pipeline
         /// <summary>
         ///  过滤处理消息
         /// </summary>
-        /// <param name="msgs"></param>
+        /// <param name="msgList"></param>
         /// <returns></returns>
-        protected virtual IEnumerable<TMsg> Filter(IEnumerable<TMsg> msgs)
+        protected virtual IEnumerable<TMsg> Filter(IEnumerable<TMsg> msgList)
         {
-            return _msgFilter != null ? _msgFilter(msgs)  : msgs;
+            return _msgFilter != null ? _msgFilter(msgList)  : msgList;
         }
 
         #region 管道内部业务处理
         
         /// <inheritdoc />
-        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessingAndDistribute(IEnumerable<TMsg> msgs)
+        internal override async Task<TrafficSignal<Empty, TMsg>> InterProcessingAndDistribute(IEnumerable<TMsg> msgList)
         {
-            var filterMsgs = Filter(msgs);
-            if (filterMsgs==null)
-                throw new ArgumentNullException(nameof(msgs), "消息枚举器列表数据不能为空!");
+            var filterMsgList = Filter(msgList);
+            if (filterMsgList==null|| !filterMsgList.Any())
+                throw new ArgumentNullException(nameof(msgList), "无消息可以枚举!");
             
-            var trafficRes = await InterWatchProcessing(filterMsgs);
+            var trafficRes = await InterWatchProcessing(filterMsgList);
 
             if (trafficRes.signal == SignalFlag.Red_Block) 
-                await InterWatchBlock(filterMsgs, trafficRes);
+                await InterWatchBlock(filterMsgList, trafficRes);
 
             return trafficRes;
         }

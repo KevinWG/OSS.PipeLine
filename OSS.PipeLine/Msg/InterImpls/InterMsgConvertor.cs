@@ -22,9 +22,7 @@ namespace OSS.Pipeline.InterImpls.Msg
     internal class InterMsgConvertor<TIn, TOut> : BaseMsgConverter<TIn, TOut>
     {
         private readonly Func<TIn, TOut> _convert;
-
         
-
         /// <inheritdoc/>
         public InterMsgConvertor( string pipeCode,Func<TIn, TOut> convertFunc):base(pipeCode)
         {
