@@ -22,6 +22,53 @@ namespace OSS.Pipeline
     ///      传入TPassivePara类型参数，且此参数作为后续上下文传递给下一个节点，自身返回处理结果但无影响
     /// </summary>
     /// <typeparam name="TPara"></typeparam>
+    public abstract class BasePassiveActivity<TPara> : BaseThreeWayPassivePipe<TPara, Empty, TPara>
+    {
+        /// <summary>
+        /// 外部Action活动基类
+        /// </summary>
+        protected BasePassiveActivity(string pipeCode = null) : base(pipeCode, PipeType.PassiveActivity)
+        {
+        }
+
+        /// <summary>
+        ///  具体执行扩展方法
+        /// </summary>
+        /// <param name="para">当前活动上下文信息</param>
+        /// <returns>
+        ///  -（活动是否处理成功，业务结果）
+        /// traffic_signal：
+        /// traffic_signal：
+        ///     Green_Pass  - 流体自动流入后续管道
+        ///     Yellow_Wait - 管道流动暂停等待（仅当前处理业务），既不向后流动，也不触发Block。
+        ///     Red_Block - 触发Block，业务流不再向后续管道传递。
+        /// </returns>
+        protected abstract Task<TrafficSignal> Executing(TPara para);
+
+        /// <summary>
+        /// 对外直接执行
+        /// </summary>
+        /// <param name="para"></param>
+        /// <returns></returns>
+        public new Task Execute(TPara para)
+        {
+            return base.Execute(para);
+        }
+
+
+        /// <inheritdoc />
+        internal override async Task<TrafficSignal<Empty, TPara>> InterProcessing(TPara req)
+        {
+            var tSignal = await Executing(req);
+            return new TrafficSignal<Empty, TPara>(tSignal.signal,Empty.Default, req, tSignal.msg);
+        }
+    }
+
+    /// <summary>
+    ///  被动触发执行活动组件基类
+    ///      传入TPassivePara类型参数，且此参数作为后续上下文传递给下一个节点，自身返回处理结果但无影响
+    /// </summary>
+    /// <typeparam name="TPara"></typeparam>
     /// <typeparam name="TRes"></typeparam>
     public abstract class BasePassiveActivity<TPara, TRes> : BaseThreeWayPassivePipe<TPara, TRes, TPara> 
     {
@@ -54,6 +101,13 @@ namespace OSS.Pipeline
         }
     }
 
+
+    /// <summary>
+    ///  被动触发执行活动组件基类
+    ///      传入TPassivePara类型参数，且此参数作为后续上下文传递给下一个节点，自身返回处理结果但无影响
+    /// </summary>
+    /// <typeparam name="TPara"></typeparam>
+    /// <typeparam name="TRes"></typeparam>
     public abstract class BasePassiveActivity<TPara, TRes,TOut> : BaseThreeWayPassivePipe<TPara, TRes, TOut>
     {
         /// <summary>

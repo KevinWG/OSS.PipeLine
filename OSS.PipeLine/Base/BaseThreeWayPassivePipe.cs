@@ -35,7 +35,7 @@ namespace OSS.Pipeline.Base
         }
 
         /// <summary>
-        ///  启动
+        ///  直接执行
         /// </summary>
         /// <param name="para"></param>
         /// <returns></returns>
