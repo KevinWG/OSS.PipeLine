@@ -11,7 +11,7 @@ namespace OSS.Pipeline
         private readonly Func<Task<TrafficSignal<TResult>>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleEffectActivity(string pipeCode, Func<Task<TrafficSignal<TResult>>> exeFunc):base(pipeCode)
+        public SimpleEffectActivity( Func<Task<TrafficSignal<TResult>>> exeFunc,string pipeCode=null) :base(pipeCode)
         {
             _exeFunc = exeFunc ?? throw new ArgumentNullException(nameof(exeFunc), "执行方法不能为空!");
         }
@@ -30,7 +30,7 @@ namespace OSS.Pipeline
         private readonly Func<TPassivePara, Task<TrafficSignal<TResult>>> _exeFunc;
 
         /// <inheritdoc />
-        public SimpleEffectActivity( string pipeCode,Func<TPassivePara, Task<TrafficSignal<TResult>>> exeFunc):base(pipeCode)
+        public SimpleEffectActivity(Func<TPassivePara, Task<TrafficSignal<TResult>>> exeFunc, string pipeCode = null) :base(pipeCode)
         {
             if (!string.IsNullOrEmpty(pipeCode))
             {
@@ -44,12 +44,6 @@ namespace OSS.Pipeline
         {
             return _exeFunc(para);
         }
-
-        ///// <inheritdoc />
-        //protected override Task<(TrafficSignal traffic_signal, TResult result)> Executing(TPassivePara contextData)
-        //{
-        //    return _exeFunc(contextData);
-        //}
     }
 
 }

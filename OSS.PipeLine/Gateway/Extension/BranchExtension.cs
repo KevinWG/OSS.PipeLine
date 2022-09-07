@@ -3,7 +3,7 @@ using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline;
 
-public static class BranchExtension
+public static partial class BranchExtension
 {
     /// <summary>
     ///   添加条件分支
@@ -12,12 +12,13 @@ public static class BranchExtension
     /// <typeparam name="TNextOut"></typeparam>
     /// <param name="pipe"></param>
     /// <param name="nextPipe"></param>
-    /// <param name="branchCondition"></param>
+    /// <param name="branchCondition">分支条件判断</param>
     /// <returns></returns>
-    public static IPipe<TOut, TNextOut> AppendCondition<TOut, TNextOut>(this BaseBranchGateway<TOut> pipe, Func<TOut, bool> branchCondition, IPipe<TOut, TNextOut> nextPipe)
+    public static IPipe<TOut, TNextOut> Append<TOut, TNextOut>(this IBranchGateway<TOut> pipe, Func<TOut, bool> branchCondition, IPipe<TOut, TNextOut> nextPipe)
     {
         pipe.SetCondition(nextPipe, branchCondition);
         pipe.InterAppend(nextPipe);
+
         return nextPipe;
     }
 
@@ -28,12 +29,13 @@ public static class BranchExtension
     /// <typeparam name="TOut">当前分支输出类型</typeparam>
     /// <param name="pipe"></param>
     /// <param name="nextPipe"></param>
-    /// <param name="branchCondition"></param>
+    /// <param name="branchCondition">分支条件判断</param>
     /// <returns></returns>
-    public static IPipe<Empty, TNextOut> AppendCondition<TOut,TNextOut>(this BaseBranchGateway<TOut> pipe, Func<TOut, bool> branchCondition, IPipe<Empty, TNextOut> nextPipe)
+    public static IPipe<Empty, TNextOut> Append<TOut,TNextOut>(this IBranchGateway<TOut> pipe, Func<TOut, bool> branchCondition, IPipe<Empty, TNextOut> nextPipe)
     {
         pipe.SetCondition(nextPipe, branchCondition);
         pipe.InterAppend(nextPipe);
+
         return nextPipe;
     }
 }

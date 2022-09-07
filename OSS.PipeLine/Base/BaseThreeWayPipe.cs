@@ -13,7 +13,6 @@
 
 
 using System.Threading.Tasks;
-using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline.Base
 {

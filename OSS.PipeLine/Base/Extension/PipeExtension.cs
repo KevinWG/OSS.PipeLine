@@ -49,20 +49,7 @@ namespace OSS.Pipeline
             return nextPipe;
         }
 
-
-        ///// <summary>
-        /////  追加发布消息管道
-        ///// </summary>
-        ///// <typeparam name="TOut"></typeparam>
-        ///// <param name="pipe"></param>
-        ///// <param name="nextPipe"></param>
-        ///// <returns></returns>
-        //public static void Append<TOut>(this IPipeAppender<TOut> pipe, BaseMsgPublisher<TOut> nextPipe)
-        //{
-        //    pipe.InterAppend(nextPipe);
-        //}
-
-
+        
         /// <summary>
         /// 绑定异常错误重试
         /// </summary>

@@ -11,30 +11,33 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using OSS.DataFlow;
-using OSS.Pipeline.Interface;
+using System;
 
 namespace OSS.Pipeline
 {
     /// <summary>
     /// 管道扩展类
     /// </summary>
-    public static partial class PipeExtension
+    public static partial class BranchExtension
     {
         /// <summary>
         ///  追加默认消息发布者管道
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
+        /// <param name="branchCondition">分支条件判断</param>
         /// <param name="msgDataKey">消息pipeDataKey，默认消息实现对应的flow是异步线程池</param>
         /// <param name="option"></param>
+        /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleMsgPublisher<TMsg> AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey,
-                                                                        DataPublisherOption option = null, string pipeCode = null)
+        public static SimpleMsgPublisher<TMsg> AppendMsgPublisher<TMsg>(
+            this IBranchGateway<TMsg> pipe, Func<TMsg, bool> branchCondition, string msgDataKey,
+            DataPublisherOption option = null, string pipeCode = null)
         {
             var nextPipe = new SimpleMsgPublisher<TMsg>(msgDataKey, option, pipeCode);
+
+            pipe.SetCondition(nextPipe, branchCondition);
             pipe.InterAppend(nextPipe);
 
             return nextPipe;
@@ -45,14 +48,20 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
+        /// <param name="branchCondition">分支条件判断</param>
         /// <param name="pushKeyGenerator">消息key生成器,为空则使用pipeCode作为发布消息key</param>
         /// <param name="option"></param>
+        /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static SimpleMsgPublisher<TMsg> AppendMsgPublisher<TMsg>(this IPipeAppender<TMsg> pipe, Func<TMsg, string> pushKeyGenerator,
-                                                                        DataPublisherOption option = null, string pipeCode = null)
+        public static SimpleMsgPublisher<TMsg> AppendMsgPublisher<TMsg>(
+            this IBranchGateway<TMsg> pipe, Func<TMsg, bool> branchCondition, Func<TMsg, string> pushKeyGenerator,
+            DataPublisherOption option = null, string pipeCode = null)
         {
             var nextPipe = new SimpleMsgPublisher<TMsg>(pushKeyGenerator, option, pipeCode);
+
+            pipe.SetCondition(nextPipe, branchCondition);
             pipe.InterAppend(nextPipe);
+
             return nextPipe;
         }
 
@@ -61,15 +70,19 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
+        /// <param name="branchCondition">分支条件判断</param>
         /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseMsgSubscriber<TMsg> AppendMsgSubscriber<TMsg>(this IPipeAppender<TMsg> pipe,
-                                                                        string msgDataKey, string pipeCode = null)
+        public static BaseMsgSubscriber<TMsg> AppendMsgSubscriber<TMsg>(
+            this IBranchGateway<TMsg> pipe, Func<TMsg, bool> branchCondition, string msgDataKey,
+            string pipeCode = null)
         {
             var nextPipe = new SimpleMsgSubscriber<TMsg>(msgDataKey, pipeCode);
 
+            pipe.SetCondition(nextPipe, branchCondition);
             pipe.InterAppend(nextPipe);
+
             return nextPipe;
         }
 
@@ -78,16 +91,20 @@ namespace OSS.Pipeline
         /// </summary>
         /// <typeparam name="TMsg"></typeparam>
         /// <param name="pipe"></param>
+        /// <param name="branchCondition">分支条件判断</param>
         /// <param name="msgDataKey">消息pipeDataKey，默认对应的flow是异步线程池</param>
         /// <param name="option"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
-        public static BaseMsgFlow<TMsg> AppendMsgFlow<TMsg>(this IPipeAppender<TMsg> pipe, string msgDataKey,
-                                                            DataFlowOption option = null, string pipeCode = null)
+        public static BaseMsgFlow<TMsg> AppendMsgFlow<TMsg>(
+            this IBranchGateway<TMsg> pipe, Func<TMsg, bool> branchCondition, string msgDataKey,
+            DataFlowOption option = null, string pipeCode = null)
         {
             var nextPipe = new SimpleMsgFlow<TMsg>(msgDataKey, option, pipeCode);
 
+            pipe.SetCondition(nextPipe, branchCondition);
             pipe.InterAppend(nextPipe);
+
             return nextPipe;
         }
 
@@ -97,34 +114,21 @@ namespace OSS.Pipeline
         /// <typeparam name="TMsg"></typeparam>
         /// <typeparam name="NextOutContext"></typeparam>
         /// <param name="pipe"></param>
+        /// <param name="branchCondition">分支条件判断</param>
         /// <param name="convertFunc"></param>
         /// <param name="pipeCode"></param>
         /// <returns></returns>
         public static BaseMsgConverter<TMsg, NextOutContext> AppendMsgConverter<TMsg, NextOutContext>(
-            this IPipeAppender<TMsg> pipe, Func<TMsg, NextOutContext> convertFunc, string pipeCode = null)
+            this IBranchGateway<TMsg> pipe, Func<TMsg, bool> branchCondition, Func<TMsg, NextOutContext> convertFunc,
+            string pipeCode = null)
         {
             var nextPipe = new SimpleMsgConvertor<TMsg, NextOutContext>(convertFunc, pipeCode);
 
+            pipe.SetCondition(nextPipe, branchCondition);
             pipe.InterAppend(nextPipe);
-            return nextPipe;
-        }
 
-        /// <summary>
-        ///  追加消息迭代器
-        /// </summary>
-        /// <typeparam name="TMsg">消息具体类型</typeparam>
-        /// <param name="pipe"></param>
-        /// <param name="pipeCode"></param>
-        /// <param name="msgFilter">消息过滤器</param>
-        /// <returns></returns>
-        public static MsgEnumerator<TMsg> AppendMsgEnumerator<TMsg>(
-            this IPipeAppender<IEnumerable<TMsg>> pipe,
-                                                                    Func<IEnumerable<TMsg>, IEnumerable<TMsg>>
-                                                                        msgFilter = null, string pipeCode = null)
-        {
-            var nextPipe = new MsgEnumerator<TMsg>(msgFilter, pipeCode);
-            pipe.InterAppend(nextPipe);
             return nextPipe;
         }
+        
     }
 }

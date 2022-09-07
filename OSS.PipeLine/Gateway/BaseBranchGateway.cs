@@ -23,11 +23,17 @@ using OSS.Pipeline.InterImpls;
 
 namespace OSS.Pipeline
 {
+
+    public interface IBranchGateway<out TContext> : IPipeAppender<TContext>
+    {
+        internal void SetCondition(IPipeMeta pipe, Func<TContext, bool> condition);
+    }
+
     /// <summary>
     /// 流体的分支网关基类
     /// </summary>
     /// <typeparam name="TContext"></typeparam>
-    public abstract class BaseBranchGateway<TContext> : BaseThreeWayPipe<TContext, TContext, TContext>
+    public abstract class BaseBranchGateway<TContext> : BaseThreeWayPipe<TContext, TContext, TContext>, IBranchGateway<TContext>
     {
         /// <summary>
         ///  流体的分支网关基类
@@ -58,7 +64,7 @@ namespace OSS.Pipeline
 
         internal Dictionary<IPipeMeta, Func<TContext, bool>> interConditions;
 
-        internal void SetCondition(IPipeMeta pipe, Func<TContext, bool> condition)
+        void IBranchGateway<TContext>.SetCondition(IPipeMeta pipe, Func<TContext, bool> condition)
         {
             if (condition == null )
                 throw new ArgumentNullException(nameof(condition), $"指向 {pipe.PipeCode} 的条件判断不能为空!");
@@ -189,7 +195,7 @@ namespace OSS.Pipeline
             base.InterFormatLink(prePipeCode, isSelf);
             _branchItems.ForEach(b => b.InterFormatLink(prePipeCode, isSelf));
         }
-
+        
         #endregion
     }
 }
