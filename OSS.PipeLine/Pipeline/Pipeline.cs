@@ -51,23 +51,22 @@ namespace OSS.Pipeline
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode, IPipeInPart<TIn> startPipe,
-            IPipeAppender<TOut> endPipeAppender) : this(pipeCode, startPipe, endPipeAppender, null)
+        public Pipeline( IPipeInPart<TIn> startPipe,
+            IPipeAppender<TOut> endPipeAppender, string pipeCode=null) : this(startPipe, endPipeAppender, null,pipeCode)
         {
         }
 
         /// <summary>
         /// 基础流体
         /// </summary>
-        public Pipeline(string pipeCode, IPipeInPart<TIn> startPipe,
-            IPipeAppender<TOut> endPipeAppender, PipeLineOption option) : base(pipeCode, PipeType.Pipeline)
+        public Pipeline(IPipeInPart<TIn> startPipe,
+            IPipeAppender<TOut> endPipeAppender, PipeLineOption option, string pipeCode = null) : base(pipeCode, PipeType.Pipeline)
         {
-            if (startPipe == null || endPipeAppender == null || string.IsNullOrEmpty(pipeCode))
+            if (startPipe == null || endPipeAppender == null )
             {
-                throw new ArgumentNullException("未发现流体的起始截止管道和管道编码！");
+                throw new ArgumentNullException("未发现流体的起始截止管道！");
             }
-
-            PipeCode   = pipeCode;
+            
             _startPipe = startPipe;
             _endPipe   = endPipeAppender;
 

@@ -8,14 +8,14 @@ namespace OSS.Pipeline
     public class EmptyEntryPipeline<TContext> : Pipeline<Empty, TContext>
     {
         /// <inheritdoc />
-        public EmptyEntryPipeline(string pipeCode,BaseInPipePart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender) 
-            : base(pipeCode,startPipe, endPipeAppender)
+        public EmptyEntryPipeline(IPipeInPart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender, string pipeCode=null) 
+            : base(startPipe, endPipeAppender, pipeCode)
         {
         }
 
         /// <inheritdoc />
-        public EmptyEntryPipeline(string pipeCode, BaseInPipePart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender, PipeLineOption option)
-            : base(pipeCode, startPipe, endPipeAppender, option)
+        public EmptyEntryPipeline(IPipeInPart<Empty> startPipe, IPipeAppender<TContext> endPipeAppender, PipeLineOption option,string pipeCode= null)
+            : base( startPipe, endPipeAppender, option,pipeCode)
         {
 
         }

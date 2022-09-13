@@ -22,7 +22,7 @@
 这个组件用来实现具体的业务功能逻辑，如关联自动执行活动，中断触发（像用户触发，或消息队列）等活动。
 根据 主动/被动 两种情形，同时根据当前活动的业务返回值和下游节点上下文的关系，提供了四类（共七个）基础活动类：
 
-### 1. BaseActivity，BaseActivity<TContext>，BaseActivity<TContext, TRes> - 主动触发活动组件
+### 1. BaseActivity，BaseActivity<TIn>，BaseActivity<TIn, TRes>，BaseActivity<TIn, TRes,TOut> - 主动触发活动组件
 常见如自动审核功能，或者支付成功后自动触发邮件发送等，最简单也是最基本的一种跟随动作处理。
 继承此基类，重写Executing方法实现活动内容，同一个流体下实现自动关联执行，执行完毕后自动触发下级节点（传入当前上下文）。
 
@@ -39,7 +39,7 @@
         /// </returns>
         protected abstract Task<TrafficSignal> Executing();
 ```
-### 2. BaseEffectActivity<TRes> ，BaseEffectActivity<TContext, TRes>  - 主动触发（受影响上下文）活动组件
+### 2. BaseEffectActivity<TRes> ，BaseEffectActivity<TIn, TRes>  - 主动触发（受影响上下文）活动组件
 
 默认情况下，当前活动处理结束后当前活动的上下文默认传递给下一个管道节点，实际中可能会出现下游业务活动仅仅需要获取上游的业务活动的执行结果即可，场景如: 下单成功 ==》 发送确认短信，发送短信需要知道订单id。
 这种下一个节点受上一个节点结果影响情况，使用此（含Effect）基类，其Executing重写方法的结果将作为下一个活动的上下文信息，如下：
@@ -60,7 +60,7 @@
 ```
 
 
-### 3. BasePassiveActivity<TPassivePara, TPassiveRes>  -  被动触发执行活动组件（如需用户参与）
+### 3. BasePassiveActivity<TPara, TRes>, BasePassiveActivity<TPara, TRes,TOut>  -  被动触发执行活动组件（如需用户参与）
 
 当业务流流入当前组件，业务流动停止，被动等待调用节点的 Execute 方法，外部调用后流程继续向后流动执行（Execute传入的参数作为后续的上下文）。
 继承此基类（含Passive），重写Executing方法实现具体业务逻辑内容。
@@ -81,7 +81,7 @@
         protected abstract Task<TrafficSignal<TRes>> Executing(TPara para);        
 ```
 
-### 4. BasePassiveEffectActivity<TPassivePara, TPassiveRes>  -  被动触发（受影响上下文）执行活动组件
+### 4. BasePassiveEffectActivity<TPara, TRes>  -  被动触发（受影响上下文）执行活动组件
 
 同主动触发活动组件一样，当前活动处理业务结果作为下游节点的上下文。
 继承此基类（含Passive和Effect），重写Executing方法实现具体业务逻辑内容。

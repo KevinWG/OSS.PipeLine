@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OSS.Pipeline.Tests.FlowItems;
+using OSS.Pipeline.Tests.Order;
 
 namespace OSS.Pipeline.Tests
 {
@@ -33,6 +34,18 @@ namespace OSS.Pipeline.Tests
         {
             var route = _flow.ToRoute();
             Assert.IsTrue(route != null);
+        }
+
+
+        private static readonly OrderPayPipeline payLine = new OrderPayPipeline();
+
+        [TestMethod]
+        public async Task TestOrder()
+        {
+            var payRes =await payLine.PayOrder(new OrderPayReq() {OrderId = 111, PayMoney = 1000.00m});
+
+            await Task.Delay(100);
+            Assert.IsTrue(payRes);
         }
     }
 

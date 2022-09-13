@@ -23,7 +23,7 @@ namespace OSS.Pipeline.Tests
         public SendEmailActivity EmailActivity  { get; } = new SendEmailActivity();
         
         //  构造函数内定义流体关联
-        public BuyFlow() : base("Buy_Flow", _startNode, _endNode, new PipeLineOption()  {Watcher = new FlowWatcher()})
+        public BuyFlow() : base( _startNode, _endNode, new PipeLineOption()  {Watcher = new FlowWatcher()})
         {
         }
 

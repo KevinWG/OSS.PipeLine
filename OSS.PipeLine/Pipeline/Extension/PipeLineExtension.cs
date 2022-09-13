@@ -13,6 +13,7 @@
 
 
 using OSS.Pipeline.Base;
+using OSS.Pipeline.Interface;
 
 namespace OSS.Pipeline
 {
@@ -65,10 +66,10 @@ namespace OSS.Pipeline
         /// <param name="flowPipeCode"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static Pipeline<TIn, TEndOut> AsPipeline<TIn, TEndIn, TEndPara, TEndResult, TEndOut>(this BaseInPipePart<TIn> startPipe,
-            BaseFourWayPipe<TEndIn, TEndPara, TEndResult, TEndOut> endPipe, string flowPipeCode, PipeLineOption option = null)
+        public static Pipeline<TIn, TEndOut> AsPipeline<TIn, TEndIn, TEndPara, TEndResult, TEndOut>(this IPipeInPart<TIn> startPipe,
+            BaseFourWayPipe<TEndIn, TEndPara, TEndResult, TEndOut> endPipe, PipeLineOption option = null, string flowPipeCode=null)
         {
-            return new Pipeline<TIn, TEndOut>(flowPipeCode, startPipe, endPipe, option);
+            return new Pipeline<TIn, TEndOut>( startPipe, endPipe, option, flowPipeCode);
         }
 
         /// <summary>
@@ -79,11 +80,11 @@ namespace OSS.Pipeline
         /// <param name="flowPipeCode"></param>
         /// <param name="option"></param>
         /// <returns></returns>
-        public static EmptyEntryPipeline<TEndOut> AsPipeline<TEndIn, TEndPara, TEndResult, TEndOut>(this BaseInPipePart<Empty> startPipe,
+        public static EmptyEntryPipeline<TEndOut> AsPipeline<TEndIn, TEndPara, TEndResult, TEndOut>(this IPipeInPart<Empty> startPipe,
             BaseFourWayPipe<TEndIn, TEndPara, TEndResult, TEndOut> endPipe,
-            string flowPipeCode, PipeLineOption option = null)
+             PipeLineOption option = null, string flowPipeCode = null)
         {
-            return new EmptyEntryPipeline<TEndOut>(flowPipeCode, startPipe, endPipe, option);
+            return new EmptyEntryPipeline<TEndOut>( startPipe, endPipe, option, flowPipeCode);
         }
 
         ///// <summary>
