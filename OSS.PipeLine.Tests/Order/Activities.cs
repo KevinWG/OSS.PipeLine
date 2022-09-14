@@ -58,14 +58,14 @@ namespace OSS.Pipeline.Tests.Order
     }
 
     /// <summary>
-    ///  发送服务
+    ///  发送短信服务
     ///     NotifyMsg - 上级管道传递的业务输入参数，   bool - 当前业务执行成功失败
     /// </summary>
-    internal class Notify : BaseActivity<NotifyMsg, bool>
+    internal class NotifySMS : BaseActivity<NotifyMsg, bool>
     {
         protected override async Task<TrafficSignal<bool>> Executing(NotifyMsg para)
         {
-            LogHelper.Info($"发送{(para.is_sms?"短信":"邮件")}消息 ：{para.target}:{para.content}");
+            LogHelper.Info($"发送用户短信消息 ：{para.target}:{para.content}");
 
             await Task.Delay(10);
 
@@ -73,12 +73,33 @@ namespace OSS.Pipeline.Tests.Order
         }
     }
 
+    /// <summary>
+    ///  发送邮件服务
+    ///     NotifyMsg - 上级管道传递的业务输入参数，   bool - 当前业务执行成功失败
+    /// </summary>
+    internal class NotifyEmail : BaseActivity<NotifyMsg, bool>
+    {
+        protected override async Task<TrafficSignal<bool>> Executing(NotifyMsg para)
+        {
+            LogHelper.Info($"发送管理员邮件消息 ：{para.target}:{para.content}");
+
+            await Task.Delay(10);
+
+            return new TrafficSignal<bool>(true);
+        }
+    }
 
     internal class OrderPayPipeline
     {
-        private static readonly OrderPay _pay     = new OrderPay();
-        private static readonly PayHook  _payHook = new PayHook();
-        private static readonly Notify   _notify  = new Notify();
+        private static readonly OrderPay    _pay       = new OrderPay();
+        private static readonly PayHook     _payHook   = new PayHook();
+
+        private static readonly SimpleBranchGateway<NotifyMsg> _notifyGateway   = new SimpleBranchGateway<NotifyMsg>();
+
+        private static readonly NotifySMS             _notifySms   = new NotifySMS();
+        private static readonly NotifyEmail           _notifyEmail = new NotifyEmail();
+
+        private static readonly EmptyActivity _end = new EmptyActivity();
 
         static OrderPayPipeline()
         {
@@ -86,10 +107,14 @@ namespace OSS.Pipeline.Tests.Order
                 .AppendMsgFlow("order_pay_event") // 添加默认实现的异步消息队列中
                 .Append(_payHook)                 // 消息队列数据流向hook管道
                 .AppendMsgEnumerator()            // Hook处理后有多条消息，添加消息枚举器
-                .Append(_notify);                 //  枚举后的单个消息体流入发送节点
+                .Append(_notifyGateway);          //  枚举后的单个消息体流入发送分支网关
 
-            // 添加日志，通过创建流水线，给流水线添加Watcher，会自动给下边的所有Pipe添加Watcher
-            _pay.AsPipeline(_notify, new PipeLineOption() { Watcher = new FlowWatcher() },"OrderPayPipeline");
+            _notifyGateway.Append(m => m.is_sms, _notifySms).Append(_end);
+            _notifyGateway.Append(m => !m.is_sms, _notifyEmail).Append(_end);
+
+
+            // 添加日志，通过初始化流水线，给流水线添加Watcher，会自动给下边的所有Pipe添加Watcher
+            _pay.AsPipeline(_end, new PipeLineOption() { Watcher = new FlowWatcher() },"OrderPayPipeline");
         }
 
         // 作为对外暴露接口
